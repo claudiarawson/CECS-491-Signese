@@ -1,3 +1,5 @@
+Navigate to the signese folder before commencing with the following.
+
 Install Dependencies:
 ```npx install```
 
@@ -153,4 +155,4 @@ Start the Development Server:
 
   package.json
   app.json
-  tsconfig.json```
+  tsconfig.json
