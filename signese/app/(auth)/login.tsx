@@ -6,8 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import { loginColors as c } from "@/src/theme/pages/login.colors";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -20,39 +23,46 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome back</Text>
+    <LinearGradient colors={[c.backgroundTop, c.backgroundBottom]} style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <Image
+          source={require("../../assets/images/signese-logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        <Text style={styles.title}>Welcome back</Text>
 
-      <TextInput
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Email"
-        style={styles.input}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
+        <TextInput
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Email"
+          style={styles.input}
+          autoCapitalize="none"
+          keyboardType="email-address"
+        />
 
-      <TextInput
-        value={password}
-        onChangeText={setPassword}
-        placeholder="Password"
-        style={styles.input}
-        secureTextEntry
-      />
+        <TextInput
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Password"
+          style={styles.input}
+          secureTextEntry
+        />
 
-      <TouchableOpacity onPress={handleLogin} style={styles.button}>
-        <Text style={styles.buttonText}>Sign in</Text>
-      </TouchableOpacity>
-
-      <View style={styles.links}>
-        <TouchableOpacity onPress={() => router.push("/signup")}> 
-          <Text style={styles.linkText}>Create account</Text>
+        <TouchableOpacity onPress={handleLogin} style={styles.button}>
+          <Text style={styles.buttonText}>Sign in</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push("/forgot-password")}> 
-          <Text style={styles.linkText}>Forgot password?</Text>
-        </TouchableOpacity>
+
+        <View style={styles.links}>
+          <TouchableOpacity onPress={() => router.push("/signup")}>
+            <Text style={styles.linkText}>Create account</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/forgot-password")}>
+            <Text style={styles.linkText}>Forgot password?</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -61,30 +71,41 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: c.cardBackground,
+    margin: 16,
+    borderRadius: 12,
+  },
+  logo: {
+    width: 80,
+    height: 80,
+    alignSelf: "center",
+    marginBottom: 16,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
     marginBottom: 24,
     textAlign: "center",
+    color: c.titleText,
   },
   input: {
+    backgroundColor: c.inputBackground,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: c.inputBorder,
     borderRadius: 4,
     padding: 12,
     marginBottom: 12,
+    color: c.inputText,
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: c.primaryButton,
     padding: 14,
     borderRadius: 4,
     alignItems: "center",
     marginTop: 12,
   },
   buttonText: {
-    color: "#fff",
+    color: c.buttonText,
     fontWeight: "600",
   },
   links: {
@@ -92,7 +113,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   linkText: {
-    color: "#007AFF",
+    color: c.linkText,
     marginTop: 8,
   },
 });

@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { landingColors as c } from "@/src/theme/pages/landing.colors";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
@@ -12,6 +12,11 @@ export default function HomeScreen() {
       style={{ flex: 1 }}
     >
       <View style={styles.container}>
+        <Image
+          source={require("../../assets/images/signese-logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <Text style={styles.title}>SIGNese</Text>
         <Text style={styles.subtitle}>Learn sign language with ease</Text>
 
@@ -41,6 +46,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 16,
   },
   title: {
     fontSize: 48,
