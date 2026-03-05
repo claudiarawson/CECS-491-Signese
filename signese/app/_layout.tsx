@@ -4,6 +4,9 @@ export default function RootLayout() {
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="(auth)/login" options={{ title: "Login" }} />
+      <Stack.Screen name="(auth)/signup" options={{ title: "Sign Up" }} />
+      <Stack.Screen name="(auth)/forgot-password" options={{ title: "Reset Password" }} />
       <Stack.Screen name="dictionary/[signId]" options={{ title: "Sign" }} />
       <Stack.Screen name="dictionary/add-dialect" options={{ title: "Add Dialect" }} />
     </Stack>
