@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
-import { View, Text, TextInput, Pressable, FlatList } from "react-native";
+import { View, Text, Pressable, FlatList } from "react-native";
+import { router } from "expo-router"; // ✅ add this
 import { SIGNS } from "../../src/features/dictionary/data/signs";
 import type { Sign } from "../../src/features/dictionary/types";
 import SignOverlay from "../../src/features/dictionary/ui/SignOverlay";
@@ -36,6 +37,10 @@ export default function DictionaryScreen() {
     setSelectedSign(null);
   };
 
+  // ✅ routes for the two buttons
+  const goToAddSign = () => router.push("/dictionary/add-dialect");
+  const goToSavedSigns = () => router.push("/account/saved-signs"); // adjust if needed
+
   return (
     <View style={{ flex: 1, padding: 18, backgroundColor: "#f4fbfa" }}>
       {/* top UI omitted for brevity... */}
@@ -45,6 +50,7 @@ export default function DictionaryScreen() {
         keyExtractor={(item) => item.id}
         numColumns={2}
         columnWrapperStyle={{ gap: 14 }}
+        contentContainerStyle={{ paddingBottom: 120 }} // ✅ prevents buttons covering cards
         renderItem={({ item }) => (
           <Pressable
             onPress={() => openOverlay(item)}
@@ -84,12 +90,51 @@ export default function DictionaryScreen() {
         )}
       />
 
-      <SignOverlay
-        visible={overlayVisible}
-        sign={selectedSign}
-        onClose={closeOverlay}
-        // later: add isSaved + onToggleSave here
-      />
+      <SignOverlay visible={overlayVisible} sign={selectedSign} onClose={closeOverlay} />
+
+      {/* ✅ Bottom buttons (fully functional) */}
+      <View
+        style={{
+          position: "absolute",
+          left: 18,
+          right: 18,
+          bottom: 18,
+          flexDirection: "row",
+          gap: 12,
+        }}
+      >
+        <Pressable
+          onPress={goToAddSign}
+          style={{
+            flex: 1,
+            backgroundColor: "#48b4a8",
+            borderRadius: 18,
+            paddingVertical: 14,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 16, fontWeight: "900" }}>
+            ＋ Add Sign
+          </Text>
+        </Pressable>
+
+        <Pressable
+          onPress={goToSavedSigns}
+          style={{
+            flex: 1,
+            backgroundColor: "#48b4a8",
+            borderRadius: 18,
+            paddingVertical: 14,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 16, fontWeight: "900" }}>
+            ≡ Saved Signs
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
