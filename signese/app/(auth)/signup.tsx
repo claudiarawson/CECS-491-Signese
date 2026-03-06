@@ -8,7 +8,7 @@ export default function SignupScreen() {
     <LinearGradient colors={[c.backgroundTop, c.backgroundBottom]} style={{ flex: 1 }}>
       <View style={styles.container}>
         <Image
-          source={require("../../assets/images/Signese Logo.png")}
+          source={require("../../assets/images/logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />
