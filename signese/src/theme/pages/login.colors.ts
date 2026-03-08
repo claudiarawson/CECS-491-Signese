@@ -21,6 +21,7 @@ export const loginColors = {
   subtitle: "#6B7280",
   label: "#6B7280",
   placeholder: "#94A3A8",
+  icon: "#6B7280",
 
   // Brand / links
   link: "#4DB3A8",

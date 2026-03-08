@@ -12,6 +12,7 @@ export const landingColors = {
 
   // brand colors
   logoText: "#4DB3A8",
+  subtitle: "#607089",
 
   // login button
   loginBackground: "#F2F8F6",

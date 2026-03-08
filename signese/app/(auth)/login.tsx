@@ -7,15 +7,35 @@ import {
   Pressable,
   Image,
   Platform,
+  ScrollView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
+import { moderateScale } from "react-native-size-matters";
 import { loginColors as c } from "@/src/theme/pages/login.colors";
 
 export default function LoginScreen() {
+
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  const handleSignIn = () => {
+    // UI-only flow for now: enter the app shell and open Home tab.
+    router.replace("/home");
+  };
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+    router.replace("/");
+  };
 
   return (
     <LinearGradient
@@ -24,197 +44,281 @@ export default function LoginScreen() {
       style={styles.bg}
     >
       <SafeAreaView style={styles.safe}>
-        {/* Back button (top-left circle) */}
         <View style={styles.topRow}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <Text style={styles.backIcon}>‹</Text>
+          <Pressable onPress={handleBack} style={styles.backBtn}>
+            <MaterialIcons name="chevron-left" size={moderateScale(20)} color={c.title} />
           </Pressable>
         </View>
 
-        {/* Centered content (phone-width) */}
-        <View style={styles.centerWrap}>
-          <View style={styles.phoneWidth}>
-            {/* Logo */}
-            <Image
-              source={require("../../assets/images/logo.png")}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-
-            {/* Title + subtitle */}
-            <Text style={styles.title}>Welcome Back!</Text>
-            <Text style={styles.subtitle}>Sign in to continue learning!</Text>
-
-            {/* Card */}
-            <View style={styles.card}>
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="your@email.com"
-                placeholderTextColor={c.placeholder}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                style={styles.input}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.centerWrap}>
+            <View style={styles.phoneWidth}>
+              <Image
+                source={require("../../assets/images/logo.png")}
+                style={styles.logo}
+                resizeMode="contain"
               />
 
-              <Text style={[styles.label, { marginTop: 12 }]}>Password</Text>
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                placeholder="••••••••"
-                placeholderTextColor={c.placeholder}
-                secureTextEntry
-                style={styles.input}
-              />
+              <Text style={styles.title}>Welcome Back!</Text>
+              <Text style={styles.subtitle}>Sign in to continue learning!</Text>
 
-              <View style={styles.rowLinks}>
-                <Pressable onPress={() => {}}>
-                  <Text style={styles.remember}>○ Remember me</Text>
-                </Pressable>
+              <View style={styles.card}>
+                <Text style={styles.label}>Username</Text>
+                <TextInput
+                  value={username}
+                  onChangeText={setUsername}
+                  placeholder="Matthew"
+                  placeholderTextColor={c.placeholder}
+                  style={styles.input}
+                />
 
-                <Pressable onPress={() => router.push("/forgot-password") }>
-                  <Text style={styles.link}>Forgot password?</Text>
-                </Pressable>
+                <Text style={styles.label}>Email</Text>
+                <TextInput
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="your@email.com"
+                  placeholderTextColor={c.placeholder}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  style={styles.input}
+                />
+
+                <Text style={styles.label}>Password</Text>
+                <View style={styles.passwordWrap}>
+                  <TextInput
+                    value={password}
+                    onChangeText={setPassword}
+                    placeholder="........"
+                    placeholderTextColor={c.placeholder}
+                    secureTextEntry={!showPassword}
+                    style={styles.passwordInput}
+                  />
+                  <Pressable onPress={() => setShowPassword((value) => !value)}>
+                    <MaterialIcons
+                      name={showPassword ? "visibility" : "visibility-off"}
+                      size={moderateScale(18)}
+                      color={c.icon}
+                    />
+                  </Pressable>
+                </View>
+
+                <View style={styles.rowLinks}>
+                  <Pressable
+                    style={styles.rememberWrap}
+                    onPress={() => setRememberMe((value) => !value)}
+                  >
+                    <View style={[styles.rememberDot, rememberMe && styles.rememberDotOn]} />
+                    <Text style={styles.remember}>Remember me</Text>
+                  </Pressable>
+
+                  <Pressable onPress={() => router.push("/(auth)/forgot-password")}>
+                    <Text style={styles.link}>Forgot password?</Text>
+                  </Pressable>
+                </View>
               </View>
 
-              <Pressable style={styles.primaryBtn} onPress={() => {}}>
-                <Text style={styles.primaryBtnText}>Sign In</Text>
-              </Pressable>
-            </View>
-
-            {/* Bottom links */}
-            <View style={styles.bottomLinks}>
-              <Pressable onPress={() => router.push("/signup") }>
-                <Text style={styles.link}>Create account</Text>
-              </Pressable>
+                <Pressable style={styles.primaryBtn} onPress={handleSignIn}>
+                  <Text style={styles.primaryBtnText}>Sign In</Text>
+                </Pressable>
             </View>
           </View>
-        </View>
+        </ScrollView>
       </SafeAreaView>
     </LinearGradient>
   );
 }
 
+const headingFont = Platform.select({
+  ios: "AvenirNext-Bold",
+  android: "sans-serif-medium",
+  default: "System",
+});
+const bodyFont = Platform.select({
+  ios: "AvenirNext-Regular",
+  android: "sans-serif",
+  default: "System",
+});
+const mediumFont = Platform.select({
+  ios: "AvenirNext-DemiBold",
+  android: "sans-serif-medium",
+  default: "System",
+});
+
 const styles = StyleSheet.create({
   bg: { flex: 1 },
   safe: { flex: 1 },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: moderateScale(14),
+  },
 
   topRow: {
-    paddingHorizontal: 16,
-    paddingTop: Platform.select({ ios: 6, android: 10, default: 10 }),
+    paddingHorizontal: moderateScale(16),
+    paddingTop: Platform.select({
+      ios: moderateScale(6),
+      android: moderateScale(10),
+      default: moderateScale(10),
+    }),
   },
 
   backBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: moderateScale(36),
+    height: moderateScale(36),
+    borderRadius: moderateScale(18),
     backgroundColor: c.backBg,
     alignItems: "center",
     justifyContent: "center",
   },
 
-  backIcon: {
-    fontSize: 26,
-    lineHeight: 26,
-    marginTop: -2,
-    color: c.title,
-  },
-
   centerWrap: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "flex-start",
-    paddingTop: 12,
-    paddingHorizontal: 16,
+    justifyContent: "center",
+    paddingTop: moderateScale(4),
+    paddingHorizontal: moderateScale(16),
   },
 
-  // This is the key to matching iPhone SE / Figma frame
   phoneWidth: {
     width: "100%",
-    maxWidth: 320, // Figma frame width
+    maxWidth: moderateScale(340),
     alignItems: "center",
   },
 
   logo: {
-    width: 46,
-    height: 46,
-    marginBottom: 10,
+    width: moderateScale(48),
+    height: moderateScale(48),
+    borderRadius: moderateScale(24),
+    overflow: "hidden",
+    marginBottom: moderateScale(6),
   },
 
   title: {
-    fontSize: 28,
+    fontSize: moderateScale(32),
+    fontFamily: headingFont,
     fontWeight: "700",
+    letterSpacing: -0.2,
+    lineHeight: moderateScale(36),
     color: c.title,
     textAlign: "center",
   },
 
   subtitle: {
-    fontSize: 13,
+    fontSize: moderateScale(18),
+    lineHeight: moderateScale(22),
     color: c.subtitle,
-    marginTop: 4,
+    marginTop: moderateScale(4),
     textAlign: "center",
+    fontFamily: bodyFont,
   },
 
   card: {
     width: "100%",
-    marginTop: 18,
+    marginTop: moderateScale(10),
     backgroundColor: c.card,
-    borderRadius: 24, // matches Figma rounded card
-    padding: 18,
+    borderRadius: moderateScale(24),
+    paddingVertical: moderateScale(12),
+    paddingHorizontal: moderateScale(16),
   },
 
   label: {
-    fontSize: 12,
+    fontSize: moderateScale(11),
     color: c.label,
-    marginBottom: 6,
+    marginBottom: moderateScale(4),
+    fontFamily: mediumFont,
   },
 
   input: {
-    height: 40,
-    borderRadius: 20, // pill input
+    height: moderateScale(36),
+    borderRadius: moderateScale(18),
+    marginBottom: moderateScale(6),
     backgroundColor: c.inputBg,
     borderWidth: 1,
     borderColor: c.inputBorder,
-    paddingHorizontal: 14,
+    paddingHorizontal: moderateScale(12),
+    fontSize: moderateScale(13),
     color: c.title,
+    fontFamily: bodyFont,
   },
 
-  rowLinks: {
-    marginTop: 10,
+  passwordWrap: {
+    height: moderateScale(36),
+    borderRadius: moderateScale(18),
+    marginBottom: moderateScale(6),
+    backgroundColor: c.inputBg,
+    borderWidth: 1,
+    borderColor: c.inputBorder,
+    paddingLeft: moderateScale(12),
+    paddingRight: moderateScale(8),
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
   },
 
+  passwordInput: {
+    flex: 1,
+    fontSize: moderateScale(14),
+    color: c.title,
+    fontFamily: bodyFont,
+  },
+
+  rowLinks: {
+    marginTop: moderateScale(4),
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: moderateScale(6),
+  },
+
+  rememberWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: moderateScale(4),
+  },
+
+  rememberDot: {
+    width: moderateScale(10),
+    height: moderateScale(10),
+    borderRadius: moderateScale(5),
+    borderWidth: 1,
+    borderColor: c.link,
+    backgroundColor: "transparent",
+  },
+
+  rememberDotOn: {
+    backgroundColor: c.link,
+  },
+
   remember: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: c.subtitle,
+    fontFamily: bodyFont,
   },
 
   link: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: c.link,
     fontWeight: "600",
+    fontFamily: mediumFont,
   },
 
   primaryBtn: {
-    marginTop: 16,
-    height: 44,
-    borderRadius: 22,
+    marginTop: moderateScale(8),
+    height: moderateScale(42),
+    borderRadius: moderateScale(21),
+    width: "72%",
     backgroundColor: c.primaryBtn,
     alignItems: "center",
     justifyContent: "center",
   },
 
   primaryBtnText: {
-    fontSize: 14,
+    fontSize: moderateScale(16),
+    fontFamily: mediumFont,
     fontWeight: "700",
     color: c.primaryBtnText,
-  },
-
-  bottomLinks: {
-    marginTop: 14,
-    alignItems: "center",
+    lineHeight: moderateScale(20),
   },
 });
