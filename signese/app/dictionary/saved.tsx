@@ -3,10 +3,10 @@ import { View, Text, TextInput, Pressable, FlatList, StyleSheet } from "react-na
 import { router } from "expo-router";
 import { SIGNS } from "../../src/features/dictionary/data/signs";
 import type { Sign } from "../../src/features/dictionary/types";
-import { getSavedIds, toggleSavedId } from "../../src/features/dictionary/storage/saved.local";
+import { getSavedIds } from "../../src/features/dictionary/storage/saved.local";
 import SignOverlay from "../../src/components/SignOverlay";
 
-export default function DictionaryScreen() {
+export default function SavedSignsScreen() {
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
@@ -16,22 +16,10 @@ export default function DictionaryScreen() {
     getSavedIds().then(ids => setSavedIds(new Set(ids)));
   }, []);
 
-  const handleToggleSave = async (signId: string) => {
-    const newSaved = await toggleSavedId(signId);
-    setSavedIds(prev => {
-      const newSet = new Set(prev);
-      if (newSaved) {
-        newSet.add(signId);
-      } else {
-        newSet.delete(signId);
-      }
-      return newSet;
-    });
-  };
-
   const filtered: Sign[] = useMemo(() => {
     const q = query.trim().toLowerCase();
     return SIGNS.filter((s) => {
+      if (!savedIds.has(s.id)) return false;
       if (communityOnly && s.source !== "community") return false;
       if (!q) return true;
       return (
@@ -39,7 +27,7 @@ export default function DictionaryScreen() {
         s.definition.toLowerCase().includes(q)
       );
     });
-  }, [query, communityOnly]);
+  }, [query, communityOnly, savedIds]);
 
   return (
     <View style={styles.container}>
@@ -79,7 +67,7 @@ export default function DictionaryScreen() {
         </Text>
       </Pressable>
 
-      <Text style={styles.sectionTitle}>Featured Signs</Text>
+      <Text style={styles.sectionTitle}>Saved Signs</Text>
 
       {/* Grid */}
       <FlatList
@@ -88,25 +76,19 @@ export default function DictionaryScreen() {
         numColumns={2}
         columnWrapperStyle={{ gap: 14 }}
         contentContainerStyle={{ paddingBottom: 110 }}
-        renderItem={({ item }) => {
-          const isSaved = savedIds.has(item.id);
-          return (
-            <Pressable
-              style={[styles.card, item.source === "community" && styles.cardCommunity]}
-              onPress={() => setSelectedSign(item)}
-            >
-              <View style={styles.mediaPlaceholder}>
-                <Text style={styles.mediaText}>media</Text>
-              </View>
-              <Text style={styles.cardWord} numberOfLines={1}>
-                {item.word}
-              </Text>
-              <Pressable onPress={() => handleToggleSave(item.id)} style={styles.saveBtn}>
-                <Text style={styles.saveIcon}>{isSaved ? '★' : '☆'}</Text>
-              </Pressable>
-            </Pressable>
-          );
-        }}
+        renderItem={({ item }) => (
+          <Pressable
+            style={[styles.card, item.source === "community" && styles.cardCommunity]}
+            onPress={() => setSelectedSign(item)}
+          >
+            <View style={styles.mediaPlaceholder}>
+              <Text style={styles.mediaText}>media</Text>
+            </View>
+            <Text style={styles.cardWord} numberOfLines={1}>
+              {item.word}
+            </Text>
+          </Pressable>
+        )}
         ListEmptyComponent={
           <Text style={{ textAlign: "center", marginTop: 20, color: "#566" }}>
             No results.
@@ -158,7 +140,6 @@ const styles = StyleSheet.create({
   },
   searchIcon: { fontSize: 18, marginRight: 8 },
   searchInput: { flex: 1, fontSize: 16, color: "#111" },
-
   clearBtn: { marginLeft: 8 },
   clearText: { fontSize: 18, color: "#7b8a8b" },
 
@@ -195,9 +176,6 @@ const styles = StyleSheet.create({
   },
   mediaText: { color: "#4d6", fontWeight: "700" },
   cardWord: { marginTop: 10, fontSize: 22, fontWeight: "900", textAlign: "center", color: "#111" },
-
-  saveBtn: { position: 'absolute', top: 8, right: 8, padding: 4 },
-  saveIcon: { fontSize: 20, color: '#ffd700' },
 
   bottomRow: {
     position: "absolute",
