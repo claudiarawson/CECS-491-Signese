@@ -45,8 +45,8 @@ export const SIGNS: Sign[] = [
     source: "community",
   },
   {
-    id: "pah",
-    word: "Pah",
+    id: "word",
+    word: "Word",
     mediaUrl: "",
     definition: "Community slang—an expressive reaction term (example).",
     howToSign: "Community-submitted sign; see media/instructions from contributor.",
