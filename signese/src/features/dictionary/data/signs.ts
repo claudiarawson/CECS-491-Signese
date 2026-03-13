@@ -44,4 +44,14 @@ export const SIGNS: Sign[] = [
     categoryId: "slang",
     source: "community",
   },
+  {
+    id: "word",
+    word: "Word",
+    mediaUrl: "",
+    definition: "Community slang—an expressive reaction term (example).",
+    howToSign: "Community-submitted sign; see media/instructions from contributor.",
+    note: "This is a community sign and may vary by region/group.",
+    categoryId: "general",
+    source: "featured",
+  },
 ];
