@@ -42,6 +42,15 @@ export default function TranslateScreen() {
     setCameraActive(true);
   };
 
+  const handleToggleCamera = async () => {
+    if (cameraActive) {
+      setCameraActive(false);
+      return;
+    }
+
+    await handleActivateCamera();
+  };
+
   const permissionDenied = permission && !permission.granted;
 
   return (
@@ -63,7 +72,12 @@ export default function TranslateScreen() {
         <View style={styles.topSection}>
           <Pressable style={styles.videoCard} onPress={handleActivateCamera}>
             {cameraActive && permission?.granted ? (
-              <CameraView style={styles.cameraPreview} facing="front" />
+              <>
+                <CameraView style={styles.cameraPreview} facing="front" />
+                <Pressable style={styles.cameraToggleChip} onPress={handleToggleCamera}>
+                  <MaterialIcons name="videocam-off" size={14} color="#FFFFFF" />
+                </Pressable>
+              </>
             ) : (
               <View style={styles.videoPlaceholderWrap}>
                 <MaterialIcons name="videocam" size={34} color="#608D86" />
@@ -81,8 +95,12 @@ export default function TranslateScreen() {
         </View>
 
         <View style={styles.captionsControlsRow}>
-          <Pressable style={styles.smallControlBtn}>
-            <MaterialIcons name="closed-caption" size={18} color="#2C5D56" />
+          <Pressable style={styles.smallControlBtn} onPress={handleToggleCamera}>
+            <MaterialIcons
+              name={cameraActive ? "videocam-off" : "videocam"}
+              size={18}
+              color="#2C5D56"
+            />
           </Pressable>
           <Text style={styles.captionsLabel}>Captions</Text>
           <Pressable style={styles.smallControlBtn}>
@@ -92,11 +110,15 @@ export default function TranslateScreen() {
 
         <View style={styles.captionsCard}>
           <Text style={styles.captionsPlaceholderText}>Translation output will appear here.</Text>
-          <Text style={styles.captionsSubText}>Waiting for live translation...</Text>
+          <Text style={styles.captionsSubText}>
+            {cameraActive
+              ? "Waiting for live translation..."
+              : "Camera is off. Live translation is paused."}
+          </Text>
         </View>
       </View>
 
-      {/* TODO: connect camera stream to live translation repository pipeline. */}
+      {/* TODO: connect camera stream to live translation repository pipeline (only when cameraActive is true). */}
       {/* TODO: bind captions content to translation output once backend integration is available. */}
       {/* TODO: replace Common Responses placeholders with dictionary-driven response suggestions. */}
     </ScreenContainer>
@@ -125,6 +147,17 @@ const styles = StyleSheet.create({
   },
   cameraPreview: {
     flex: 1,
+  },
+  cameraToggleChip: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 32,
+    height: 32,
+    borderRadius: 14,
+    backgroundColor: "rgba(0,0,0,0.55)",
   },
   videoPlaceholderWrap: {
     flex: 1,
