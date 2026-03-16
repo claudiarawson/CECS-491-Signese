@@ -3,7 +3,7 @@ import React from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Sizes, navigationStyles, navigationTheme } from "@/src/theme";
 
-const TAB_ICON_SIZE = Sizes.iconMd + 2;
+const TAB_ICON_SIZE = Sizes.iconMd;
 
 export default function TabLayout() {
   return (
@@ -13,6 +13,7 @@ export default function TabLayout() {
         animation: "fade",
         tabBarStyle: navigationStyles.tabBar,
         tabBarLabelStyle: navigationStyles.tabLabel,
+        tabBarAllowFontScaling: false,
         tabBarActiveTintColor: navigationTheme.activeTint,
         tabBarInactiveTintColor: navigationTheme.inactiveTint,
         tabBarItemStyle: navigationStyles.tabItem,

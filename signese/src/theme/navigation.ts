@@ -12,21 +12,23 @@ export const navigationTheme = {
 export const navigationStyles = StyleSheet.create({
   tabBar: {
     backgroundColor: navigationTheme.surface,
-    height: Platform.OS === "ios" ? 84 : 84,
+    height: Platform.OS === "ios" ? 78 : 74,
     width: "100%",
-    paddingTop: 10,
-    paddingBottom: Platform.OS === "ios" ? 24 : 14,
+    paddingTop: 6,
+    paddingBottom: Platform.OS === "ios" ? 16 : 10,
     borderTopWidth: 1,
     borderTopColor: navigationTheme.border,
   },
   tabItem: {
-    paddingVertical: 2,
+    paddingVertical: 0,
   },
   tabLabel: {
     ...Typography.caption,
-    fontSize: fontScale(10),
-    marginTop: 2,
-    marginBottom: 2,
+    fontSize: fontScale(9),
+    lineHeight: fontScale(11),
+    marginTop: 1,
+    marginBottom: 0,
+    includeFontPadding: false,
   },
   topHeaderAccent: {
     backgroundColor: navigationTheme.surface,

@@ -1,7 +1,8 @@
 import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Sizes, Spacing, moderateScale, semanticColors } from "@/src/theme";
+import { semanticColors } from "@/src/theme";
+import { navigationTheme } from "@/src/theme/navigation";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 
 type HeaderActionButtonProps = {
@@ -15,13 +16,13 @@ export function HeaderActionButton({
   onPress,
   density = 1,
 }: HeaderActionButtonProps) {
-  const size = Sizes.avatarSmall * density;
+  const size = 30 * density;
   return (
     <Pressable style={[styles.actionBtn, { width: size, height: size, borderRadius: size / 2 }]} onPress={onPress}>
       <MaterialIcons
         name={iconName}
-        size={moderateScale(18) * density}
-        color={semanticColors.text.secondary}
+        size={24 * density}
+        color={navigationTheme.activeTint}
       />
     </Pressable>
   );
@@ -39,28 +40,31 @@ export function HeaderAvatarButton({
   density = 1,
 }: HeaderAvatarButtonProps) {
   const { profile } = useAuthUser();
-  const size = Sizes.avatarSmall * density;
+  const size = 36 * density;
   const avatarValue = profile?.avatar ?? avatar;
   return (
     <Pressable style={[styles.avatarBtn, { width: size, height: size, borderRadius: size / 2 }]} onPress={onPress}>
-      <Text style={[styles.avatarText, { fontSize: moderateScale(16) * density }]}>{avatarValue}</Text>
+      <Text style={[styles.avatarText, { fontSize: 20 * density }]}>{avatarValue}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   actionBtn: {
-    backgroundColor: "#F2F7F8",
+    backgroundColor: "#E8F6F2",
+    borderWidth: 1,
+    borderColor: "#D4ECE6",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: Spacing.xs,
   },
   avatarBtn: {
     backgroundColor: "#EDE7F7",
+    borderWidth: 1,
+    borderColor: "#E2D8F2",
     alignItems: "center",
     justifyContent: "center",
   },
   avatarText: {
-    lineHeight: moderateScale(18),
+    lineHeight: 18,
   },
 });

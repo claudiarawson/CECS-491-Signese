@@ -21,7 +21,7 @@ export function ScreenContainer({
 	return (
 		<SafeAreaView 
 			style={[styles.safe, { backgroundColor }, safeStyle]}
-			edges={["left", "right"]}
+			edges={["top", "left", "right"]}
 		>
 			<View style={[styles.content, contentPadded && styles.padded, contentStyle]}>{children}</View>
 		</SafeAreaView>

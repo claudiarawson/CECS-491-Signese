@@ -1,4 +1,5 @@
-import { Sizes, Spacing, Typography, fontScale, semanticColors } from "@/src/theme";
+import { Sizes, Typography, semanticColors } from "@/src/theme";
+import { navigationTheme } from "@/src/theme/navigation";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import React from "react";
@@ -50,24 +51,23 @@ export function ScreenHeader({
 const styles = StyleSheet.create({
 	container: {
 		width: "100%",
-		backgroundColor: "#FFFFFF",
-		paddingTop: 36,
+		backgroundColor: navigationTheme.surface,
 	},
 	innerContent: {
-		height: 48,
+		height: 56,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		paddingHorizontal: Spacing.screenPadding,
+		paddingHorizontal: 20,
 	},
 	accent: {
 		borderBottomWidth: 1,
-		borderBottomColor: "#DCE3E1",
+		borderBottomColor: navigationTheme.border,
 	},
 	leftWrap: {
 		flexDirection: "row",
 		alignItems: "center",
-		width: 80,
+		minWidth: 72,
 	},
 	backButton: {
 		width: 32,
@@ -76,12 +76,13 @@ const styles = StyleSheet.create({
 		backgroundColor: "#F2F7F8",
 		alignItems: "center",
 		justifyContent: "center",
-		marginRight: Spacing.xs - 2,
+		marginRight: 6,
 	},
 	title: {
 		...Typography.screenTitle,
-		fontSize: fontScale(19),
-		lineHeight: fontScale(24),
+		fontSize: 19,
+		lineHeight: 24,
+		fontWeight: "700",
 		flex: 1,
 		textAlign: "center",
 	},
@@ -89,7 +90,8 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "flex-end",
-		width: 80,
+		minWidth: 96,
+		columnGap: 10,
 	},
 });
 
