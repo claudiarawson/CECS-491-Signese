@@ -49,3 +49,6 @@ app-example
 # generated native folders
 /ios
 /android
+
+# sussy api key
+firebase_PRIVATE_API_KEY.json
