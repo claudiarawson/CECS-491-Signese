@@ -37,9 +37,8 @@ const styles = StyleSheet.create({
 
   headerText: {
     fontSize: 22,
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Accessibility</Text>
-        </View>
+    fontWeight: "800",
+  },
   card: {
     backgroundColor: "#ffffff",
     marginHorizontal: 20,
