@@ -1,10 +1,16 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { View, Text, TextInput, Pressable, FlatList, StyleSheet } from "react-native";
+import { HeaderActionButton, HeaderAvatarButton, ScreenContainer, ScreenHeader } from "@/src/components/layout";
+import { Spacing } from "@/src/theme";
 import { router } from "expo-router";
-import { SIGNS } from "../../src/features/dictionary/data/signs";
-import type { Sign } from "../../src/features/dictionary/types";
-import { getSavedIds, toggleSavedId } from "../../src/features/dictionary/storage/saved.local";
+import React, { useEffect, useMemo, useState } from "react";
+import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import SignOverlay from "../../src/components/SignOverlay";
+import { SIGNS } from "../../src/features/dictionary/data/signs";
+import { getSavedIds, toggleSavedId } from "../../src/features/dictionary/storage/saved.local";
+import type { Sign } from "../../src/features/dictionary/types";
+
+const MINT = "#cfe9e6";
+const TEAL = "#48b4a8";
+const TEAL_DARK = "#2c9a8f";
 
 export default function DictionaryScreen() {
   const [query, setQuery] = useState("");
@@ -42,52 +48,54 @@ export default function DictionaryScreen() {
   }, [query, communityOnly]);
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerRow}>
-        <Text style={styles.title}>Dictionary</Text>
-        <View style={styles.headerIcons}>
-          <Pressable style={styles.iconBtn}><Text>⚙️</Text></Pressable>
-          <Pressable style={styles.iconBtn}><Text>🙂</Text></Pressable>
+    <ScreenContainer backgroundColor="#F1F6F5">
+      <ScreenHeader
+        title="Dictionary"
+        right={
+          <>
+            <HeaderActionButton
+              iconName="settings"
+              onPress={() => router.push("/(tabs)/settings")}
+            />
+            <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account")} />
+          </>
+        }
+      />
+
+      <View style={styles.content}>
+        <View style={styles.searchWrap}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Search Sign/Word"
+            placeholderTextColor="#7b8a8b"
+            style={styles.searchInput}
+          />
+          {query.length > 0 && (
+            <Pressable onPress={() => setQuery("")} style={styles.clearBtn}>
+              <Text style={styles.clearText}>✕</Text>
+            </Pressable>
+          )}
         </View>
-      </View>
 
-      {/* Search */}
-      <View style={styles.searchWrap}>
-        <Text style={styles.searchIcon}>🔍</Text>
-        <TextInput
-          value={query}
-          onChangeText={setQuery}
-          placeholder="Search Sign/Word"
-          placeholderTextColor="#7b8a8b"
-          style={styles.searchInput}
-        />
-        {query.length > 0 && (
-          <Pressable onPress={() => setQuery("")} style={styles.clearBtn}>
-            <Text style={styles.clearText}>✕</Text>
-          </Pressable>
-        )}
-      </View>
+        <Pressable
+          onPress={() => setCommunityOnly((v) => !v)}
+          style={[styles.togglePill, communityOnly && styles.togglePillOn]}
+        >
+          <Text style={[styles.toggleText, communityOnly && styles.toggleTextOn]}>
+            {communityOnly ? "✓ " : ""}Community Signs
+          </Text>
+        </Pressable>
 
-      {/* Community toggle */}
-      <Pressable
-        onPress={() => setCommunityOnly((v) => !v)}
-        style={[styles.togglePill, communityOnly && styles.togglePillOn]}
-      >
-        <Text style={[styles.toggleText, communityOnly && styles.toggleTextOn]}>
-          {communityOnly ? "✓ " : ""}Community Signs
-        </Text>
-      </Pressable>
+        <Text style={styles.sectionTitle}>Featured Signs</Text>
 
-      <Text style={styles.sectionTitle}>Featured Signs</Text>
-
-      {/* Grid */}
-      <FlatList
+        <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
         numColumns={2}
         columnWrapperStyle={{ gap: 14 }}
-        contentContainerStyle={{ paddingBottom: 110 }}
+        contentContainerStyle={{ paddingBottom: 70 }}
         renderItem={({ item }) => {
           const isSaved = savedIds.has(item.id);
           return (
@@ -114,7 +122,6 @@ export default function DictionaryScreen() {
         }
       />
 
-      {/* Bottom buttons */}
       <View style={styles.bottomRow}>
         <Pressable
           style={styles.bottomBtn}
@@ -132,21 +139,16 @@ export default function DictionaryScreen() {
       </View>
 
       <SignOverlay visible={!!selectedSign} sign={selectedSign} onClose={() => setSelectedSign(null)} />
-    </View>
+      </View>
+    </ScreenContainer>
   );
 }
 
-const MINT = "#cfe9e6";
-const TEAL = "#48b4a8";
-const TEAL_DARK = "#2c9a8f";
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f4fbfa", paddingHorizontal: 18, paddingTop: 18 },
-  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  title: { fontSize: 32, fontWeight: "800", color: "#111" },
-  headerIcons: { flexDirection: "row", gap: 10 },
-  iconBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: "#eef7f6", alignItems: "center", justifyContent: "center" },
-
+  content: {
+    flex: 1,
+    paddingHorizontal: Spacing.screenPadding,
+  },
   searchWrap: {
     marginTop: 12,
     flexDirection: "row",
@@ -201,8 +203,8 @@ const styles = StyleSheet.create({
 
   bottomRow: {
     position: "absolute",
-    left: 18,
-    right: 18,
+    left: Spacing.screenPadding,
+    right: Spacing.screenPadding,
     bottom: 18,
     flexDirection: "row",
     gap: 12,

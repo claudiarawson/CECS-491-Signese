@@ -115,7 +115,6 @@ export default function AddSignScreen() {
 }
 
 const TEAL = "#48B4A8";
-const TEAL_DARK = "#2C9A8F";
 const MINT = "#BFE4DF";
 const BG = "#F4FBFA";
 const TEXT = "#0B0B0B";

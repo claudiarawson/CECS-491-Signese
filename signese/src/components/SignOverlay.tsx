@@ -11,12 +11,13 @@ interface SignOverlayProps {
 
 export default function SignOverlay({ visible, sign, onClose }: SignOverlayProps) {
   const [saved, setSaved] = useState(false);
+  const signId = sign?.id;
 
   useEffect(() => {
-    if (visible && sign) {
-      isSaved(sign.id).then(setSaved);
+    if (visible && signId) {
+      isSaved(signId).then(setSaved);
     }
-  }, [visible, sign?.id]);
+  }, [visible, signId]);
 
   const handleToggleSave = async () => {
     if (!sign) return;
