@@ -1,88 +1,64 @@
-import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
-import Svg, { Path, Circle, Rect } from "react-native-svg";
+import React from "react";
+import { ScrollView, StyleSheet, View, Text, Dimensions } from "react-native";
+import Svg, { Path } from "react-native-svg";
+import { LinearGradient } from "expo-linear-gradient";
 
 const { width } = Dimensions.get("window");
 const centerX = width / 2;
 
 const lessons = [
-  { emoji: "👋", title: "Greetings", top: 120, side: "right" },
-  { emoji: "🔢", title: "Numbers", top: 280, side: "left" },
-  { emoji: "🎨", title: "Colors", top: 440, side: "right" },
-  { emoji: "⏰", title: "Telling Time", top: 600, side: "left" },
-  { emoji: "🍔", title: "Food & Drink", top: 760, side: "right" },
-  { emoji: "🏠", title: "Common Objects", top: 920, side: "left" },
+  { title: "Greetings", icon: "👋", top: 120, side: "right" },
+  { title: "Numbers", icon: "🔢", top: 300, side: "left" },
+  { title: "Colors", icon: "🎨", top: 480, side: "right" },
+  { title: "Telling Time", icon: "⏰", top: 660, side: "left" },
+  { title: "Food & Drink", icon: "🍔", top: 840, side: "right" },
+  { title: "Common Objects", icon: "🏠", top: 1020, side: "left" },
 ];
 
-const Tree = ({ x, y }: { x: number; y: number }) => (
-  <Svg
-    style={{ position: "absolute", left: x, top: y }}
-    width="70"
-    height="90"
-    viewBox="0 0 70 90"
-  >
-    {/* leaves */}
-    <Circle cx="35" cy="30" r="20" fill="#9ED9C5" />
-    <Circle cx="20" cy="35" r="16" fill="#7ED6C5" />
-    <Circle cx="50" cy="35" r="16" fill="#7ED6C5" />
-
-    {/* trunk */}
-    <Rect x="30" y="50" width="10" height="30" fill="#8B5E3C" />
-  </Svg>
-);
-
-export default function Learn() {
+export default function LearnScreen() {
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.mapContainer}>
+      <LinearGradient
+        colors={["#dbeafe", "#e9d5ff"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.scene}
+      >
 
-        {/* Decorative Trees */}
-        <Tree x={30} y={200} />
-        <Tree x={width - 100} y={450} />
-        <Tree x={20} y={700} />
-        <Tree x={width - 90} y={900} />
-
-        {/* Clouds */}
-        <Text style={[styles.cloud, { top: 80, left: 40 }]}>☁️</Text>
-        <Text style={[styles.cloud, { top: 400, right: 40 }]}>☁️</Text>
-        <Text style={[styles.cloud, { top: 700, left: 60 }]}>☁️</Text>
-
-        {/* Road */}
-        <Svg height="1100" width="100%" style={StyleSheet.absoluteFill}>
+        {/* ROAD */}
+        <Svg height="1200" width={width} style={StyleSheet.absoluteFill}>
           <Path
             d={`
-              M ${centerX} 80
-              C ${centerX + 120} 200 ${centerX - 120} 260 ${centerX} 400
-              C ${centerX + 120} 540 ${centerX - 120} 620 ${centerX} 760
-              C ${centerX + 120} 900 ${centerX - 120} 980 ${centerX} 1120
+              M ${centerX} 0
+              C ${centerX + 120} 150, ${centerX - 120} 250, ${centerX} 400
+              C ${centerX + 120} 550, ${centerX - 120} 650, ${centerX} 800
+              C ${centerX + 120} 950, ${centerX - 120} 1050, ${centerX} 1200
             `}
-            stroke="#7ED6C5"
-            strokeWidth="70"
+            stroke="#7ad3c2"
+            strokeWidth="110"
             fill="none"
             strokeLinecap="round"
           />
         </Svg>
 
-        {/* Lessons */}
-        {lessons.map((lesson, index) => (
+        {/* LESSON BUBBLES */}
+        {lessons.map((lesson) => (
           <View
-            key={index}
+            key={lesson.title}
             style={[
-              styles.lessonBubble,
+              styles.lesson,
               {
                 top: lesson.top,
-                left:
-                  lesson.side === "left"
-                    ? centerX - 140
-                    : centerX + 30,
+                left: lesson.side === "left" ? centerX - 180 : centerX + 50,
               },
             ]}
           >
-            <Text style={styles.emoji}>{lesson.emoji}</Text>
-            <Text style={styles.lessonText}>{lesson.title}</Text>
+            <Text style={styles.icon}>{lesson.icon}</Text>
+            <Text style={styles.text}>{lesson.title}</Text>
           </View>
         ))}
 
-      </View>
+      </LinearGradient>
     </ScrollView>
   );
 }
@@ -90,44 +66,39 @@ export default function Learn() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EEF1F4",
   },
 
-  mapContainer: {
-    height: 1100,
-    position: "relative",
+  scene: {
+    height: 1200,
   },
 
-  lessonBubble: {
+  lesson: {
     position: "absolute",
-    width: 110,
-    height: 110,
-    borderRadius: 55,
-    backgroundColor: "#FFFFFF",
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 6,
-    borderColor: "#DCE4EA",
+    borderColor: "#d8dde3",
+
     shadowColor: "#000",
     shadowOpacity: 0.15,
-    shadowRadius: 6,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 5,
   },
 
-  emoji: {
-    fontSize: 30,
+  icon: {
+    fontSize: 36,
   },
 
-  lessonText: {
-    fontSize: 13,
-    fontWeight: "600",
-    marginTop: 4,
-    color: "#333",
+  text: {
+    marginTop: 6,
+    fontWeight: "700",
     textAlign: "center",
-  },
-
-  cloud: {
-    position: "absolute",
-    fontSize: 28,
-    opacity: 0.5,
+    width: 90,
+    lineHeight: 16,
   },
 });
