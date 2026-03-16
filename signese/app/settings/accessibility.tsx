@@ -1,29 +1,68 @@
-import React from "react";
-import { Text, StyleSheet } from "react-native";
-import { router } from "expo-router";
-import { ScreenContainer, ScreenHeader, HeaderActionButton } from "@/src/components/layout";
-import { Typography, semanticColors } from "@/src/theme";
 
-export default function AccessibilitySettingsScreen() {
-	return (
-		<ScreenContainer backgroundColor="#F1F6F5">
-			<ScreenHeader
-				title="Accessibility"
-				right={<HeaderActionButton iconName="arrow-back" onPress={() => router.back()} />}
-			/>
-			<Text style={styles.body}>Accessibility settings are coming soon.</Text>
-		</ScreenContainer>
-	);
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Switch,
+} from "react-native";
+import { router } from "expo-router";
+
+export default function AccessibilityScreen() {
+  const [captions, setCaptions] = useState(true);
+  const [tts, setTts] = useState(true);
+  const [largeText, setLargeText] = useState(false);
+
+  return (
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Accessibility</Text>
+      </View>
+
+      {/* Translate Captions */}
+      <View style={styles.card}>
+        <View style={styles.leftSection}>
+          <View style={styles.iconBox}>
+            <Text style={styles.iconText}>🤟</Text>
+          </View>
+          <Text style={styles.label}>Translate Captions</Text>
+        </View>
+        <Switch value={captions} onValueChange={setCaptions} />
+      </View>
+
+      {/* Translate Text-to-Speech */}
+      <View style={styles.card}>
+        <View style={styles.leftSection}>
+          <View style={styles.iconBox}>
+            <Text style={styles.iconText}>🤟</Text>
+          </View>
+          <Text style={styles.label}>Translate Text-to-Speech</Text>
+        </View>
+        <Switch value={tts} onValueChange={setTts} />
+      </View>
+
+      {/* Larger Text */}
+      <View style={styles.card}>
+        <View style={styles.leftSection}>
+          <View style={styles.iconBox}>
+            <Text style={styles.iconText}>CC</Text>
+          </View>
+          <Text style={styles.label}>Larger Text</Text>
+        </View>
+        <Switch value={largeText} onValueChange={setLargeText} />
+      </View>
+
+      {/* Back Button */}
+      <Pressable style={styles.backBtn} onPress={() => router.back()}>
+        <Text style={styles.backText}>&lt;&lt; Back</Text>
+      </Pressable>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
-	body: {
-		...Typography.body,
-		color: semanticColors.text.secondary,
-	},
-});
-=======
   container: {
     flex: 1,
     backgroundColor: "#eef7f6",
@@ -91,4 +130,3 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
->>>>>>> b3b93d4c (Update About and Accessibility pages with real content)
