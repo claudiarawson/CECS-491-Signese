@@ -85,6 +85,7 @@ export default function SettingsScreen() {
     <ScreenContainer backgroundColor="#F1F6F5" contentStyle={styles.safeContent}>
       <ScreenHeader
         title="Settings"
+        showBackButton
         right={
           <>
             <HeaderActionButton iconName="settings" onPress={() => router.push("/(tabs)/settings")} />

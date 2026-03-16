@@ -38,9 +38,9 @@ export default function AccountScreen() {
     <ScreenContainer backgroundColor="#F1F6F5" contentStyle={styles.content}>
       <ScreenHeader
         title="Account"
+        showBackButton
         right={
           <>
-            <HeaderActionButton iconName="home" onPress={() => router.push("/(tabs)/home")} />
             <HeaderActionButton iconName="settings" onPress={() => router.push("/(tabs)/settings")} />
           </>
         }

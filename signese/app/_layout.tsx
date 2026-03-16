@@ -4,7 +4,13 @@ import { AuthUserProvider } from "@/src/contexts/AuthUserContext";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthUserProvider>
-      <Stack>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          animation: "fade_from_bottom",
+          animationDuration: 180,
+        }}
+      >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />

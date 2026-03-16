@@ -10,6 +10,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
+        animation: "fade",
         tabBarStyle: navigationStyles.tabBar,
         tabBarLabelStyle: navigationStyles.tabLabel,
         tabBarActiveTintColor: navigationTheme.activeTint,
