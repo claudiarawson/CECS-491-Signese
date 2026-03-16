@@ -1,4 +1,4 @@
-import { ViewStyle, TextStyle } from "react-native";
+import { ViewStyle } from "react-native";
 import { moderateScale } from "react-native-size-matters";
 import { semanticColors } from "./colors";
 

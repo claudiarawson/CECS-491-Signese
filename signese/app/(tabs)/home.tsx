@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable, useWindowDimensions } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import {
   getDeviceDensity,
