@@ -215,7 +215,7 @@ const createStyles = (density: number) => {
       color: "#FFFFFF",
     },
     tipsSection: {
-      marginTop: Spacing.xs,
+      marginTop: 0,
     },
   });
 };

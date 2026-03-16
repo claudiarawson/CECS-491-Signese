@@ -22,7 +22,7 @@ export function HeaderActionButton({
       <MaterialIcons
         name={iconName}
         size={24 * density}
-        color={navigationTheme.activeTint}
+        color={semanticColors.text.primary}
       />
     </Pressable>
   );
@@ -51,9 +51,9 @@ export function HeaderAvatarButton({
 
 const styles = StyleSheet.create({
   actionBtn: {
-    backgroundColor: "#E8F6F2",
+    backgroundColor: "#F2F7F8",
     borderWidth: 1,
-    borderColor: "#D4ECE6",
+    borderColor: navigationTheme.border,
     alignItems: "center",
     justifyContent: "center",
   },

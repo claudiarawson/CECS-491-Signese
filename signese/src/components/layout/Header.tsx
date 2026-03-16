@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
 		backgroundColor: navigationTheme.surface,
 	},
 	innerContent: {
-		height: 56,
+		height: 48,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",

@@ -1,4 +1,5 @@
 import { Spacing } from "@/src/theme";
+import { navigationTheme } from "@/src/theme/navigation";
 import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,10 +21,12 @@ export function ScreenContainer({
 }: ScreenContainerProps) {
 	return (
 		<SafeAreaView 
-			style={[styles.safe, { backgroundColor }, safeStyle]}
+			style={[styles.safe, { backgroundColor: navigationTheme.surface }, safeStyle]}
 			edges={["top", "left", "right"]}
 		>
-			<View style={[styles.content, contentPadded && styles.padded, contentStyle]}>{children}</View>
+			<View style={[styles.content, { backgroundColor }, contentPadded && styles.padded, contentStyle]}>
+				{children}
+			</View>
 		</SafeAreaView>
 	);
 }
