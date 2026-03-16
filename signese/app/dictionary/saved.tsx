@@ -35,7 +35,12 @@ export default function SavedSignsScreen() {
       <View style={styles.headerRow}>
         <Text style={styles.title}>Dictionary</Text>
         <View style={styles.headerIcons}>
-          <Pressable style={styles.iconBtn}><Text>⚙️</Text></Pressable>
+        <Pressable
+  style={styles.iconBtn}
+  onPress={() => router.push("/settings")}
+>
+  <Text>⚙️</Text>
+</Pressable>
           <Pressable style={styles.iconBtn}><Text>🙂</Text></Pressable>
         </View>
       </View>
