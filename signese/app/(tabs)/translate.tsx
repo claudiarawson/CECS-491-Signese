@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, Platform } from "react-native";
 import { router } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -25,14 +25,12 @@ function CommonResponsesPlaceholder() {
 
 export default function TranslateScreen() {
   const [cameraActive, setCameraActive] = useState(false);
+  const [cameraFacing, setCameraFacing] = useState<"front" | "back">("front");
+  const [isVolumeOn, setIsVolumeOn] = useState(true);
   const [permission, requestPermission] = useCameraPermissions();
 
   const handleActivateCamera = async () => {
-    if (!permission) {
-      return;
-    }
-
-    if (!permission.granted) {
+    if (!permission?.granted) {
       const result = await requestPermission();
       if (!result.granted) {
         return;
@@ -49,6 +47,18 @@ export default function TranslateScreen() {
     }
 
     await handleActivateCamera();
+  };
+
+  const handleReverseCamera = () => {
+    if (Platform.OS === "web") {
+      return;
+    }
+
+    setCameraFacing((previous) => (previous === "front" ? "back" : "front"));
+  };
+
+  const handleToggleVolume = () => {
+    setIsVolumeOn((previous) => !previous);
   };
 
   const permissionDenied = permission && !permission.granted;
@@ -72,12 +82,7 @@ export default function TranslateScreen() {
         <View style={styles.topSection}>
           <Pressable style={styles.videoCard} onPress={handleActivateCamera}>
             {cameraActive && permission?.granted ? (
-              <>
-                <CameraView style={styles.cameraPreview} facing="front" />
-                <Pressable style={styles.cameraToggleChip} onPress={handleToggleCamera}>
-                  <MaterialIcons name="videocam-off" size={14} color="#FFFFFF" />
-                </Pressable>
-              </>
+              <CameraView style={styles.cameraPreview} facing={cameraFacing} />
             ) : (
               <View style={styles.videoPlaceholderWrap}>
                 <MaterialIcons name="videocam" size={34} color="#608D86" />
@@ -95,17 +100,28 @@ export default function TranslateScreen() {
         </View>
 
         <View style={styles.captionsControlsRow}>
-          <Pressable style={styles.smallControlBtn} onPress={handleToggleCamera}>
-            <MaterialIcons
-              name={cameraActive ? "videocam-off" : "videocam"}
-              size={18}
-              color="#2C5D56"
-            />
-          </Pressable>
-          <Text style={styles.captionsLabel}>Captions</Text>
-          <Pressable style={styles.smallControlBtn}>
-            <MaterialIcons name="volume-up" size={18} color="#2C5D56" />
-          </Pressable>
+          <View style={styles.leftControlsWrap}>
+            <Pressable style={styles.smallControlBtn} onPress={handleToggleCamera}>
+              <MaterialIcons
+                name={cameraActive ? "videocam-off" : "videocam"}
+                size={18}
+                color="#2C5D56"
+              />
+            </Pressable>
+            {Platform.OS !== "web" ? (
+              <Pressable style={styles.smallControlBtn} onPress={handleReverseCamera}>
+                <MaterialIcons name="flip-camera-ios" size={18} color="#2C5D56" />
+              </Pressable>
+            ) : null}
+          </View>
+          <View style={styles.captionsLabelWrap} pointerEvents="none">
+            <Text style={styles.captionsLabel}>Captions</Text>
+          </View>
+          <View style={styles.rightControlsWrap}>
+            <Pressable style={styles.smallControlBtn} onPress={handleToggleVolume}>
+              <MaterialIcons name={isVolumeOn ? "volume-up" : "volume-off"} size={18} color="#2C5D56" />
+            </Pressable>
+          </View>
         </View>
 
         <View style={styles.captionsCard}>
@@ -115,6 +131,7 @@ export default function TranslateScreen() {
               ? "Waiting for live translation..."
               : "Camera is off. Live translation is paused."}
           </Text>
+          <Text style={styles.captionsSubText}>{isVolumeOn ? "Volume is on." : "Volume is muted."}</Text>
         </View>
       </View>
 
@@ -147,17 +164,6 @@ const styles = StyleSheet.create({
   },
   cameraPreview: {
     flex: 1,
-  },
-  cameraToggleChip: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    width: 32,
-    height: 32,
-    borderRadius: 14,
-    backgroundColor: "rgba(0,0,0,0.55)",
   },
   videoPlaceholderWrap: {
     flex: 1,
@@ -223,6 +229,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    position: "relative",
+  },
+  leftControlsWrap: {
+    width: 84,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  rightControlsWrap: {
+    width: 84,
+    alignItems: "flex-end",
+  },
+  captionsLabelWrap: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    alignItems: "center",
   },
   smallControlBtn: {
     width: 36,
