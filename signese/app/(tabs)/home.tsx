@@ -29,9 +29,8 @@ export default function HomeScreen() {
             <HeaderActionButton
               iconName="settings"
               onPress={() => router.push("/(tabs)/settings")}
-              density={density}
             />
-            <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account")} density={density} />
+            <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account")} />
           </>
         }
       />
@@ -74,7 +73,7 @@ export default function HomeScreen() {
             <View style={styles.progressTrack}>
               <View style={styles.progressFill} />
             </View>
-            <Pressable style={styles.continueBtn}>
+            <Pressable style={styles.continueBtn} onPress={() => router.push("/(tabs)/learn")}>
               <Text style={styles.continueBtnText}>▶ Continue to Learn</Text>
             </Pressable>
         </SectionCard>

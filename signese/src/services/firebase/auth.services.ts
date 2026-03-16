@@ -8,6 +8,8 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 
+const DEFAULT_AVATAR = "🐨";
+
 export async function signUpWithEmail(email: string, password: string, username: string) {
   const credential = await createUserWithEmailAndPassword(auth, email, password);
   const user = credential.user;
@@ -23,6 +25,7 @@ export async function signUpWithEmail(email: string, password: string, username:
       uid: user.uid,
       email: user.email,
       username,
+      avatar: DEFAULT_AVATAR,
       createdAt: serverTimestamp(),
     });
   } catch (err) {
@@ -52,4 +55,14 @@ export async function getUserProfile(uid: string) {
     console.warn("Offline profile read", err);
     return null;
   }
+}
+
+export async function updateUserAvatar(uid: string, avatar: string) {
+  await setDoc(
+    doc(db, "users", uid),
+    {
+      avatar,
+    },
+    { merge: true }
+  );
 }

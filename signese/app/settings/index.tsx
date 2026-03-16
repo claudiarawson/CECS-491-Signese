@@ -87,8 +87,8 @@ export default function SettingsScreen() {
         title="Settings"
         right={
           <>
-            <HeaderActionButton iconName="settings" onPress={() => router.push("/(tabs)/settings")} density={density} />
-            <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account")} density={density} />
+            <HeaderActionButton iconName="settings" onPress={() => router.push("/(tabs)/settings")} />
+            <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account")} />
           </>
         }
       />

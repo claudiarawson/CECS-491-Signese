@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, Pressable, Platform, TextInput } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable, Platform, TextInput, ScrollView, KeyboardAvoidingView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -31,32 +31,40 @@ export default function LoginScreen() {
   return (
     <LinearGradient colors={[c.backgroundTop, c.backgroundBottom]} locations={[0, 1]} style={styles.bg}>
       <SafeAreaView style={styles.safe}>
-        <View style={styles.topRow}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <MaterialIcons name="chevron-left" size={moderateScale(20)} color={c.titleText} />
-          </Pressable>
-        </View>
-        <View style={styles.centerWrap}>
-          <Image source={require("../../assets/images/logo.png")} style={styles.logo} resizeMode="contain" />
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to continue</Text>
-          <View style={styles.card}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput value={email} onChangeText={setEmail} placeholder="your@email.com" placeholderTextColor={c.placeholderText} autoCapitalize="none" keyboardType="email-address" style={styles.input} />
-            <Text style={styles.label}>Password</Text>
-            <View style={styles.passwordWrap}>
-              <TextInput value={password} onChangeText={setPassword} placeholder="........" placeholderTextColor={c.placeholderText} secureTextEntry={!showPassword} style={styles.passwordInput} />
-              <Pressable style={styles.eyeBtn} onPress={() => setShowPassword((s) => !s)}>
-                <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={moderateScale(18)} color={c.inputText} />
-              </Pressable>
-            </View>
-            {error ? <Text style={[styles.label, { color: "#ff4d4f", marginBottom: moderateScale(6) }]}>{error}</Text> : null}
-            <Pressable style={styles.primaryBtn} onPress={handleSignIn}><Text style={styles.primaryBtnText}>Login</Text></Pressable>
-            <View style={styles.bottomRow}>
-              <Pressable onPress={() => router.push("/forgot-password")}><Text style={styles.link}>Forgot password?</Text></Pressable>
-            </View>
+        <KeyboardAvoidingView
+          style={styles.keyboardWrap}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? moderateScale(12) : 0}
+        >
+          <View style={styles.topRow}>
+            <Pressable onPress={() => router.back()} style={styles.backBtn}>
+              <MaterialIcons name="chevron-left" size={moderateScale(20)} color={c.titleText} />
+            </Pressable>
           </View>
-        </View>
+          <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+            <View style={styles.centerWrap}>
+              <Image source={require("../../assets/images/logo.png")} style={styles.logo} resizeMode="contain" />
+              <Text style={styles.title}>Welcome Back</Text>
+              <Text style={styles.subtitle}>Sign in to continue</Text>
+              <View style={styles.card}>
+                <Text style={styles.label}>Email</Text>
+                <TextInput value={email} onChangeText={setEmail} placeholder="your@email.com" placeholderTextColor={c.placeholderText} autoCapitalize="none" keyboardType="email-address" style={styles.input} />
+                <Text style={styles.label}>Password</Text>
+                <View style={styles.passwordWrap}>
+                  <TextInput value={password} onChangeText={setPassword} placeholder="........" placeholderTextColor={c.placeholderText} secureTextEntry={!showPassword} style={styles.passwordInput} />
+                  <Pressable style={styles.eyeBtn} onPress={() => setShowPassword((s) => !s)}>
+                    <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={moderateScale(18)} color={c.inputText} />
+                  </Pressable>
+                </View>
+                {error ? <Text style={[styles.label, { color: "#ff4d4f", marginBottom: moderateScale(6) }]}>{error}</Text> : null}
+                <Pressable style={styles.primaryBtn} onPress={handleSignIn}><Text style={styles.primaryBtnText}>Login</Text></Pressable>
+                <View style={styles.bottomRow}>
+                  <Pressable onPress={() => router.push("/forgot-password")}><Text style={styles.link}>Forgot password?</Text></Pressable>
+                </View>
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </LinearGradient>
   );
@@ -68,6 +76,8 @@ const mediumFont = Platform.select({ ios: "AvenirNext-DemiBold", android: "sans-
 const styles = StyleSheet.create({
   bg: { flex: 1 },
   safe: { flex: 1 },
+  keyboardWrap: { flex: 1 },
+  scrollContent: { flexGrow: 1 },
   topRow: {
     paddingHorizontal: moderateScale(16),
     paddingTop: Platform.select({ ios: moderateScale(6), android: moderateScale(10), default: moderateScale(10) }),

@@ -2,6 +2,7 @@ import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Sizes, Spacing, moderateScale, semanticColors } from "@/src/theme";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
 
 type HeaderActionButtonProps = {
   iconName: React.ComponentProps<typeof MaterialIcons>["name"];
@@ -37,10 +38,12 @@ export function HeaderAvatarButton({
   onPress,
   density = 1,
 }: HeaderAvatarButtonProps) {
+  const { profile } = useAuthUser();
   const size = Sizes.avatarSmall * density;
+  const avatarValue = profile?.avatar ?? avatar;
   return (
     <Pressable style={[styles.avatarBtn, { width: size, height: size, borderRadius: size / 2 }]} onPress={onPress}>
-      <Text style={[styles.avatarText, { fontSize: moderateScale(16) * density }]}>{avatar}</Text>
+      <Text style={[styles.avatarText, { fontSize: moderateScale(16) * density }]}>{avatarValue}</Text>
     </Pressable>
   );
 }

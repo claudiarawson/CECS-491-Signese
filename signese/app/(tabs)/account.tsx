@@ -9,17 +9,30 @@ import {
   moderateScale,
 } from "@/src/theme";
 import { ScreenContainer, ScreenHeader, HeaderActionButton, SectionCard } from "@/src/components/layout";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
 
 const avatars = ["🐨", "🐼", "🐱", "🐰", "🐻", "🦊"];
 
 export default function AccountScreen() {
+  const { profile, setProfileAvatar } = useAuthUser();
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density);
 
-  const [selectedAvatar, setSelectedAvatar] = useState("🐨");
+  const [selectedAvatar, setSelectedAvatar] = useState(profile?.avatar ?? "🐨");
   const stars = 0;
   const dayStreak = 1;
+
+  React.useEffect(() => {
+    if (profile?.avatar) {
+      setSelectedAvatar(profile.avatar);
+    }
+  }, [profile?.avatar]);
+
+  const handleSelectAvatar = async (avatar: string) => {
+    setSelectedAvatar(avatar);
+    await setProfileAvatar(avatar);
+  };
 
   return (
     <ScreenContainer backgroundColor="#F1F6F5" contentStyle={styles.content}>
@@ -27,8 +40,8 @@ export default function AccountScreen() {
         title="Account"
         right={
           <>
-            <HeaderActionButton iconName="home" onPress={() => router.push("/(tabs)/home")} density={density} />
-            <HeaderActionButton iconName="settings" onPress={() => router.push("/(tabs)/settings")} density={density} />
+            <HeaderActionButton iconName="home" onPress={() => router.push("/(tabs)/home")} />
+            <HeaderActionButton iconName="settings" onPress={() => router.push("/(tabs)/settings")} />
           </>
         }
       />
@@ -57,7 +70,7 @@ export default function AccountScreen() {
                   <Pressable
                     key={avatar}
                     style={[styles.avatarOption, selected && styles.avatarOptionSelected]}
-                    onPress={() => setSelectedAvatar(avatar)}
+                    onPress={() => void handleSelectAvatar(avatar)}
                   >
                     <Text style={styles.avatarOptionEmoji}>{avatar}</Text>
                   </Pressable>

@@ -3,12 +3,24 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/src/services/firebase/firebase.config";
-import { getUserProfile } from "@/src/services/firebase/auth.services";
+import { getUserProfile, updateUserAvatar } from "@/src/services/firebase/auth.services";
 
-type Profile = { uid: string; username: string; email: string } | null;
-type AuthContextType = { authUser: User | null; profile: Profile; loading: boolean };
+type Profile = { uid: string; username: string; email: string; avatar: string } | null;
+type AuthContextType = {
+  authUser: User | null;
+  profile: Profile;
+  loading: boolean;
+  setProfileAvatar: (avatar: string) => Promise<void>;
+};
 
-const AuthContext = createContext<AuthContextType>({ authUser: null, profile: null, loading: true });
+const DEFAULT_AVATAR = "🐨";
+
+const AuthContext = createContext<AuthContextType>({
+  authUser: null,
+  profile: null,
+  loading: true,
+  setProfileAvatar: async () => {},
+});
 
 export function AuthUserProvider({ children }: { children: React.ReactNode }) {
   const [authUser, setAuthUser] = useState<User | null>(null);
@@ -25,6 +37,7 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
           uid: user.uid,
           username: (data?.username as string | undefined) ?? fallbackUsername,
           email: data?.email ?? user.email ?? "",
+          avatar: (data?.avatar as string | undefined) ?? DEFAULT_AVATAR,
         });
       } else {
         setProfile(null);
@@ -34,7 +47,29 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
     return unsub;
   }, []);
 
-  const value = useMemo(() => ({ authUser, profile, loading }), [authUser, profile, loading]);
+  const setProfileAvatar = async (avatar: string) => {
+    if (!authUser) {
+      return;
+    }
+
+    setProfile((current) => {
+      if (!current) {
+        return current;
+      }
+      return { ...current, avatar };
+    });
+
+    try {
+      await updateUserAvatar(authUser.uid, avatar);
+    } catch (error) {
+      console.warn("Avatar update failed", error);
+    }
+  };
+
+  const value = useMemo(
+    () => ({ authUser, profile, loading, setProfileAvatar }),
+    [authUser, profile, loading]
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

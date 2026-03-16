@@ -8,6 +8,7 @@ import {
   Platform,
   TextInput,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -54,43 +55,49 @@ export default function SignupScreen() {
   return (
     <LinearGradient colors={[c.backgroundTop, c.backgroundBottom]} locations={[0, 1]} style={styles.bg}>
       <SafeAreaView style={styles.safe}>
-        <View style={styles.topRow}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <MaterialIcons name="chevron-left" size={moderateScale(20)} color={c.titleText} />
-          </Pressable>
-        </View>
-        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-          <View style={styles.centerWrap}>
-            <View style={styles.phoneWidth}>
-              <Image source={require("../../assets/images/logo.png")} style={styles.logo} resizeMode="contain" />
-              <Text style={styles.title}>Create Account</Text>
-              <Text style={styles.subtitle}>Choose your avatar & get started!</Text>
-              <View style={styles.card}>
-                <Text style={styles.label}>Username</Text>
-                <TextInput value={username} onChangeText={setUsername} placeholder="Matthew" placeholderTextColor={c.placeholderText} style={styles.input} />
-                <Text style={styles.label}>Email</Text>
-                <TextInput value={email} onChangeText={setEmail} placeholder="your@email.com" placeholderTextColor={c.placeholderText} autoCapitalize="none" keyboardType="email-address" style={styles.input} />
-                <Text style={styles.label}>Password</Text>
-                <View style={styles.passwordWrap}>
-                  <TextInput value={password} onChangeText={setPassword} placeholder="........" placeholderTextColor={c.placeholderText} secureTextEntry={!showPassword} style={styles.passwordInput} />
-                  <Pressable style={styles.eyeBtn} onPress={() => setShowPassword((s) => !s)}>
-                    <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={moderateScale(18)} color={c.inputText} />
+        <KeyboardAvoidingView
+          style={styles.keyboardWrap}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? moderateScale(12) : 0}
+        >
+          <View style={styles.topRow}>
+            <Pressable onPress={() => router.back()} style={styles.backBtn}>
+              <MaterialIcons name="chevron-left" size={moderateScale(20)} color={c.titleText} />
+            </Pressable>
+          </View>
+          <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+            <View style={styles.centerWrap}>
+              <View style={styles.phoneWidth}>
+                <Image source={require("../../assets/images/logo.png")} style={styles.logo} resizeMode="contain" />
+                <Text style={styles.title}>Create Account</Text>
+                <Text style={styles.subtitle}>Choose your avatar & get started!</Text>
+                <View style={styles.card}>
+                  <Text style={styles.label}>Username</Text>
+                  <TextInput value={username} onChangeText={setUsername} placeholder="Matthew" placeholderTextColor={c.placeholderText} style={styles.input} />
+                  <Text style={styles.label}>Email</Text>
+                  <TextInput value={email} onChangeText={setEmail} placeholder="your@email.com" placeholderTextColor={c.placeholderText} autoCapitalize="none" keyboardType="email-address" style={styles.input} />
+                  <Text style={styles.label}>Password</Text>
+                  <View style={styles.passwordWrap}>
+                    <TextInput value={password} onChangeText={setPassword} placeholder="........" placeholderTextColor={c.placeholderText} secureTextEntry={!showPassword} style={styles.passwordInput} />
+                    <Pressable style={styles.eyeBtn} onPress={() => setShowPassword((s) => !s)}>
+                      <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={moderateScale(18)} color={c.inputText} />
+                    </Pressable>
+                  </View>
+                  <Text style={styles.label}>Confirm Password</Text>
+                  <TextInput value={confirmPassword} onChangeText={setConfirmPassword} placeholder="........" placeholderTextColor={c.placeholderText} secureTextEntry style={styles.input} />
+                  {error ? <Text style={[styles.label, { color: "#ff4d4f", marginBottom: moderateScale(6) }]}>{error}</Text> : null}
+                  <Pressable style={styles.primaryBtn} onPress={handleSignUp}>
+                    <Text style={styles.primaryBtnText}>Sign Up</Text>
                   </Pressable>
-                </View>
-                <Text style={styles.label}>Confirm Password</Text>
-                <TextInput value={confirmPassword} onChangeText={setConfirmPassword} placeholder="........" placeholderTextColor={c.placeholderText} secureTextEntry style={styles.input} />
-                {error ? <Text style={[styles.label, { color: "#ff4d4f", marginBottom: moderateScale(6) }]}>{error}</Text> : null}
-                <Pressable style={styles.primaryBtn} onPress={handleSignUp}>
-                  <Text style={styles.primaryBtnText}>Sign Up</Text>
-                </Pressable>
-                <View style={styles.bottomRow}>
-                  <Text style={styles.bottomText}>Already have an account? </Text>
-                  <Pressable onPress={() => router.push("/login")}><Text style={styles.link}>Login</Text></Pressable>
+                  <View style={styles.bottomRow}>
+                    <Text style={styles.bottomText}>Already have an account? </Text>
+                    <Pressable onPress={() => router.push("/login")}><Text style={styles.link}>Login</Text></Pressable>
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </LinearGradient>
   );
@@ -102,6 +109,7 @@ const mediumFont = Platform.select({ ios: "AvenirNext-DemiBold", android: "sans-
 const styles = StyleSheet.create({
   bg: { flex: 1 },
   safe: { flex: 1 },
+  keyboardWrap: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: moderateScale(14),
