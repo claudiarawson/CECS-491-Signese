@@ -1,24 +1,22 @@
-import React from "react";
-import { View, Text, StyleSheet, Pressable, useWindowDimensions } from "react-native";
-import { router } from "expo-router";
+import { DailyTipsCarousel, HeaderActionButton, HeaderAvatarButton, ScreenContainer, ScreenHeader, SectionCard } from "@/src/components/layout";
 import {
-  getDeviceDensity,
-  semanticColors,
-  Typography,
-  Spacing,
-  Sizes,
-  moderateScale,
+    getDeviceDensity,
+    moderateScale,
+    semanticColors,
+    Sizes,
+    Spacing,
+    Typography,
 } from "@/src/theme";
-import { ScreenContainer } from "@/src/components/layout/Screen";
-import { ScreenHeader, HeaderActionButton, HeaderAvatarButton } from "@/src/components/layout/Header";
-import { SectionCard } from "@/src/components/layout/SectionCard";
+import { router } from "expo-router";
+import React from "react";
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 
 export default function HomeScreen() {
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density);
   return (
-    <ScreenContainer backgroundColor="#F1F6F5" contentStyle={styles.content}>
+    <ScreenContainer backgroundColor="#F1F6F5">
       <ScreenHeader
         title="Home"
         right={
@@ -33,70 +31,52 @@ export default function HomeScreen() {
         }
       />
 
-      <View style={styles.greetingWrap}>
-        <Text style={styles.greetingLine}>Welcome Back</Text>
-        <Text style={styles.greetingName}>Matthew! 👋</Text>
-      </View>
-
-      <View style={styles.statsRow}>
-        <View style={[styles.statCard, styles.statCardStreak]}>
-          <Text style={styles.statIcon}>🔥</Text>
-          <Text style={styles.statValue}>1</Text>
-          <Text style={styles.statLabel}>Streak</Text>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.greetingWrap}>
+          <Text style={styles.greetingLine}>Welcome Back</Text>
+          <Text style={styles.greetingName}>Matthew! 👋</Text>
         </View>
-        <View style={[styles.statCard, styles.statCardStars]}>
-          <Text style={styles.statIcon}>⭐</Text>
-          <Text style={styles.statValue}>0</Text>
-          <Text style={styles.statLabel}>Stars</Text>
-        </View>
-        <View style={[styles.statCard, styles.statCardLessons]}>
-          <Text style={styles.statIcon}>📖</Text>
-          <Text style={styles.statValue}>0</Text>
-          <Text style={styles.statLabel}>Lessons</Text>
-        </View>
-      </View>
 
-      <SectionCard style={styles.learningCard}>
-          <View style={styles.learningTopRow}>
-            <View style={styles.learningIconWrap}>
-              <Text style={styles.learningIcon}>👋</Text>
-            </View>
-            <View style={styles.learningTextWrap}>
-              <Text style={styles.learningTitle}>Continue Learning</Text>
-              <Text style={styles.learningSubtitle}>Greetings • 0% complete</Text>
-            </View>
+        <View style={styles.statsRow}>
+          <View style={[styles.statCard, styles.statCardStreak]}>
+            <Text style={styles.statIcon}>🔥</Text>
+            <Text style={styles.statValue}>1</Text>
+            <Text style={styles.statLabel}>Streak</Text>
           </View>
-          <View style={styles.progressTrack}>
-            <View style={styles.progressFill} />
+          <View style={[styles.statCard, styles.statCardStars]}>
+            <Text style={styles.statIcon}>⭐</Text>
+            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statLabel}>Stars</Text>
           </View>
-          <Pressable style={styles.continueBtn}>
-            <Text style={styles.continueBtnText}>▶ Continue to Learn</Text>
-          </Pressable>
-      </SectionCard>
+          <View style={[styles.statCard, styles.statCardLessons]}>
+            <Text style={styles.statIcon}>📖</Text>
+            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statLabel}>Lessons</Text>
+          </View>
+        </View>
 
-      <SectionCard style={styles.tipCard}>
-          <View style={styles.tipHeaderRow}>
-            <Text style={styles.tipTitle}>😊 Tip: Facial Expressions</Text>
-            <View style={styles.tipNavWrap}>
-              <Pressable style={styles.tipNavBtn}>
-                <Text style={styles.tipNavText}>‹</Text>
-              </Pressable>
-              <Pressable style={styles.tipNavBtn}>
-                <Text style={styles.tipNavText}>›</Text>
-              </Pressable>
+        <SectionCard style={styles.learningCard}>
+            <View style={styles.learningTopRow}>
+              <View style={styles.learningIconWrap}>
+                <Text style={styles.learningIcon}>👋</Text>
+              </View>
+              <View style={styles.learningTextWrap}>
+                <Text style={styles.learningTitle}>Continue Learning</Text>
+                <Text style={styles.learningSubtitle}>Greetings • 0% complete</Text>
+              </View>
             </View>
-          </View>
-          <Text style={styles.tipBody}>
-            In ASL, facial expressions are just as important as hand movements!
-          </Text>
-          <View style={styles.dotRow}>
-            <View style={[styles.dot, styles.dotActive]} />
-            <View style={styles.dot} />
-            <View style={styles.dot} />
-            <View style={styles.dot} />
-            <View style={styles.dot} />
-          </View>
-      </SectionCard>
+            <View style={styles.progressTrack}>
+              <View style={styles.progressFill} />
+            </View>
+            <Pressable style={styles.continueBtn}>
+              <Text style={styles.continueBtnText}>▶ Continue to Learn</Text>
+            </Pressable>
+        </SectionCard>
+
+        <View style={styles.tipsSection}>
+          <DailyTipsCarousel />
+        </View>
+      </ScrollView>
     </ScreenContainer>
   );
 }
@@ -107,7 +87,11 @@ const createStyles = (density: number) => {
   return StyleSheet.create({
     content: {
       flex: 1,
-      paddingBottom: Spacing.sm,
+    },
+    scrollContent: {
+      paddingHorizontal: Spacing.screenPadding,
+      paddingTop: Spacing.md,
+      paddingBottom: Spacing.lg,
     },
     greetingWrap: {
       marginBottom: ms(8),
@@ -225,64 +209,8 @@ const createStyles = (density: number) => {
       ...Typography.button,
       color: "#FFFFFF",
     },
-    tipCard: {
-      backgroundColor: "#F2E7BF",
-      padding: ms(8),
-      marginBottom: Spacing.xs,
-    },
-    tipHeaderRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      marginBottom: ms(4),
-    },
-    tipTitle: {
-      ...Typography.sectionTitle,
-      fontWeight: "700",
-      color: semanticColors.text.primary,
-      fontSize: ms(14),
-      lineHeight: ms(18),
-      flex: 1,
-    },
-    tipNavWrap: {
-      flexDirection: "row",
-      gap: ms(4),
-    },
-    tipNavBtn: {
-      width: ms(22),
-      height: ms(22),
-      borderRadius: ms(11),
-      backgroundColor: "#F8F8F8",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    tipNavText: {
-      ...Typography.body,
-      color: semanticColors.text.secondary,
-      fontSize: ms(13),
-      lineHeight: ms(15),
-    },
-    tipBody: {
-      ...Typography.body,
-      color: semanticColors.text.secondary,
-      fontSize: ms(12),
-      lineHeight: ms(16),
-      marginBottom: ms(8),
-    },
-    dotRow: {
-      flexDirection: "row",
-      alignSelf: "center",
-      gap: ms(4),
-    },
-    dot: {
-      width: ms(6),
-      height: ms(6),
-      borderRadius: ms(3),
-      backgroundColor: "#CFD3D1",
-    },
-    dotActive: {
-      width: ms(12),
-      backgroundColor: "#23B58F",
+    tipsSection: {
+      marginTop: Spacing.xs,
     },
   });
 };

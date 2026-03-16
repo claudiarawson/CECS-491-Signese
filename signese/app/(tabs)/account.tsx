@@ -8,9 +8,7 @@ import {
   Typography,
   moderateScale,
 } from "@/src/theme";
-import { ScreenContainer } from "@/src/components/layout/Screen";
-import { ScreenHeader, HeaderActionButton } from "@/src/components/layout/Header";
-import { SectionCard } from "@/src/components/layout/SectionCard";
+import { ScreenContainer, ScreenHeader, HeaderActionButton, SectionCard } from "@/src/components/layout";
 
 const avatars = ["🐨", "🐼", "🐱", "🐰", "🐻", "🦊"];
 

@@ -3,8 +3,7 @@ import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, useWindowDime
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import { getDeviceDensity, semanticColors, Typography, Spacing, moderateScale } from "@/src/theme";
-import { ScreenContainer } from "@/src/components/layout/Screen";
-import { ScreenHeader, HeaderActionButton, HeaderAvatarButton } from "@/src/components/layout/Header";
+import { ScreenContainer, ScreenHeader, HeaderActionButton, HeaderAvatarButton } from "@/src/components/layout";
 
 type SettingsItem = {
   key: string;

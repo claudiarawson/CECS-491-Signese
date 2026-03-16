@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
-import { Sizes, Spacing, moderateScale, fontScale } from "./index";
+import { Platform, StyleSheet } from "react-native";
+import { fontScale } from "./responsive";
 import { Typography } from "./typography";
 
 export const navigationTheme = {
@@ -12,19 +12,21 @@ export const navigationTheme = {
 export const navigationStyles = StyleSheet.create({
   tabBar: {
     backgroundColor: navigationTheme.surface,
-    height: Sizes.tabBarHeight,
-    paddingTop: moderateScale(4),
-    paddingBottom: Spacing.xs,
+    height: Platform.OS === "ios" ? 84 : 84,
+    width: "100%",
+    paddingTop: 10,
+    paddingBottom: Platform.OS === "ios" ? 24 : 14,
     borderTopWidth: 1,
     borderTopColor: navigationTheme.border,
   },
   tabItem: {
-    paddingVertical: moderateScale(2),
+    paddingVertical: 2,
   },
   tabLabel: {
     ...Typography.caption,
-    fontSize: fontScale(10.5),
-    marginBottom: moderateScale(2),
+    fontSize: fontScale(10),
+    marginTop: 2,
+    marginBottom: 2,
   },
   topHeaderAccent: {
     backgroundColor: navigationTheme.surface,

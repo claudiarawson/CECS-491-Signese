@@ -13,7 +13,7 @@ export const Spacing = {
 
   sectionGap: verticalScale(18),
   cardGap: verticalScale(14),
-  screenPadding: moderateScale(16),
+  screenPadding: moderateScale(20),
   screenTop: verticalScale(18),
 } as const;
 

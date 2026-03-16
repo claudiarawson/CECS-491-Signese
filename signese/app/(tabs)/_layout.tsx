@@ -1,7 +1,9 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { moderateScale, navigationStyles, navigationTheme } from "@/src/theme";
+import { Sizes, navigationStyles, navigationTheme } from "@/src/theme";
+
+const TAB_ICON_SIZE = Sizes.iconMd + 2;
 
 export default function TabLayout() {
   return (
@@ -20,7 +22,7 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="home" size={moderateScale(20)} color={color} />
+            <MaterialIcons name="home" size={TAB_ICON_SIZE} color={color} />
           ),
         }}
       />
@@ -29,7 +31,7 @@ export default function TabLayout() {
         options={{
           title: "Translate",
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="waving-hand" size={moderateScale(20)} color={color} />
+            <MaterialIcons name="waving-hand" size={TAB_ICON_SIZE} color={color} />
           ),
         }}
       />
@@ -38,7 +40,7 @@ export default function TabLayout() {
         options={{
           title: "Learn",
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="menu-book" size={moderateScale(20)} color={color} />
+            <MaterialIcons name="menu-book" size={TAB_ICON_SIZE} color={color} />
           ),
         }}
       />
@@ -47,7 +49,7 @@ export default function TabLayout() {
         options={{
           title: "Dictionary",
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="manage-search" size={moderateScale(20)} color={color} />
+            <MaterialIcons name="manage-search" size={TAB_ICON_SIZE} color={color} />
           ),
         }}
       />
