@@ -4,19 +4,23 @@ export default function RootLayout() {
   return (
     <Stack>
       {/* Tabs */}
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="(tabs)"
+        options={{ headerShown: false }}
+      />
 
-      {/* Dictionary stack screens */}
+      {/* Dictionary screens */}
       <Stack.Screen
         name="dictionary/[signId]"
         options={{ title: "Sign" }}
       />
+
       <Stack.Screen
         name="dictionary/add-dialect"
         options={{ title: "Add Dialect" }}
       />
 
-      {/* Settings stack (HIDE HEADER HERE) */}
+      {/* Settings (hide the stack header) */}
       <Stack.Screen
         name="settings"
         options={{ headerShown: false }}
