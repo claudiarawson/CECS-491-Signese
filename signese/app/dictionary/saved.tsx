@@ -33,7 +33,10 @@ export default function SavedSignsScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.headerRow}>
-        <Text style={styles.title}>Dictionary</Text>
+        <Pressable onPress={() => router.push('/dictionary')} style={styles.backBtn}>
+          <Text style={styles.backText}>←</Text>
+        </Pressable>
+        <Text style={styles.title}>Saved Signs</Text>
         <View style={styles.headerIcons}>
           <Pressable style={styles.iconBtn}><Text>⚙️</Text></Pressable>
           <Pressable style={styles.iconBtn}><Text>🙂</Text></Pressable>
@@ -125,7 +128,9 @@ const TEAL_DARK = "#2c9a8f";
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f4fbfa", paddingHorizontal: 18, paddingTop: 18 },
   headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  title: { fontSize: 32, fontWeight: "800", color: "#111" },
+  backBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: "#eef7f6", alignItems: "center", justifyContent: "center", marginRight: 10 },
+  backText: { fontSize: 20, color: "#111" },
+  title: { fontSize: 32, fontWeight: "800", color: "#111", flex: 1 },
   headerIcons: { flexDirection: "row", gap: 10 },
   iconBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: "#eef7f6", alignItems: "center", justifyContent: "center" },
 
