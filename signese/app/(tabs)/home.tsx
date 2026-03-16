@@ -12,8 +12,13 @@ import {
 import { ScreenContainer } from "@/src/components/layout/Screen";
 import { ScreenHeader, HeaderActionButton, HeaderAvatarButton } from "@/src/components/layout/Header";
 import { SectionCard } from "@/src/components/layout/SectionCard";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
+
 
 export default function HomeScreen() {
+  const { profile, loading } = useAuthUser();   // get current profile from global auth context
+  if (loading) return <Text>Loading...</Text>;
+
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density);
@@ -35,7 +40,7 @@ export default function HomeScreen() {
 
       <View style={styles.greetingWrap}>
         <Text style={styles.greetingLine}>Welcome Back</Text>
-        <Text style={styles.greetingName}>Matthew! 👋</Text>
+        <Text style={styles.greetingName}>{profile?.username ?? "User"}! 👋</Text>
       </View>
 
       <View style={styles.statsRow}>
