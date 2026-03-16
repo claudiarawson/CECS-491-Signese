@@ -20,7 +20,7 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
       setAuthUser(user);
       if (user) {
         const data = await getUserProfile(user.uid);
-        const fallbackUsername = user.displayName ?? user.email?.split("@")[0] ?? "User";
+        const fallbackUsername = user.displayName ?? "User";
         setProfile({
           uid: user.uid,
           username: (data?.username as string | undefined) ?? fallbackUsername,

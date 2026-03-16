@@ -26,7 +26,6 @@ export default function SignupScreen() {
   const [error, setError] = useState("");
 
   const handleSignUp = async () => {
-    setError("ETUHASTHYEA");
     if (!username.trim() || !email.trim() || !password || !confirmPassword) {
       setError("Username, email, and both password fields are required.");
       return;
