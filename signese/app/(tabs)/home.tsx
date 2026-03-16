@@ -10,8 +10,13 @@ import {
 import { router } from "expo-router";
 import React from "react";
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
+
 
 export default function HomeScreen() {
+  const { profile, loading } = useAuthUser();   // get current profile from global auth context
+  if (loading) return <Text>Loading...</Text>;
+
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density);
@@ -32,10 +37,11 @@ export default function HomeScreen() {
       />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        <View style={styles.greetingWrap}>
-          <Text style={styles.greetingLine}>Welcome Back</Text>
-          <Text style={styles.greetingName}>Matthew! 👋</Text>
-        </View>
+
+      <View style={styles.greetingWrap}>
+        <Text style={styles.greetingLine}>Welcome Back</Text>
+        <Text style={styles.greetingName}>{profile?.username ?? "User"}! 👋</Text>
+      </View>
 
         <View style={styles.statsRow}>
           <View style={[styles.statCard, styles.statCardStreak]}>
