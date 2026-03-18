@@ -71,7 +71,7 @@ export default function TranslateScreen() {
           <>
             <HeaderActionButton
               iconName="settings"
-              onPress={() => router.push("/(tabs)/settings")}
+              onPress={() => router.push("/(tabs)/settings" as any)}
             />
             <HeaderAvatarButton onPress={() => router.push("/(tabs)/account")} />
           </>

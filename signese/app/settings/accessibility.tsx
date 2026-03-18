@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   View,
@@ -78,6 +77,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "800",
   },
+
   card: {
     backgroundColor: "#ffffff",
     marginHorizontal: 20,

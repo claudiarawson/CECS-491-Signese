@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, useWindowDimensions } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
-import { getDeviceDensity, semanticColors, Typography, Spacing, moderateScale } from "@/src/theme";
+import { Spacing, Typography, semanticColors, getDeviceDensity, moderateScale } from "@/src/theme";
 import { ScreenContainer, ScreenHeader, HeaderActionButton, HeaderAvatarButton } from "@/src/components/layout";
 
 type SettingsItem = {
@@ -88,8 +88,8 @@ export default function SettingsScreen() {
         showBackButton
         right={
           <>
-            <HeaderActionButton iconName="settings" onPress={() => router.push("/(tabs)/settings")} />
-            <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account")} />
+            <HeaderActionButton iconName="settings" onPress={() => router.push("/(tabs)/settings" as any)} />
+            <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account" as any)} />
           </>
         }
       />

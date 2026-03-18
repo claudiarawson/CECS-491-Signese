@@ -55,7 +55,7 @@ export default function DictionaryScreen() {
           <>
             <HeaderActionButton
               iconName="settings"
-              onPress={() => router.push("/(tabs)/settings")}
+              onPress={() => router.push("/(tabs)/settings" as any)}
             />
             <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account")} />
           </>
@@ -147,7 +147,7 @@ export default function DictionaryScreen() {
 const styles = StyleSheet.create({
   content: {
     flex: 1,
-    paddingHorizontal: Spacing.screenPadding,
+    paddingHorizontal: Spacing.xl,
   },
   searchWrap: {
     marginTop: 12,

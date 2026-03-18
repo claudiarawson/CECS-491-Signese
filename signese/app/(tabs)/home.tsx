@@ -28,7 +28,7 @@ export default function HomeScreen() {
           <>
             <HeaderActionButton
               iconName="settings"
-              onPress={() => router.push("/(tabs)/settings")}
+              onPress={() => router.push("/(tabs)/settings" as any)}
             />
             <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account")} />
           </>

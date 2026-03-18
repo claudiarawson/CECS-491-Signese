@@ -45,7 +45,7 @@ export default function LearnScreen() {
           <>
             <HeaderActionButton
               iconName="settings"
-              onPress={() => router.push("/(tabs)/settings")}
+              onPress={() => router.push("/(tabs)/settings" as any)}
             />
             <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account")} />
           </>
