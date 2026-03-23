@@ -1,13 +1,33 @@
 import React, { useMemo, useState } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  TextInput,
+  useWindowDimensions,
+} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
-import { Spacing, Typography, semanticColors, getDeviceDensity, moderateScale } from "@/src/theme";
-import { ScreenContainer, ScreenHeader, HeaderActionButton, HeaderAvatarButton } from "@/src/components/layout";
+import {
+  Spacing,
+  Typography,
+  semanticColors,
+  getDeviceDensity,
+  moderateScale,
+} from "@/src/theme";
+import {
+  ScreenContainer,
+  ScreenHeader,
+  HeaderActionButton,
+  HeaderAvatarButton,
+} from "@/src/components/layout";
 
 type SettingsItem = {
   key: string;
   label: string;
+  keywords?: string[];
   icon: React.ComponentProps<typeof MaterialIcons>["name"];
   iconBg: string;
   iconColor: string;
@@ -28,6 +48,7 @@ export default function SettingsScreen() {
       {
         key: "about",
         label: "About",
+        keywords: ["info", "application", "app", "version"],
         icon: "info",
         iconBg: "#DDF1F8",
         iconColor: "#6CB5D1",
@@ -36,6 +57,7 @@ export default function SettingsScreen() {
       {
         key: "accessibility",
         label: "Accessibility",
+        keywords: ["font", "voice", "vision", "support", "screen reader"],
         icon: "accessibility",
         iconBg: "#F8E4DD",
         iconColor: "#F4A78E",
@@ -44,6 +66,7 @@ export default function SettingsScreen() {
       {
         key: "notifications",
         label: "Notifications",
+        keywords: ["alerts", "reminders", "messages", "push"],
         icon: "notifications-none",
         iconBg: "#DDEFE9",
         iconColor: "#53B1A3",
@@ -52,6 +75,7 @@ export default function SettingsScreen() {
       {
         key: "appearance",
         label: "Appearance",
+        keywords: ["theme", "dark mode", "light mode", "display"],
         icon: "nightlight",
         iconBg: "#E9E1F1",
         iconColor: "#B192CE",
@@ -60,6 +84,7 @@ export default function SettingsScreen() {
       {
         key: "privacy",
         label: "Privacy & Security",
+        keywords: ["privacy", "security", "permissions", "safe", "account"],
         icon: "verified-user",
         iconBg: "#F9F0D9",
         iconColor: "#E1B245",
@@ -68,6 +93,7 @@ export default function SettingsScreen() {
       {
         key: "feedback",
         label: "Feedback",
+        keywords: ["report", "help", "support", "bug", "contact"],
         icon: "feedback",
         iconBg: "#FCE6DF",
         iconColor: "#F7A78D",
@@ -77,9 +103,19 @@ export default function SettingsScreen() {
     []
   );
 
-  const filteredItems = items.filter((item) =>
-    item.label.toLowerCase().includes(query.trim().toLowerCase())
-  );
+  const filteredItems = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    if (!normalizedQuery) return items;
+
+    return items.filter((item) => {
+      const searchableText = [item.label, ...(item.keywords ?? [])]
+        .join(" ")
+        .toLowerCase();
+
+      return searchableText.includes(normalizedQuery);
+    });
+  }, [items, query]);
 
   return (
     <ScreenContainer backgroundColor="#F1F6F5" contentStyle={styles.safeContent}>
@@ -88,8 +124,14 @@ export default function SettingsScreen() {
         showBackButton
         right={
           <>
-            <HeaderActionButton iconName="settings" onPress={() => router.push("/(tabs)/settings" as any)} />
-            <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account" as any)} />
+            <HeaderActionButton
+              iconName="settings"
+              onPress={() => router.push("/(tabs)/settings" as any)}
+            />
+            <HeaderAvatarButton
+              avatar="🐨"
+              onPress={() => router.push("/(tabs)/account" as any)}
+            />
           </>
         }
       />
@@ -103,6 +145,10 @@ export default function SettingsScreen() {
             placeholder="Search Settings"
             placeholderTextColor="#8CA4A7"
             style={styles.searchInput}
+            autoCapitalize="none"
+            autoCorrect={false}
+            clearButtonMode="while-editing"
+            returnKeyType="search"
           />
         </View>
 
@@ -118,7 +164,9 @@ export default function SettingsScreen() {
           </Pressable>
         ))}
 
-        {filteredItems.length === 0 ? <Text style={styles.emptyText}>No matching settings.</Text> : null}
+        {filteredItems.length === 0 ? (
+          <Text style={styles.emptyText}>No matching settings found.</Text>
+        ) : null}
       </ScrollView>
     </ScreenContainer>
   );
