@@ -27,10 +27,46 @@ export default function SignupScreen() {
   const [error, setError] = useState("");
 
   const handleSignUp = async () => {
-    if (!username.trim() || !email.trim() || !password || !confirmPassword) {
+    setError("");
+
+    const trimmedUsername = username.trim();
+    const trimmedEmail = email.trim().toLowerCase();
+
+    if (!trimmedUsername || !trimmedEmail || !password || !confirmPassword) {
       setError("Username, email, and both password fields are required.");
       return;
     }
+
+    // Basic format validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    // Optional: catch a few common domain typos
+    const commonDomainFixes: Record<string, string> = {
+      "gmaill.com": "gmail.com",
+      "gmail.co": "gmail.com",
+      "gmial.com": "gmail.com",
+      "gnail.com": "gmail.com",
+      "hotnail.com": "hotmail.com",
+      "outlok.com": "outlook.com",
+      "yaho.com": "yahoo.com",
+    };
+
+    const [localPart, domainPart] = trimmedEmail.split("@");
+
+    if (domainPart && commonDomainFixes[domainPart]) {
+      setError(`Did you mean ${localPart}@${commonDomainFixes[domainPart]}?`);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password should be at least 6 characters.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -38,19 +74,34 @@ export default function SignupScreen() {
 
     try {
       const result = await signUpWithEmail(
-        email.trim().toLowerCase(),
+        trimmedEmail,
         password,
-        username.trim()
+        trimmedUsername
       );
+
       console.log("signed up uid:", result.user.uid);
-      console.log("before router.replace");
       router.replace("/home");
-      console.log("after router.replace");
     } catch (e: any) {
       console.log("SIGNUP ERROR FULL:", e);
-      setError(e?.message ?? "Sign up failed.");
-    }
-  };
+
+      switch (e?.code) {
+        case "auth/email-already-in-use":
+          setError("That email is already in use.");
+          break;
+        case "auth/invalid-email":
+          setError("That email address is invalid.");
+          break;
+        case "auth/weak-password":
+          setError("Password should be at least 6 characters.");
+          break;
+        case "auth/network-request-failed":
+          setError("Network error. Check your connection and try again.");
+          break;
+        default:
+          setError("Sign up failed. Please try again.");
+        }
+      }
+    };
 
   return (
     <LinearGradient colors={[c.backgroundTop, c.backgroundBottom]} locations={[0, 1]} style={styles.bg}>
