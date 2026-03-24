@@ -1,11 +1,26 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  useWindowDimensions,
+  Pressable,
+  Alert,
+} from "react-native";
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
-import { ScreenContainer, ScreenHeader, HeaderActionButton, HeaderAvatarButton } from "@/src/components/layout";
+import {
+  ScreenContainer,
+  ScreenHeader,
+  HeaderActionButton,
+  HeaderAvatarButton,
+} from "@/src/components/layout";
 
 const BASE_WIDTH = 320;
 const BASE_HEIGHT = 568;
+const CURRENT_LESSON_ID = 3;
 
 const LESSON_NODES = [
   { id: 1, title: "Greetings", emoji: "👋", x: 120, y: 80 },
@@ -37,6 +52,21 @@ export default function LearnScreen() {
     `C${scale(300)} ${vscale(800)}, ${scale(40)} ${vscale(880)}, ${scale(160)} ${vscale(960)}`,
   ].join(" ");
 
+  const handleLessonPress = (lessonId: number, lessonTitle: string) => {
+    if (lessonId > CURRENT_LESSON_ID) {
+      Alert.alert(
+        "Lesson Locked",
+        `${lessonTitle} is a future lesson. Please complete the earlier lessons first.`
+      );
+      return;
+    }
+
+    router.push({
+      pathname: "/learn/[id]",
+      params: { id: String(lessonId) },
+    } as any);
+  };
+
   return (
     <ScreenContainer backgroundColor="#F4F4F6">
       <ScreenHeader
@@ -47,7 +77,10 @@ export default function LearnScreen() {
               iconName="settings"
               onPress={() => router.push("/(tabs)/settings" as any)}
             />
-            <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account")} />
+            <HeaderAvatarButton
+              avatar="🐨"
+              onPress={() => router.push("/(tabs)/account" as any)}
+            />
           </>
         }
       />
@@ -88,29 +121,89 @@ export default function LearnScreen() {
               />
             </Svg>
 
-            {LESSON_NODES.map((lesson) => (
-              <View
-                key={lesson.id}
-                style={[
-                  styles.lesson,
-                  {
-                    top: vscale(lesson.y),
-                    left: scale(lesson.x),
-                    width: scale(92),
-                    height: scale(92),
-                    borderRadius: scale(46),
-                    borderWidth: scale(5),
-                  },
-                ]}
-              >
-                <View style={[styles.lessonInner, { borderRadius: scale(40), borderWidth: scale(3) }]}>
-                  <Text style={[styles.emoji, { fontSize: scale(16) }]}>{lesson.emoji}</Text>
-                  <Text style={[styles.label, { marginTop: vscale(4), fontSize: scale(11) }]}>
-                    {lesson.title}
-                  </Text>
-                </View>
-              </View>
-            ))}
+            {LESSON_NODES.map((lesson) => {
+              const isCompleted = lesson.id < CURRENT_LESSON_ID;
+              const isCurrent = lesson.id === CURRENT_LESSON_ID;
+              const isLocked = lesson.id > CURRENT_LESSON_ID;
+
+              return (
+                <Pressable
+                  key={lesson.id}
+                  onPress={() => handleLessonPress(lesson.id, lesson.title)}
+                  style={({ pressed }) => [
+                    styles.lesson,
+                    {
+                      top: vscale(lesson.y),
+                      left: scale(lesson.x),
+                      width: scale(92),
+                      height: scale(92),
+                      borderRadius: scale(46),
+                      borderWidth: scale(5),
+                      opacity: pressed ? 0.88 : 1,
+                      backgroundColor: isLocked ? "#EEF2F7" : "#FFFFFF",
+                      borderColor: isCurrent
+                        ? "#65D8C5"
+                        : isCompleted
+                        ? "#BEEDEA"
+                        : "#D7DEE8",
+                    },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.lessonInner,
+                      {
+                        borderRadius: scale(40),
+                        borderWidth: scale(3),
+                        borderColor: isLocked ? "#D9E2EC" : "#E5F6F4",
+                      },
+                    ]}
+                  >
+                    <View style={styles.badgeRow}>
+                      {isCompleted ? (
+                        <MaterialIcons
+                          name="check-circle"
+                          size={scale(18)}
+                          color="#22C55E"
+                        />
+                      ) : null}
+                      {isLocked ? (
+                        <MaterialIcons
+                          name="lock"
+                          size={scale(18)}
+                          color="#64748B"
+                        />
+                      ) : null}
+                    </View>
+
+                    <Text
+                      style={[
+                        styles.emoji,
+                        {
+                          fontSize: scale(16),
+                          opacity: isLocked ? 0.55 : 1,
+                        },
+                      ]}
+                    >
+                      {lesson.emoji}
+                    </Text>
+
+                    <Text
+                      style={[
+                        styles.label,
+                        {
+                          marginTop: vscale(4),
+                          fontSize: scale(11),
+                          color: isLocked ? "#64748B" : "#334155",
+                        },
+                      ]}
+                    >
+                      {lesson.title}
+                    </Text>
+                  </View>
+                </Pressable>
+              );
+            })}
           </View>
         </ScrollView>
       </View>
@@ -136,8 +229,6 @@ const styles = StyleSheet.create({
   },
   lesson: {
     position: "absolute",
-    backgroundColor: "#FFFFFF",
-    borderColor: "#BEEDEA",
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#83C5BE",
@@ -149,15 +240,20 @@ const styles = StyleSheet.create({
   lessonInner: {
     width: "100%",
     height: "100%",
-    borderColor: "#E5F6F4",
     alignItems: "center",
     justifyContent: "center",
+    position: "relative",
+  },
+  badgeRow: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    zIndex: 2,
   },
   emoji: {
     color: "#334155",
   },
   label: {
-    color: "#334155",
     fontWeight: "700",
     textAlign: "center",
     paddingHorizontal: 4,
