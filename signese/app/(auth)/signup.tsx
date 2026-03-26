@@ -1,15 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Pressable,
-  Platform,
-  TextInput,
-  ScrollView,
-  KeyboardAvoidingView,
-} from "react-native";
+import { View, Text, StyleSheet, Image, Pressable, Platform, TextInput, ScrollView, KeyboardAvoidingView, ActivityIndicator} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -17,6 +7,7 @@ import { router } from "expo-router";
 import { moderateScale } from "react-native-size-matters";
 import { signupColors as c } from "@/src/theme/pages/signup.colors";
 import { signUpWithEmail } from "@/src/services/firebase/auth.services";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
 
 export default function SignupScreen() {
   const [username, setUsername] = useState("");
@@ -25,8 +16,11 @@ export default function SignupScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const { refreshProfile } = useAuthUser();
 
   const handleSignUp = async () => {
+    if (submitting) return;
     setError("");
 
     const trimmedUsername = username.trim();
@@ -73,6 +67,7 @@ export default function SignupScreen() {
     }
 
     try {
+      setSubmitting(true);
       const result = await signUpWithEmail(
         trimmedEmail,
         password,
@@ -80,6 +75,8 @@ export default function SignupScreen() {
       );
 
       console.log("signed up uid:", result.user.uid);
+
+      await refreshProfile();
       router.replace("/home");
     } catch (e: any) {
       console.log("SIGNUP ERROR FULL:", e);
@@ -99,9 +96,12 @@ export default function SignupScreen() {
           break;
         default:
           setError("Sign up failed. Please try again.");
-        }
       }
+    } finally {
+      setSubmitting(false);
+    }
     };
+
 
   return (
     <LinearGradient colors={[c.backgroundTop, c.backgroundBottom]} locations={[0, 1]} style={styles.bg}>
@@ -135,14 +135,32 @@ export default function SignupScreen() {
                     </Pressable>
                   </View>
                   <Text style={styles.label}>Confirm Password</Text>
-                  <TextInput value={confirmPassword} onChangeText={setConfirmPassword} placeholder="........" placeholderTextColor={c.placeholderText} secureTextEntry style={styles.input} />
+                  <TextInput
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    placeholder="........"
+                    placeholderTextColor={c.placeholderText}
+                    secureTextEntry
+                    style={styles.input}
+                    editable={!submitting}
+                  />
                   {error ? <Text style={[styles.label, { color: "#ff4d4f", marginBottom: moderateScale(6) }]}>{error}</Text> : null}
-                  <Pressable style={styles.primaryBtn} onPress={handleSignUp}>
-                    <Text style={styles.primaryBtnText}>Sign Up</Text>
+                  <Pressable
+                    style={[styles.primaryBtn, submitting && styles.primaryBtnDisabled]}
+                    onPress={handleSignUp}
+                    disabled={submitting}
+                  >
+                    {submitting ? (
+                      <ActivityIndicator color={c.buttonText} />
+                    ) : (
+                      <Text style={styles.primaryBtnText}>Sign Up</Text>
+                    )}
                   </Pressable>
                   <View style={styles.bottomRow}>
                     <Text style={styles.bottomText}>Already have an account? </Text>
-                    <Pressable onPress={() => router.push("/login")}><Text style={styles.link}>Login</Text></Pressable>
+                    <Pressable onPress={() => router.push("/login")} disabled={submitting}>
+                      <Text style={styles.link}>Login</Text>
+                    </Pressable>
                   </View>
                 </View>
               </View>
@@ -267,6 +285,9 @@ const styles = StyleSheet.create({
     backgroundColor: c.primaryButton,
     alignItems: "center",
     justifyContent: "center",
+  },
+  primaryBtnDisabled: {
+    opacity: 0.7,
   },
   primaryBtnText: {
     fontSize: moderateScale(15),

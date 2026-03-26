@@ -1,16 +1,16 @@
-// This folder "contexts" is a central place for golbal share state across the app.
-// This file in particular is for storing the current authenticated user and their profile data.
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/src/services/firebase/firebase.config";
 import { getUserProfile, updateUserAvatar } from "@/src/services/firebase/auth.services";
 
 type Profile = { uid: string; username: string; email: string; avatar: string } | null;
+
 type AuthContextType = {
   authUser: User | null;
   profile: Profile;
   loading: boolean;
   setProfileAvatar: (avatar: string) => Promise<void>;
+  refreshProfile: () => Promise<void>;
 };
 
 const DEFAULT_AVATAR = "🐨";
@@ -20,6 +20,7 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   loading: true,
   setProfileAvatar: async () => {},
+  refreshProfile: async () => {},
 });
 
 export function AuthUserProvider({ children }: { children: React.ReactNode }) {
@@ -27,35 +28,66 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      setAuthUser(user);
-      if (user) {
-        const data = await getUserProfile(user.uid);
-        const fallbackUsername = user.displayName ?? "User";
-        setProfile({
-          uid: user.uid,
-          username: (data?.username as string | undefined) ?? fallbackUsername,
-          email: data?.email ?? user.email ?? "",
-          avatar: (data?.avatar as string | undefined) ?? DEFAULT_AVATAR,
-        });
-      } else {
-        setProfile(null);
-      }
-      setLoading(false);
-    });
-    return unsub;
-  }, []);
-
-  const setProfileAvatar = async (avatar: string) => {
-    if (!authUser) {
+  const loadProfile = useCallback(async (user: User | null) => {
+    if (!user) {
+      setProfile(null);
       return;
     }
 
-    setProfile((current) => {
-      if (!current) {
-        return current;
+    try {
+      await user.reload();
+      const freshUser = auth.currentUser ?? user;
+
+      const data = await getUserProfile(freshUser.uid);
+      const fallbackUsername = freshUser.displayName?.trim() || "User";
+
+      setProfile({
+        uid: freshUser.uid,
+        username: (data?.username as string | undefined)?.trim() || fallbackUsername,
+        email: data?.email ?? freshUser.email ?? "",
+        avatar: (data?.avatar as string | undefined) ?? DEFAULT_AVATAR,
+      });
+    } catch (error) {
+      console.warn("Failed to load user profile", error);
+
+      setProfile({
+        uid: user.uid,
+        username: user.displayName?.trim() || "User",
+        email: user.email ?? "",
+        avatar: DEFAULT_AVATAR,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      setLoading(true);
+      setAuthUser(user);
+
+      try {
+        await loadProfile(user);
+      } finally {
+        setLoading(false);
       }
+    });
+
+    return unsub;
+  }, [loadProfile]);
+
+  const refreshProfile = useCallback(async () => {
+    setLoading(true);
+    try {
+      await loadProfile(auth.currentUser);
+    } finally {
+      setLoading(false);
+    }
+  }, [loadProfile]);
+
+  const setProfileAvatar = async (avatar: string) => {
+    if (!authUser) return;
+
+    setProfile((current) => {
+      if (!current) return current;
       return { ...current, avatar };
     });
 
@@ -67,9 +99,10 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
   };
 
   const value = useMemo(
-    () => ({ authUser, profile, loading, setProfileAvatar }),
-    [authUser, profile, loading]
+    () => ({ authUser, profile, loading, setProfileAvatar, refreshProfile }),
+    [authUser, profile, loading, refreshProfile]
   );
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
