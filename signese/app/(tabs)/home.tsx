@@ -16,6 +16,7 @@ import { useAuthUser } from "@/src/contexts/AuthUserContext";
 export default function HomeScreen() {
   const { profile, loading } = useAuthUser();   // get current profile from global auth context
   if (loading) return <Text>Loading...</Text>;
+  const streakCount = profile?.streak?.current ?? 0;
 
   const streakCount = profile?.streak?.current ?? 0;
 
