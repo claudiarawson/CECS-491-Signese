@@ -6,7 +6,18 @@ import { auth } from "@/src/services/firebase/firebase.config";
 import { getUserProfile, updateUserAvatar } from "@/src/services/firebase/auth.services";
 import { updateLoginStreakForCurrentUser } from "@/src/services/streak.service";
 
-type Profile = { uid: string; username: string; email: string; avatar: string } | null;
+type ProfileStreak = {
+  current: number;
+  longest: number;
+  lastLoginDate?: string;
+} | null;
+type Profile = {
+  uid: string;
+  username: string;
+  email: string;
+  avatar: string;
+  streak: ProfileStreak;
+} | null;
 type AuthContextType = {
   authUser: User | null;
   profile: Profile;
@@ -35,9 +46,11 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
       if (user) {
         if (!streakUpdatedForUid.current.has(user.uid)) {
           streakUpdatedForUid.current.add(user.uid);
-          void updateLoginStreakForCurrentUser().catch((error) => {
+          try {
+            await updateLoginStreakForCurrentUser();
+          } catch (error) {
             console.warn("Streak update failed", error);
-          });
+          }
         }
 
         const data = await getUserProfile(user.uid);
@@ -47,8 +60,19 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
           username: (data?.username as string | undefined) ?? fallbackUsername,
           email: data?.email ?? user.email ?? "",
           avatar: (data?.avatar as string | undefined) ?? DEFAULT_AVATAR,
+          streak: {
+            current:
+              typeof data?.streak?.current === "number" ? (data.streak.current as number) : 0,
+            longest:
+              typeof data?.streak?.longest === "number" ? (data.streak.longest as number) : 0,
+            lastLoginDate:
+              typeof data?.streak?.lastLoginDate === "string"
+                ? (data.streak.lastLoginDate as string)
+                : undefined,
+          },
         });
       } else {
+        streakUpdatedForUid.current.clear();
         setProfile(null);
       }
       setLoading(false);
