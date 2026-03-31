@@ -16,6 +16,7 @@ import { useAuthUser } from "@/src/contexts/AuthUserContext";
 export default function HomeScreen() {
   const { profile, loading } = useAuthUser();   // get current profile from global auth context
   if (loading) return <Text>Loading...</Text>;
+  const streakCount = profile?.streak?.current ?? 0;
 
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
@@ -45,7 +46,7 @@ export default function HomeScreen() {
         <View style={styles.statsRow}>
           <View style={[styles.statCard, styles.statCardStreak]}>
             <Text style={styles.statIcon}>🔥</Text>
-            <Text style={styles.statValue}>1</Text>
+            <Text style={styles.statValue}>{streakCount}</Text>
             <Text style={styles.statLabel}>Streak</Text>
           </View>
           <View style={[styles.statCard, styles.statCardStars]}>

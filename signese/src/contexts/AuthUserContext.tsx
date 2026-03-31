@@ -1,9 +1,10 @@
 // This folder "contexts" is a central place for golbal share state across the app.
 // This file in particular is for storing the current authenticated user and their profile data.
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/src/services/firebase/firebase.config";
 import { getUserProfile, updateUserAvatar } from "@/src/services/firebase/auth.services";
+import { updateLoginStreakForCurrentUser } from "@/src/services/streak.service";
 
 type Profile = { uid: string; username: string; email: string; avatar: string } | null;
 type AuthContextType = {
@@ -26,11 +27,19 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
   const [authUser, setAuthUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile>(null);
   const [loading, setLoading] = useState(true);
+  const streakUpdatedForUid = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
       setAuthUser(user);
       if (user) {
+        if (!streakUpdatedForUid.current.has(user.uid)) {
+          streakUpdatedForUid.current.add(user.uid);
+          void updateLoginStreakForCurrentUser().catch((error) => {
+            console.warn("Streak update failed", error);
+          });
+        }
+
         const data = await getUserProfile(user.uid);
         const fallbackUsername = user.displayName ?? "User";
         setProfile({
