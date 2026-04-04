@@ -1,7 +1,11 @@
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/src/services/firebase/firebase.config";
-import { getUserProfile, updateUserAvatar } from "@/src/services/firebase/auth.services";
+import {
+  getUserProfile,
+  updateUserAvatar,
+  syncFirestoreUserEmailIfNeeded,
+} from "@/src/services/firebase/auth.services";
 
 type Profile = { uid: string; username: string; email: string; avatar: string } | null;
 
@@ -34,27 +38,50 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    let freshUser = user;
     try {
       await user.reload();
-      const freshUser = auth.currentUser ?? user;
+      freshUser = auth.currentUser ?? user;
+    } catch (reloadErr) {
+      // reload() can fail transiently after password/email updates; keep session and continue
+      console.warn("user.reload() skipped or failed", reloadErr);
+      freshUser = auth.currentUser ?? user;
+    }
 
+    try {
       const data = await getUserProfile(freshUser.uid);
       const fallbackUsername = freshUser.displayName?.trim() || "User";
+      const firestoreEmail =
+        typeof data?.email === "string" && data.email.trim() !== "" ? data.email.trim() : null;
 
-      setProfile({
-        uid: freshUser.uid,
-        username: (data?.username as string | undefined)?.trim() || fallbackUsername,
-        email: data?.email ?? freshUser.email ?? "",
-        avatar: (data?.avatar as string | undefined) ?? DEFAULT_AVATAR,
+      await syncFirestoreUserEmailIfNeeded(freshUser.uid, freshUser.email, firestoreEmail);
+
+      setProfile((prev) => {
+        const sameUser = prev?.uid === freshUser.uid;
+        const fromDoc = data?.avatar as string | undefined;
+        return {
+          uid: freshUser.uid,
+          username: (data?.username as string | undefined)?.trim() || fallbackUsername,
+          // Prefer Auth email (updates after verify-before-email link); Firestore is synced in syncFirestoreUserEmailIfNeeded
+          email: freshUser.email ?? firestoreEmail ?? (sameUser ? prev?.email ?? "" : ""),
+          avatar:
+            (fromDoc && fromDoc.trim() !== "" ? fromDoc : undefined) ??
+            (sameUser ? prev?.avatar : undefined) ??
+            DEFAULT_AVATAR,
+        };
       });
     } catch (error) {
       console.warn("Failed to load user profile", error);
 
-      setProfile({
-        uid: user.uid,
-        username: user.displayName?.trim() || "User",
-        email: user.email ?? "",
-        avatar: DEFAULT_AVATAR,
+      setProfile((prev) => {
+        const sameUser = prev?.uid === freshUser.uid;
+        return {
+          uid: freshUser.uid,
+          username:
+            freshUser.displayName?.trim() || (sameUser ? prev?.username : undefined) || "User",
+          email: freshUser.email ?? (sameUser ? prev?.email ?? "" : ""),
+          avatar: sameUser && prev?.avatar ? prev.avatar : DEFAULT_AVATAR,
+        };
       });
     }
   }, []);
