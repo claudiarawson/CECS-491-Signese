@@ -1,5 +1,17 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView, useWindowDimensions } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  Alert,
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  useWindowDimensions,
+  TextInput,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import {
@@ -10,28 +22,166 @@ import {
 } from "@/src/theme";
 import { ScreenContainer, ScreenHeader, HeaderActionButton, SectionCard } from "@/src/components/layout";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import {
+  updateUserUsername,
+  updateAccountEmail,
+  updateAccountPassword,
+  getAuthErrorMessage,
+  userHasPasswordProvider,
+  signOutUser,
+} from "@/src/services/firebase/auth.services";
 
 const avatars = ["🐨", "🐼", "🐱", "🐰", "🐻", "🦊"];
 
 export default function AccountScreen() {
-  const { profile, setProfileAvatar } = useAuthUser();
+  const { profile, authUser, setProfileAvatar, refreshProfile } = useAuthUser();
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density);
 
   const [selectedAvatar, setSelectedAvatar] = useState(profile?.avatar ?? "🐨");
+  const [usernameDraft, setUsernameDraft] = useState(profile?.username ?? "");
+  const [newEmail, setNewEmail] = useState("");
+  const [emailCurrentPassword, setEmailCurrentPassword] = useState("");
+  const [passwordCurrent, setPasswordCurrent] = useState("");
+  const [passwordNew, setPasswordNew] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+
+  const [usernameBusy, setUsernameBusy] = useState(false);
+  const [emailBusy, setEmailBusy] = useState(false);
+  const [passwordBusy, setPasswordBusy] = useState(false);
+  const [usernameErr, setUsernameErr] = useState("");
+  const [emailErr, setEmailErr] = useState("");
+  const [passwordErr, setPasswordErr] = useState("");
+  const [signingOut, setSigningOut] = useState(false);
+
   const stars = 0;
   const dayStreak = 1;
+  const canChangeEmailPassword = userHasPasswordProvider(authUser);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (profile?.avatar) {
       setSelectedAvatar(profile.avatar);
     }
   }, [profile?.avatar]);
 
+  useEffect(() => {
+    if (profile?.username !== undefined) {
+      setUsernameDraft(profile.username);
+    }
+  }, [profile?.username]);
+
+  // Prefill email when auth/profile loads; skip while user has typed (avoids stomping input on refresh)
+  useEffect(() => {
+    if (newEmail.trim() !== "") return;
+
+    const next =
+      (authUser?.email && authUser.email.trim() !== "" ? authUser.email : null) ??
+      (profile?.email && profile.email.trim() !== "" ? profile.email : null);
+
+    if (next) {
+      setNewEmail(next);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only when auth/profile email source changes, not on each keystroke
+  }, [profile?.email, authUser?.email]);
+
   const handleSelectAvatar = async (avatar: string) => {
     setSelectedAvatar(avatar);
     await setProfileAvatar(avatar);
+  };
+
+  const handleSaveUsername = async () => {
+    if (!authUser || usernameBusy) return;
+    setUsernameErr("");
+    const next = usernameDraft.trim();
+    if (next === (profile?.username ?? "").trim()) {
+      setUsernameErr("No changes to save.");
+      return;
+    }
+    try {
+      setUsernameBusy(true);
+      await updateUserUsername(authUser, next);
+      await refreshProfile();
+      Alert.alert("Success", "Your display name was updated.");
+    } catch (e) {
+      setUsernameErr(getAuthErrorMessage(e));
+    } finally {
+      setUsernameBusy(false);
+    }
+  };
+
+  const handleSaveEmail = async () => {
+    if (!authUser || emailBusy) return;
+    setEmailErr("");
+    const trimmed = newEmail.trim().toLowerCase();
+    // Use Auth email as source of truth (Firestore can be empty or out of sync)
+    const current = (authUser.email ?? "").trim().toLowerCase();
+    if (trimmed === current) {
+      setEmailErr("Enter a different email address.");
+      return;
+    }
+    if (!emailCurrentPassword) {
+      setEmailErr("Enter your current password to confirm.");
+      return;
+    }
+    try {
+      setEmailBusy(true);
+      await updateAccountEmail(authUser, trimmed, emailCurrentPassword);
+      setEmailCurrentPassword("");
+      await refreshProfile();
+      Alert.alert(
+        "Verification sent",
+        `We emailed a confirmation link to ${trimmed}. Open it to finish the change. Until then, sign in with your current email.`
+      );
+    } catch (e) {
+      setEmailErr(getAuthErrorMessage(e));
+    } finally {
+      setEmailBusy(false);
+    }
+  };
+
+  const handleSavePassword = async () => {
+    if (!authUser || passwordBusy) return;
+    setPasswordErr("");
+    if (!passwordCurrent) {
+      setPasswordErr("Enter your current password.");
+      return;
+    }
+    if (passwordNew.length < 6) {
+      setPasswordErr("New password should be at least 6 characters.");
+      return;
+    }
+    if (passwordNew !== passwordConfirm) {
+      setPasswordErr("New passwords do not match.");
+      return;
+    }
+    try {
+      setPasswordBusy(true);
+      await updateAccountPassword(authUser, passwordCurrent, passwordNew);
+      setPasswordCurrent("");
+      setPasswordNew("");
+      setPasswordConfirm("");
+      await refreshProfile();
+      Alert.alert("Success", "Your password was updated.");
+    } catch (e) {
+      setPasswordErr(getAuthErrorMessage(e));
+    } finally {
+      setPasswordBusy(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    if (signingOut) return;
+
+    try {
+      setSigningOut(true);
+      await signOutUser();
+      router.replace("/");
+    } catch (e) {
+      Alert.alert("Error", getAuthErrorMessage(e));
+    } finally {
+      setSigningOut(false);
+    }
   };
 
   return (
@@ -46,11 +196,17 @@ export default function AccountScreen() {
         }
       />
 
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoid}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 8 : 0}
+      >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         bounces={false}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <View style={styles.mainStack}>
           <View style={styles.heroAvatarWrap}>
@@ -94,12 +250,184 @@ export default function AccountScreen() {
             </View>
           </SectionCard>
 
-          <Pressable style={styles.signOutBtn} onPress={() => router.replace("/")}>
-            <MaterialIcons name="logout" size={moderateScale(18)} color="#FFFFFF" />
-            <Text style={styles.signOutText}>Logout</Text>
+          <SectionCard style={styles.blockCard}>
+            <Text style={styles.blockTitle}>Display name</Text>
+            <Text style={styles.fieldHint}>Shown across the app and saved to your profile.</Text>
+            <TextInput
+              value={usernameDraft}
+              onChangeText={(t) => {
+                setUsernameDraft(t);
+                if (usernameErr) setUsernameErr("");
+              }}
+              placeholder="Your name"
+              placeholderTextColor="#8CA4A7"
+              style={styles.textInput}
+              autoCapitalize="words"
+              editable={!!authUser && !usernameBusy}
+            />
+            {usernameErr ? <Text style={styles.fieldError}>{usernameErr}</Text> : null}
+            <Pressable
+              style={[styles.primaryBtn, (!authUser || usernameBusy) && styles.btnDisabled]}
+              onPress={() => void handleSaveUsername()}
+              disabled={!authUser || usernameBusy}
+            >
+              {usernameBusy ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={styles.primaryBtnText}>Save name</Text>
+              )}
+            </Pressable>
+          </SectionCard>
+
+          <SectionCard style={styles.blockCard}>
+            <Text style={styles.blockTitle}>Email</Text>
+            {canChangeEmailPassword ? (
+              <>
+                <Text style={styles.fieldHint}>Changing email requires your current password.</Text>
+                <TextInput
+                  value={newEmail}
+                  onChangeText={(t) => {
+                    setNewEmail(t);
+                    if (emailErr) setEmailErr("");
+                  }}
+                  placeholder="you@example.com"
+                  placeholderTextColor="#8CA4A7"
+                  style={styles.textInput}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="email-address"
+                  autoComplete="email"
+                  textContentType="emailAddress"
+                  editable={!!authUser && !emailBusy}
+                />
+                <TextInput
+                  value={emailCurrentPassword}
+                  onChangeText={(t) => {
+                    setEmailCurrentPassword(t);
+                    if (emailErr) setEmailErr("");
+                  }}
+                  placeholder="Current password"
+                  placeholderTextColor="#8CA4A7"
+                  style={styles.textInput}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="current-password"
+                  textContentType="password"
+                  editable={!!authUser && !emailBusy}
+                />
+                {emailErr ? <Text style={styles.fieldError}>{emailErr}</Text> : null}
+                <Pressable
+                  style={[styles.primaryBtn, (!authUser || emailBusy) && styles.btnDisabled]}
+                  onPress={() => void handleSaveEmail()}
+                  disabled={!authUser || emailBusy}
+                >
+                  {emailBusy ? (
+                    <ActivityIndicator color="#FFFFFF" />
+                  ) : (
+                    <Text style={styles.primaryBtnText}>Update email</Text>
+                  )}
+                </Pressable>
+              </>
+            ) : (
+              <Text style={styles.fieldHintMuted}>
+                You signed in without an email password. Manage email in your Google (or other) account
+                settings, or contact support to link a password.
+              </Text>
+            )}
+          </SectionCard>
+
+          <SectionCard style={styles.blockCard}>
+            <Text style={styles.blockTitle}>Password</Text>
+            {canChangeEmailPassword ? (
+              <>
+                <Text style={styles.fieldHint}>Use at least 6 characters.</Text>
+                <TextInput
+                  value={passwordCurrent}
+                  onChangeText={(t) => {
+                    setPasswordCurrent(t);
+                    if (passwordErr) setPasswordErr("");
+                  }}
+                  placeholder="Current password"
+                  placeholderTextColor="#8CA4A7"
+                  style={styles.textInput}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="current-password"
+                  textContentType="password"
+                  editable={!!authUser && !passwordBusy}
+                />
+                <TextInput
+                  value={passwordNew}
+                  onChangeText={(t) => {
+                    setPasswordNew(t);
+                    if (passwordErr) setPasswordErr("");
+                  }}
+                  placeholder="New password"
+                  placeholderTextColor="#8CA4A7"
+                  style={styles.textInput}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="password-new"
+                  textContentType="newPassword"
+                  editable={!!authUser && !passwordBusy}
+                />
+                <TextInput
+                  value={passwordConfirm}
+                  onChangeText={(t) => {
+                    setPasswordConfirm(t);
+                    if (passwordErr) setPasswordErr("");
+                  }}
+                  placeholder="Confirm new password"
+                  placeholderTextColor="#8CA4A7"
+                  style={styles.textInput}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="password-new"
+                  textContentType="newPassword"
+                  editable={!!authUser && !passwordBusy}
+                />
+                {passwordErr ? <Text style={styles.fieldError}>{passwordErr}</Text> : null}
+                <Pressable
+                  style={[styles.primaryBtn, (!authUser || passwordBusy) && styles.btnDisabled]}
+                  onPress={() => void handleSavePassword()}
+                  disabled={!authUser || passwordBusy}
+                >
+                  {passwordBusy ? (
+                    <ActivityIndicator color="#FFFFFF" />
+                  ) : (
+                    <Text style={styles.primaryBtnText}>Update password</Text>
+                  )}
+                </Pressable>
+              </>
+            ) : (
+              <Text style={styles.fieldHintMuted}>
+                Password changes apply to email sign-in only. OAuth accounts use the provider's password or
+                security settings.
+              </Text>
+            )}
+          </SectionCard>
+
+          <Pressable
+            style={[styles.signOutBtn, signingOut && styles.btnDisabled]}
+            onPress={() => void handleSignOut()}
+            disabled={signingOut}
+          >
+            {signingOut ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <>
+                <MaterialIcons name="logout" size={moderateScale(18)} color="#FFFFFF" />
+                <Text style={styles.signOutText}>Logout</Text>
+              </>
+            )}
           </Pressable>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </ScreenContainer>
   );
 }
@@ -109,6 +437,10 @@ const createStyles = (density: number) => {
 
   return StyleSheet.create({
   content: {
+    flex: 1,
+  },
+
+  keyboardAvoid: {
     flex: 1,
   },
 
@@ -236,6 +568,63 @@ const createStyles = (density: number) => {
   progressEmoji: {
     fontSize: ms(11),
     marginTop: 3,
+  },
+
+  fieldHint: {
+    ...Typography.caption,
+    color: semanticColors.text.secondary,
+    fontSize: ms(11),
+    textAlign: "center",
+    marginBottom: 8,
+    opacity: 0.9,
+  },
+
+  fieldHintMuted: {
+    ...Typography.caption,
+    color: semanticColors.text.secondary,
+    fontSize: ms(12),
+    textAlign: "center",
+    lineHeight: ms(17),
+    paddingVertical: 4,
+  },
+
+  textInput: {
+    width: "100%",
+    minHeight: ms(42),
+    borderRadius: ms(14),
+    backgroundColor: "#E9F0EF",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: ms(14),
+    color: semanticColors.text.primary,
+    marginBottom: 8,
+  },
+
+  fieldError: {
+    ...Typography.caption,
+    color: "#C53030",
+    fontSize: ms(12),
+    textAlign: "center",
+    marginBottom: 8,
+  },
+
+  primaryBtn: {
+    marginTop: 4,
+    height: ms(44),
+    borderRadius: ms(16),
+    backgroundColor: "#43B3A8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  btnDisabled: {
+    opacity: 0.55,
+  },
+
+  primaryBtnText: {
+    ...Typography.button,
+    fontSize: ms(15),
+    color: "#FFFFFF",
   },
 
   signOutBtn: {

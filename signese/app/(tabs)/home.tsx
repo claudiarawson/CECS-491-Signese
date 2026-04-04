@@ -9,20 +9,29 @@ import {
 } from "@/src/theme";
 import { router } from "expo-router";
 import React from "react";
-import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 
 
 export default function HomeScreen() {
-  const { profile, loading } = useAuthUser();   // get current profile from global auth context
-  if (loading) return <Text>Loading...</Text>;
-  const streakCount = profile?.streak?.current ?? 0;
-
+  const { profile, loading } = useAuthUser();
   const streakCount = profile?.streak?.current ?? 0;
 
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density);
+  
+  if (loading) {
+    return (
+      <ScreenContainer backgroundColor="#F1F6F5">
+        <View style={styles.loadingWrap}>
+          <ActivityIndicator size="large" />
+          <Text style={styles.loadingText}>Loading your profile...</Text>
+        </View>
+      </ScreenContainer>
+    );
+  }
+
   return (
     <ScreenContainer backgroundColor="#F1F6F5">
       <ScreenHeader
@@ -219,6 +228,18 @@ const createStyles = (density: number) => {
     },
     tipsSection: {
       marginTop: 0,
+    },
+    loadingWrap: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: Spacing.screenPadding,
+    },
+    loadingText: {
+      marginTop: ms(10),
+      ...Typography.body,
+      color: semanticColors.text.secondary,
+      fontSize: ms(14),
     },
   });
 };
