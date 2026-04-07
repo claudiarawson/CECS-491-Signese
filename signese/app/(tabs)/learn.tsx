@@ -15,9 +15,10 @@ import {
   ScreenContainer,
   ScreenHeader,
   HeaderActionButton,
-  HeaderAvatarButton,
 } from "@/src/components/layout";
 import { addStarsToCurrentUser } from "@/src/features/gamification/stars.services";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import { getProfileIconById } from "@/src/features/account/types";
 
 const BASE_WIDTH = 320;
 const BASE_HEIGHT = 568;
@@ -34,6 +35,8 @@ const LESSON_NODES = [
 ];
 
 export default function LearnScreen() {
+  const { profile } = useAuthUser();
+  const headerProfileIcon = getProfileIconById(profile?.avatar);
   const { width, height } = useWindowDimensions();
 
   const frameWidth = Math.min(width, 480);
@@ -93,10 +96,15 @@ export default function LearnScreen() {
               iconName="settings"
               onPress={() => router.push("/(tabs)/settings" as any)}
             />
-            <HeaderAvatarButton
-              avatar="🐨"
+
+            <Pressable
+              style={styles.headerProfileButton}
               onPress={() => router.push("/(tabs)/account" as any)}
-            />
+            >
+              <Text style={styles.headerProfileEmoji}>
+                {headerProfileIcon.emoji}
+              </Text>
+            </Pressable>
           </>
         }
       />
@@ -121,7 +129,9 @@ export default function LearnScreen() {
           showsVerticalScrollIndicator={false}
           bounces
         >
-          <View style={[styles.mapFrame, { width: frameWidth, height: canvasHeight }]}>
+          <View
+            style={[styles.mapFrame, { width: frameWidth, height: canvasHeight }]}
+          >
             <Svg height={canvasHeight} width={frameWidth} style={styles.road}>
               <Path
                 d={snakePath}
@@ -163,8 +173,8 @@ export default function LearnScreen() {
                       borderColor: isCurrent
                         ? "#65D8C5"
                         : isCompleted
-                        ? "#BEEDEA"
-                        : "#D7DEE8",
+                          ? "#BEEDEA"
+                          : "#D7DEE8",
                     },
                   ]}
                 >
@@ -186,6 +196,7 @@ export default function LearnScreen() {
                           color="#22C55E"
                         />
                       ) : null}
+
                       {isLocked ? (
                         <MaterialIcons
                           name="lock"
@@ -300,5 +311,17 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
+  },
+  headerProfileButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#E6DDF0",
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 8,
+  },
+  headerProfileEmoji: {
+    fontSize: 18,
   },
 });
