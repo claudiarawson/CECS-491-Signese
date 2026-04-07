@@ -20,7 +20,12 @@ import {
   Typography,
   moderateScale,
 } from "@/src/theme";
-import { ScreenContainer, ScreenHeader, HeaderActionButton, SectionCard } from "@/src/components/layout";
+import {
+  ScreenContainer,
+  ScreenHeader,
+  HeaderActionButton,
+  SectionCard,
+} from "@/src/components/layout";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import {
   updateUserUsername,
@@ -31,16 +36,16 @@ import {
   signOutUser,
 } from "@/src/services/firebase/auth.services";
 import { getCurrentUserStars } from "@/src/features/gamification/stars.services";
-
-const avatars = ["🐨", "🐼", "🐱", "🐰", "🐻", "🦊"];
+import { getProfileIconById } from "@/src/features/account/types";
 
 export default function AccountScreen() {
-  const { profile, authUser, setProfileAvatar, refreshProfile } = useAuthUser();
+  const { profile, authUser, refreshProfile } = useAuthUser();
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density);
 
-  const [selectedAvatar, setSelectedAvatar] = useState(profile?.avatar ?? "🐨");
+  const selectedProfileIcon = getProfileIconById(profile?.avatar);
+
   const [usernameDraft, setUsernameDraft] = useState(profile?.username ?? "");
   const [newEmail, setNewEmail] = useState("");
   const [emailCurrentPassword, setEmailCurrentPassword] = useState("");
@@ -58,34 +63,29 @@ export default function AccountScreen() {
 
   const [stars, setStars] = useState(0);
 
-useEffect(() => {
-  let mounted = true;
+  useEffect(() => {
+    let mounted = true;
 
-  const loadStars = async () => {
-    try {
-      const result = await getCurrentUserStars();
-      if (mounted) {
-        setStars(result.balance);
+    const loadStars = async () => {
+      try {
+        const result = await getCurrentUserStars();
+        if (mounted) {
+          setStars(result.balance);
+        }
+      } catch (error) {
+        console.warn("Failed to load stars", error);
       }
-    } catch (error) {
-      console.warn("Failed to load stars", error);
-    }
-  };
+    };
 
-  void loadStars();
+    void loadStars();
 
-  return () => {
-    mounted = false;
-  };
-}, []);
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const dayStreak = 1;
   const canChangeEmailPassword = userHasPasswordProvider(authUser);
-
-  useEffect(() => {
-    if (profile?.avatar) {
-      setSelectedAvatar(profile.avatar);
-    }
-  }, [profile?.avatar]);
 
   useEffect(() => {
     if (profile?.username !== undefined) {
@@ -93,7 +93,6 @@ useEffect(() => {
     }
   }, [profile?.username]);
 
-  // Prefill email when auth/profile loads; skip while user has typed (avoids stomping input on refresh)
   useEffect(() => {
     if (newEmail.trim() !== "") return;
 
@@ -104,22 +103,19 @@ useEffect(() => {
     if (next) {
       setNewEmail(next);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only when auth/profile email source changes, not on each keystroke
-  }, [profile?.email, authUser?.email]);
-
-  const handleSelectAvatar = async (avatar: string) => {
-    setSelectedAvatar(avatar);
-    await setProfileAvatar(avatar);
-  };
+  }, [profile?.email, authUser?.email, newEmail]);
 
   const handleSaveUsername = async () => {
     if (!authUser || usernameBusy) return;
+
     setUsernameErr("");
     const next = usernameDraft.trim();
+
     if (next === (profile?.username ?? "").trim()) {
       setUsernameErr("No changes to save.");
       return;
     }
+
     try {
       setUsernameBusy(true);
       await updateUserUsername(authUser, next);
@@ -134,23 +130,27 @@ useEffect(() => {
 
   const handleSaveEmail = async () => {
     if (!authUser || emailBusy) return;
+
     setEmailErr("");
     const trimmed = newEmail.trim().toLowerCase();
-    // Use Auth email as source of truth (Firestore can be empty or out of sync)
     const current = (authUser.email ?? "").trim().toLowerCase();
+
     if (trimmed === current) {
       setEmailErr("Enter a different email address.");
       return;
     }
+
     if (!emailCurrentPassword) {
       setEmailErr("Enter your current password to confirm.");
       return;
     }
+
     try {
       setEmailBusy(true);
       await updateAccountEmail(authUser, trimmed, emailCurrentPassword);
       setEmailCurrentPassword("");
       await refreshProfile();
+
       Alert.alert(
         "Verification sent",
         `We emailed a confirmation link to ${trimmed}. Open it to finish the change. Until then, sign in with your current email.`
@@ -164,19 +164,24 @@ useEffect(() => {
 
   const handleSavePassword = async () => {
     if (!authUser || passwordBusy) return;
+
     setPasswordErr("");
+
     if (!passwordCurrent) {
       setPasswordErr("Enter your current password.");
       return;
     }
+
     if (passwordNew.length < 6) {
       setPasswordErr("New password should be at least 6 characters.");
       return;
     }
+
     if (passwordNew !== passwordConfirm) {
       setPasswordErr("New passwords do not match.");
       return;
     }
+
     try {
       setPasswordBusy(true);
       await updateAccountPassword(authUser, passwordCurrent, passwordNew);
@@ -212,9 +217,10 @@ useEffect(() => {
         title="Account"
         showBackButton
         right={
-          <>
-            <HeaderActionButton iconName="settings" onPress={() => router.push("/(tabs)/settings")} />
-          </>
+          <HeaderActionButton
+            iconName="settings"
+            onPress={() => router.push("/(tabs)/settings")}
+          />
         }
       />
 
@@ -223,249 +229,276 @@ useEffect(() => {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 8 : 0}
       >
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        bounces={false}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={styles.mainStack}>
-          <View style={styles.heroAvatarWrap}>
-            <Text style={styles.heroAvatar}>{selectedAvatar}</Text>
-          </View>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          bounces={false}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.mainStack}>
+            <View style={styles.heroAvatarWrap}>
+              <Text style={styles.heroAvatar}>{selectedProfileIcon.emoji}</Text>
+            </View>
 
-          <View style={styles.starPill}>
-            <Text style={styles.starPillText}>⭐ {stars} Stars</Text>
-          </View>
+            <View style={styles.starPill}>
+              <Text style={styles.starPillText}>⭐ {stars} Stars</Text>
+            </View>
 
-          <SectionCard style={styles.blockCard}>
-            <Text style={styles.blockTitle}>Choose Your Avatar</Text>
-            <View style={styles.avatarGrid}>
-              {avatars.map((avatar) => {
-                const selected = avatar === selectedAvatar;
-                return (
+            <SectionCard style={styles.blockCard}>
+              <Text style={styles.blockTitle}>Profile Customization</Text>
+              <Text style={styles.fieldHint}>
+                Earn stars from lessons to unlock new profile icons.
+              </Text>
+
+              <Pressable
+                style={styles.primaryBtn}
+                onPress={() => router.push("/account/edit-profile")}
+              >
+                <Text style={styles.primaryBtnText}>
+                  Unlock & Choose Profile Icon
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.primaryBtn, styles.secondaryActionBtn]}
+                onPress={() => router.push("/account/achievements")}
+              >
+                <Text style={styles.primaryBtnText}>View Achievements</Text>
+              </Pressable>
+            </SectionCard>
+
+            <SectionCard style={styles.blockCard}>
+              <Text style={styles.blockTitle}>Your Progress</Text>
+              <View style={styles.progressRow}>
+                <View style={[styles.progressCard, styles.progressStreak]}>
+                  <Text style={styles.progressValue}>{dayStreak}</Text>
+                  <Text style={styles.progressLabel}>Day Streak</Text>
+                  <Text style={styles.progressEmoji}>🔥</Text>
+                </View>
+
+                <View style={[styles.progressCard, styles.progressStars]}>
+                  <Text style={styles.progressValue}>{stars}</Text>
+                  <Text style={styles.progressLabel}>Stars ⭐</Text>
+                </View>
+              </View>
+            </SectionCard>
+
+            <SectionCard style={styles.blockCard}>
+              <Text style={styles.blockTitle}>Display name</Text>
+              <Text style={styles.fieldHint}>
+                Shown across the app and saved to your profile.
+              </Text>
+
+              <TextInput
+                value={usernameDraft}
+                onChangeText={(t) => {
+                  setUsernameDraft(t);
+                  if (usernameErr) setUsernameErr("");
+                }}
+                placeholder="Your name"
+                placeholderTextColor="#8CA4A7"
+                style={styles.textInput}
+                autoCapitalize="words"
+                editable={!!authUser && !usernameBusy}
+              />
+
+              {usernameErr ? (
+                <Text style={styles.fieldError}>{usernameErr}</Text>
+              ) : null}
+
+              <Pressable
+                style={[
+                  styles.primaryBtn,
+                  (!authUser || usernameBusy) && styles.btnDisabled,
+                ]}
+                onPress={() => void handleSaveUsername()}
+                disabled={!authUser || usernameBusy}
+              >
+                {usernameBusy ? (
+                  <ActivityIndicator color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.primaryBtnText}>Save name</Text>
+                )}
+              </Pressable>
+            </SectionCard>
+
+            <SectionCard style={styles.blockCard}>
+              <Text style={styles.blockTitle}>Email</Text>
+              {canChangeEmailPassword ? (
+                <>
+                  <Text style={styles.fieldHint}>
+                    Changing email requires your current password.
+                  </Text>
+
+                  <TextInput
+                    value={newEmail}
+                    onChangeText={(t) => {
+                      setNewEmail(t);
+                      if (emailErr) setEmailErr("");
+                    }}
+                    placeholder="you@example.com"
+                    placeholderTextColor="#8CA4A7"
+                    style={styles.textInput}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    keyboardType="email-address"
+                    autoComplete="email"
+                    textContentType="emailAddress"
+                    editable={!!authUser && !emailBusy}
+                  />
+
+                  <TextInput
+                    value={emailCurrentPassword}
+                    onChangeText={(t) => {
+                      setEmailCurrentPassword(t);
+                      if (emailErr) setEmailErr("");
+                    }}
+                    placeholder="Current password"
+                    placeholderTextColor="#8CA4A7"
+                    style={styles.textInput}
+                    secureTextEntry
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    autoComplete="current-password"
+                    textContentType="password"
+                    editable={!!authUser && !emailBusy}
+                  />
+
+                  {emailErr ? (
+                    <Text style={styles.fieldError}>{emailErr}</Text>
+                  ) : null}
+
                   <Pressable
-                    key={avatar}
-                    style={[styles.avatarOption, selected && styles.avatarOptionSelected]}
-                    onPress={() => void handleSelectAvatar(avatar)}
+                    style={[
+                      styles.primaryBtn,
+                      (!authUser || emailBusy) && styles.btnDisabled,
+                    ]}
+                    onPress={() => void handleSaveEmail()}
+                    disabled={!authUser || emailBusy}
                   >
-                    <Text style={styles.avatarOptionEmoji}>{avatar}</Text>
+                    {emailBusy ? (
+                      <ActivityIndicator color="#FFFFFF" />
+                    ) : (
+                      <Text style={styles.primaryBtnText}>Update email</Text>
+                    )}
                   </Pressable>
-                );
-              })}
-            </View>
-          </SectionCard>
+                </>
+              ) : (
+                <Text style={styles.fieldHintMuted}>
+                  You signed in without an email password. Manage email in your
+                  Google (or other) account settings, or contact support to link
+                  a password.
+                </Text>
+              )}
+            </SectionCard>
 
-          <SectionCard style={styles.blockCard}>
-            <Text style={styles.blockTitle}>Your Progress</Text>
-            <View style={styles.progressRow}>
-              <View style={[styles.progressCard, styles.progressStreak]}>
-                <Text style={styles.progressValue}>{dayStreak}</Text>
-                <Text style={styles.progressLabel}>Day Streak</Text>
-                <Text style={styles.progressEmoji}>🔥</Text>
-              </View>
-              <View style={[styles.progressCard, styles.progressStars]}>
-                <Text style={styles.progressValue}>{stars}</Text>
-                <Text style={styles.progressLabel}>Stars ⭐</Text>
-              </View>
-            </View>
-          </SectionCard>
+            <SectionCard style={styles.blockCard}>
+              <Text style={styles.blockTitle}>Password</Text>
+              {canChangeEmailPassword ? (
+                <>
+                  <Text style={styles.fieldHint}>
+                    Use at least 6 characters.
+                  </Text>
 
-          <SectionCard style={styles.blockCard}>
-            <Text style={styles.blockTitle}>Display name</Text>
-            <Text style={styles.fieldHint}>Shown across the app and saved to your profile.</Text>
-            <TextInput
-              value={usernameDraft}
-              onChangeText={(t) => {
-                setUsernameDraft(t);
-                if (usernameErr) setUsernameErr("");
-              }}
-              placeholder="Your name"
-              placeholderTextColor="#8CA4A7"
-              style={styles.textInput}
-              autoCapitalize="words"
-              editable={!!authUser && !usernameBusy}
-            />
-            {usernameErr ? <Text style={styles.fieldError}>{usernameErr}</Text> : null}
+                  <TextInput
+                    value={passwordCurrent}
+                    onChangeText={(t) => {
+                      setPasswordCurrent(t);
+                      if (passwordErr) setPasswordErr("");
+                    }}
+                    placeholder="Current password"
+                    placeholderTextColor="#8CA4A7"
+                    style={styles.textInput}
+                    secureTextEntry
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    autoComplete="current-password"
+                    textContentType="password"
+                    editable={!!authUser && !passwordBusy}
+                  />
+
+                  <TextInput
+                    value={passwordNew}
+                    onChangeText={(t) => {
+                      setPasswordNew(t);
+                      if (passwordErr) setPasswordErr("");
+                    }}
+                    placeholder="New password"
+                    placeholderTextColor="#8CA4A7"
+                    style={styles.textInput}
+                    secureTextEntry
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    autoComplete="password-new"
+                    textContentType="newPassword"
+                    editable={!!authUser && !passwordBusy}
+                  />
+
+                  <TextInput
+                    value={passwordConfirm}
+                    onChangeText={(t) => {
+                      setPasswordConfirm(t);
+                      if (passwordErr) setPasswordErr("");
+                    }}
+                    placeholder="Confirm new password"
+                    placeholderTextColor="#8CA4A7"
+                    style={styles.textInput}
+                    secureTextEntry
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    autoComplete="password-new"
+                    textContentType="newPassword"
+                    editable={!!authUser && !passwordBusy}
+                  />
+
+                  {passwordErr ? (
+                    <Text style={styles.fieldError}>{passwordErr}</Text>
+                  ) : null}
+
+                  <Pressable
+                    style={[
+                      styles.primaryBtn,
+                      (!authUser || passwordBusy) && styles.btnDisabled,
+                    ]}
+                    onPress={() => void handleSavePassword()}
+                    disabled={!authUser || passwordBusy}
+                  >
+                    {passwordBusy ? (
+                      <ActivityIndicator color="#FFFFFF" />
+                    ) : (
+                      <Text style={styles.primaryBtnText}>Update password</Text>
+                    )}
+                  </Pressable>
+                </>
+              ) : (
+                <Text style={styles.fieldHintMuted}>
+                  Password changes apply to email sign-in only. OAuth accounts
+                  use the provider&apos;s password or security settings.
+                </Text>
+              )}
+            </SectionCard>
+
             <Pressable
-              style={[styles.primaryBtn, (!authUser || usernameBusy) && styles.btnDisabled]}
-              onPress={() => void handleSaveUsername()}
-              disabled={!authUser || usernameBusy}
+              style={[styles.signOutBtn, signingOut && styles.btnDisabled]}
+              onPress={() => void handleSignOut()}
+              disabled={signingOut}
             >
-              {usernameBusy ? (
+              {signingOut ? (
                 <ActivityIndicator color="#FFFFFF" />
               ) : (
-                <Text style={styles.primaryBtnText}>Save name</Text>
+                <>
+                  <MaterialIcons
+                    name="logout"
+                    size={moderateScale(18)}
+                    color="#FFFFFF"
+                  />
+                  <Text style={styles.signOutText}>Logout</Text>
+                </>
               )}
             </Pressable>
-          </SectionCard>
-
-          <SectionCard style={styles.blockCard}>
-            <Text style={styles.blockTitle}>Email</Text>
-            {canChangeEmailPassword ? (
-              <>
-                <Text style={styles.fieldHint}>Changing email requires your current password.</Text>
-                <TextInput
-                  value={newEmail}
-                  onChangeText={(t) => {
-                    setNewEmail(t);
-                    if (emailErr) setEmailErr("");
-                  }}
-                  placeholder="you@example.com"
-                  placeholderTextColor="#8CA4A7"
-                  style={styles.textInput}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  keyboardType="email-address"
-                  autoComplete="email"
-                  textContentType="emailAddress"
-                  editable={!!authUser && !emailBusy}
-                />
-                <TextInput
-                  value={emailCurrentPassword}
-                  onChangeText={(t) => {
-                    setEmailCurrentPassword(t);
-                    if (emailErr) setEmailErr("");
-                  }}
-                  placeholder="Current password"
-                  placeholderTextColor="#8CA4A7"
-                  style={styles.textInput}
-                  secureTextEntry
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  autoComplete="current-password"
-                  textContentType="password"
-                  editable={!!authUser && !emailBusy}
-                />
-                {emailErr ? <Text style={styles.fieldError}>{emailErr}</Text> : null}
-                <Pressable
-                  style={[styles.primaryBtn, (!authUser || emailBusy) && styles.btnDisabled]}
-                  onPress={() => void handleSaveEmail()}
-                  disabled={!authUser || emailBusy}
-                >
-                  {emailBusy ? (
-                    <ActivityIndicator color="#FFFFFF" />
-                  ) : (
-                    <Text style={styles.primaryBtnText}>Update email</Text>
-                  )}
-                </Pressable>
-              </>
-            ) : (
-              <Text style={styles.fieldHintMuted}>
-                You signed in without an email password. Manage email in your Google (or other) account
-                settings, or contact support to link a password.
-              </Text>
-            )}
-          <SectionCard style={styles.blockCard}>
-  <Text style={styles.blockTitle}>Profile Customization</Text>
-
-  <Pressable
-    style={styles.primaryBtn}
-    onPress={() => router.push("/account/edit-profile")}
-  >
-    <Text style={styles.primaryBtnText}>Edit profile icon</Text>
-  </Pressable>
-
-  <Pressable
-    style={[styles.primaryBtn, { marginTop: 10, backgroundColor: "#5C6AC4" }]}
-    onPress={() => router.push("/account/achievements")}
-  >
-    <Text style={styles.primaryBtnText}>View achievements</Text>
-  </Pressable>
-</SectionCard> 
-          </SectionCard>
-
-          <SectionCard style={styles.blockCard}>
-            <Text style={styles.blockTitle}>Password</Text>
-            {canChangeEmailPassword ? (
-              <>
-                <Text style={styles.fieldHint}>Use at least 6 characters.</Text>
-                <TextInput
-                  value={passwordCurrent}
-                  onChangeText={(t) => {
-                    setPasswordCurrent(t);
-                    if (passwordErr) setPasswordErr("");
-                  }}
-                  placeholder="Current password"
-                  placeholderTextColor="#8CA4A7"
-                  style={styles.textInput}
-                  secureTextEntry
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  autoComplete="current-password"
-                  textContentType="password"
-                  editable={!!authUser && !passwordBusy}
-                />
-                <TextInput
-                  value={passwordNew}
-                  onChangeText={(t) => {
-                    setPasswordNew(t);
-                    if (passwordErr) setPasswordErr("");
-                  }}
-                  placeholder="New password"
-                  placeholderTextColor="#8CA4A7"
-                  style={styles.textInput}
-                  secureTextEntry
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  autoComplete="password-new"
-                  textContentType="newPassword"
-                  editable={!!authUser && !passwordBusy}
-                />
-                <TextInput
-                  value={passwordConfirm}
-                  onChangeText={(t) => {
-                    setPasswordConfirm(t);
-                    if (passwordErr) setPasswordErr("");
-                  }}
-                  placeholder="Confirm new password"
-                  placeholderTextColor="#8CA4A7"
-                  style={styles.textInput}
-                  secureTextEntry
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  autoComplete="password-new"
-                  textContentType="newPassword"
-                  editable={!!authUser && !passwordBusy}
-                />
-                {passwordErr ? <Text style={styles.fieldError}>{passwordErr}</Text> : null}
-                <Pressable
-                  style={[styles.primaryBtn, (!authUser || passwordBusy) && styles.btnDisabled]}
-                  onPress={() => void handleSavePassword()}
-                  disabled={!authUser || passwordBusy}
-                >
-                  {passwordBusy ? (
-                    <ActivityIndicator color="#FFFFFF" />
-                  ) : (
-                    <Text style={styles.primaryBtnText}>Update password</Text>
-                  )}
-                </Pressable>
-              </>
-            ) : (
-              <Text style={styles.fieldHintMuted}>
-                Password changes apply to email sign-in only. OAuth accounts use the provider's password or
-                security settings.
-              </Text>
-            )}
-          </SectionCard>
-
-          <Pressable
-            style={[styles.signOutBtn, signingOut && styles.btnDisabled]}
-            onPress={() => void handleSignOut()}
-            disabled={signingOut}
-          >
-            {signingOut ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <>
-                <MaterialIcons name="logout" size={moderateScale(18)} color="#FFFFFF" />
-                <Text style={styles.signOutText}>Logout</Text>
-              </>
-            )}
-          </Pressable>
-        </View>
-      </ScrollView>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </ScreenContainer>
   );
@@ -475,214 +508,191 @@ const createStyles = (density: number) => {
   const ms = (value: number) => moderateScale(value) * density;
 
   return StyleSheet.create({
-  content: {
-    flex: 1,
-  },
+    content: {
+      flex: 1,
+    },
 
-  keyboardAvoid: {
-    flex: 1,
-  },
+    keyboardAvoid: {
+      flex: 1,
+    },
 
-  scrollView: {
-    flex: 1,
-  },
+    scrollView: {
+      flex: 1,
+    },
 
-  scrollContent: {
-    flexGrow: 1,
-  },
+    scrollContent: {
+      flexGrow: 1,
+    },
 
-  mainStack: {
-    paddingTop: 20,
-    paddingBottom: 16,
-    gap: 7,
-  },
+    mainStack: {
+      paddingTop: 20,
+      paddingBottom: 16,
+      gap: 7,
+    },
 
-  heroAvatarWrap: {
-    width: ms(68),
-    height: ms(68),
-    borderRadius: ms(34),
-    backgroundColor: "#E6DDF0",
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-  },
+    heroAvatarWrap: {
+      width: ms(68),
+      height: ms(68),
+      borderRadius: ms(34),
+      backgroundColor: "#E6DDF0",
+      alignItems: "center",
+      justifyContent: "center",
+      alignSelf: "center",
+    },
 
-  heroAvatar: {
-    fontSize: ms(34),
-  },
+    heroAvatar: {
+      fontSize: ms(34),
+    },
 
-  starPill: {
-    backgroundColor: "#E9DEC1",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    alignSelf: "center",
-  },
+    starPill: {
+      backgroundColor: "#E9DEC1",
+      borderRadius: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 4,
+      alignSelf: "center",
+    },
 
-  starPillText: {
-    ...Typography.caption,
-    color: semanticColors.text.secondary,
-    fontSize: ms(12),
-  },
+    starPillText: {
+      ...Typography.caption,
+      color: semanticColors.text.secondary,
+      fontSize: ms(12),
+    },
 
-  blockCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginBottom: 0,
-  },
+    blockCard: {
+      backgroundColor: "#FFFFFF",
+      borderRadius: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      marginBottom: 0,
+    },
 
-  blockTitle: {
-    ...Typography.sectionTitle,
-    color: semanticColors.text.secondary,
-    fontSize: ms(15),
-    textAlign: "center",
-    marginBottom: 7,
-  },
+    blockTitle: {
+      ...Typography.sectionTitle,
+      color: semanticColors.text.secondary,
+      fontSize: ms(15),
+      textAlign: "center",
+      marginBottom: 7,
+    },
 
-  avatarGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    rowGap: 8,
-    columnGap: 10,
-  },
+    progressRow: {
+      flexDirection: "row",
+      gap: 8,
+    },
 
-  avatarOption: {
-    width: ms(36),
-    height: ms(36),
-    borderRadius: ms(18),
-    backgroundColor: "#E9F0EF",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-    borderColor: "transparent",
-  },
+    progressCard: {
+      flex: 1,
+      minHeight: 92,
+      borderRadius: 16,
+      paddingVertical: 12,
+      alignItems: "center",
+      justifyContent: "center",
+    },
 
-  avatarOptionSelected: {
-    borderColor: "#43B3A8",
-    backgroundColor: "#E0F4F1",
-  },
+    progressStreak: {
+      backgroundColor: "#CADBDD",
+    },
 
-  avatarOptionEmoji: {
-    fontSize: ms(18),
-  },
+    progressStars: {
+      backgroundColor: "#DDD4E8",
+    },
 
-  progressRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
+    progressValue: {
+      ...Typography.statNumber,
+      fontSize: ms(18),
+      lineHeight: ms(20),
+      color: "#5BAFB0",
+    },
 
-  progressCard: {
-    flex: 1,
-    minHeight: 92,
-    borderRadius: 16,
-    paddingVertical: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+    progressLabel: {
+      ...Typography.body,
+      color: semanticColors.text.secondary,
+      fontSize: ms(12),
+    },
 
-  progressStreak: {
-    backgroundColor: "#CADBDD",
-  },
+    progressEmoji: {
+      fontSize: ms(11),
+      marginTop: 3,
+    },
 
-  progressStars: {
-    backgroundColor: "#DDD4E8",
-  },
+    fieldHint: {
+      ...Typography.caption,
+      color: semanticColors.text.secondary,
+      fontSize: ms(11),
+      textAlign: "center",
+      marginBottom: 8,
+      opacity: 0.9,
+    },
 
-  progressValue: {
-    ...Typography.statNumber,
-    fontSize: ms(18),
-    lineHeight: ms(20),
-    color: "#5BAFB0",
-  },
+    fieldHintMuted: {
+      ...Typography.caption,
+      color: semanticColors.text.secondary,
+      fontSize: ms(12),
+      textAlign: "center",
+      lineHeight: ms(17),
+      paddingVertical: 4,
+    },
 
-  progressLabel: {
-    ...Typography.body,
-    color: semanticColors.text.secondary,
-    fontSize: ms(12),
-  },
+    textInput: {
+      width: "100%",
+      minHeight: ms(42),
+      borderRadius: ms(14),
+      backgroundColor: "#E9F0EF",
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      fontSize: ms(14),
+      color: semanticColors.text.primary,
+      marginBottom: 8,
+    },
 
-  progressEmoji: {
-    fontSize: ms(11),
-    marginTop: 3,
-  },
+    fieldError: {
+      ...Typography.caption,
+      color: "#C53030",
+      fontSize: ms(12),
+      textAlign: "center",
+      marginBottom: 8,
+    },
 
-  fieldHint: {
-    ...Typography.caption,
-    color: semanticColors.text.secondary,
-    fontSize: ms(11),
-    textAlign: "center",
-    marginBottom: 8,
-    opacity: 0.9,
-  },
+    primaryBtn: {
+      marginTop: 4,
+      height: ms(44),
+      borderRadius: ms(16),
+      backgroundColor: "#43B3A8",
+      alignItems: "center",
+      justifyContent: "center",
+    },
 
-  fieldHintMuted: {
-    ...Typography.caption,
-    color: semanticColors.text.secondary,
-    fontSize: ms(12),
-    textAlign: "center",
-    lineHeight: ms(17),
-    paddingVertical: 4,
-  },
+    secondaryActionBtn: {
+      marginTop: 10,
+      backgroundColor: "#5C6AC4",
+    },
 
-  textInput: {
-    width: "100%",
-    minHeight: ms(42),
-    borderRadius: ms(14),
-    backgroundColor: "#E9F0EF",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    fontSize: ms(14),
-    color: semanticColors.text.primary,
-    marginBottom: 8,
-  },
+    btnDisabled: {
+      opacity: 0.55,
+    },
 
-  fieldError: {
-    ...Typography.caption,
-    color: "#C53030",
-    fontSize: ms(12),
-    textAlign: "center",
-    marginBottom: 8,
-  },
+    primaryBtnText: {
+      ...Typography.button,
+      fontSize: ms(15),
+      color: "#FFFFFF",
+    },
 
-  primaryBtn: {
-    marginTop: 4,
-    height: ms(44),
-    borderRadius: ms(16),
-    backgroundColor: "#43B3A8",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+    signOutBtn: {
+      width: "100%",
+      marginTop: 8,
+      marginBottom: 8,
+      height: 47,
+      borderRadius: 19,
+      backgroundColor: "#E55555",
+      flexDirection: "row",
+      gap: 8,
+      alignItems: "center",
+      justifyContent: "center",
+    },
 
-  btnDisabled: {
-    opacity: 0.55,
-  },
-
-  primaryBtnText: {
-    ...Typography.button,
-    fontSize: ms(15),
-    color: "#FFFFFF",
-  },
-
-  signOutBtn: {
-    width: "100%",
-    marginTop: 8,
-    marginBottom: 8,
-    height: 47,
-    borderRadius: 19,
-    backgroundColor: "#E55555",
-    flexDirection: "row",
-    gap: 8,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  signOutText: {
-    ...Typography.button,
-    fontSize: ms(16),
-    color: "#FFFFFF",
-  },
+    signOutText: {
+      ...Typography.button,
+      fontSize: ms(16),
+      color: "#FFFFFF",
+    },
   });
 };
