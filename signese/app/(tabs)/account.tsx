@@ -30,6 +30,7 @@ import {
   userHasPasswordProvider,
   signOutUser,
 } from "@/src/services/firebase/auth.services";
+import { getCurrentUserStars } from "@/src/features/gamification/stars.services";
 
 const avatars = ["🐨", "🐼", "🐱", "🐰", "🐻", "🦊"];
 
@@ -55,7 +56,28 @@ export default function AccountScreen() {
   const [passwordErr, setPasswordErr] = useState("");
   const [signingOut, setSigningOut] = useState(false);
 
-  const stars = 0;
+  const [stars, setStars] = useState(0);
+
+useEffect(() => {
+  let mounted = true;
+
+  const loadStars = async () => {
+    try {
+      const result = await getCurrentUserStars();
+      if (mounted) {
+        setStars(result.balance);
+      }
+    } catch (error) {
+      console.warn("Failed to load stars", error);
+    }
+  };
+
+  void loadStars();
+
+  return () => {
+    mounted = false;
+  };
+}, []);
   const dayStreak = 1;
   const canChangeEmailPassword = userHasPasswordProvider(authUser);
 
@@ -335,6 +357,23 @@ export default function AccountScreen() {
                 settings, or contact support to link a password.
               </Text>
             )}
+          <SectionCard style={styles.blockCard}>
+  <Text style={styles.blockTitle}>Profile Customization</Text>
+
+  <Pressable
+    style={styles.primaryBtn}
+    onPress={() => router.push("/account/edit-profile")}
+  >
+    <Text style={styles.primaryBtnText}>Edit profile icon</Text>
+  </Pressable>
+
+  <Pressable
+    style={[styles.primaryBtn, { marginTop: 10, backgroundColor: "#5C6AC4" }]}
+    onPress={() => router.push("/account/achievements")}
+  >
+    <Text style={styles.primaryBtnText}>View achievements</Text>
+  </Pressable>
+</SectionCard> 
           </SectionCard>
 
           <SectionCard style={styles.blockCard}>

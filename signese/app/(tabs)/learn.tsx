@@ -17,6 +17,7 @@ import {
   HeaderActionButton,
   HeaderAvatarButton,
 } from "@/src/components/layout";
+import { addStarsToCurrentUser } from "@/src/features/gamification/stars.services";
 
 const BASE_WIDTH = 320;
 const BASE_HEIGHT = 568;
@@ -67,6 +68,21 @@ export default function LearnScreen() {
     } as any);
   };
 
+  const handleCompleteLesson = async (lessonTitle: string) => {
+    try {
+      const reward = 5;
+      const updated = await addStarsToCurrentUser(reward);
+
+      Alert.alert(
+        "Lesson Complete",
+        `${lessonTitle} completed! You earned ${reward} stars.\n\nCurrent stars: ${updated.balance}`
+      );
+    } catch (error) {
+      console.warn("Failed to award stars", error);
+      Alert.alert("Error", "Could not award stars.");
+    }
+  };
+
   return (
     <ScreenContainer backgroundColor="#F4F4F6">
       <ScreenHeader
@@ -98,7 +114,10 @@ export default function LearnScreen() {
 
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: navSafePad }]}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: navSafePad },
+          ]}
           showsVerticalScrollIndicator={false}
           bounces
         >
@@ -205,6 +224,15 @@ export default function LearnScreen() {
               );
             })}
           </View>
+
+          <Pressable
+            style={styles.testButton}
+            onPress={() => void handleCompleteLesson("Greetings")}
+          >
+            <Text style={styles.testButtonText}>
+              Complete Test Lesson (+5 stars)
+            </Text>
+          </Pressable>
         </ScrollView>
       </View>
     </ScreenContainer>
@@ -257,5 +285,20 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
     paddingHorizontal: 4,
+  },
+  testButton: {
+    marginTop: 20,
+    marginHorizontal: 20,
+    marginBottom: 20,
+    backgroundColor: "#43B3A8",
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  testButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
