@@ -25,13 +25,13 @@ const BASE_HEIGHT = 568;
 const CURRENT_LESSON_ID = 3;
 
 const LESSON_NODES = [
-  { id: 1, title: "Greetings", emoji: "👋", x: 120, y: 80 },
+  { id: 1, title: "Alphabet", emoji: "🔤", x: 120, y: 80 },
   { id: 2, title: "Numbers", emoji: "🔢", x: 60, y: 190 },
-  { id: 3, title: "Family", emoji: "👨‍👩‍👧", x: 150, y: 300 },
-  { id: 4, title: "Colors", emoji: "🎨", x: 80, y: 410 },
-  { id: 5, title: "Telling Time", emoji: "⏰", x: 145, y: 520 },
-  { id: 6, title: "Food & Drink", emoji: "🍔", x: 70, y: 640 },
-  { id: 7, title: "Daily Phrases", emoji: "🗣️", x: 145, y: 760 },
+  { id: 3, title: "Greetings", emoji: "👋", x: 150, y: 300 },
+  { id: 4, title: "Family", emoji: "👨‍👩‍👧", x: 80, y: 410 },
+  { id: 5, title: "Colors", emoji: "🎨", x: 145, y: 520 },
+  { id: 6, title: "Telling Time", emoji: "⏰", x: 70, y: 640 },
+  { id: 7, title: "Food & Drink", emoji: "🍔", x: 145, y: 760 },
 ];
 
 export default function LearnScreen() {
