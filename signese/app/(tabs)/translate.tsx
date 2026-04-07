@@ -4,7 +4,14 @@ import { router } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { semanticColors, Spacing, Typography } from "@/src/theme";
-import { ScreenContainer, ScreenHeader, HeaderActionButton, HeaderAvatarButton } from "@/src/components/layout";
+import {
+  ScreenContainer,
+  ScreenHeader,
+  HeaderActionButton,
+  HeaderAvatarButton,
+} from "@/src/components/layout";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import { getProfileIconById } from "@/src/features/account/types";
 
 function CommonResponsesPlaceholder() {
   const items = useMemo(() => ["Good", "Ok", "Bad"], []);
@@ -24,6 +31,9 @@ function CommonResponsesPlaceholder() {
 }
 
 export default function TranslateScreen() {
+  const { profile } = useAuthUser();
+  const headerProfileIcon = getProfileIconById(profile?.avatar);
+
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraFacing, setCameraFacing] = useState<"front" | "back">("front");
   const [isVolumeOn, setIsVolumeOn] = useState(true);
@@ -73,7 +83,10 @@ export default function TranslateScreen() {
               iconName="settings"
               onPress={() => router.push("/(tabs)/settings" as any)}
             />
-            <HeaderAvatarButton onPress={() => router.push("/(tabs)/account")} />
+            <HeaderAvatarButton
+              avatar={headerProfileIcon.emoji}
+              onPress={() => router.push("/(tabs)/account")}
+            />
           </>
         }
       />
@@ -114,24 +127,34 @@ export default function TranslateScreen() {
               </Pressable>
             ) : null}
           </View>
+
           <View style={styles.captionsLabelWrap} pointerEvents="none">
             <Text style={styles.captionsLabel}>Captions</Text>
           </View>
+
           <View style={styles.rightControlsWrap}>
             <Pressable style={styles.smallControlBtn} onPress={handleToggleVolume}>
-              <MaterialIcons name={isVolumeOn ? "volume-up" : "volume-off"} size={18} color="#2C5D56" />
+              <MaterialIcons
+                name={isVolumeOn ? "volume-up" : "volume-off"}
+                size={18}
+                color="#2C5D56"
+              />
             </Pressable>
           </View>
         </View>
 
         <View style={styles.captionsCard}>
-          <Text style={styles.captionsPlaceholderText}>Translation output will appear here.</Text>
+          <Text style={styles.captionsPlaceholderText}>
+            Translation output will appear here.
+          </Text>
           <Text style={styles.captionsSubText}>
             {cameraActive
               ? "Waiting for live translation..."
               : "Camera is off. Live translation is paused."}
           </Text>
-          <Text style={styles.captionsSubText}>{isVolumeOn ? "Volume is on." : "Volume is muted."}</Text>
+          <Text style={styles.captionsSubText}>
+            {isVolumeOn ? "Volume is on." : "Volume is muted."}
+          </Text>
         </View>
       </View>
 

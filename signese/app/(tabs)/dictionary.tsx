@@ -1,30 +1,50 @@
-import { HeaderActionButton, HeaderAvatarButton, ScreenContainer, ScreenHeader } from "@/src/components/layout";
+import {
+  HeaderActionButton,
+  HeaderAvatarButton,
+  ScreenContainer,
+  ScreenHeader,
+} from "@/src/components/layout";
 import { Spacing } from "@/src/theme";
 import { router } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import SignOverlay from "../../src/components/SignOverlay";
 import { SIGNS } from "../../src/features/dictionary/data/signs";
-import { getSavedIds, toggleSavedId } from "../../src/features/dictionary/storage/saved.local";
+import {
+  getSavedIds,
+  toggleSavedId,
+} from "../../src/features/dictionary/storage/saved.local";
 import type { Sign } from "../../src/features/dictionary/types";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import { getProfileIconById } from "@/src/features/account/types";
 
 const MINT = "#cfe9e6";
 const TEAL = "#48b4a8";
 const TEAL_DARK = "#2c9a8f";
 
 export default function DictionaryScreen() {
+  const { profile } = useAuthUser();
+  const headerProfileIcon = getProfileIconById(profile?.avatar);
+
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [selectedSign, setSelectedSign] = useState<Sign | null>(null);
 
   useEffect(() => {
-    getSavedIds().then(ids => setSavedIds(new Set(ids)));
+    getSavedIds().then((ids) => setSavedIds(new Set(ids)));
   }, []);
 
   const handleToggleSave = async (signId: string) => {
     const newSaved = await toggleSavedId(signId);
-    setSavedIds(prev => {
+    setSavedIds((prev) => {
       const newSet = new Set(prev);
       if (newSaved) {
         newSet.add(signId);
@@ -57,7 +77,10 @@ export default function DictionaryScreen() {
               iconName="settings"
               onPress={() => router.push("/(tabs)/settings" as any)}
             />
-            <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account")} />
+            <HeaderAvatarButton
+              avatar={headerProfileIcon.emoji}
+              onPress={() => router.push("/(tabs)/account")}
+            />
           </>
         }
       />
@@ -83,7 +106,9 @@ export default function DictionaryScreen() {
           onPress={() => setCommunityOnly((v) => !v)}
           style={[styles.togglePill, communityOnly && styles.togglePillOn]}
         >
-          <Text style={[styles.toggleText, communityOnly && styles.toggleTextOn]}>
+          <Text
+            style={[styles.toggleText, communityOnly && styles.toggleTextOn]}
+          >
             {communityOnly ? "✓ " : ""}Community Signs
           </Text>
         </Pressable>
@@ -91,54 +116,69 @@ export default function DictionaryScreen() {
         <Text style={styles.sectionTitle}>Featured Signs</Text>
 
         <FlatList
-        data={filtered}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        columnWrapperStyle={{ gap: 14 }}
-        contentContainerStyle={{ paddingBottom: 70 }}
-        renderItem={({ item }) => {
-          const isSaved = savedIds.has(item.id);
-          return (
-            <Pressable
-              style={[styles.card, item.source === "community" && styles.cardCommunity]}
-              onPress={() => setSelectedSign(item)}
-            >
-              <View style={styles.mediaPlaceholder}>
-                <Text style={styles.mediaText}>media</Text>
-              </View>
-              <Text style={styles.cardWord} numberOfLines={1}>
-                {item.word}
-              </Text>
-              <Pressable onPress={() => handleToggleSave(item.id)} style={styles.saveBtn}>
-                <Text style={styles.saveIcon}>{isSaved ? '★' : '☆'}</Text>
+          data={filtered}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          columnWrapperStyle={{ gap: 14 }}
+          contentContainerStyle={{ paddingBottom: 70 }}
+          renderItem={({ item }) => {
+            const isSaved = savedIds.has(item.id);
+
+            return (
+              <Pressable
+                style={[
+                  styles.card,
+                  item.source === "community" && styles.cardCommunity,
+                ]}
+                onPress={() => setSelectedSign(item)}
+              >
+                <View style={styles.mediaPlaceholder}>
+                  <Text style={styles.mediaText}>media</Text>
+                </View>
+
+                <Text style={styles.cardWord} numberOfLines={1}>
+                  {item.word}
+                </Text>
+
+                <Pressable
+                  onPress={() => handleToggleSave(item.id)}
+                  style={styles.saveBtn}
+                >
+                  <Text style={styles.saveIcon}>{isSaved ? "★" : "☆"}</Text>
+                </Pressable>
               </Pressable>
-            </Pressable>
-          );
-        }}
-        ListEmptyComponent={
-          <Text style={{ textAlign: "center", marginTop: 20, color: "#566" }}>
-            No results.
-          </Text>
-        }
-      />
+            );
+          }}
+          ListEmptyComponent={
+            <Text
+              style={{ textAlign: "center", marginTop: 20, color: "#566" }}
+            >
+              No results.
+            </Text>
+          }
+        />
 
-      <View style={styles.bottomRow}>
-        <Pressable
-          style={styles.bottomBtn}
-          onPress={() => router.push("/dictionary/add-dialect")}
-        >
-          <Text style={styles.bottomBtnText}>＋ Add Sign</Text>
-        </Pressable>
+        <View style={styles.bottomRow}>
+          <Pressable
+            style={styles.bottomBtn}
+            onPress={() => router.push("/dictionary/add-dialect")}
+          >
+            <Text style={styles.bottomBtnText}>＋ Add Sign</Text>
+          </Pressable>
 
-        <Pressable
-          style={styles.bottomBtn}
-          onPress={() => router.push("/dictionary/saved")}
-        >
-          <Text style={styles.bottomBtnText}>≡ Saved Signs</Text>
-        </Pressable>
-      </View>
+          <Pressable
+            style={styles.bottomBtn}
+            onPress={() => router.push("/dictionary/saved")}
+          >
+            <Text style={styles.bottomBtnText}>≡ Saved Signs</Text>
+          </Pressable>
+        </View>
 
-      <SignOverlay visible={!!selectedSign} sign={selectedSign} onClose={() => setSelectedSign(null)} />
+        <SignOverlay
+          visible={!!selectedSign}
+          sign={selectedSign}
+          onClose={() => setSelectedSign(null)}
+        />
       </View>
     </ScreenContainer>
   );
@@ -176,7 +216,13 @@ const styles = StyleSheet.create({
   toggleText: { fontSize: 16, fontWeight: "700", color: TEAL_DARK },
   toggleTextOn: { color: "white" },
 
-  sectionTitle: { marginTop: 14, marginBottom: 10, fontSize: 20, fontWeight: "800", textAlign: "center" },
+  sectionTitle: {
+    marginTop: 14,
+    marginBottom: 10,
+    fontSize: 20,
+    fontWeight: "800",
+    textAlign: "center",
+  },
 
   card: {
     flex: 1,
@@ -196,10 +242,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   mediaText: { color: "#4d6", fontWeight: "700" },
-  cardWord: { marginTop: 10, fontSize: 22, fontWeight: "900", textAlign: "center", color: "#111" },
+  cardWord: {
+    marginTop: 10,
+    fontSize: 22,
+    fontWeight: "900",
+    textAlign: "center",
+    color: "#111",
+  },
 
-  saveBtn: { position: 'absolute', top: 8, right: 8, padding: 4 },
-  saveIcon: { fontSize: 20, color: '#ffd700' },
+  saveBtn: { position: "absolute", top: 8, right: 8, padding: 4 },
+  saveIcon: { fontSize: 20, color: "#ffd700" },
 
   bottomRow: {
     position: "absolute",

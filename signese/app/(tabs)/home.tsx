@@ -1,26 +1,66 @@
-import { DailyTipsCarousel, HeaderActionButton, HeaderAvatarButton, ScreenContainer, ScreenHeader, SectionCard } from "@/src/components/layout";
 import {
-    getDeviceDensity,
-    moderateScale,
-    semanticColors,
-    Sizes,
-    Spacing,
-    Typography,
+  DailyTipsCarousel,
+  HeaderActionButton,
+  HeaderAvatarButton,
+  ScreenContainer,
+  ScreenHeader,
+  SectionCard,
+} from "@/src/components/layout";
+import {
+  getDeviceDensity,
+  moderateScale,
+  semanticColors,
+  Sizes,
+  Spacing,
+  Typography,
 } from "@/src/theme";
 import { router } from "expo-router";
-import React from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
-
+import { getProfileIconById } from "@/src/features/account/types";
+import { getCurrentUserStars } from "@/src/features/gamification/stars.services";
 
 export default function HomeScreen() {
   const { profile, loading } = useAuthUser();
+  const headerProfileIcon = getProfileIconById(profile?.avatar);
   const streakCount = profile?.streak?.current ?? 0;
+
+  const [stars, setStars] = useState(0);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadStars = async () => {
+      try {
+        const result = await getCurrentUserStars();
+        if (mounted) {
+          setStars(result.balance);
+        }
+      } catch (error) {
+        console.warn("Failed to load stars", error);
+      }
+    };
+
+    void loadStars();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density);
-  
+
   if (loading) {
     return (
       <ScreenContainer backgroundColor="#F1F6F5">
@@ -42,17 +82,24 @@ export default function HomeScreen() {
               iconName="settings"
               onPress={() => router.push("/(tabs)/settings" as any)}
             />
-            <HeaderAvatarButton avatar="🐨" onPress={() => router.push("/(tabs)/account")} />
+            <HeaderAvatarButton
+              avatar={headerProfileIcon.emoji}
+              onPress={() => router.push("/(tabs)/account")}
+            />
           </>
         }
       />
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-
-      <View style={styles.greetingWrap}>
-        <Text style={styles.greetingLine}>Welcome Back</Text>
-        <Text style={styles.greetingName}>{profile?.username ?? "User"}! 👋</Text>
-      </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.greetingWrap}>
+          <Text style={styles.greetingLine}>Welcome Back</Text>
+          <Text style={styles.greetingName}>
+            {profile?.username ?? "User"}! 👋
+          </Text>
+        </View>
 
         <View style={styles.statsRow}>
           <View style={[styles.statCard, styles.statCardStreak]}>
@@ -60,11 +107,13 @@ export default function HomeScreen() {
             <Text style={styles.statValue}>{streakCount}</Text>
             <Text style={styles.statLabel}>Streak</Text>
           </View>
+
           <View style={[styles.statCard, styles.statCardStars]}>
             <Text style={styles.statIcon}>⭐</Text>
-            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statValue}>{stars}</Text>
             <Text style={styles.statLabel}>Stars</Text>
           </View>
+
           <View style={[styles.statCard, styles.statCardLessons]}>
             <Text style={styles.statIcon}>📖</Text>
             <Text style={styles.statValue}>0</Text>
@@ -73,21 +122,28 @@ export default function HomeScreen() {
         </View>
 
         <SectionCard style={styles.learningCard}>
-            <View style={styles.learningTopRow}>
-              <View style={styles.learningIconWrap}>
-                <Text style={styles.learningIcon}>👋</Text>
-              </View>
-              <View style={styles.learningTextWrap}>
-                <Text style={styles.learningTitle}>Continue Learning</Text>
-                <Text style={styles.learningSubtitle}>Greetings • 0% complete</Text>
-              </View>
+          <View style={styles.learningTopRow}>
+            <View style={styles.learningIconWrap}>
+              <Text style={styles.learningIcon}>👋</Text>
             </View>
-            <View style={styles.progressTrack}>
-              <View style={styles.progressFill} />
+            <View style={styles.learningTextWrap}>
+              <Text style={styles.learningTitle}>Continue Learning</Text>
+              <Text style={styles.learningSubtitle}>
+                Greetings • 0% complete
+              </Text>
             </View>
-            <Pressable style={styles.continueBtn} onPress={() => router.push("/(tabs)/learn")}>
-              <Text style={styles.continueBtnText}>▶ Continue to Learn</Text>
-            </Pressable>
+          </View>
+
+          <View style={styles.progressTrack}>
+            <View style={styles.progressFill} />
+          </View>
+
+          <Pressable
+            style={styles.continueBtn}
+            onPress={() => router.push("/(tabs)/learn")}
+          >
+            <Text style={styles.continueBtnText}>▶ Continue to Learn</Text>
+          </Pressable>
         </SectionCard>
 
         <View style={styles.tipsSection}>
