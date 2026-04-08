@@ -9,7 +9,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "inference:start": "powershell -ExecutionPolicy Bypass -File .\\ml\\scripts\\start_inference_api.ps1",
+    "inference:stop": "powershell -ExecutionPolicy Bypass -File .\\ml\\scripts\\stop_inference_api.ps1"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

@@ -41,6 +41,14 @@ yarn-error.*
 .venv
 venv
 
+# Python caches and tooling
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
 # typescript
 *.tsbuildinfo
 
@@ -59,3 +67,18 @@ serviceAccountKey.json
 
 .env.local
 .env
+
+# ML datasets and generated artifacts
+data/raw/
+# Most ML outputs are generated and should not be committed by default.
+data/processed/
+data/processed/landmarks/
+data/processed/models/
+*.pt
+*.pth
+*.onnx
+*.tflite
+*.h5
+*.ckpt
+*.pkl
+*.npz
