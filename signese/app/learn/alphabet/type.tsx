@@ -25,6 +25,7 @@ import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { getProfileIconById } from "@/src/features/account/types";
 import { ALPHABET_LEARN_ITEMS } from "@/src/features/learn/data/alphabet";
+import { setLessonStepProgress } from "@/src/features/learn/utils/lessonProgress";
 
 function shuffleArray<T>(items: T[]): T[] {
   const copy = [...items];
@@ -56,6 +57,11 @@ export default function AlphabetTypeScreen() {
   const [answered, setAnswered] = useState(false);
 
   const currentItem = questions[currentIndex];
+  React.useEffect(() => {
+    // Entering screen 2 implies only screen 1 is completed.
+    void setLessonStepProgress("alphabet", 1);
+  }, []);
+
   const total = questions.length;
   const progress = ((currentIndex + 1) / total) * 100;
 
@@ -69,6 +75,8 @@ export default function AlphabetTypeScreen() {
       return;
     }
 
+    // Only mark screen 2 complete after the final prompt.
+    void setLessonStepProgress("alphabet", 2);
     router.push("/learn/alphabet/quiz");
   };
 
@@ -97,7 +105,7 @@ export default function AlphabetTypeScreen() {
   return (
     <ScreenContainer backgroundColor="#EEF3F1">
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
+        <Pressable style={styles.backButton} onPress={() => router.replace("/(tabs)/learn")}>
           <MaterialIcons name="chevron-left" size={32} color="#FFFFFF" />
         </Pressable>
 

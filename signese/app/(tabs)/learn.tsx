@@ -25,6 +25,9 @@ import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import {
   getUnlockedLessons,
   getCompletedLessons,
+  getLessonProgressPercent,
+  getLessonStepProgress,
+  setLessonStepProgress,
   LESSON_STAR_REQUIREMENTS,
   unlockLessonWithStars,
   type LessonId,
@@ -56,14 +59,17 @@ export default function LearnScreen() {
 
   const [unlockedLessons, setUnlockedLessons] = useState<LessonId[]>([]);
   const [completedLessons, setCompletedLessons] = useState<LessonId[]>([]);
+  const [lessonProgressPct, setLessonProgressPct] = useState<Partial<Record<LessonId, number>>>({});
   const [unlockingLessonId, setUnlockingLessonId] = useState<LessonId | null>(null);
 
   const loadProgress = async () => {
     try {
       const unlocked = await getUnlockedLessons();
       const completed = await getCompletedLessons();
+      const alphabetPct = await getLessonProgressPercent("alphabet");
       setUnlockedLessons(unlocked);
       setCompletedLessons(completed);
+      setLessonProgressPct({ alphabet: alphabetPct });
     } catch (error) {
       console.warn("Failed to load lesson progress", error);
     }
@@ -140,7 +146,46 @@ export default function LearnScreen() {
       return;
     }
 
-    router.push(lesson.route as any);
+    void (async () => {
+      if (lesson.id === "alphabet") {
+        const isCompleted = completedLessons.includes("alphabet");
+        if (isCompleted) {
+          Alert.alert(
+            "Lesson already completed",
+            "You already completed Alphabet. Do you want to retry it?",
+            [
+              { text: "Cancel", style: "cancel" },
+              {
+                text: "Retry",
+                onPress: () => {
+                  void (async () => {
+                    await setLessonStepProgress("alphabet", 0);
+                    await loadProgress();
+                    router.push("/learn/alphabet");
+                  })();
+                },
+              },
+            ]
+          );
+          return;
+        }
+
+        const step = await getLessonStepProgress("alphabet");
+        if (step >= 3) {
+          router.push("/learn/alphabet/complete");
+          return;
+        }
+        if (step === 2) {
+          router.push("/learn/alphabet/quiz");
+          return;
+        }
+        if (step === 1) {
+          router.push("/learn/alphabet/type");
+          return;
+        }
+      }
+      router.push(lesson.route as any);
+    })();
   };
 
   return (
@@ -210,6 +255,7 @@ export default function LearnScreen() {
                 currentLessonIndex !== -1 && nodeIndex === currentLessonIndex;
               const isLocked = !isUnlocked;
               const starsRequired = LESSON_STAR_REQUIREMENTS[lesson.id as LessonId];
+              const progressPct = lessonProgressPct[lesson.id as LessonId] ?? 0;
 
               return (
                 <Pressable
@@ -236,6 +282,8 @@ export default function LearnScreen() {
                         ? "#65D8C5"
                         : isCompleted
                           ? "#BEEDEA"
+                          : progressPct > 0
+                            ? "#56BDB4"
                           : "#D7DEE8",
                     },
                   ]}
@@ -309,6 +357,21 @@ export default function LearnScreen() {
                         ⭐ {starsRequired}
                       </Text>
                     ) : null}
+
+                    {!isLocked && progressPct > 0 && progressPct < 100 ? (
+                      <Text
+                        style={[
+                          styles.progressPctText,
+                          {
+                            marginTop: vscale(3),
+                            fontSize: tscale(9),
+                            lineHeight: tscale(11),
+                          },
+                        ]}
+                      >
+                        {progressPct}%
+                      </Text>
+                    ) : null}
                   </View>
                 </Pressable>
               );
@@ -373,6 +436,11 @@ const createStyles = (density: number, textScale: number) => {
     },
     starsNeededText: {
       color: "#64748B",
+      fontWeight: "700",
+      textAlign: "center",
+    },
+    progressPctText: {
+      color: "#0F766E",
       fontWeight: "700",
       textAlign: "center",
     },

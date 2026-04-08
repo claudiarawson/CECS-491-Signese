@@ -71,7 +71,7 @@ export default function AlphabetCompleteScreen() {
   return (
     <ScreenContainer backgroundColor="#DCE8F3">
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
+        <Pressable style={styles.backButton} onPress={() => router.replace("/(tabs)/learn")}>
           <MaterialIcons name="chevron-left" size={32} color="#FFFFFF" />
         </Pressable>
 

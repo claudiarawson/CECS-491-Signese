@@ -24,6 +24,7 @@ import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { getProfileIconById } from "@/src/features/account/types";
 import { ALPHABET_LEARN_ITEMS } from "@/src/features/learn/data/alphabet";
+import { setLessonStepProgress } from "@/src/features/learn/utils/lessonProgress";
 
 export default function AlphabetLearnScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -35,6 +36,11 @@ export default function AlphabetLearnScreen() {
   const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
 
   const currentItem = ALPHABET_LEARN_ITEMS[currentIndex];
+  React.useEffect(() => {
+    // Entering the first screen means 0/3 screens completed so far.
+    void setLessonStepProgress("alphabet", 0);
+  }, []);
+
   const total = ALPHABET_LEARN_ITEMS.length;
   const progress = ((currentIndex + 1) / total) * 100;
 
@@ -44,13 +50,15 @@ export default function AlphabetLearnScreen() {
       return;
     }
 
-   router.push("/learn/alphabet/type");
+    // Only mark screen 1 complete after the final card.
+    void setLessonStepProgress("alphabet", 1);
+    router.push("/learn/alphabet/type");
   };
 
   return (
     <ScreenContainer backgroundColor="#EEF3F1">
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
+        <Pressable style={styles.backButton} onPress={() => router.replace("/(tabs)/learn")}>
           <MaterialIcons name="chevron-left" size={32} color="#FFFFFF" />
         </Pressable>
 

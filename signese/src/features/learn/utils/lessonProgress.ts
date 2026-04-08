@@ -46,12 +46,14 @@ type Persisted = {
   totalStars: number;
   unlockedLessons: LessonId[];
   completedLessons: LessonId[];
+  lessonStepProgress?: Partial<Record<LessonId, number>>;
 };
 
 const DEFAULT_PERSISTED: Persisted = {
   totalStars: 0,
   unlockedLessons: [...DEFAULT_UNLOCKED],
   completedLessons: [...DEFAULT_COMPLETED],
+  lessonStepProgress: {},
 };
 
 async function loadPersisted(): Promise<Persisted> {
@@ -66,6 +68,10 @@ async function loadPersisted(): Promise<Persisted> {
     totalStars: typeof raw.totalStars === "number" ? raw.totalStars : 0,
     unlockedLessons: unlocked,
     completedLessons: Array.isArray(raw.completedLessons) ? raw.completedLessons : [...DEFAULT_COMPLETED],
+    lessonStepProgress:
+      typeof raw.lessonStepProgress === "object" && raw.lessonStepProgress != null
+        ? raw.lessonStepProgress
+        : {},
   };
 }
 
@@ -122,7 +128,54 @@ export async function resetLessonProgress(): Promise<void> {
     totalStars: 0,
     unlockedLessons: [...DEFAULT_UNLOCKED],
     completedLessons: [...DEFAULT_COMPLETED],
+    lessonStepProgress: {},
   });
+}
+
+const LESSON_STEP_TOTAL: Partial<Record<LessonId, number>> = {
+  alphabet: 3,
+};
+
+/**
+ * Record local screen-step progress for a lesson.
+ * For alphabet: 1=learn, 2=type, 3=quiz/complete
+ */
+export async function setLessonStepProgress(lessonId: LessonId, completedSteps: number) {
+  const p = await loadPersisted();
+  const total = LESSON_STEP_TOTAL[lessonId];
+  if (!total) return;
+
+  const safeSteps = Math.max(0, Math.min(total, Math.floor(completedSteps)));
+  const prev = p.lessonStepProgress?.[lessonId] ?? 0;
+  const next = Math.max(prev, safeSteps);
+
+  p.lessonStepProgress = {
+    ...(p.lessonStepProgress ?? {}),
+    [lessonId]: next,
+  };
+  await savePersisted(p);
+}
+
+export async function getLessonProgressPercent(lessonId: LessonId): Promise<number> {
+  const total = LESSON_STEP_TOTAL[lessonId];
+  if (!total) return 0;
+
+  // Completed lesson always shows 100%
+  if (await isLessonCompleted(lessonId)) return 100;
+
+  const p = await loadPersisted();
+  const steps = p.lessonStepProgress?.[lessonId] ?? 0;
+  const percent = (Math.max(0, Math.min(total, steps)) / total) * 100;
+  return Math.round(percent);
+}
+
+export async function getLessonStepProgress(lessonId: LessonId): Promise<number> {
+  const total = LESSON_STEP_TOTAL[lessonId];
+  if (!total) return 0;
+
+  const p = await loadPersisted();
+  const steps = p.lessonStepProgress?.[lessonId] ?? 0;
+  return Math.max(0, Math.min(total, steps));
 }
 
 export async function isLessonUnlocked(lessonId: LessonId) {
