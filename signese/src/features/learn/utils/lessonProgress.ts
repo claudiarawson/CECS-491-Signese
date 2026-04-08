@@ -1,4 +1,10 @@
 import { readLocalJson, writeLocalJson } from "@/src/storage/localJsonFile";
+import { auth } from "@/src/services/firebase/firebase.config";
+import {
+  addStarsToCurrentUser,
+  ensureStarsDocument,
+  getCurrentUserStars,
+} from "@/src/features/gamification/stars.services";
 
 const FILE_NAME = "lesson_progress.json";
 const WEB_KEY = "signese_lesson_progress_v1";
@@ -67,6 +73,16 @@ async function savePersisted(data: Persisted): Promise<void> {
 }
 
 export async function getTotalStars() {
+  if (auth.currentUser) {
+    try {
+      await ensureStarsDocument();
+      const stars = await getCurrentUserStars();
+      return stars.balance;
+    } catch (error) {
+      console.warn("Failed to load backend stars, falling back to local stars", error);
+    }
+  }
+
   const p = await loadPersisted();
   return p.totalStars;
 }
@@ -155,8 +171,16 @@ export async function completeLessonOnce(lessonId: LessonId, starsEarned: number
   let unlockedNextLessonId: LessonId | null = null;
 
   if (!alreadyCompleted) {
-    totalStars += starsEarned;
-    await setTotalStars(totalStars);
+    if (auth.currentUser) {
+      await ensureStarsDocument();
+      const updated = await addStarsToCurrentUser(starsEarned);
+      totalStars = updated.balance;
+      // Keep local value in sync for any offline/fallback code paths.
+      await setTotalStars(totalStars);
+    } else {
+      totalStars += starsEarned;
+      await setTotalStars(totalStars);
+    }
 
     const updatedCompleted = [...completed, lessonId];
     await setCompletedLessons(updatedCompleted);
