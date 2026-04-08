@@ -1,70 +1,58 @@
 import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { semanticColors } from "@/src/theme";
-import { navigationTheme } from "@/src/theme/navigation";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
-
-type HeaderActionButtonProps = {
-  iconName: React.ComponentProps<typeof MaterialIcons>["name"];
-  onPress: () => void;
-  density?: number;
-};
+import { getProfileIconById } from "@/src/features/account/types";
 
 export function HeaderActionButton({
   iconName,
   onPress,
-  density = 1,
-}: HeaderActionButtonProps) {
-  const size = 30 * density;
+}: {
+  iconName: React.ComponentProps<typeof MaterialIcons>["name"];
+  onPress?: () => void;
+}) {
   return (
-    <Pressable style={[styles.actionBtn, { width: size, height: size, borderRadius: size / 2 }]} onPress={onPress}>
-      <MaterialIcons
-        name={iconName}
-        size={24 * density}
-        color={semanticColors.text.primary}
-      />
+    <Pressable onPress={onPress} style={styles.actionBtn}>
+      <MaterialIcons name={iconName} size={20} color="#4B5563" />
     </Pressable>
   );
 }
 
-type HeaderAvatarButtonProps = {
-  avatar?: string;
-  onPress: () => void;
-  density?: number;
-};
-
 export function HeaderAvatarButton({
-  avatar = "🐨",
+  avatar,
   onPress,
-  density = 1,
-}: HeaderAvatarButtonProps) {
-  const { profile } = useAuthUser();
-  const size = 36 * density;
-  const avatarValue = profile?.avatar ?? avatar;
+}: {
+  avatar?: string;
+  onPress?: () => void;
+}) {
+  const resolvedAvatar = getProfileIconById(avatar).emoji;
+
   return (
-    <Pressable style={[styles.avatarBtn, { width: size, height: size, borderRadius: size / 2 }]} onPress={onPress}>
-      <Text style={[styles.avatarText, { fontSize: 20 * density }]}>{avatarValue}</Text>
+    <Pressable onPress={onPress} style={styles.avatarButton}>
+      <Text style={styles.avatarEmoji}>{resolvedAvatar}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   actionBtn: {
-    backgroundColor: "#F2F7F8",
-    borderWidth: 1,
-    borderColor: navigationTheme.border,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#F3F4F6",
     alignItems: "center",
     justifyContent: "center",
+    marginLeft: 8,
   },
-  avatarBtn: {
-    backgroundColor: "#EDE7F7",
-    borderWidth: 1,
-    borderColor: "#E2D8F2",
+  avatarButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#E6DDF0",
     alignItems: "center",
     justifyContent: "center",
+    marginLeft: 8,
   },
-  avatarText: {
-    lineHeight: 18,
+  avatarEmoji: {
+    fontSize: 18,
   },
 });

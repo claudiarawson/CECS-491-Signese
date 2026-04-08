@@ -17,29 +17,44 @@ import {
   HeaderActionButton,
   HeaderAvatarButton,
 } from "@/src/components/layout";
+import {
+  getDeviceDensity,
+  moderateScale,
+} from "@/src/theme";
+import { addStarsToCurrentUser } from "@/src/features/gamification/stars.services";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import { getProfileIconById } from "@/src/features/account/types";
+import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 
 const BASE_WIDTH = 320;
 const BASE_HEIGHT = 568;
 const CURRENT_LESSON_ID = 3;
 
 const LESSON_NODES = [
-  { id: 1, title: "Greetings", emoji: "👋", x: 120, y: 80 },
+  { id: 1, title: "Alphabet", emoji: "🔤", x: 120, y: 80 },
   { id: 2, title: "Numbers", emoji: "🔢", x: 60, y: 190 },
-  { id: 3, title: "Family", emoji: "👨‍👩‍👧", x: 150, y: 300 },
-  { id: 4, title: "Colors", emoji: "🎨", x: 80, y: 410 },
-  { id: 5, title: "Telling Time", emoji: "⏰", x: 145, y: 520 },
-  { id: 6, title: "Food & Drink", emoji: "🍔", x: 70, y: 640 },
-  { id: 7, title: "Daily Phrases", emoji: "🗣️", x: 145, y: 760 },
+  { id: 3, title: "Greetings", emoji: "👋", x: 150, y: 300 },
+  { id: 4, title: "Family", emoji: "👨‍👩‍👧", x: 80, y: 410 },
+  { id: 5, title: "Colors", emoji: "🎨", x: 145, y: 520 },
+  { id: 6, title: "Telling Time", emoji: "⏰", x: 70, y: 640 },
+  { id: 7, title: "Food & Drink", emoji: "🍔", x: 145, y: 760 },
 ];
 
 export default function LearnScreen() {
+  const { profile } = useAuthUser();
+  const { textScale } = useAccessibility();
+  const headerProfileIcon = getProfileIconById(profile?.avatar);
   const { width, height } = useWindowDimensions();
+
+  const density = getDeviceDensity(width, height);
+  const styles = createStyles(density, textScale);
 
   const frameWidth = Math.min(width, 480);
   const frameHeight = Math.max(height, BASE_HEIGHT);
 
   const scale = (size: number) => (frameWidth / BASE_WIDTH) * size;
   const vscale = (size: number) => (frameHeight / BASE_HEIGHT) * size;
+  const tscale = (size: number) => scale(size) * textScale;
 
   const canvasHeight = vscale(980);
   const navSafePad = Math.max(vscale(92), 100);
@@ -67,6 +82,21 @@ export default function LearnScreen() {
     } as any);
   };
 
+  const handleCompleteLesson = async (lessonTitle: string) => {
+    try {
+      const reward = 5;
+      const updated = await addStarsToCurrentUser(reward);
+
+      Alert.alert(
+        "Lesson Complete",
+        `${lessonTitle} completed! You earned ${reward} stars.\n\nCurrent stars: ${updated.balance}`
+      );
+    } catch (error) {
+      console.warn("Failed to award stars", error);
+      Alert.alert("Error", "Could not award stars.");
+    }
+  };
+
   return (
     <ScreenContainer backgroundColor="#F4F4F6">
       <ScreenHeader
@@ -78,7 +108,7 @@ export default function LearnScreen() {
               onPress={() => router.push("/(tabs)/settings" as any)}
             />
             <HeaderAvatarButton
-              avatar="🐨"
+              avatar={headerProfileIcon.emoji}
               onPress={() => router.push("/(tabs)/account" as any)}
             />
           </>
@@ -98,11 +128,16 @@ export default function LearnScreen() {
 
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: navSafePad }]}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: navSafePad },
+          ]}
           showsVerticalScrollIndicator={false}
           bounces
         >
-          <View style={[styles.mapFrame, { width: frameWidth, height: canvasHeight }]}>
+          <View
+            style={[styles.mapFrame, { width: frameWidth, height: canvasHeight }]}
+          >
             <Svg height={canvasHeight} width={frameWidth} style={styles.road}>
               <Path
                 d={snakePath}
@@ -144,8 +179,8 @@ export default function LearnScreen() {
                       borderColor: isCurrent
                         ? "#65D8C5"
                         : isCompleted
-                        ? "#BEEDEA"
-                        : "#D7DEE8",
+                          ? "#BEEDEA"
+                          : "#D7DEE8",
                     },
                   ]}
                 >
@@ -159,7 +194,7 @@ export default function LearnScreen() {
                       },
                     ]}
                   >
-                    <View style={styles.badgeRow}>
+                    <View style={[styles.badgeRow, { top: scale(8), right: scale(8) }]}>
                       {isCompleted ? (
                         <MaterialIcons
                           name="check-circle"
@@ -167,6 +202,7 @@ export default function LearnScreen() {
                           color="#22C55E"
                         />
                       ) : null}
+
                       {isLocked ? (
                         <MaterialIcons
                           name="lock"
@@ -180,7 +216,8 @@ export default function LearnScreen() {
                       style={[
                         styles.emoji,
                         {
-                          fontSize: scale(16),
+                          fontSize: tscale(16),
+                          lineHeight: tscale(18),
                           opacity: isLocked ? 0.55 : 1,
                         },
                       ]}
@@ -193,7 +230,8 @@ export default function LearnScreen() {
                         styles.label,
                         {
                           marginTop: vscale(4),
-                          fontSize: scale(11),
+                          fontSize: tscale(11),
+                          lineHeight: tscale(13),
                           color: isLocked ? "#64748B" : "#334155",
                         },
                       ]}
@@ -205,57 +243,87 @@ export default function LearnScreen() {
               );
             })}
           </View>
+
+          <Pressable
+            style={styles.testButton}
+            onPress={() => void handleCompleteLesson("Greetings")}
+          >
+            <Text style={styles.testButtonText}>
+              Complete Test Lesson (+5 stars)
+            </Text>
+          </Pressable>
         </ScrollView>
       </View>
     </ScreenContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    alignItems: "center",
-  },
-  mapFrame: {
-    position: "relative",
-  },
-  road: {
-    position: "absolute",
-  },
-  lesson: {
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#83C5BE",
-    shadowOpacity: 0.32,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 6,
-  },
-  lessonInner: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-  },
-  badgeRow: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    zIndex: 2,
-  },
-  emoji: {
-    color: "#334155",
-  },
-  label: {
-    fontWeight: "700",
-    textAlign: "center",
-    paddingHorizontal: 4,
-  },
-});
+const createStyles = (density: number, textScale: number) => {
+  const ms = (value: number) => moderateScale(value) * density;
+  const ts = (value: number) => ms(value) * textScale;
+
+  return StyleSheet.create({
+    content: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      alignItems: "center",
+    },
+    mapFrame: {
+      position: "relative",
+    },
+    road: {
+      position: "absolute",
+    },
+    lesson: {
+      position: "absolute",
+      justifyContent: "center",
+      alignItems: "center",
+      shadowColor: "#83C5BE",
+      shadowOpacity: 0.32,
+      shadowRadius: ms(10),
+      shadowOffset: { width: 0, height: ms(5) },
+      elevation: 6,
+    },
+    lessonInner: {
+      width: "100%",
+      height: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+      position: "relative",
+    },
+    badgeRow: {
+      position: "absolute",
+      zIndex: 2,
+    },
+    emoji: {
+      color: "#334155",
+      textAlign: "center",
+    },
+    label: {
+      fontWeight: "700",
+      textAlign: "center",
+      paddingHorizontal: ms(4),
+    },
+    testButton: {
+      marginTop: ms(20),
+      marginHorizontal: ms(20),
+      marginBottom: ms(20),
+      backgroundColor: "#43B3A8",
+      paddingVertical: ms(14),
+      paddingHorizontal: ms(20),
+      borderRadius: ms(12),
+      alignItems: "center",
+    },
+    testButtonText: {
+      color: "#FFFFFF",
+      fontSize: ts(16),
+      lineHeight: ts(20),
+      fontWeight: "600",
+      textAlign: "center",
+    },
+  });
+};
