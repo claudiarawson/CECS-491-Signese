@@ -4,10 +4,8 @@ import {
   Text,
   StyleSheet,
   Pressable,
-  Image,
   useWindowDimensions,
   ScrollView,
-  TextInput,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
@@ -19,7 +17,6 @@ import {
 import {
   getDeviceDensity,
   moderateScale,
-  semanticColors,
 } from "@/src/theme";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
@@ -37,7 +34,16 @@ function shuffleArray<T>(items: T[]): T[] {
   return copy;
 }
 
-export default function AlphabetTypeScreen() {
+function buildChoices(correctAnswer: string) {
+  const allLetters = ALPHABET_LEARN_ITEMS.map((item) => item.letter.toUpperCase());
+  const wrongChoices = shuffleArray(
+    allLetters.filter((letter) => letter !== correctAnswer)
+  ).slice(0, 3);
+
+  return shuffleArray([correctAnswer, ...wrongChoices]);
+}
+
+export default function AlphabetQuizScreen() {
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const { textScale } = useAccessibility();
@@ -50,7 +56,7 @@ export default function AlphabetTypeScreen() {
   }, []);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [inputValue, setInputValue] = useState("");
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -59,40 +65,44 @@ export default function AlphabetTypeScreen() {
   const total = questions.length;
   const progress = ((currentIndex + 1) / total) * 100;
 
+  // placeholder correct answer for now
+  const correctAnswer = "A";
+
+  const choices = useMemo(() => {
+    return buildChoices(correctAnswer);
+  }, [currentIndex]);
+
   const goToNext = () => {
     if (currentIndex < total - 1) {
       setCurrentIndex((prev) => prev + 1);
-      setInputValue("");
+      setSelectedAnswer(null);
       setFeedback("");
       setIsCorrect(null);
       setAnswered(false);
       return;
     }
 
-    router.push("/learn/alphabet/quiz");
+    router.push("/learn/alphabet/complete");
   };
 
   const handleCheckAnswer = () => {
-  const userAnswer = inputValue.trim().toUpperCase();
-  const correctAnswer = "A"; // ✅ placeholder for now
+    if (!selectedAnswer) {
+      setFeedback("Please choose an answer first.");
+      setIsCorrect(false);
+      setAnswered(false);
+      return;
+    }
 
-  if (!userAnswer) {
-    setFeedback("Please type your answer first.");
-    setIsCorrect(false);
-    setAnswered(false);
-    return;
-  }
-
-  if (userAnswer === correctAnswer) {
-    setFeedback("Correct!");
-    setIsCorrect(true);
-    setAnswered(true);
-  } else {
-    setFeedback("Incorrect. Try again.");
-    setIsCorrect(false);
-    setAnswered(false);
-  }
-};
+    if (selectedAnswer === correctAnswer) {
+      setFeedback("Correct!");
+      setIsCorrect(true);
+      setAnswered(true);
+    } else {
+      setFeedback("Incorrect. Try again.");
+      setIsCorrect(false);
+      setAnswered(false);
+    }
+  };
 
   return (
     <ScreenContainer backgroundColor="#EEF3F1">
@@ -101,7 +111,7 @@ export default function AlphabetTypeScreen() {
           <MaterialIcons name="chevron-left" size={32} color="#FFFFFF" />
         </Pressable>
 
-        <Text style={styles.headerTitle}>Alphabet</Text>
+        <Text style={styles.headerTitle}>Alphabet Quiz</Text>
 
         <View style={styles.headerRight}>
           <HeaderActionButton
@@ -120,7 +130,7 @@ export default function AlphabetTypeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.progressTopRow}>
-          <Text style={styles.progressLabel}>Type</Text>
+          <Text style={styles.progressLabel}>Multiple Choice</Text>
           <Text style={styles.progressCount}>
             {currentIndex + 1}/{total}
           </Text>
@@ -131,36 +141,41 @@ export default function AlphabetTypeScreen() {
         </View>
 
         <View style={styles.card}>
-          <Image
-            source={currentItem.image}
-            style={styles.lessonImage}
-            resizeMode="contain"
-          />
-          <Text style={styles.subtitle}>What letter is this?</Text>
+          <Text style={styles.promptText}>Which letter is this?</Text>
+          <Text style={styles.bigLetter}>A</Text>
         </View>
 
-        <TextInput
-          value={inputValue}
-          onChangeText={(text) => {
-            setInputValue(text.replace(/[^a-zA-Z]/g, "").toUpperCase());
-            setFeedback("");
-            setIsCorrect(null);
-          }}
-          placeholder="Type your answer"
-          placeholderTextColor="#7B8794"
-          autoCapitalize="characters"
-          autoCorrect={false}
-          maxLength={1}
-          style={styles.answerInput}
-        />
+        <View style={styles.choicesContainer}>
+          {choices.map((choice) => {
+            const isSelected = selectedAnswer === choice;
+
+            return (
+              <Pressable
+                key={choice}
+                style={[
+                  styles.choiceButton,
+                  isSelected && styles.choiceButtonSelected,
+                ]}
+                onPress={() => setSelectedAnswer(choice)}
+              >
+                <Text
+                  style={[
+                    styles.choiceText,
+                    isSelected && styles.choiceTextSelected,
+                  ]}
+                >
+                  {choice}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
 
         {!!feedback && (
           <Text
             style={[
               styles.feedbackText,
-              isCorrect === true
-                ? styles.correctText
-                : styles.incorrectText,
+              isCorrect === true ? styles.correctText : styles.incorrectText,
             ]}
           >
             {feedback}
@@ -257,34 +272,49 @@ const createStyles = (density: number, textScale: number) => {
       backgroundColor: "#FAFAFA",
       borderRadius: ms(34),
       paddingHorizontal: ms(20),
-      paddingVertical: ms(22),
+      paddingVertical: ms(30),
       alignItems: "center",
     },
-    lessonImage: {
-      width: "100%",
-      maxWidth: ms(340),
-      height: ms(300),
-      marginBottom: ms(18),
-      backgroundColor: "#F7F7F7",
-    },
-    subtitle: {
-      fontSize: ts(18),
-      lineHeight: ts(24),
+    promptText: {
+      fontSize: ts(20),
+      lineHeight: ts(26),
       color: "#64748B",
       textAlign: "center",
+      marginBottom: ms(20),
     },
-    answerInput: {
-      marginTop: ms(26),
-      marginHorizontal: ms(56),
-      minHeight: ms(56),
-      borderRadius: ms(28),
-      borderWidth: ms(6),
+    bigLetter: {
+      fontSize: ts(72),
+      lineHeight: ts(82),
+      fontWeight: "800",
+      color: "#111111",
+    },
+    choicesContainer: {
+      marginTop: ms(24),
+      marginHorizontal: ms(28),
+      gap: ms(14),
+    },
+    choiceButton: {
+      minHeight: ms(64),
+      borderRadius: ms(24),
+      backgroundColor: "#FFFFFF",
+      borderWidth: ms(3),
       borderColor: "#DCE7E7",
-      backgroundColor: "#F7FAFA",
-      paddingHorizontal: ms(22),
-      fontSize: ts(18),
-      lineHeight: ts(24),
-      color: semanticColors.text.primary,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: ms(16),
+    },
+    choiceButtonSelected: {
+      borderColor: "#56BDB4",
+      backgroundColor: "#E8F8F6",
+    },
+    choiceText: {
+      fontSize: ts(22),
+      lineHeight: ts(28),
+      fontWeight: "700",
+      color: "#111111",
+    },
+    choiceTextSelected: {
+      color: "#0F766E",
     },
     feedbackText: {
       marginTop: ms(16),

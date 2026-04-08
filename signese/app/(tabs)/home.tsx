@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@/src/theme";
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -25,10 +25,15 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { getProfileIconById } from "@/src/features/account/types";
-import { getCurrentUserStars } from "@/src/features/gamification/stars.services";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
+import {
+  getCompletedLessons,
+  getTotalStars,
+} from "@/src/features/learn/utils/lessonProgress";
 
 export default function HomeScreen() {
   const { textScale } = useAccessibility();
@@ -37,31 +42,48 @@ export default function HomeScreen() {
   const streakCount = profile?.streak?.current ?? 0;
 
   const [stars, setStars] = useState(0);
+  const [completedLessonsCount, setCompletedLessonsCount] = useState(0);
+
+  const loadProgress = async () => {
+    try {
+      const [totalStars, completedLessons] = await Promise.all([
+        getTotalStars(),
+        getCompletedLessons(),
+      ]);
+
+      setStars(totalStars);
+      setCompletedLessonsCount(completedLessons.length);
+    } catch (error) {
+      console.warn("Failed to load home progress", error);
+    }
+  };
+
+  const handleResetProgress = async () => {
+    try {
+      await AsyncStorage.removeItem("totalStars");
+      await AsyncStorage.removeItem("unlockedLessons");
+      await AsyncStorage.removeItem("completedLessons");
+
+      setStars(0);
+      setCompletedLessonsCount(0);
+    } catch (error) {
+      console.warn("Failed to reset progress", error);
+    }
+  };
 
   useEffect(() => {
-    let mounted = true;
-
-    const loadStars = async () => {
-      try {
-        const result = await getCurrentUserStars();
-        if (mounted) {
-          setStars(result.balance);
-        }
-      } catch (error) {
-        console.warn("Failed to load stars", error);
-      }
-    };
-
-    void loadStars();
-
-    return () => {
-      mounted = false;
-    };
+    void loadProgress();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      void loadProgress();
+    }, [])
+  );
 
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const styles = createStyles(density, textScale);
+  const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
 
   if (loading) {
     return (
@@ -118,20 +140,24 @@ export default function HomeScreen() {
 
           <View style={[styles.statCard, styles.statCardLessons]}>
             <Text style={styles.statIcon}>📖</Text>
-            <Text style={styles.statValue}>0</Text>
+            <Text style={styles.statValue}>{completedLessonsCount}</Text>
             <Text style={styles.statLabel}>Lessons</Text>
           </View>
         </View>
 
+        <Pressable style={styles.resetButton} onPress={handleResetProgress}>
+          <Text style={styles.resetButtonText}>Reset Progress</Text>
+        </Pressable>
+
         <SectionCard style={styles.learningCard}>
           <View style={styles.learningTopRow}>
             <View style={styles.learningIconWrap}>
-              <Text style={styles.learningIcon}>👋</Text>
+              <Text style={styles.learningIcon}>🔤</Text>
             </View>
             <View style={styles.learningTextWrap}>
               <Text style={styles.learningTitle}>Continue Learning</Text>
               <Text style={styles.learningSubtitle}>
-                Greetings • 0% complete
+                Alphabet • Continue your lesson path
               </Text>
             </View>
           </View>
@@ -223,6 +249,20 @@ const createStyles = (density: number, textScale: number) => {
       fontSize: ts(12),
       color: semanticColors.text.secondary,
       lineHeight: ts(14),
+    },
+    resetButton: {
+      alignSelf: "flex-start",
+      marginBottom: Spacing.cardGap,
+      backgroundColor: "#EF4444",
+      paddingHorizontal: ms(14),
+      paddingVertical: ms(10),
+      borderRadius: ms(12),
+    },
+    resetButtonText: {
+      color: "#FFFFFF",
+      fontSize: ts(14),
+      lineHeight: ts(18),
+      fontWeight: "700",
     },
     learningCard: {
       backgroundColor: "#EDEDED",

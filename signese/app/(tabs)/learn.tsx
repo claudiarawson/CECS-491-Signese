@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -11,34 +11,38 @@ import {
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   ScreenContainer,
   ScreenHeader,
   HeaderActionButton,
   HeaderAvatarButton,
 } from "@/src/components/layout";
-import {
-  getDeviceDensity,
-  moderateScale,
-} from "@/src/theme";
-import { addStarsToCurrentUser } from "@/src/features/gamification/stars.services";
+import { getDeviceDensity, moderateScale } from "@/src/theme";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { getProfileIconById } from "@/src/features/account/types";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
+import {
+  getUnlockedLessons,
+  getCompletedLessons,
+  LESSON_STAR_REQUIREMENTS,
+  type LessonId,
+} from "@/src/features/learn/utils/lessonProgress";
 
 const BASE_WIDTH = 320;
 const BASE_HEIGHT = 568;
-const CURRENT_LESSON_ID = 3;
 
 const LESSON_NODES = [
-  { id: 1, title: "Alphabet", emoji: "🔤", x: 120, y: 80 },
-  { id: 2, title: "Numbers", emoji: "🔢", x: 60, y: 190 },
-  { id: 3, title: "Greetings", emoji: "👋", x: 150, y: 300 },
-  { id: 4, title: "Family", emoji: "👨‍👩‍👧", x: 80, y: 410 },
-  { id: 5, title: "Colors", emoji: "🎨", x: 145, y: 520 },
-  { id: 6, title: "Telling Time", emoji: "⏰", x: 70, y: 640 },
-  { id: 7, title: "Food & Drink", emoji: "🍔", x: 145, y: 760 },
-];
+  { id: "alphabet", title: "Alphabet", emoji: "🔤", x: 120, y: 80, route: "/learn/alphabet" },
+  { id: "numbers", title: "Numbers", emoji: "🔢", x: 60, y: 190, route: "/learn/numbers" },
+  { id: "greetings", title: "Greetings", emoji: "👋", x: 150, y: 300, route: "/learn/greetings" },
+  { id: "family", title: "Family", emoji: "👨‍👩‍👧", x: 80, y: 410, route: "/learn/family" },
+  { id: "colors", title: "Colors", emoji: "🎨", x: 145, y: 520, route: "/learn/colors" },
+  { id: "telling-time", title: "Telling Time", emoji: "⏰", x: 70, y: 640, route: "/learn/telling-time" },
+  { id: "food-drink", title: "Food & Drink", emoji: "🍔", x: 145, y: 760, route: "/learn/food-drink" },
+] as const;
+
+type LessonNode = (typeof LESSON_NODES)[number];
 
 export default function LearnScreen() {
   const { profile } = useAuthUser();
@@ -47,7 +51,31 @@ export default function LearnScreen() {
   const { width, height } = useWindowDimensions();
 
   const density = getDeviceDensity(width, height);
-  const styles = createStyles(density, textScale);
+  const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
+
+  const [unlockedLessons, setUnlockedLessons] = useState<LessonId[]>([]);
+  const [completedLessons, setCompletedLessons] = useState<LessonId[]>([]);
+
+  const loadProgress = async () => {
+    try {
+      const unlocked = await getUnlockedLessons();
+      const completed = await getCompletedLessons();
+      setUnlockedLessons(unlocked);
+      setCompletedLessons(completed);
+    } catch (error) {
+      console.warn("Failed to load lesson progress", error);
+    }
+  };
+
+  useEffect(() => {
+    void loadProgress();
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      void loadProgress();
+    }, [])
+  );
 
   const frameWidth = Math.min(width, 480);
   const frameHeight = Math.max(height, BASE_HEIGHT);
@@ -67,39 +95,23 @@ export default function LearnScreen() {
     `C${scale(300)} ${vscale(800)}, ${scale(40)} ${vscale(880)}, ${scale(160)} ${vscale(960)}`,
   ].join(" ");
 
-  const handleLessonPress = (lessonId: number, lessonTitle: string) => {
-  if (lessonId > CURRENT_LESSON_ID) {
-    Alert.alert(
-      "Lesson Locked",
-      `${lessonTitle} is a future lesson. Please complete the earlier lessons first.`
-    );
-    return;
-  }
+  const currentLessonIndex = LESSON_NODES.findIndex(
+    (lesson) => !unlockedLessons.includes(lesson.id as LessonId)
+  );
 
-  if (lessonId === 1) {
-    router.push("/learn/alphabet");
-    return;
-  }
+  const handleLessonPress = (lesson: LessonNode) => {
+    const isUnlocked = unlockedLessons.includes(lesson.id as LessonId);
 
-  router.push({
-    pathname: "/learn/[id]",
-    params: { id: String(lessonId) },
-  } as any);
-};
-
-  const handleCompleteLesson = async (lessonTitle: string) => {
-    try {
-      const reward = 5;
-      const updated = await addStarsToCurrentUser(reward);
-
+    if (!isUnlocked) {
+      const starsRequired = LESSON_STAR_REQUIREMENTS[lesson.id as LessonId];
       Alert.alert(
-        "Lesson Complete",
-        `${lessonTitle} completed! You earned ${reward} stars.\n\nCurrent stars: ${updated.balance}`
+        "Lesson Locked",
+        `${lesson.title} requires ${starsRequired} stars to unlock.`
       );
-    } catch (error) {
-      console.warn("Failed to award stars", error);
-      Alert.alert("Error", "Could not award stars.");
+      return;
     }
+
+    router.push(lesson.route as any);
   };
 
   return (
@@ -162,14 +174,18 @@ export default function LearnScreen() {
             </Svg>
 
             {LESSON_NODES.map((lesson) => {
-              const isCompleted = lesson.id < CURRENT_LESSON_ID;
-              const isCurrent = lesson.id === CURRENT_LESSON_ID;
-              const isLocked = lesson.id > CURRENT_LESSON_ID;
+              const nodeIndex = LESSON_NODES.findIndex((item) => item.id === lesson.id);
+              const isUnlocked = unlockedLessons.includes(lesson.id as LessonId);
+              const isCompleted = completedLessons.includes(lesson.id as LessonId);
+              const isCurrent =
+                currentLessonIndex !== -1 && nodeIndex === currentLessonIndex;
+              const isLocked = !isUnlocked;
+              const starsRequired = LESSON_STAR_REQUIREMENTS[lesson.id as LessonId];
 
               return (
                 <Pressable
                   key={lesson.id}
-                  onPress={() => handleLessonPress(lesson.id, lesson.title)}
+                  onPress={() => handleLessonPress(lesson)}
                   style={({ pressed }) => [
                     styles.lesson,
                     {
@@ -243,20 +259,26 @@ export default function LearnScreen() {
                     >
                       {lesson.title}
                     </Text>
+
+                    {isLocked ? (
+                      <Text
+                        style={[
+                          styles.starsNeededText,
+                          {
+                            marginTop: vscale(4),
+                            fontSize: tscale(9),
+                            lineHeight: tscale(11),
+                          },
+                        ]}
+                      >
+                        ⭐ {starsRequired}
+                      </Text>
+                    ) : null}
                   </View>
                 </Pressable>
               );
             })}
           </View>
-
-          <Pressable
-            style={styles.testButton}
-            onPress={() => void handleCompleteLesson("Greetings")}
-          >
-            <Text style={styles.testButtonText}>
-              Complete Test Lesson (+5 stars)
-            </Text>
-          </Pressable>
         </ScrollView>
       </View>
     </ScreenContainer>
@@ -299,6 +321,7 @@ const createStyles = (density: number, textScale: number) => {
       alignItems: "center",
       justifyContent: "center",
       position: "relative",
+      paddingHorizontal: ms(2),
     },
     badgeRow: {
       position: "absolute",
@@ -313,21 +336,9 @@ const createStyles = (density: number, textScale: number) => {
       textAlign: "center",
       paddingHorizontal: ms(4),
     },
-    testButton: {
-      marginTop: ms(20),
-      marginHorizontal: ms(20),
-      marginBottom: ms(20),
-      backgroundColor: "#43B3A8",
-      paddingVertical: ms(14),
-      paddingHorizontal: ms(20),
-      borderRadius: ms(12),
-      alignItems: "center",
-    },
-    testButtonText: {
-      color: "#FFFFFF",
-      fontSize: ts(16),
-      lineHeight: ts(20),
-      fontWeight: "600",
+    starsNeededText: {
+      color: "#64748B",
+      fontWeight: "700",
       textAlign: "center",
     },
   });
