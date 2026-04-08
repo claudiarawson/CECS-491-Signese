@@ -618,7 +618,6 @@ const createStyles = (density: number, textScale: number) => {
       color: semanticColors.text.primary,
       fontSize: ts(16),
       lineHeight: ts(20),
-      lineHeight: 22,
     fontWeight: "700",
     minHeight: 54,
   },
