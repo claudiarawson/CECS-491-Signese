@@ -1,23 +1,63 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { View, Text, TextInput, Pressable, FlatList, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  HeaderActionButton,
+  HeaderAvatarButton,
+  ScreenContainer,
+  ScreenHeader,
+} from "@/src/components/layout";
+import {
+  Spacing,
+  getDeviceDensity,
+  moderateScale,
+} from "@/src/theme";
 import { router, useFocusEffect } from "expo-router";
-import type { Sign } from "../../src/features/dictionary/types";
+import React, { useCallback, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  useWindowDimensions,
+} from "react-native";
+import { DictionaryFooter } from "@/src/components/DictionaryFooter";
+import SignOverlay from "../../src/components/SignOverlay";
+import { useDictionarySigns } from "../../src/features/dictionary/hooks/useDictionarySigns";
+import { prefetchDictionaryVideoUrl } from "../../src/services/dictionary/dictionarySigns.service";
 import {
   getSavedIds,
   getSavedSnapshotMap,
   mergeSignWithSnapshot,
+  toggleSavedId,
 } from "../../src/features/dictionary/storage/saved.local";
-import SignOverlay from "../../src/components/SignOverlay";
-import { useDictionarySigns } from "../../src/features/dictionary/hooks/useDictionarySigns";
-import { prefetchDictionaryVideoUrl } from "../../src/services/dictionary/dictionarySigns.service";
+import type { Sign, SignCategoryId } from "../../src/features/dictionary/types";
+import {
+  SIGN_CATEGORY_LABEL,
+  SIGN_CATEGORY_ORDER,
+} from "../../src/features/dictionary/signCategories";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import { getProfileIconById } from "@/src/features/account/types";
+import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 
+const MINT = "#cfe9e6";
 const TEAL = "#48b4a8";
 const TEAL_DARK = "#2c9a8f";
 
 export default function SavedSignsScreen() {
   const { signs, loading, error, reload } = useDictionarySigns();
+  const { textScale } = useAccessibility();
+  const { profile } = useAuthUser();
+  const headerProfileIcon = getProfileIconById(profile?.avatar);
+
+  const { height, width } = useWindowDimensions();
+  const density = getDeviceDensity(width, height);
+  const styles = createStyles(density, textScale);
+
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<SignCategoryId[]>([]);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [savedSnapshots, setSavedSnapshots] = useState<Record<string, Sign>>({});
   const [selectedSign, setSelectedSign] = useState<Sign | null>(null);
@@ -35,6 +75,28 @@ export default function SavedSignsScreen() {
     }, [reloadSaved])
   );
 
+  const handleToggleSave = async (sign: Sign) => {
+    const newSaved = await toggleSavedId(sign.id, sign);
+    setSavedIds((prev) => {
+      const next = new Set(prev);
+      if (newSaved) next.add(sign.id);
+      else next.delete(sign.id);
+      return next;
+    });
+    setSavedSnapshots((prev) => {
+      const next = { ...prev };
+      if (newSaved) next[sign.id] = sign;
+      else delete next[sign.id];
+      return next;
+    });
+  };
+
+  const toggleCategoryFilter = (id: SignCategoryId) => {
+    setSelectedCategoryIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
   const filtered: Sign[] = useMemo(() => {
     const q = query.trim().toLowerCase();
     const rows: Sign[] = [];
@@ -46,6 +108,11 @@ export default function SavedSignsScreen() {
     }
     return rows.filter((s) => {
       if (communityOnly && s.source !== "community") return false;
+      if (selectedCategoryIds.length > 0) {
+        const cats = s.categories ?? [];
+        const matches = selectedCategoryIds.some((fid) => cats.includes(fid));
+        if (!matches) return false;
+      }
       if (!q) return true;
       return (
         s.word.toLowerCase().includes(q) ||
@@ -53,208 +120,345 @@ export default function SavedSignsScreen() {
         (s.note && s.note.toLowerCase().includes(q))
       );
     });
-  }, [query, communityOnly, savedIds, signs, savedSnapshots]);
+  }, [query, communityOnly, selectedCategoryIds, savedIds, signs, savedSnapshots]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerRow}>
-        <Pressable onPress={() => router.push("/(tabs)/dictionary")} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
-        </Pressable>
-        <Text style={styles.title}>Saved Signs</Text>
-        <View style={styles.headerIcons}>
-          <Pressable style={styles.iconBtn}>
-            <Text>⚙️</Text>
-          </Pressable>
-          <Pressable style={styles.iconBtn}>
-            <Text>🙂</Text>
-          </Pressable>
-        </View>
-      </View>
+    <ScreenContainer backgroundColor="#F1F6F5">
+      <ScreenHeader
+        title="Saved Signs"
+        showBackButton
+        onBackPress={() => router.push("/(tabs)/dictionary")}
+        right={
+          <>
+            <HeaderActionButton
+              iconName="settings"
+              onPress={() => router.push("/(tabs)/settings" as any)}
+            />
+            <HeaderAvatarButton
+              avatar={headerProfileIcon.emoji}
+              onPress={() => router.push("/(tabs)/account")}
+            />
+          </>
+        }
+      />
 
-      <View style={styles.searchWrap}>
-        <Text style={styles.searchIcon}>🔍</Text>
-        <TextInput
-          value={query}
-          onChangeText={setQuery}
-          placeholder="Search Sign/Word"
-          placeholderTextColor="#7b8a8b"
-          style={styles.searchInput}
-        />
-        {query.length > 0 && (
-          <Pressable onPress={() => setQuery("")} style={styles.clearBtn}>
-            <Text style={styles.clearText}>✕</Text>
-          </Pressable>
-        )}
-      </View>
+      <View style={styles.content}>
+        <View style={styles.filtersBlock}>
+          <View style={styles.searchWrap}>
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search Sign/Word"
+              placeholderTextColor="#7b8a8b"
+              style={styles.searchInput}
+            />
+            {query.length > 0 && (
+              <Pressable onPress={() => setQuery("")} style={styles.clearBtn}>
+                <Text style={styles.clearText}>✕</Text>
+              </Pressable>
+            )}
+          </View>
 
-      <Pressable
-        onPress={() => setCommunityOnly((v) => !v)}
-        style={[styles.togglePill, communityOnly && styles.togglePillOn]}
-      >
-        <Text style={[styles.toggleText, communityOnly && styles.toggleTextOn]}>
-          {communityOnly ? "✓ " : ""}Community Signs
-        </Text>
-      </Pressable>
-
-      {error ? (
-        <View style={styles.banner}>
-          <Text style={styles.bannerText}>{error}</Text>
-          <Pressable onPress={() => void reload()}>
-            <Text style={styles.retryText}>Retry</Text>
-          </Pressable>
-        </View>
-      ) : null}
-
-      <Text style={styles.sectionTitle}>Saved Signs</Text>
-
-      {loading ? (
-        <View style={styles.loadingBox}>
-          <ActivityIndicator size="large" color={TEAL} />
-          <Text style={styles.loadingText}>Loading…</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={filtered}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          columnWrapperStyle={{ gap: 14 }}
-          contentContainerStyle={{ paddingBottom: 110 }}
-          renderItem={({ item }) => {
-            const hasVideo = !!(item.mediaUrl || item.storagePath || item.videoId);
-            return (
-            <Pressable
-              style={[styles.card, item.source === "community" && styles.cardCommunity]}
-              onPressIn={() => prefetchDictionaryVideoUrl(item)}
-              onPress={() => setSelectedSign(item)}
-            >
-              <View style={styles.mediaPlaceholder}>
-                <Text style={styles.mediaText}>{hasVideo ? "▶ Video" : "—"}</Text>
-              </View>
-              <Text style={styles.cardWord} numberOfLines={1}>
-                {item.word}
-              </Text>
-            </Pressable>
-            );
-          }}
-          ListEmptyComponent={
-            <Text style={{ textAlign: "center", marginTop: 20, color: "#566" }}>
-              {savedIds.size === 0 ? "No saved signs yet." : "No matching saved signs."}
+          <Pressable
+            onPress={() => setCommunityOnly((v) => !v)}
+            style={[styles.togglePill, communityOnly && styles.togglePillOn]}
+          >
+            <Text style={[styles.toggleText, communityOnly && styles.toggleTextOn]}>
+              {communityOnly ? "✓ " : ""}Community Signs
             </Text>
-          }
-        />
-      )}
+          </Pressable>
 
-      <View style={styles.bottomRow}>
-        <Pressable style={styles.bottomBtn} onPress={() => router.push("/dictionary/add-dialect")}>
-          <Text style={styles.bottomBtnText}>＋ Add Sign</Text>
-        </Pressable>
+          <Text style={styles.categoryFilterLabel}>Categories</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoryScroll}
+            contentContainerStyle={styles.categoryScrollContent}
+          >
+            {SIGN_CATEGORY_ORDER.map((id) => {
+              const on = selectedCategoryIds.includes(id);
+              return (
+                <Pressable
+                  key={id}
+                  onPress={() => toggleCategoryFilter(id)}
+                  style={[styles.categoryChip, on && styles.categoryChipOn]}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: on }}
+                  accessibilityLabel={`${SIGN_CATEGORY_LABEL[id]}${on ? ", selected" : ""}`}
+                >
+                  <Text style={[styles.categoryChipText, on && styles.categoryChipTextOn]}>
+                    {on ? "✓ " : ""}
+                    {SIGN_CATEGORY_LABEL[id]}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+        </View>
 
-        <Pressable style={styles.bottomBtn} onPress={() => router.push("/dictionary/saved")}>
-          <Text style={styles.bottomBtnText}>≡ Saved Signs</Text>
-        </Pressable>
+        {error ? (
+          <View style={styles.banner}>
+            <Text style={styles.bannerText}>{error}</Text>
+            <Pressable onPress={() => void reload()} style={styles.retryBtn}>
+              <Text style={styles.retryText}>Retry</Text>
+            </Pressable>
+          </View>
+        ) : null}
+
+        <Text style={styles.sectionTitle}>Saved Signs</Text>
+
+        {loading ? (
+          <View style={styles.loadingBox}>
+            <ActivityIndicator size="large" color={TEAL} />
+            <Text style={styles.loadingText}>Loading…</Text>
+          </View>
+        ) : (
+          <FlatList
+            style={styles.signsList}
+            data={filtered}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            columnWrapperStyle={{ gap: 14 }}
+            contentContainerStyle={{ paddingBottom: 70 }}
+            initialNumToRender={12}
+            maxToRenderPerBatch={16}
+            windowSize={7}
+            removeClippedSubviews
+            renderItem={({ item }) => {
+              const merged = mergeSignWithSnapshot(item, savedSnapshots[item.id]) ?? item;
+              const isItemSaved = savedIds.has(item.id);
+              const hasVideo = !!(
+                merged.mediaUrl ||
+                merged.storagePath ||
+                merged.videoId
+              );
+
+              return (
+                <Pressable
+                  style={[styles.card, item.source === "community" && styles.cardCommunity]}
+                  onPressIn={() => prefetchDictionaryVideoUrl(merged)}
+                  onPress={() => setSelectedSign(merged)}
+                >
+                  <View style={styles.mediaPlaceholder}>
+                    <Text style={styles.mediaText}>{hasVideo ? "▶ Video" : "—"}</Text>
+                  </View>
+                  <Text style={styles.cardWord} numberOfLines={1}>
+                    {merged.word}
+                  </Text>
+                  <Pressable onPress={() => handleToggleSave(merged)} style={styles.saveBtn}>
+                    <Text style={styles.saveIcon}>{isItemSaved ? "★" : "☆"}</Text>
+                  </Pressable>
+                </Pressable>
+              );
+            }}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>
+                {error
+                  ? "Could not load signs."
+                  : savedIds.size === 0
+                    ? "No saved signs yet."
+                    : "No matching saved signs."}
+              </Text>
+            }
+          />
+        )}
+
+        <DictionaryFooter />
+
+        <SignOverlay visible={!!selectedSign} sign={selectedSign} onClose={() => setSelectedSign(null)} />
       </View>
-
-      <SignOverlay visible={!!selectedSign} sign={selectedSign} onClose={() => setSelectedSign(null)} />
-    </View>
+    </ScreenContainer>
   );
 }
 
-const MINT = "#cfe9e6";
+const createStyles = (density: number, textScale: number) => {
+  const ms = (value: number) => moderateScale(value) * density;
+  const ts = (value: number) => ms(value) * textScale;
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f4fbfa", paddingHorizontal: 18, paddingTop: 18 },
-  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  backBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "#eef7f6",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 10,
-  },
-  backText: { fontSize: 20, color: "#111" },
-  title: { fontSize: 32, fontWeight: "800", color: "#111", flex: 1 },
-  headerIcons: { flexDirection: "row", gap: 10 },
-  iconBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: "#eef7f6", alignItems: "center", justifyContent: "center" },
+  return StyleSheet.create({
+    content: {
+      flex: 1,
+      paddingHorizontal: Spacing.xl,
+      minHeight: 0,
+    },
+    filtersBlock: {
+      flexShrink: 0,
+    },
+    signsList: {
+      flex: 1,
+      minHeight: 0,
+    },
+    searchWrap: {
+      marginTop: ms(12),
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: "#e6f4f2",
+      borderRadius: ms(24),
+      paddingHorizontal: ms(14),
+      height: ms(46),
+    },
+    searchIcon: {
+      fontSize: ts(18),
+      marginRight: ms(8),
+    },
+    searchInput: {
+      flex: 1,
+      fontSize: ts(16),
+      lineHeight: ts(20),
+      color: "#111",
+    },
 
-  searchWrap: {
-    marginTop: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#e6f4f2",
-    borderRadius: 24,
-    paddingHorizontal: 14,
-    height: 46,
-  },
-  searchIcon: { fontSize: 18, marginRight: 8 },
-  searchInput: { flex: 1, fontSize: 16, color: "#111" },
-  clearBtn: { marginLeft: 8 },
-  clearText: { fontSize: 18, color: "#7b8a8b" },
+    clearBtn: {
+      marginLeft: ms(8),
+    },
+    clearText: {
+      fontSize: ts(18),
+      color: "#7b8a8b",
+    },
 
-  togglePill: {
-    marginTop: 10,
-    alignSelf: "flex-start",
-    backgroundColor: "#e1f2f0",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 18,
-  },
-  togglePillOn: { backgroundColor: TEAL_DARK },
-  toggleText: { fontSize: 16, fontWeight: "700", color: TEAL_DARK },
-  toggleTextOn: { color: "white" },
+    togglePill: {
+      marginTop: ms(10),
+      alignSelf: "flex-start",
+      backgroundColor: "#e1f2f0",
+      paddingHorizontal: ms(14),
+      paddingVertical: ms(8),
+      borderRadius: ms(18),
+    },
+    togglePillOn: {
+      backgroundColor: TEAL_DARK,
+    },
+    toggleText: {
+      fontSize: ts(16),
+      lineHeight: ts(20),
+      fontWeight: "700",
+      color: TEAL_DARK,
+    },
+    toggleTextOn: {
+      color: "white",
+    },
 
-  banner: {
-    marginTop: 12,
-    padding: 12,
-    backgroundColor: "#fde8e8",
-    borderRadius: 12,
-    gap: 8,
-  },
-  bannerText: { color: "#721c24", fontSize: 14 },
-  retryText: { color: TEAL_DARK, fontWeight: "700" },
+    categoryFilterLabel: {
+      marginTop: ms(10),
+      marginBottom: ms(6),
+      fontSize: ts(12),
+      lineHeight: ts(16),
+      fontWeight: "700",
+      color: TEAL_DARK,
+    },
+    categoryScroll: {
+      marginBottom: ms(8),
+      flexShrink: 0,
+      flexGrow: 0,
+    },
+    categoryScrollContent: {
+      flexDirection: "row",
+      alignItems: "center",
+      flexWrap: "nowrap",
+      gap: ms(8),
+      paddingVertical: ms(4),
+      paddingRight: ms(8),
+    },
+    categoryChip: {
+      flexShrink: 0,
+      backgroundColor: MINT,
+      borderWidth: 1,
+      borderColor: TEAL,
+      paddingHorizontal: ms(12),
+      paddingVertical: ms(8),
+      borderRadius: ms(18),
+    },
+    categoryChipOn: {
+      backgroundColor: TEAL_DARK,
+      borderColor: TEAL_DARK,
+    },
+    categoryChipText: {
+      fontSize: ts(14),
+      lineHeight: ts(18),
+      fontWeight: "700",
+      color: TEAL_DARK,
+    },
+    categoryChipTextOn: {
+      color: "white",
+    },
 
-  loadingBox: { paddingVertical: 32, alignItems: "center", gap: 8 },
-  loadingText: { color: "#566" },
+    banner: {
+      marginTop: ms(12),
+      padding: ms(12),
+      backgroundColor: "#fde8e8",
+      borderRadius: ms(12),
+      gap: ms(8),
+    },
+    bannerText: { color: "#721c24", fontSize: ts(14), lineHeight: ts(18) },
+    retryBtn: { alignSelf: "flex-start" },
+    retryText: { color: TEAL_DARK, fontWeight: "700", fontSize: ts(14), lineHeight: ts(18) },
 
-  sectionTitle: { marginTop: 14, marginBottom: 10, fontSize: 20, fontWeight: "800", textAlign: "center" },
+    loadingBox: {
+      paddingVertical: ms(40),
+      alignItems: "center",
+      gap: ms(12),
+    },
+    loadingText: { color: "#566", fontSize: ts(15), lineHeight: ts(20) },
 
-  card: {
-    flex: 1,
-    backgroundColor: MINT,
-    borderRadius: 22,
-    padding: 12,
-    marginBottom: 14,
-  },
-  cardCommunity: {
-    backgroundColor: "#4ab3a7",
-  },
-  mediaPlaceholder: {
-    height: 120,
-    borderRadius: 18,
-    backgroundColor: "rgba(255,255,255,0.75)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  mediaText: { color: "#4d6", fontWeight: "700" },
-  cardWord: { marginTop: 10, fontSize: 22, fontWeight: "900", textAlign: "center", color: "#111" },
+    sectionTitle: {
+      marginTop: ms(14),
+      marginBottom: ms(10),
+      fontSize: ts(20),
+      lineHeight: ts(24),
+      fontWeight: "800",
+      textAlign: "center",
+    },
 
-  bottomRow: {
-    position: "absolute",
-    left: 18,
-    right: 18,
-    bottom: 18,
-    flexDirection: "row",
-    gap: 12,
-  },
-  bottomBtn: {
-    flex: 1,
-    backgroundColor: TEAL,
-    borderRadius: 18,
-    paddingVertical: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  bottomBtnText: { color: "white", fontSize: 16, fontWeight: "800" },
-});
+    card: {
+      flex: 1,
+      backgroundColor: MINT,
+      borderRadius: ms(22),
+      padding: ms(12),
+      marginBottom: ms(14),
+    },
+    cardCommunity: {
+      backgroundColor: "#4ab3a7",
+    },
+    mediaPlaceholder: {
+      height: ms(120),
+      borderRadius: ms(18),
+      backgroundColor: "rgba(255,255,255,0.75)",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    mediaText: {
+      color: "#4d6",
+      fontWeight: "700",
+      fontSize: ts(14),
+      lineHeight: ts(18),
+    },
+    cardWord: {
+      marginTop: ms(10),
+      fontSize: ts(22),
+      lineHeight: ts(26),
+      fontWeight: "900",
+      textAlign: "center",
+      color: "#111",
+    },
+
+    saveBtn: {
+      position: "absolute",
+      top: ms(8),
+      right: ms(8),
+      padding: ms(4),
+    },
+    saveIcon: {
+      fontSize: ts(30),
+      lineHeight: ts(34),
+      color: "#ffd700",
+    },
+
+    emptyText: {
+      textAlign: "center",
+      marginTop: ms(20),
+      color: "#566",
+      fontSize: ts(16),
+      lineHeight: ts(20),
+    },
+  });
+};
