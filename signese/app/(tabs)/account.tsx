@@ -37,12 +37,14 @@ import {
 } from "@/src/services/firebase/auth.services";
 import { getCurrentUserStars } from "@/src/features/gamification/stars.services";
 import { getProfileIconById } from "@/src/features/account/types";
+import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 
 export default function AccountScreen() {
   const { profile, authUser, refreshProfile } = useAuthUser();
+  const { textScale } = useAccessibility();
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const styles = createStyles(density);
+  const styles = createStyles(density, textScale);
 
   const selectedProfileIcon = getProfileIconById(profile?.avatar);
 
@@ -490,7 +492,7 @@ export default function AccountScreen() {
                 <>
                   <MaterialIcons
                     name="logout"
-                    size={moderateScale(18)}
+                    size={moderateScale(18) * density}
                     color="#FFFFFF"
                   />
                   <Text style={styles.signOutText}>Logout</Text>
@@ -504,8 +506,9 @@ export default function AccountScreen() {
   );
 }
 
-const createStyles = (density: number) => {
+const createStyles = (density: number, textScale: number) => {
   const ms = (value: number) => moderateScale(value) * density;
+  const ts = (value: number) => ms(value) * textScale;
 
   return StyleSheet.create({
     content: {
@@ -525,9 +528,9 @@ const createStyles = (density: number) => {
     },
 
     mainStack: {
-      paddingTop: 20,
-      paddingBottom: 16,
-      gap: 7,
+      paddingTop: ms(20),
+      paddingBottom: ms(16),
+      gap: ms(7),
     },
 
     heroAvatarWrap: {
@@ -541,49 +544,52 @@ const createStyles = (density: number) => {
     },
 
     heroAvatar: {
-      fontSize: ms(34),
+      fontSize: ts(34),
+      lineHeight: ts(38),
     },
 
     starPill: {
       backgroundColor: "#E9DEC1",
-      borderRadius: 12,
-      paddingHorizontal: 12,
-      paddingVertical: 4,
+      borderRadius: ms(12),
+      paddingHorizontal: ms(12),
+      paddingVertical: ms(4),
       alignSelf: "center",
     },
 
     starPillText: {
       ...Typography.caption,
       color: semanticColors.text.secondary,
-      fontSize: ms(12),
+      fontSize: ts(12),
+      lineHeight: ts(16),
     },
 
     blockCard: {
       backgroundColor: "#FFFFFF",
-      borderRadius: 20,
-      paddingHorizontal: 16,
-      paddingVertical: 14,
+      borderRadius: ms(20),
+      paddingHorizontal: ms(16),
+      paddingVertical: ms(14),
       marginBottom: 0,
     },
 
     blockTitle: {
       ...Typography.sectionTitle,
       color: semanticColors.text.secondary,
-      fontSize: ms(15),
+      fontSize: ts(15),
+      lineHeight: ts(20),
       textAlign: "center",
-      marginBottom: 7,
+      marginBottom: ms(7),
     },
 
     progressRow: {
       flexDirection: "row",
-      gap: 8,
+      gap: ms(8),
     },
 
     progressCard: {
       flex: 1,
-      minHeight: 92,
-      borderRadius: 16,
-      paddingVertical: 12,
+      minHeight: ms(92),
+      borderRadius: ms(16),
+      paddingVertical: ms(12),
       alignItems: "center",
       justifyContent: "center",
     },
@@ -598,38 +604,41 @@ const createStyles = (density: number) => {
 
     progressValue: {
       ...Typography.statNumber,
-      fontSize: ms(18),
-      lineHeight: ms(20),
+      fontSize: ts(18),
+      lineHeight: ts(20),
       color: "#5BAFB0",
     },
 
     progressLabel: {
       ...Typography.body,
       color: semanticColors.text.secondary,
-      fontSize: ms(12),
+      fontSize: ts(12),
+      lineHeight: ts(16),
     },
 
     progressEmoji: {
-      fontSize: ms(11),
-      marginTop: 3,
+      fontSize: ts(11),
+      lineHeight: ts(14),
+      marginTop: ms(3),
     },
 
     fieldHint: {
       ...Typography.caption,
       color: semanticColors.text.secondary,
-      fontSize: ms(11),
+      fontSize: ts(11),
+      lineHeight: ts(15),
       textAlign: "center",
-      marginBottom: 8,
+      marginBottom: ms(8),
       opacity: 0.9,
     },
 
     fieldHintMuted: {
       ...Typography.caption,
       color: semanticColors.text.secondary,
-      fontSize: ms(12),
+      fontSize: ts(12),
       textAlign: "center",
-      lineHeight: ms(17),
-      paddingVertical: 4,
+      lineHeight: ts(17),
+      paddingVertical: ms(4),
     },
 
     textInput: {
@@ -637,23 +646,25 @@ const createStyles = (density: number) => {
       minHeight: ms(42),
       borderRadius: ms(14),
       backgroundColor: "#E9F0EF",
-      paddingHorizontal: 14,
-      paddingVertical: 10,
-      fontSize: ms(14),
+      paddingHorizontal: ms(14),
+      paddingVertical: ms(10),
+      fontSize: ts(14),
+      lineHeight: ts(18),
       color: semanticColors.text.primary,
-      marginBottom: 8,
+      marginBottom: ms(8),
     },
 
     fieldError: {
       ...Typography.caption,
       color: "#C53030",
-      fontSize: ms(12),
+      fontSize: ts(12),
+      lineHeight: ts(16),
       textAlign: "center",
-      marginBottom: 8,
+      marginBottom: ms(8),
     },
 
     primaryBtn: {
-      marginTop: 4,
+      marginTop: ms(4),
       height: ms(44),
       borderRadius: ms(16),
       backgroundColor: "#43B3A8",
@@ -662,7 +673,7 @@ const createStyles = (density: number) => {
     },
 
     secondaryActionBtn: {
-      marginTop: 10,
+      marginTop: ms(10),
       backgroundColor: "#5C6AC4",
     },
 
@@ -672,26 +683,29 @@ const createStyles = (density: number) => {
 
     primaryBtnText: {
       ...Typography.button,
-      fontSize: ms(15),
+      fontSize: ts(15),
+      lineHeight: ts(19),
       color: "#FFFFFF",
+      textAlign: "center",
     },
 
     signOutBtn: {
       width: "100%",
-      marginTop: 8,
-      marginBottom: 8,
-      height: 47,
-      borderRadius: 19,
+      marginTop: ms(8),
+      marginBottom: ms(8),
+      height: ms(47),
+      borderRadius: ms(19),
       backgroundColor: "#E55555",
       flexDirection: "row",
-      gap: 8,
+      gap: ms(8),
       alignItems: "center",
       justifyContent: "center",
     },
 
     signOutText: {
       ...Typography.button,
-      fontSize: ms(16),
+      fontSize: ts(16),
+      lineHeight: ts(20),
       color: "#FFFFFF",
     },
   });

@@ -1,61 +1,76 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Switch,
-} from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, Pressable, Switch } from "react-native";
 import { router } from "expo-router";
+import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 
 export default function AccessibilityScreen() {
-  const [captions, setCaptions] = useState(true);
-  const [tts, setTts] = useState(true);
-  const [largeText, setLargeText] = useState(false);
+  const {
+    captions,
+    tts,
+    largeText,
+    setCaptions,
+    setTts,
+    setLargeText,
+    textScale,
+  } = useAccessibility();
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>Accessibility</Text>
+        <Text style={[styles.headerText, { fontSize: 22 * textScale }]}>
+          Accessibility
+        </Text>
       </View>
 
-      {/* Translate Captions */}
       <View style={styles.card}>
         <View style={styles.leftSection}>
           <View style={styles.iconBox}>
-            <Text style={styles.iconText}>🤟</Text>
+            <Text style={[styles.iconText, { fontSize: 18 * textScale }]}>🤟</Text>
           </View>
-          <Text style={styles.label}>Translate Captions</Text>
+          <Text style={[styles.label, { fontSize: 16 * textScale }]}>
+            Translate Captions
+          </Text>
         </View>
         <Switch value={captions} onValueChange={setCaptions} />
       </View>
 
-      {/* Translate Text-to-Speech */}
       <View style={styles.card}>
         <View style={styles.leftSection}>
           <View style={styles.iconBox}>
-            <Text style={styles.iconText}>🤟</Text>
+            <Text style={[styles.iconText, { fontSize: 18 * textScale }]}>🤟</Text>
           </View>
-          <Text style={styles.label}>Translate Text-to-Speech</Text>
+          <Text style={[styles.label, { fontSize: 16 * textScale }]}>
+            Translate Text-to-Speech
+          </Text>
         </View>
         <Switch value={tts} onValueChange={setTts} />
       </View>
 
-      {/* Larger Text */}
       <View style={styles.card}>
         <View style={styles.leftSection}>
           <View style={styles.iconBox}>
-            <Text style={styles.iconText}>CC</Text>
+            <Text style={[styles.iconText, { fontSize: 18 * textScale }]}>CC</Text>
           </View>
-          <Text style={styles.label}>Larger Text</Text>
+          <Text style={[styles.label, { fontSize: 16 * textScale }]}>
+            Larger Text
+          </Text>
         </View>
         <Switch value={largeText} onValueChange={setLargeText} />
       </View>
 
-      {/* Back Button */}
+      <View style={styles.previewCard}>
+        <Text style={[styles.previewTitle, { fontSize: 18 * textScale }]}>
+          Preview
+        </Text>
+        <Text style={[styles.previewText, { fontSize: 15 * textScale }]}>
+          This text updates immediately when Larger Text is turned on.
+        </Text>
+      </View>
+
       <Pressable style={styles.backBtn} onPress={() => router.back()}>
-        <Text style={styles.backText}>&lt;&lt; Back</Text>
+        <Text style={[styles.backText, { fontSize: 16 * textScale }]}>
+          &lt;&lt; Back
+        </Text>
       </Pressable>
     </View>
   );
@@ -74,7 +89,6 @@ const styles = StyleSheet.create({
   },
 
   headerText: {
-    fontSize: 22,
     fontWeight: "800",
   },
 
@@ -92,6 +106,8 @@ const styles = StyleSheet.create({
   leftSection: {
     flexDirection: "row",
     alignItems: "center",
+    flex: 1,
+    paddingRight: 12,
   },
 
   iconBox: {
@@ -106,13 +122,30 @@ const styles = StyleSheet.create({
 
   iconText: {
     fontWeight: "700",
-    fontSize: 18,
     color: "#f97316",
   },
 
   label: {
-    fontSize: 16,
     fontWeight: "600",
+    flexShrink: 1,
+  },
+
+  previewCard: {
+    backgroundColor: "#ffffff",
+    marginHorizontal: 20,
+    marginTop: 20,
+    padding: 18,
+    borderRadius: 14,
+  },
+
+  previewTitle: {
+    fontWeight: "700",
+    marginBottom: 8,
+  },
+
+  previewText: {
+    color: "#334155",
+    fontWeight: "500",
   },
 
   backBtn: {
