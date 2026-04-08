@@ -498,11 +498,11 @@ const createStyles = (density: number, textScale: number) => {
       color: "#334155",
     },
     progressTrack: {
-      height: ms(10),
+      height: ms(8),
       borderRadius: ms(99),
       backgroundColor: "#F5A898",
       overflow: "hidden",
-      marginBottom: ms(24),
+      marginBottom: ms(16),
     },
     progressFill: {
       height: "100%",
@@ -522,18 +522,18 @@ const createStyles = (density: number, textScale: number) => {
       borderTopRightRadius: ms(24),
       borderBottomLeftRadius: 0,
       borderBottomRightRadius: 0,
-      paddingHorizontal: ms(20),
-      paddingTop: ms(20),
-      paddingBottom: ms(20),
+      paddingHorizontal: ms(16),
+      paddingTop: ms(16),
+      paddingBottom: ms(12),
     },
     // Learn card
     gifArea: {
-      width: "100%",
-      height: ms(260),
-      borderRadius: ms(20),
+      flex: 1,
+      minHeight: ms(120),
+      borderRadius: ms(18),
       overflow: "hidden",
       backgroundColor: "#EEF7FA",
-      marginBottom: ms(12),
+      marginBottom: ms(10),
     },
     gifImage: {
       width: "100%",
@@ -541,48 +541,45 @@ const createStyles = (density: number, textScale: number) => {
     },
     caption: {
       textAlign: "center",
-      fontSize: ts(14),
-      fontWeight: "600",
-      color: "#94A3B8",
-      marginBottom: ms(4),
-    },
-    signWord: {
-      textAlign: "center",
-      fontSize: ts(26),
-      fontWeight: "800",
-      color: "#334155",
-      marginBottom: ms(8),
-    },
-    // Match card
-    matchTitle: {
-      fontSize: ts(18),
-      fontWeight: "800",
-      color: "#334155",
-      textAlign: "center",
-      marginBottom: ms(2),
-    },
-    matchScore: {
       fontSize: ts(13),
       fontWeight: "600",
       color: "#94A3B8",
+    },
+    signWord: {
       textAlign: "center",
+      fontSize: ts(22),
+      fontWeight: "800",
+      color: "#334155",
       marginBottom: ms(4),
+    },
+    // Match card
+    matchTitle: {
+      fontSize: ts(16),
+      fontWeight: "800",
+      color: "#334155",
+      textAlign: "center",
+    },
+    matchScore: {
+      fontSize: ts(12),
+      fontWeight: "600",
+      color: "#94A3B8",
+      textAlign: "center",
+      marginBottom: ms(6),
     },
     matchGrid: {
       flex: 1,
       flexDirection: "row",
-      gap: ms(12),
+      gap: ms(8),
       minHeight: 0,
     },
     matchCol: {
       flex: 1,
-      gap: ms(12),
+      gap: ms(8),
     },
     gifTile: {
       flex: 1,
-      borderRadius: ms(16),
+      borderRadius: ms(14),
       overflow: "hidden",
-      minHeight: ms(80),
     },
     matchGifImage: {
       width: "100%",
@@ -590,15 +587,14 @@ const createStyles = (density: number, textScale: number) => {
     },
     wordTile: {
       flex: 1,
-      borderRadius: ms(16),
+      borderRadius: ms(14),
       alignItems: "center",
       justifyContent: "center",
-      paddingHorizontal: ms(10),
-      paddingVertical: ms(10),
-      minHeight: ms(80),
+      paddingHorizontal: ms(8),
+      paddingVertical: ms(6),
     },
     wordTileText: {
-      fontSize: ts(14),
+      fontSize: ts(12),
       fontWeight: "700",
       textAlign: "center",
     },
@@ -607,7 +603,7 @@ const createStyles = (density: number, textScale: number) => {
     },
     // Feedback
     feedbackRow: {
-      minHeight: ms(28),
+      height: ms(28),
       alignItems: "center",
       justifyContent: "center",
     },
@@ -629,13 +625,13 @@ const createStyles = (density: number, textScale: number) => {
     // Next button
     buttonRow: {
       backgroundColor: "#CDDDED",
-      paddingTop: ms(20),
-      paddingHorizontal: ms(20),
-      paddingBottom: ms(24),
+      paddingTop: ms(14),
+      paddingHorizontal: ms(16),
+      paddingBottom: ms(16),
     },
     nextButton: {
-      height: ms(64),
-      borderRadius: ms(28),
+      height: ms(56),
+      borderRadius: ms(24),
       backgroundColor: "#4DB3A8",
       alignItems: "center",
       justifyContent: "center",
@@ -645,9 +641,8 @@ const createStyles = (density: number, textScale: number) => {
     },
     nextButtonText: {
       color: "#FFFFFF",
-      fontSize: ts(19),
+      fontSize: ts(17),
       fontWeight: "700",
-      letterSpacing: 0.3,
     },
   });
 };
