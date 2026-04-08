@@ -68,7 +68,7 @@ export default function GreetingsCompleteScreen() {
   }, [starsEarned]);
 
   return (
-    <ScreenContainer backgroundColor="#CDDDED">
+    <ScreenContainer backgroundColor="#EEF3F1">
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={() => router.back()}>
@@ -161,7 +161,7 @@ const createStyles = (density: number, textScale: number) => {
       width: ms(40),
       height: ms(40),
       borderRadius: ms(20),
-      backgroundColor: "#4DB3A8",
+      backgroundColor: "#56BDB4",
       alignItems: "center",
       justifyContent: "center",
     },
@@ -178,7 +178,7 @@ const createStyles = (density: number, textScale: number) => {
     },
     content: {
       flex: 1,
-      backgroundColor: "#CDDDED",
+      backgroundColor: "#EEF3F1",
       paddingHorizontal: ms(16),
       paddingTop: ms(32),
       paddingBottom: ms(24),
@@ -216,7 +216,7 @@ const createStyles = (density: number, textScale: number) => {
     scoreNumber: {
       fontSize: ts(38),
       fontWeight: "800",
-      color: "#4DB3A8",
+      color: "#56BDB4",
     },
     scoreLabel: {
       fontSize: ts(12),
@@ -235,7 +235,7 @@ const createStyles = (density: number, textScale: number) => {
     primaryButton: {
       height: ms(56),
       borderRadius: ms(24),
-      backgroundColor: "#4DB3A8",
+      backgroundColor: "#56BDB4",
       alignItems: "center",
       justifyContent: "center",
     },
@@ -251,10 +251,10 @@ const createStyles = (density: number, textScale: number) => {
       alignItems: "center",
       justifyContent: "center",
       borderWidth: 2,
-      borderColor: "#4DB3A8",
+      borderColor: "#56BDB4",
     },
     secondaryButtonText: {
-      color: "#4DB3A8",
+      color: "#56BDB4",
       fontSize: ts(17),
       fontWeight: "700",
     },

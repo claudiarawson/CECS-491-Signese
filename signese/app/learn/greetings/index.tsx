@@ -231,15 +231,15 @@ export default function GreetingsLearnScreen() {
 
   // ── Tile border/bg helpers ──────────────────────────────────────────────────
   const gifTileStyle = (state: TileState) => {
-    if (state === "selected") return { borderColor: "#4DB3A8", backgroundColor: "#E1F5EE" };
-    if (state === "correct") return { borderColor: "#4DB3A8", backgroundColor: "#E1F5EE" };
+    if (state === "selected") return { borderColor: "#56BDB4", backgroundColor: "#E1F5EE" };
+    if (state === "correct") return { borderColor: "#56BDB4", backgroundColor: "#E1F5EE" };
     if (state === "wrong") return { borderColor: "#E24B4A", backgroundColor: "#FCEBEB" };
     return { borderColor: "#E2EDF3", backgroundColor: "#EEF7FA" };
   };
 
   const wordTileStyle = (state: TileState) => {
     if (state === "selected") return { borderColor: "#7DD3FC", backgroundColor: "#EBF4F8" };
-    if (state === "correct") return { borderColor: "#4DB3A8", backgroundColor: "#E1F5EE" };
+    if (state === "correct") return { borderColor: "#56BDB4", backgroundColor: "#E1F5EE" };
     if (state === "wrong") return { borderColor: "#E24B4A", backgroundColor: "#FCEBEB" };
     return { borderColor: "#E2EDF3", backgroundColor: "#EEF7FA" };
   };
@@ -252,7 +252,7 @@ export default function GreetingsLearnScreen() {
 
   // ── Layout ──────────────────────────────────────────────────────────────────
   return (
-    <ScreenContainer backgroundColor="#CDDDED">
+    <ScreenContainer backgroundColor="#EEF3F1">
       {/* Top bar */}
       <View style={styles.header}>
         <Pressable
@@ -466,7 +466,7 @@ const createStyles = (density: number, textScale: number) => {
       width: ms(40),
       height: ms(40),
       borderRadius: ms(20),
-      backgroundColor: "#4DB3A8",
+      backgroundColor: "#56BDB4",
       alignItems: "center",
       justifyContent: "center",
     },
@@ -483,7 +483,7 @@ const createStyles = (density: number, textScale: number) => {
     },
     // Progress strip
     progressStrip: {
-      backgroundColor: "#CDDDED",
+      backgroundColor: "#EEF3F1",
       paddingHorizontal: ms(16),
       paddingTop: ms(6),
     },
@@ -500,19 +500,19 @@ const createStyles = (density: number, textScale: number) => {
     progressTrack: {
       height: ms(8),
       borderRadius: ms(99),
-      backgroundColor: "#F5A898",
+      backgroundColor: "#F4B7A0",
       overflow: "hidden",
       marginBottom: ms(16),
     },
     progressFill: {
       height: "100%",
       borderRadius: ms(99),
-      backgroundColor: "#4DB3A8",
+      backgroundColor: "#56BDB4",
     },
     // Card wrapper (fills between progress and button)
     cardWrapper: {
       flex: 1,
-      backgroundColor: "#CDDDED",
+      backgroundColor: "#EEF3F1",
     },
     // White card
     card: {
@@ -624,7 +624,7 @@ const createStyles = (density: number, textScale: number) => {
     },
     // Next button
     buttonRow: {
-      backgroundColor: "#CDDDED",
+      backgroundColor: "#EEF3F1",
       paddingTop: ms(14),
       paddingHorizontal: ms(16),
       paddingBottom: ms(16),
@@ -632,7 +632,7 @@ const createStyles = (density: number, textScale: number) => {
     nextButton: {
       height: ms(56),
       borderRadius: ms(24),
-      backgroundColor: "#4DB3A8",
+      backgroundColor: "#56BDB4",
       alignItems: "center",
       justifyContent: "center",
     },
