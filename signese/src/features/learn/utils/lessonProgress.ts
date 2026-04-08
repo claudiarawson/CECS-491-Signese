@@ -14,12 +14,12 @@ export type LessonId =
 
 export const LESSON_STAR_REQUIREMENTS: Record<LessonId, number> = {
   alphabet: 0,
-  numbers: 3,
-  greetings: 6,
-  family: 9,
-  colors: 12,
-  "telling-time": 15,
-  "food-drink": 18,
+  numbers: 0,
+  greetings: 0,
+  family: 0,
+  colors: 0,
+  "telling-time": 0,
+  "food-drink": 0,
 };
 
 export const LESSON_ORDER: LessonId[] = [
@@ -32,7 +32,7 @@ export const LESSON_ORDER: LessonId[] = [
   "food-drink",
 ];
 
-const DEFAULT_UNLOCKED: LessonId[] = ["alphabet"];
+const DEFAULT_UNLOCKED: LessonId[] = ["alphabet", "numbers", "greetings", "family", "colors", "telling-time", "food-drink"];
 const DEFAULT_COMPLETED: LessonId[] = [];
 
 type Persisted = {
@@ -50,10 +50,8 @@ const DEFAULT_PERSISTED: Persisted = {
 async function loadPersisted(): Promise<Persisted> {
   const raw = await readLocalJson<Persisted>(FILE_NAME, WEB_KEY, DEFAULT_PERSISTED);
 
-  let unlocked = Array.isArray(raw.unlockedLessons) ? raw.unlockedLessons : [...DEFAULT_UNLOCKED];
-  if (!unlocked.includes("alphabet")) {
-    unlocked = ["alphabet", ...unlocked.filter((id) => id !== "alphabet")] as LessonId[];
-  }
+  // Always ensure all lessons are unlocked (no lock gates during development)
+  const unlocked: LessonId[] = [...DEFAULT_UNLOCKED];
 
   return {
     totalStars: typeof raw.totalStars === "number" ? raw.totalStars : 0,
