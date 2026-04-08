@@ -10,6 +10,7 @@ export const Spacing = {
   md: moderateScale(16),
   lg: moderateScale(24),
   xl: moderateScale(32),
+  xxl: moderateScale(40),
 
   sectionGap: verticalScale(18),
   cardGap: verticalScale(14),
@@ -24,7 +25,16 @@ export const spacing = {
   md: Spacing.md,
   lg: Spacing.lg,
   xl: Spacing.xl,
-  xxl: moderateScale(40),
+  xxl: Spacing.xxl,
+} as const;
+
+export const lessonSpacing = {
+  xs: Spacing.xs,
+  sm: Spacing.sm,
+  md: Spacing.md,
+  lg: Spacing.lg,
+  xl: Spacing.xl,
+  xxl: Spacing.xxl,
 } as const;
 
 /**

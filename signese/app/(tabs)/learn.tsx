@@ -343,3 +343,4 @@ const createStyles = (density: number, textScale: number) => {
     },
   });
 };
+
