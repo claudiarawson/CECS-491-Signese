@@ -351,7 +351,7 @@ export default function TranslateScreen() {
               onPress={() => router.push("/(tabs)/settings" as any)}
             />
             <HeaderAvatarButton
-              avatar={headerProfileIcon.emoji}
+              avatar={profile?.avatar}
               onPress={() => router.push("/(tabs)/account")}
             />
           </>

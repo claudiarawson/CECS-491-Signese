@@ -222,6 +222,8 @@ export async function submitCommunitySign(
     storagePath,
     videoPath: storagePath,
     videoUrl: "",
+    // Matches Firestore rule: request.resource.data.uid == request.auth.uid
+    uid: user.uid,
     contributorUid: user.uid,
     searchTerms,
     createdAt: serverTimestamp(),

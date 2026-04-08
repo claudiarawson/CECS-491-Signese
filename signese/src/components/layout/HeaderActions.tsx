@@ -24,7 +24,8 @@ export function HeaderAvatarButton({
   avatar?: string;
   onPress?: () => void;
 }) {
-  const resolvedAvatar = getProfileIconById(avatar).emoji;
+  const looksLikeEmoji = typeof avatar === "string" && avatar.length <= 3;
+  const resolvedAvatar = looksLikeEmoji ? avatar : getProfileIconById(avatar).emoji;
 
   return (
     <Pressable onPress={onPress} style={styles.avatarButton}>
