@@ -86,7 +86,7 @@ export default function AccountScreen() {
     };
   }, []);
 
-  const dayStreak = 1;
+  const dayStreak = profile?.streak?.current ?? 0;
   const canChangeEmailPassword = userHasPasswordProvider(authUser);
 
   useEffect(() => {
