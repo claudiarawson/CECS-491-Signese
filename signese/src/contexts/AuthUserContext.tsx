@@ -1,12 +1,16 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "@/src/services/firebase/firebase.config";
+import { auth, db } from "@/src/services/firebase/firebase.config";
+import { doc, onSnapshot } from "firebase/firestore";
 import {
   getUserProfile,
   updateUserAvatar,
   syncFirestoreUserEmailIfNeeded,
 } from "@/src/services/firebase/auth.services";
 import { updateLoginStreakForCurrentUser } from "@/src/services/streak.service";
+import { DEFAULT_PROFILE_ICON_ID } from "@/src/features/account/types";
+import { ensureStarsDocument } from "@/src/features/gamification/stars.services";
+import type { UserStars } from "@/src/features/gamification/types";
 
 type ProfileStreak = {
   current: number;
@@ -14,12 +18,15 @@ type ProfileStreak = {
   lastLoginDate?: string;
 };
 
+type ProfileStars = UserStars;
+
 type Profile = {
   uid: string;
   username: string;
   email: string;
   avatar: string;
   streak: ProfileStreak;
+  stars: ProfileStars;
 } | null;
 
 type AuthContextType = {
@@ -30,7 +37,7 @@ type AuthContextType = {
   refreshProfile: () => Promise<void>;
 };
 
-const DEFAULT_AVATAR = "🐨";
+const DEFAULT_AVATAR = DEFAULT_PROFILE_ICON_ID;
 
 function streakFromDoc(data: Record<string, unknown> | null | undefined): ProfileStreak {
   const s = data?.streak as Record<string, unknown> | undefined;
@@ -38,6 +45,15 @@ function streakFromDoc(data: Record<string, unknown> | null | undefined): Profil
     current: typeof s?.current === "number" ? s.current : 0,
     longest: typeof s?.longest === "number" ? s.longest : 0,
     lastLoginDate: typeof s?.lastLoginDate === "string" ? s.lastLoginDate : undefined,
+  };
+}
+
+function starsFromDoc(data: Record<string, unknown> | null | undefined): ProfileStars {
+  const s = data?.stars as Partial<UserStars> | undefined;
+  return {
+    balance: typeof s?.balance === "number" ? s.balance : 0,
+    lifetimeEarned: typeof s?.lifetimeEarned === "number" ? s.lifetimeEarned : 0,
+    lifetimeSpent: typeof s?.lifetimeSpent === "number" ? s.lifetimeSpent : 0,
   };
 }
 
@@ -79,6 +95,7 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
       await syncFirestoreUserEmailIfNeeded(freshUser.uid, freshUser.email, firestoreEmail);
 
       const streak = streakFromDoc(data as Record<string, unknown> | undefined);
+      const stars = starsFromDoc(data as Record<string, unknown> | undefined);
 
       setProfile((prev) => {
         const sameUser = prev?.uid === freshUser.uid;
@@ -92,6 +109,7 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
             (sameUser ? prev?.avatar : undefined) ??
             DEFAULT_AVATAR,
           streak,
+          stars: sameUser ? { ...prev!.stars, ...stars } : stars,
         };
       });
     } catch (error) {
@@ -106,6 +124,7 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
           email: freshUser.email ?? (sameUser ? prev?.email ?? "" : ""),
           avatar: sameUser && prev?.avatar ? prev.avatar : DEFAULT_AVATAR,
           streak: sameUser && prev?.streak ? prev.streak : { current: 0, longest: 0 },
+          stars: sameUser && prev?.stars ? prev.stars : { balance: 0, lifetimeEarned: 0, lifetimeSpent: 0 },
         };
       });
     }
@@ -133,6 +152,12 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
       }
 
       try {
+        await ensureStarsDocument();
+      } catch (error) {
+        console.warn("Stars init failed", error);
+      }
+
+      try {
         await loadProfile(user);
       } finally {
         setLoading(false);
@@ -141,6 +166,60 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
 
     return unsub;
   }, [loadProfile]);
+
+  // Real-time profile sync for fields that can change while app is open (stars, streak, avatar, etc.)
+  useEffect(() => {
+    if (!authUser) return;
+
+    const userRef = doc(db, "users", authUser.uid);
+    const unsub = onSnapshot(
+      userRef,
+      (snap) => {
+        const data = (snap.data() as Record<string, unknown> | undefined) ?? undefined;
+        const nextStreak = streakFromDoc(data);
+        const nextStars = starsFromDoc(data);
+        const nextAvatar =
+          typeof data?.avatar === "string" && data.avatar.trim() !== ""
+            ? data.avatar.trim()
+            : undefined;
+        const nextUsername =
+          typeof data?.username === "string" && data.username.trim() !== ""
+            ? data.username.trim()
+            : undefined;
+        const nextEmail =
+          typeof data?.email === "string" && data.email.trim() !== ""
+            ? data.email.trim()
+            : undefined;
+
+        setProfile((prev) => {
+          if (!prev || prev.uid !== authUser.uid) {
+            return {
+              uid: authUser.uid,
+              username: nextUsername ?? authUser.displayName?.trim() ?? "User",
+              email: authUser.email ?? nextEmail ?? "",
+              avatar: nextAvatar ?? DEFAULT_AVATAR,
+              streak: nextStreak,
+              stars: nextStars,
+            };
+          }
+
+          return {
+            ...prev,
+            username: nextUsername ?? prev.username,
+            email: authUser.email ?? nextEmail ?? prev.email,
+            avatar: nextAvatar ?? prev.avatar,
+            streak: nextStreak ?? prev.streak,
+            stars: nextStars,
+          };
+        });
+      },
+      (error) => {
+        console.warn("User profile realtime sync failed", error);
+      }
+    );
+
+    return unsub;
+  }, [authUser]);
 
   const refreshProfile = useCallback(async () => {
     setLoading(true);

@@ -12,8 +12,9 @@ import {
   signOut,
 } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { DEFAULT_PROFILE_ICON_ID } from "@/src/features/account/types";
 
-const DEFAULT_AVATAR = "🐨";
+const INITIAL_STARS_BALANCE = 5;
 
 export async function signUpWithEmail(email: string, password: string, username: string) {
   const credential = await createUserWithEmailAndPassword(auth, email, password);
@@ -30,7 +31,16 @@ export async function signUpWithEmail(email: string, password: string, username:
       uid: user.uid,
       email: user.email,
       username,
-      avatar: DEFAULT_AVATAR,
+      avatar: DEFAULT_PROFILE_ICON_ID,
+      profileIcons: {
+        selectedIcon: DEFAULT_PROFILE_ICON_ID,
+        unlockedIconIds: [DEFAULT_PROFILE_ICON_ID],
+      },
+      stars: {
+        balance: INITIAL_STARS_BALANCE,
+        lifetimeEarned: INITIAL_STARS_BALANCE,
+        lifetimeSpent: 0,
+      },
       createdAt: serverTimestamp(),
     });
   } catch (err) {

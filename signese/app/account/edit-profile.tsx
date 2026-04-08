@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
+import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
 
 import {
   DEFAULT_PROFILE_ICON_ID,
@@ -22,7 +23,6 @@ import {
 } from "@/src/features/account/profile.services";
 import {
   ensureStarsDocument,
-  getCurrentUserStars,
 } from "@/src/features/gamification/stars.services";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 
@@ -31,18 +31,17 @@ type ScreenState = {
   savingId: string | null;
   selectedIcon: string;
   unlockedIconIds: string[];
-  stars: number;
 };
 
 export default function EditProfileScreen() {
-  const { refreshProfile } = useAuthUser();
+  const { profile, refreshProfile } = useAuthUser();
+  const liveStars = profile?.stars?.balance ?? 0;
 
   const [state, setState] = useState<ScreenState>({
     loading: true,
     savingId: null,
     selectedIcon: DEFAULT_PROFILE_ICON_ID,
     unlockedIconIds: [DEFAULT_PROFILE_ICON_ID],
-    stars: 0,
   });
 
   const loadData = useCallback(async () => {
@@ -51,17 +50,13 @@ export default function EditProfileScreen() {
     try {
       await ensureStarsDocument();
 
-      const [iconsState, starsState] = await Promise.all([
-        getCurrentUserProfileIcons(),
-        getCurrentUserStars(),
-      ]);
+      const iconsState = await getCurrentUserProfileIcons();
 
       setState((current) => ({
         ...current,
         loading: false,
         selectedIcon: iconsState.selectedIcon,
         unlockedIconIds: iconsState.unlockedIconIds,
-        stars: starsState.balance,
       }));
     } catch (error) {
       console.warn("Failed to load edit profile screen", error);
@@ -88,7 +83,7 @@ export default function EditProfileScreen() {
       setState((current) => ({ ...current, savingId: iconId }));
 
       if (!isUnlocked) {
-        if (state.stars < icon.starsRequired) {
+        if (liveStars < icon.starsRequired) {
           Alert.alert(
             "Not enough stars",
             `You need ${icon.starsRequired} stars to unlock ${icon.label}.`
@@ -97,12 +92,10 @@ export default function EditProfileScreen() {
         }
 
         const updatedIcons = await unlockCurrentUserProfileIcon(iconId);
-        const updatedStars = await getCurrentUserStars();
 
         setState((current) => ({
           ...current,
           unlockedIconIds: updatedIcons.unlockedIconIds,
-          stars: updatedStars.balance,
         }));
 
         Alert.alert("Unlocked", `${icon.label} is now available.`);
@@ -130,66 +123,72 @@ export default function EditProfileScreen() {
 
   if (state.loading) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" />
-        <Text style={styles.loadingText}>Loading profile icons...</Text>
-      </View>
+      <ScreenContainer backgroundColor="#F1F6F5">
+        <ScreenHeader title="Edit Profile" showBackButton />
+        <View style={styles.centered}>
+          <ActivityIndicator size="large" />
+          <Text style={styles.loadingText}>Loading profile icons...</Text>
+        </View>
+      </ScreenContainer>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Edit Profile Icon</Text>
+    <ScreenContainer backgroundColor="#F1F6F5">
+      <ScreenHeader title="Edit Profile" showBackButton />
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+        <Text style={styles.title}>Edit Profile Icon</Text>
 
-      <View style={styles.heroCard}>
-        <Text style={styles.heroEmoji}>{selectedIcon.emoji}</Text>
-        <Text style={styles.heroLabel}>Selected: {selectedIcon.label}</Text>
-        <Text style={styles.starsText}>⭐ Available Stars: {state.stars}</Text>
-      </View>
+        <View style={styles.heroCard}>
+          <Text style={styles.heroEmoji}>{selectedIcon.emoji}</Text>
+          <Text style={styles.heroLabel}>Selected: {selectedIcon.label}</Text>
+          <Text style={styles.starsText}>⭐ Available Stars: {liveStars}</Text>
+        </View>
 
-      <View style={styles.grid}>
-        {PROFILE_ICONS.map((icon) => {
-          const isUnlocked = state.unlockedIconIds.includes(icon.id);
-          const isSelected = state.selectedIcon === icon.id;
-          const isBusy = state.savingId === icon.id;
+        <View style={styles.grid}>
+          {PROFILE_ICONS.map((icon) => {
+            const isUnlocked = state.unlockedIconIds.includes(icon.id);
+            const isSelected = state.selectedIcon === icon.id;
+            const isBusy = state.savingId === icon.id;
 
-          return (
-            <Pressable
-              key={icon.id}
-              style={[
-                styles.iconCard,
-                isSelected && styles.iconCardSelected,
-                !isUnlocked && styles.iconCardLocked,
-              ]}
-              onPress={() => void handlePress(icon.id)}
-              disabled={isBusy}
-            >
-              <Text style={styles.iconEmoji}>{icon.emoji}</Text>
-              <Text style={styles.iconLabel}>{icon.label}</Text>
+            return (
+              <Pressable
+                key={icon.id}
+                style={[
+                  styles.iconCard,
+                  isSelected && styles.iconCardSelected,
+                  !isUnlocked && styles.iconCardLocked,
+                ]}
+                onPress={() => void handlePress(icon.id)}
+                disabled={isBusy}
+              >
+                <Text style={styles.iconEmoji}>{icon.emoji}</Text>
+                <Text style={styles.iconLabel}>{icon.label}</Text>
 
-              {isUnlocked ? (
-                <Text style={styles.statusText}>
-                  {isSelected ? "Selected" : "Tap to select"}
-                </Text>
-              ) : (
-                <Text style={styles.statusText}>
-                  🔒 Unlock for {icon.starsRequired} stars
-                </Text>
-              )}
+                {isUnlocked ? (
+                  <Text style={styles.statusText}>
+                    {isSelected ? "Selected" : "Tap to select"}
+                  </Text>
+                ) : (
+                  <Text style={styles.statusText}>
+                    🔒 Unlock for {icon.starsRequired} stars
+                  </Text>
+                )}
 
-              {isBusy ? <ActivityIndicator style={styles.inlineLoader} /> : null}
-            </Pressable>
-          );
-        })}
-      </View>
+                {isBusy ? <ActivityIndicator style={styles.inlineLoader} /> : null}
+              </Pressable>
+            );
+          })}
+        </View>
 
-      <Pressable
-        style={styles.secondaryButton}
-        onPress={() => router.push("/account/achievements")}
-      >
-        <Text style={styles.secondaryButtonText}>View Achievements</Text>
-      </Pressable>
-    </ScrollView>
+        <Pressable
+          style={styles.secondaryButton}
+          onPress={() => router.push("/account/achievements")}
+        >
+          <Text style={styles.secondaryButtonText}>View Achievements</Text>
+        </Pressable>
+      </ScrollView>
+    </ScreenContainer>
   );
 }
 
