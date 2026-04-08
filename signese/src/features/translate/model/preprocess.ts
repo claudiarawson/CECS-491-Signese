@@ -11,6 +11,7 @@ export class BasicTemporalClipPreprocessor implements ClipPreprocessor {
   async preprocess(clip: TemporalClip): Promise<NormalizedModelInput> {
     const frameCount = Math.max(clip.frames.length, 1);
     const durationMs = Math.max(clip.endMs - clip.startMs, 1);
+    const clipSignature = this.computeClipSignature(clip.clipId);
 
     // TODO(model): Replace handcrafted temporal features with real pixel/keypoint tensors.
     // This placeholder keeps the runtime pipeline testable before model assets are integrated.
@@ -19,7 +20,7 @@ export class BasicTemporalClipPreprocessor implements ClipPreprocessor {
       Math.min(durationMs / 2000, 1),
       clip.fps / 60,
       this.computeTemporalVariance(clip),
-      this.computeAspectRatioHint(clip),
+      Math.min((this.computeAspectRatioHint(clip) / 2 + clipSignature) / 2, 1),
     ];
 
     return {
@@ -58,6 +59,15 @@ export class BasicTemporalClipPreprocessor implements ClipPreprocessor {
     }
 
     return Math.min(firstFrame.width / firstFrame.height, 2);
+  }
+
+  private computeClipSignature(clipId: string): number {
+    let hash = 0;
+    for (let index = 0; index < clipId.length; index += 1) {
+      hash = (hash * 31 + clipId.charCodeAt(index)) % 1000003;
+    }
+
+    return (hash % 1000) / 1000;
   }
 }
 

@@ -8,7 +8,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "inference:start": "powershell -ExecutionPolicy Bypass -File .\\ml\\scripts\\start_inference_api.ps1",
+    "inference:stop": "powershell -ExecutionPolicy Bypass -File .\\ml\\scripts\\stop_inference_api.ps1"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -23,6 +25,7 @@
     "expo-camera": "^55.0.9",
     "expo-constants": "~18.0.13",
     "expo-crypto": "~15.0.8",
+    "expo-file-system": "^55.0.15",
     "expo-font": "~14.0.11",
     "expo-haptics": "~15.0.8",
     "expo-image": "~3.0.11",

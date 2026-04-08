@@ -138,6 +138,15 @@ export class BackendInferenceAdapter implements InferenceAdapter {
 			const payload: unknown = await response.json();
 			const parsed = this.parseBackendPayload(payload);
 
+			if (__DEV__) {
+				console.log("[BackendInferenceAdapter] raw backend response", payload);
+				console.log("[BackendInferenceAdapter] parsed backend scores", {
+					modelId: parsed.modelId,
+					scoreCount: parsed.scores.length,
+					topScore: parsed.scores[0] ?? null,
+				});
+			}
+
 			return {
 				clipId: input.clipId,
 				modelId: parsed.modelId,

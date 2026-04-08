@@ -91,6 +91,8 @@ export default function TranslateScreen() {
     reverseCamera,
   } = useTranslateCamera();
   const sequenceRef = useRef(0);
+  const cameraRef = useRef<CameraView | null>(null);
+  const recordingPromiseRef = useRef<Promise<{ uri: string } | undefined> | null>(null);
 
   const shortClipService = useMemo<ShortClipInferenceService>(() => {
     return createShortClipInferenceService(RUNTIME_V0_LABELS);
@@ -98,6 +100,11 @@ export default function TranslateScreen() {
 
   useEffect(() => {
     if (!cameraActive) {
+      const recorder = cameraRef.current as any;
+      if (recorder?.stopRecording) {
+        recorder.stopRecording();
+      }
+      recordingPromiseRef.current = null;
       shortClipService.reset();
       setIsRecordingClip(false);
       setIsRecordCooldown(false);
@@ -154,6 +161,20 @@ export default function TranslateScreen() {
         setIsRecordingClip(true);
         setRecordingStartedAtMs(Date.now());
         setRecordingElapsedMs(0);
+
+        if (Platform.OS !== "web") {
+          const recorder = cameraRef.current as any;
+          if (!recorder?.recordAsync) {
+            setInferenceError("Video recording is not available on this device.");
+            setIsRecordingClip(false);
+          } else {
+            recordingPromiseRef.current = recorder.recordAsync({
+              maxDuration: 6,
+              quality: "480p",
+              mute: true,
+            });
+          }
+        }
       }
     }, 100);
 
@@ -182,12 +203,48 @@ export default function TranslateScreen() {
     setIsInferring(true);
 
     try {
-      // TODO(camera): Replace mock short-clip generation with true recorded clip capture from CameraView.
-      const response = await shortClipService.inferShortClip({
+      const clipDurationMs = Math.max(recordingElapsedMs, 0);
+
+      let response: TranslateInferenceResponse;
+      if (Platform.OS !== "web") {
+        const recorder = cameraRef.current as any;
+        if (recorder?.stopRecording) {
+          recorder.stopRecording();
+        }
+
+        const recordingResult = recordingPromiseRef.current
+          ? await recordingPromiseRef.current
+          : undefined;
+        recordingPromiseRef.current = null;
+
+        if (!recordingResult?.uri) {
+          throw new Error("No recorded clip was captured.");
+        }
+
+        response = await shortClipService.inferRecordedClip({
+          sequence: sequenceRef.current,
+          clipUri: recordingResult.uri,
+          startMs: 0,
+          endMs: clipDurationMs,
+        });
+      } else {
+        const derivedFps = Math.max(
+          10,
+          Math.min(16, Math.round((recordingElapsedMs || 1200) / 100))
+        );
+        const derivedFrameCount = Math.max(
+          8,
+          Math.min(48, Math.round((Math.max(clipDurationMs, 400) / 1000) * derivedFps))
+        );
+
+        // Web fallback keeps the previous mocked path until browser recording uploads are implemented.
+        response = await shortClipService.inferShortClip({
         sequence: sequenceRef.current,
-        frameCount: 12,
-        fps: 12,
-      });
+        frameCount: derivedFrameCount,
+        fps: derivedFps,
+        });
+      }
+
       sequenceRef.current += 1;
       setLastInference(response);
 
@@ -207,20 +264,20 @@ export default function TranslateScreen() {
       const topScores = response.raw_top_k ?? [];
       if (topScores.length > 0) {
         const best = topScores[0];
+        const primaryToken = response.tokens[0];
         setLastDecision({
-          token:
-            response.tokens.length > 0
-              ? {
-                  id: `resp-${Date.now()}-${response.tokens[0].label}`,
-                  label: response.tokens[0].label,
-                  source: "single",
-                  confidence: response.tokens[0].confidence,
-                  timestampMs: response.tokens[0].end_ms,
-                  rawTopK: topScores,
-                }
-              : undefined,
+          token: primaryToken
+            ? {
+                id: `resp-${Date.now()}-${primaryToken.label}`,
+                label: primaryToken.label,
+                source: "single",
+                confidence: primaryToken.confidence,
+                timestampMs: primaryToken.end_ms,
+                rawTopK: topScores,
+              }
+            : undefined,
           smoothedScores: topScores,
-          reason: best.score >= 0.45 ? "accepted" : "below-threshold",
+          reason: primaryToken && best.score >= 0.45 ? "accepted" : "below-threshold",
         });
       }
     } catch (error) {
@@ -270,8 +327,10 @@ export default function TranslateScreen() {
       ? "Running short-clip inference..."
       : inferenceError
         ? `Error: ${inferenceError}`
+        : lastInference && lastInference.tokens.length === 0
+          ? "No prediction"
         : lastDecision?.reason === "accepted"
-      ? `Recognized: ${lastDecision.token?.label}`
+      ? `Recognized: ${lastDecision.token?.label ?? "No prediction"}`
       : lastDecision?.reason === "duplicate-suppressed"
         ? "Duplicate token suppressed"
         : cameraActive
@@ -310,7 +369,7 @@ export default function TranslateScreen() {
         <View style={styles.topSection}>
           <View style={styles.videoCard}>
             {cameraActive && permission?.granted ? (
-              <CameraView style={styles.cameraPreview} facing={cameraFacing} />
+              <CameraView ref={cameraRef} style={styles.cameraPreview} facing={cameraFacing} mode="video" />
             ) : (
               <View style={styles.videoPlaceholderWrap}>
                 <MaterialIcons name="videocam" size={34} color="#608D86" />
