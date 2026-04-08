@@ -115,8 +115,8 @@ export default function AlphabetQuizScreen() {
   return (
     <ScreenContainer backgroundColor="#EEF3F1">
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.replace("/(tabs)/learn")}>
-          <MaterialIcons name="chevron-left" size={32} color="#FFFFFF" />
+        <Pressable style={styles.backButton} onPress={() => router.back()}>
+          <MaterialIcons name="chevron-left" size={28} color="#FFFFFF" />
         </Pressable>
 
         <Text style={styles.headerTitle}>Alphabet Quiz</Text>
@@ -214,32 +214,30 @@ const createStyles = (density: number, textScale: number) => {
     header: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: ms(20),
-      paddingTop: ms(8),
-      paddingBottom: ms(10),
       backgroundColor: "#FFFFFF",
+      paddingHorizontal: ms(16),
+      paddingBottom: ms(10),
+      paddingTop: ms(10),
+      gap: ms(12),
     },
     backButton: {
-      width: ms(56),
-      height: ms(56),
-      borderRadius: ms(28),
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
       backgroundColor: "#56BDB4",
       alignItems: "center",
       justifyContent: "center",
     },
     headerTitle: {
       flex: 1,
-      marginLeft: ms(12),
-      fontSize: ts(22),
-      lineHeight: ts(28),
+      fontSize: ts(18),
       fontWeight: "800",
-      color: "#111111",
+      color: "#334155",
     },
     headerRight: {
       flexDirection: "row",
       alignItems: "center",
-      gap: ms(8),
+      gap: ms(6),
     },
     scrollContent: {
       paddingBottom: ms(28),
@@ -341,16 +339,15 @@ const createStyles = (density: number, textScale: number) => {
     actionButton: {
       marginTop: ms(24),
       marginHorizontal: ms(56),
-      minHeight: ms(76),
-      borderRadius: ms(28),
+      height: ms(52),
+      borderRadius: ms(22),
       backgroundColor: "#56BDB4",
       alignItems: "center",
       justifyContent: "center",
     },
     actionButtonText: {
       color: "#FFFFFF",
-      fontSize: ts(22),
-      lineHeight: ts(28),
+      fontSize: ts(16),
       fontWeight: "700",
     },
   });

@@ -107,6 +107,8 @@ export default function LearnScreen() {
     (lesson) => !unlockedLessons.includes(lesson.id as LessonId)
   );
 
+  const IMPLEMENTED_LESSONS = new Set(["alphabet", "greetings", "numbers"]);
+
   const handleLessonPress = (lesson: LessonNode) => {
     const isUnlocked = unlockedLessons.includes(lesson.id as LessonId);
 
@@ -184,6 +186,12 @@ export default function LearnScreen() {
           return;
         }
       }
+
+      if (!IMPLEMENTED_LESSONS.has(lesson.id)) {
+        Alert.alert("Coming Soon", `${lesson.title} is not available yet. Stay tuned!`);
+        return;
+      }
+
       router.push(lesson.route as any);
     })();
   };
@@ -446,3 +454,4 @@ const createStyles = (density: number, textScale: number) => {
     },
   });
 };
+

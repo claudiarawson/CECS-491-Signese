@@ -152,6 +152,14 @@ export const Typography = {
   button: typography.button,
 } as const;
 
+export const lessonTypography = {
+  title: typography.screenTitle,
+  subtitle: typography.sectionTitle,
+  body: typography.body,
+  button: typography.button,
+  caption: typography.caption,
+} as const;
+
 /**
  * Helper function to apply typography preset
  * Usage: const titleStyle = applyTypography(typography.pageTitle, { color: '#000' })

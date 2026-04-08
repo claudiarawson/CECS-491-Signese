@@ -85,3 +85,21 @@ export const colors = {
   semantic: semanticColors,
   pages: pageColors,
 } as const;
+
+/**
+ * Lesson flow color tokens.
+ * These are used by the new Learn lesson screens/components.
+ */
+export const lessonColors = {
+  background: "#F5F6F8",
+  surface: "#FFFFFF",
+  primaryButton: "#58C8B8",
+  answerButton: "#DDF5F1",
+  textPrimary: "#1F2937",
+  textSecondary: "#4B5563",
+  progressBackground: "#E9EEF2",
+  progressFill: "#58C8B8",
+  success: "#27AE60",
+  error: "#E35D6A",
+  star: "#F4B942",
+} as const;
