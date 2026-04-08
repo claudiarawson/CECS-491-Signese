@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
@@ -17,6 +18,7 @@ import * as ImagePicker from "expo-image-picker";
 import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
 import { getDeviceDensity, moderateScale } from "@/src/theme";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
+import { submitFeedback } from "@/src/services/firebase/feedback.service";
 
 const FEEDBACK_CATEGORIES = ["Bug", "Suggestion", "Improvement", "Other"] as const;
 type FeedbackCategory = (typeof FEEDBACK_CATEGORIES)[number];
@@ -27,6 +29,7 @@ export default function FeedbackScreen() {
     useState<FeedbackCategory>("Bug");
   const [selectedImageName, setSelectedImageName] = useState("");
   const [selectedImageUri, setSelectedImageUri] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
@@ -64,21 +67,40 @@ export default function FeedbackScreen() {
     setSelectedImageName("");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (submitting) return;
+
     if (!feedback.trim()) {
       Alert.alert("Missing feedback", "Please type your feedback first.");
       return;
     }
 
-    Alert.alert(
-      "Submitted",
-      `Category: ${selectedCategory}\nMedia attached: ${selectedImageUri ? "Yes" : "No"}`
-    );
+    try {
+      setSubmitting(true);
+      await submitFeedback({
+        category: selectedCategory,
+        message: feedback,
+        imageUri: selectedImageUri || undefined,
+      });
 
-    setFeedback("");
-    setSelectedCategory("Bug");
-    setSelectedImageName("");
-    setSelectedImageUri("");
+      Alert.alert(
+        "Thank you!",
+        `Your ${selectedCategory.toLowerCase()} feedback was submitted${selectedImageUri ? " with your image attached." : "."}`
+      );
+
+      setFeedback("");
+      setSelectedCategory("Bug");
+      setSelectedImageName("");
+      setSelectedImageUri("");
+    } catch (error) {
+      console.warn("Feedback submit failed", error);
+      Alert.alert(
+        "Error",
+        "We couldn't submit your feedback right now. Please check your connection and try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -182,8 +204,16 @@ export default function FeedbackScreen() {
               <Text style={styles.backButtonText}>&lt;&lt; Back</Text>
             </Pressable>
 
-            <Pressable style={styles.submitButton} onPress={handleSubmit}>
-              <Text style={styles.submitButtonText}>Submit!</Text>
+            <Pressable
+              style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
+              onPress={() => void handleSubmit()}
+              disabled={submitting}
+            >
+              {submitting ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={styles.submitButtonText}>Submit!</Text>
+              )}
             </Pressable>
           </View>
         </ScrollView>
@@ -369,6 +399,10 @@ const createStyles = (density: number, textScale: number) => {
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: ms(16),
+    },
+
+    submitButtonDisabled: {
+      opacity: 0.7,
     },
 
     submitButtonText: {
