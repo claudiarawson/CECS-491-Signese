@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "0.1",
   "project": "Signese",
   "task": "isolated_sign_recognition",
@@ -74,10 +74,30 @@
     ]
   },
   "composed_phrases": [
-    { "phrase": "GOOD MORNING",    "from_labels": ["GOOD", "MORNING"],        "train_as_single_label": false, "notes": "Compose in postprocessing or UI later." },
-    { "phrase": "GOOD NIGHT",      "from_labels": ["GOOD", "NIGHT"],          "train_as_single_label": false, "notes": "Compose in postprocessing or UI later." },
-    { "phrase": "NICE TO MEET YOU","from_labels": ["NICE", "MEET", "YOU"],    "train_as_single_label": false, "notes": "Compose in postprocessing or UI later." },
-    { "phrase": "MY NAME",         "from_labels": ["MY", "NAME"],             "train_as_single_label": false, "notes": "Compose in postprocessing or UI later." }
+    {
+      "phrase": "GOOD MORNING",
+      "from_labels": ["GOOD", "MORNING"],
+      "train_as_single_label": false,
+      "notes": "Compose in postprocessing or UI later."
+    },
+    {
+      "phrase": "GOOD NIGHT",
+      "from_labels": ["GOOD", "NIGHT"],
+      "train_as_single_label": false,
+      "notes": "Compose in postprocessing or UI later."
+    },
+    {
+      "phrase": "NICE TO MEET YOU",
+      "from_labels": ["NICE", "MEET", "YOU"],
+      "train_as_single_label": false,
+      "notes": "Compose in postprocessing or UI later."
+    },
+    {
+      "phrase": "MY NAME",
+      "from_labels": ["MY", "NAME"],
+      "train_as_single_label": false,
+      "notes": "Compose in postprocessing or UI later."
+    }
   ],
   "status_legend": {
     "candidate":               "Expected to exist but not yet verified in the chosen dataset.",
