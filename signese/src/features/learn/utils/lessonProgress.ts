@@ -1,8 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { readLocalJson, writeLocalJson } from "@/src/storage/localJsonFile";
 
-const TOTAL_STARS_KEY = "totalStars";
-const UNLOCKED_LESSONS_KEY = "unlockedLessons";
-const COMPLETED_LESSONS_KEY = "completedLessons";
+const FILE_NAME = "lesson_progress.json";
+const WEB_KEY = "signese_lesson_progress_v1";
 
 export type LessonId =
   | "alphabet"
@@ -36,57 +35,77 @@ export const LESSON_ORDER: LessonId[] = [
 const DEFAULT_UNLOCKED: LessonId[] = ["alphabet"];
 const DEFAULT_COMPLETED: LessonId[] = [];
 
+type Persisted = {
+  totalStars: number;
+  unlockedLessons: LessonId[];
+  completedLessons: LessonId[];
+};
+
+const DEFAULT_PERSISTED: Persisted = {
+  totalStars: 0,
+  unlockedLessons: [...DEFAULT_UNLOCKED],
+  completedLessons: [...DEFAULT_COMPLETED],
+};
+
+async function loadPersisted(): Promise<Persisted> {
+  const raw = await readLocalJson<Persisted>(FILE_NAME, WEB_KEY, DEFAULT_PERSISTED);
+
+  let unlocked = Array.isArray(raw.unlockedLessons) ? raw.unlockedLessons : [...DEFAULT_UNLOCKED];
+  if (!unlocked.includes("alphabet")) {
+    unlocked = ["alphabet", ...unlocked.filter((id) => id !== "alphabet")] as LessonId[];
+  }
+
+  return {
+    totalStars: typeof raw.totalStars === "number" ? raw.totalStars : 0,
+    unlockedLessons: unlocked,
+    completedLessons: Array.isArray(raw.completedLessons) ? raw.completedLessons : [...DEFAULT_COMPLETED],
+  };
+}
+
+async function savePersisted(data: Persisted): Promise<void> {
+  await writeLocalJson(FILE_NAME, WEB_KEY, data);
+}
+
 export async function getTotalStars() {
-  const value = await AsyncStorage.getItem(TOTAL_STARS_KEY);
-  return value ? Number(value) : 0;
+  const p = await loadPersisted();
+  return p.totalStars;
 }
 
 export async function setTotalStars(stars: number) {
-  await AsyncStorage.setItem(TOTAL_STARS_KEY, String(stars));
+  const p = await loadPersisted();
+  p.totalStars = stars;
+  await savePersisted(p);
 }
 
 export async function getUnlockedLessons(): Promise<LessonId[]> {
-  const value = await AsyncStorage.getItem(UNLOCKED_LESSONS_KEY);
-
-  if (!value) {
-    await AsyncStorage.setItem(
-      UNLOCKED_LESSONS_KEY,
-      JSON.stringify(DEFAULT_UNLOCKED)
-    );
-    return DEFAULT_UNLOCKED;
-  }
-
-  const parsed = JSON.parse(value) as LessonId[];
-
-  if (!parsed.includes("alphabet")) {
-    const fixed = ["alphabet", ...parsed.filter((id) => id !== "alphabet")] as LessonId[];
-    await AsyncStorage.setItem(UNLOCKED_LESSONS_KEY, JSON.stringify(fixed));
-    return fixed;
-  }
-
-  return parsed;
+  const p = await loadPersisted();
+  return p.unlockedLessons;
 }
 
 export async function setUnlockedLessons(lessons: LessonId[]) {
-  await AsyncStorage.setItem(UNLOCKED_LESSONS_KEY, JSON.stringify(lessons));
+  const p = await loadPersisted();
+  p.unlockedLessons = lessons;
+  await savePersisted(p);
 }
 
 export async function getCompletedLessons(): Promise<LessonId[]> {
-  const value = await AsyncStorage.getItem(COMPLETED_LESSONS_KEY);
-
-  if (!value) {
-    await AsyncStorage.setItem(
-      COMPLETED_LESSONS_KEY,
-      JSON.stringify(DEFAULT_COMPLETED)
-    );
-    return DEFAULT_COMPLETED;
-  }
-
-  return JSON.parse(value) as LessonId[];
+  const p = await loadPersisted();
+  return p.completedLessons;
 }
 
 export async function setCompletedLessons(lessons: LessonId[]) {
-  await AsyncStorage.setItem(COMPLETED_LESSONS_KEY, JSON.stringify(lessons));
+  const p = await loadPersisted();
+  p.completedLessons = lessons;
+  await savePersisted(p);
+}
+
+/** Clears local lesson progress (stars + unlocks + completions). */
+export async function resetLessonProgress(): Promise<void> {
+  await savePersisted({
+    totalStars: 0,
+    unlockedLessons: [...DEFAULT_UNLOCKED],
+    completedLessons: [...DEFAULT_COMPLETED],
+  });
 }
 
 export async function isLessonUnlocked(lessonId: LessonId) {
@@ -128,10 +147,7 @@ export async function unlockNextLesson(currentLessonId: LessonId) {
   return nextLessonId;
 }
 
-export async function completeLessonOnce(
-  lessonId: LessonId,
-  starsEarned: number
-) {
+export async function completeLessonOnce(lessonId: LessonId, starsEarned: number) {
   const completed = await getCompletedLessons();
   const alreadyCompleted = completed.includes(lessonId);
 

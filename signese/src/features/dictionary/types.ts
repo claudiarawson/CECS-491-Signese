@@ -56,6 +56,12 @@ export type DictionarySignDocument = {
   searchTerms?: string[];
   isActive?: boolean;
   isCommunity?: boolean;
+  /** Explicit flag for community submissions (Add Sign flow). */
+  isCommunitySign?: boolean;
+  /** Duplicate explicit marker (some rules / queries may use this). */
+  communitySign?: boolean;
+  /** Uid of the user who submitted a community sign. */
+  contributorUid?: string;
   tags?: string[];
   /** App taxonomy (verbs, places, feelings, …). */
   categories?: string[];

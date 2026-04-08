@@ -15,9 +15,10 @@ import {
   Typography,
 } from "@/src/theme";
 import { router } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -26,13 +27,13 @@ import {
   View,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { getProfileIconById } from "@/src/features/account/types";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
+import { getCurrentUserStars } from "@/src/features/gamification/stars.services";
 import {
   getCompletedLessons,
-  getTotalStars,
+  resetLessonProgress,
 } from "@/src/features/learn/utils/lessonProgress";
 
 export default function HomeScreen() {
@@ -42,27 +43,51 @@ export default function HomeScreen() {
   const streakCount = profile?.streak?.current ?? 0;
 
   const [stars, setStars] = useState(0);
+  const [completedLessonsCount, setCompletedLessonsCount] = useState(0);
 
-  useEffect(() => {
-    let mounted = true;
-
-    const loadStars = async () => {
-      try {
-        const result = await getCurrentUserStars();
-        if (mounted) {
-          setStars(result.balance);
-        }
-      } catch (error) {
-        console.warn("Failed to load stars", error);
-      }
-    };
-
-    void loadStars();
-
-    return () => {
-      mounted = false;
-    };
+  const refreshHomeStats = React.useCallback(async () => {
+    try {
+      const [starResult, completed] = await Promise.all([
+        getCurrentUserStars(),
+        getCompletedLessons(),
+      ]);
+      setStars(starResult.balance);
+      setCompletedLessonsCount(completed.length);
+    } catch (error) {
+      console.warn("Failed to load home stats", error);
+    }
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      void refreshHomeStats();
+    }, [refreshHomeStats])
+  );
+
+  const handleResetProgress = () => {
+    Alert.alert(
+      "Reset progress",
+      "Clear local lesson progress (unlocks and completed lessons)? Your account streak is unchanged.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Reset",
+          style: "destructive",
+          onPress: () => {
+            void (async () => {
+              try {
+                await resetLessonProgress();
+                await refreshHomeStats();
+              } catch (e) {
+                console.warn(e);
+                Alert.alert("Error", "Could not reset progress.");
+              }
+            })();
+          },
+        },
+      ]
+    );
+  };
 
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
@@ -90,7 +115,7 @@ export default function HomeScreen() {
               onPress={() => router.push("/(tabs)/settings" as any)}
             />
             <HeaderAvatarButton
-              avatar={profile?.avatar}
+              avatar={headerProfileIcon.emoji}
               onPress={() => router.push("/(tabs)/account")}
             />
           </>

@@ -1,0 +1,14 @@
+{
+  "name": "cecs-491-signese",
+  "private": true,
+  "description": "Workspace root. The Expo app lives in ./signese — run npm scripts from here or cd signese first.",
+  "scripts": {
+    "start": "npm run start --prefix signese",
+    "start:clear": "npm run start --prefix signese -- --clear",
+    "start:offline": "npm run start:offline --prefix signese",
+    "android": "npm run android --prefix signese",
+    "ios": "npm run ios --prefix signese",
+    "web": "npm run web --prefix signese",
+    "lint": "npm run lint --prefix signese"
+  }
+}
