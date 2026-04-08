@@ -1,0 +1,89 @@
+﻿{
+  "version": "0.1",
+  "project": "Signese",
+  "task": "isolated_sign_recognition",
+  "description": "Starter vocabulary manifest for Signese v0. This supports a constrained live sign recognizer that outputs gloss-like tokens into the Translate captions area.",
+  "notes": [
+    "This is not full ASL sentence translation.",
+    "The first model should classify isolated signs or short sign clips into a limited label set.",
+    "Phrase-like outputs should usually be composed from component signs instead of trained as whole sentences."
+  ],
+  "label_groups": {
+    "alphabet": [
+      { "label": "A", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "B", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "C", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "D", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "E", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "F", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "G", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "H", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "I", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "J", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "Dynamic letter." },
+      { "label": "K", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "L", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "M", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "N", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "O", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "P", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "Q", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "R", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "S", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "T", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "U", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "V", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "W", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "X", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "Y", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "Z", "group": "alphabet", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "Dynamic letter." }
+    ],
+    "numbers": [
+      { "label": "1",  "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "2",  "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "3",  "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "4",  "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "5",  "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "6",  "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "7",  "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "8",  "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "9",  "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "10", "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "11", "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "12", "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "13", "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "14", "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "15", "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "16", "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "17", "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "18", "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "19", "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" },
+      { "label": "20", "group": "numbers", "source_dataset": null, "source_gloss": null, "status": "needs_alt_dataset", "include": true, "notes": "" }
+    ],
+    "greetings_intro": [
+      { "label": "HELLO",   "group": "greetings_intro", "source_dataset": "asl_citizen", "source_gloss": "HELLO",   "status": "candidate", "include": true, "notes": "" },
+      { "label": "GOOD",    "group": "greetings_intro", "source_dataset": "asl_citizen", "source_gloss": "GOOD",    "status": "candidate", "include": true, "notes": "Use for GOOD MORNING and GOOD NIGHT composition." },
+      { "label": "MORNING", "group": "greetings_intro", "source_dataset": "asl_citizen", "source_gloss": "MORNING", "status": "candidate", "include": true, "notes": "" },
+      { "label": "NIGHT",   "group": "greetings_intro", "source_dataset": "asl_citizen", "source_gloss": "NIGHT",   "status": "candidate", "include": true, "notes": "" },
+      { "label": "WELCOME", "group": "greetings_intro", "source_dataset": "asl_citizen", "source_gloss": "WELCOME", "status": "candidate", "include": true, "notes": "" },
+      { "label": "NICE",    "group": "greetings_intro", "source_dataset": "asl_citizen", "source_gloss": "NICE",    "status": "candidate", "include": true, "notes": "" },
+      { "label": "MEET",    "group": "greetings_intro", "source_dataset": "asl_citizen", "source_gloss": "MEET",    "status": "candidate", "include": true, "notes": "" },
+      { "label": "YOU",     "group": "greetings_intro", "source_dataset": "asl_citizen", "source_gloss": "YOU",     "status": "candidate", "include": true, "notes": "" },
+      { "label": "HOW",     "group": "greetings_intro", "source_dataset": "asl_citizen", "source_gloss": "HOW",     "status": "candidate", "include": true, "notes": "" },
+      { "label": "NAME",    "group": "greetings_intro", "source_dataset": "asl_citizen", "source_gloss": "NAME",    "status": "candidate", "include": true, "notes": "" },
+      { "label": "MY",      "group": "greetings_intro", "source_dataset": "asl_citizen", "source_gloss": "MY",      "status": "candidate", "include": true, "notes": "" }
+    ]
+  },
+  "composed_phrases": [
+    { "phrase": "GOOD MORNING",    "from_labels": ["GOOD", "MORNING"],        "train_as_single_label": false, "notes": "Compose in postprocessing or UI later." },
+    { "phrase": "GOOD NIGHT",      "from_labels": ["GOOD", "NIGHT"],          "train_as_single_label": false, "notes": "Compose in postprocessing or UI later." },
+    { "phrase": "NICE TO MEET YOU","from_labels": ["NICE", "MEET", "YOU"],    "train_as_single_label": false, "notes": "Compose in postprocessing or UI later." },
+    { "phrase": "MY NAME",         "from_labels": ["MY", "NAME"],             "train_as_single_label": false, "notes": "Compose in postprocessing or UI later." }
+  ],
+  "status_legend": {
+    "candidate":               "Expected to exist but not yet verified in the chosen dataset.",
+    "confirmed_in_dataset":    "Verified present and usable.",
+    "needs_alt_dataset":       "Needs another dataset source.",
+    "needs_custom_recording":  "Needs Signese-recorded data.",
+    "excluded":                "Not part of current MVP."
+  }
+}
