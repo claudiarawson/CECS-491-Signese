@@ -2,9 +2,18 @@ import { HeaderActionButton, HeaderAvatarButton, ScreenContainer, ScreenHeader }
 import { Spacing } from "@/src/theme";
 import { router } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import SignOverlay from "../../src/components/SignOverlay";
-import { SIGNS } from "../../src/features/dictionary/data/signs";
+import { useDictionarySigns } from "../../src/features/dictionary/hooks/useDictionarySigns";
+import { prefetchDictionaryVideoUrl } from "../../src/services/dictionary/dictionarySigns.service";
 import { getSavedIds, toggleSavedId } from "../../src/features/dictionary/storage/saved.local";
 import type { Sign } from "../../src/features/dictionary/types";
 
@@ -13,18 +22,19 @@ const TEAL = "#48b4a8";
 const TEAL_DARK = "#2c9a8f";
 
 export default function DictionaryScreen() {
+  const { signs, loading, error, reload, datasetCapped, fetchLimit } = useDictionarySigns();
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [selectedSign, setSelectedSign] = useState<Sign | null>(null);
 
   useEffect(() => {
-    getSavedIds().then(ids => setSavedIds(new Set(ids)));
+    getSavedIds().then((ids) => setSavedIds(new Set(ids)));
   }, []);
 
   const handleToggleSave = async (signId: string) => {
     const newSaved = await toggleSavedId(signId);
-    setSavedIds(prev => {
+    setSavedIds((prev) => {
       const newSet = new Set(prev);
       if (newSaved) {
         newSet.add(signId);
@@ -37,15 +47,16 @@ export default function DictionaryScreen() {
 
   const filtered: Sign[] = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return SIGNS.filter((s) => {
+    return signs.filter((s) => {
       if (communityOnly && s.source !== "community") return false;
       if (!q) return true;
       return (
         s.word.toLowerCase().includes(q) ||
-        s.definition.toLowerCase().includes(q)
+        s.definition.toLowerCase().includes(q) ||
+        (s.note && s.note.toLowerCase().includes(q))
       );
     });
-  }, [query, communityOnly]);
+  }, [query, communityOnly, signs]);
 
   return (
     <ScreenContainer backgroundColor="#F1F6F5">
@@ -88,57 +99,78 @@ export default function DictionaryScreen() {
           </Text>
         </Pressable>
 
-        <Text style={styles.sectionTitle}>Featured Signs</Text>
-
-        <FlatList
-        data={filtered}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        columnWrapperStyle={{ gap: 14 }}
-        contentContainerStyle={{ paddingBottom: 70 }}
-        renderItem={({ item }) => {
-          const isSaved = savedIds.has(item.id);
-          return (
-            <Pressable
-              style={[styles.card, item.source === "community" && styles.cardCommunity]}
-              onPress={() => setSelectedSign(item)}
-            >
-              <View style={styles.mediaPlaceholder}>
-                <Text style={styles.mediaText}>media</Text>
-              </View>
-              <Text style={styles.cardWord} numberOfLines={1}>
-                {item.word}
-              </Text>
-              <Pressable onPress={() => handleToggleSave(item.id)} style={styles.saveBtn}>
-                <Text style={styles.saveIcon}>{isSaved ? '★' : '☆'}</Text>
-              </Pressable>
+        {error ? (
+          <View style={styles.banner}>
+            <Text style={styles.bannerText}>{error}</Text>
+            <Pressable onPress={() => void reload()} style={styles.retryBtn}>
+              <Text style={styles.retryText}>Retry</Text>
             </Pressable>
-          );
-        }}
-        ListEmptyComponent={
-          <Text style={{ textAlign: "center", marginTop: 20, color: "#566" }}>
-            No results.
+          </View>
+        ) : null}
+
+        <Text style={styles.sectionTitle}>Featured Signs</Text>
+        {datasetCapped && fetchLimit != null ? (
+          <Text style={styles.demoHint}>
+            Demo: first {fetchLimit} entries — set EXPO_PUBLIC_DICTIONARY_FETCH_LIMIT=all for full list
           </Text>
-        }
-      />
+        ) : null}
 
-      <View style={styles.bottomRow}>
-        <Pressable
-          style={styles.bottomBtn}
-          onPress={() => router.push("/dictionary/add-dialect")}
-        >
-          <Text style={styles.bottomBtnText}>＋ Add Sign</Text>
-        </Pressable>
+        {loading ? (
+          <View style={styles.loadingBox}>
+            <ActivityIndicator size="large" color={TEAL} />
+            <Text style={styles.loadingText}>Loading dictionary…</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filtered}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            columnWrapperStyle={{ gap: 14 }}
+            contentContainerStyle={{ paddingBottom: 70 }}
+            initialNumToRender={12}
+            maxToRenderPerBatch={16}
+            windowSize={7}
+            removeClippedSubviews
+            renderItem={({ item }) => {
+              const isItemSaved = savedIds.has(item.id);
+              const hasVideo = !!(item.mediaUrl || item.storagePath || item.videoId);
+              return (
+                <Pressable
+                  style={[styles.card, item.source === "community" && styles.cardCommunity]}
+                  onPressIn={() => prefetchDictionaryVideoUrl(item)}
+                  onPress={() => setSelectedSign(item)}
+                >
+                  <View style={styles.mediaPlaceholder}>
+                    <Text style={styles.mediaText}>{hasVideo ? "▶ Video" : "—"}</Text>
+                  </View>
+                  <Text style={styles.cardWord} numberOfLines={1}>
+                    {item.word}
+                  </Text>
+                  <Pressable onPress={() => handleToggleSave(item.id)} style={styles.saveBtn}>
+                    <Text style={styles.saveIcon}>{isItemSaved ? "★" : "☆"}</Text>
+                  </Pressable>
+                </Pressable>
+              );
+            }}
+            ListEmptyComponent={
+              <Text style={{ textAlign: "center", marginTop: 20, color: "#566" }}>
+                {error ? "Could not load signs." : "No results."}
+              </Text>
+            }
+          />
+        )}
 
-        <Pressable
-          style={styles.bottomBtn}
-          onPress={() => router.push("/dictionary/saved")}
-        >
-          <Text style={styles.bottomBtnText}>≡ Saved Signs</Text>
-        </Pressable>
-      </View>
+        <View style={styles.bottomRow}>
+          <Pressable style={styles.bottomBtn} onPress={() => router.push("/dictionary/add-dialect")}>
+            <Text style={styles.bottomBtnText}>＋ Add Sign</Text>
+          </Pressable>
 
-      <SignOverlay visible={!!selectedSign} sign={selectedSign} onClose={() => setSelectedSign(null)} />
+          <Pressable style={styles.bottomBtn} onPress={() => router.push("/dictionary/saved")}>
+            <Text style={styles.bottomBtnText}>≡ Saved Signs</Text>
+          </Pressable>
+        </View>
+
+        <SignOverlay visible={!!selectedSign} sign={selectedSign} onClose={() => setSelectedSign(null)} />
       </View>
     </ScreenContainer>
   );
@@ -176,7 +208,29 @@ const styles = StyleSheet.create({
   toggleText: { fontSize: 16, fontWeight: "700", color: TEAL_DARK },
   toggleTextOn: { color: "white" },
 
-  sectionTitle: { marginTop: 14, marginBottom: 10, fontSize: 20, fontWeight: "800", textAlign: "center" },
+  banner: {
+    marginTop: 12,
+    padding: 12,
+    backgroundColor: "#fde8e8",
+    borderRadius: 12,
+    gap: 8,
+  },
+  bannerText: { color: "#721c24", fontSize: 14 },
+  retryBtn: { alignSelf: "flex-start" },
+  retryText: { color: TEAL_DARK, fontWeight: "700" },
+
+  loadingBox: { paddingVertical: 40, alignItems: "center", gap: 12 },
+  loadingText: { color: "#566", fontSize: 15 },
+
+  sectionTitle: { marginTop: 14, marginBottom: 6, fontSize: 20, fontWeight: "800", textAlign: "center" },
+  demoHint: {
+    fontSize: 12,
+    color: "#5a6e6d",
+    textAlign: "center",
+    marginBottom: 10,
+    paddingHorizontal: 8,
+    lineHeight: 16,
+  },
 
   card: {
     flex: 1,
@@ -198,8 +252,8 @@ const styles = StyleSheet.create({
   mediaText: { color: "#4d6", fontWeight: "700" },
   cardWord: { marginTop: 10, fontSize: 22, fontWeight: "900", textAlign: "center", color: "#111" },
 
-  saveBtn: { position: 'absolute', top: 8, right: 8, padding: 4 },
-  saveIcon: { fontSize: 20, color: '#ffd700' },
+  saveBtn: { position: "absolute", top: 8, right: 8, padding: 4 },
+  saveIcon: { fontSize: 20, color: "#ffd700" },
 
   bottomRow: {
     position: "absolute",

@@ -52,3 +52,10 @@ app-example
 
 # sussy api key
 firebase_PRIVATE_API_KEY.json
+
+# Firebase Admin service account (local only)
+serviceAccountKey.js
+serviceAccountKey.json
+
+.env.local
+.env
