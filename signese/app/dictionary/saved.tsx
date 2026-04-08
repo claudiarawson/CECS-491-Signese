@@ -1,8 +1,12 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { View, Text, TextInput, Pressable, FlatList, StyleSheet, ActivityIndicator } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import type { Sign } from "../../src/features/dictionary/types";
-import { getSavedIds } from "../../src/features/dictionary/storage/saved.local";
+import {
+  getSavedIds,
+  getSavedSnapshotMap,
+  mergeSignWithSnapshot,
+} from "../../src/features/dictionary/storage/saved.local";
 import SignOverlay from "../../src/components/SignOverlay";
 import { useDictionarySigns } from "../../src/features/dictionary/hooks/useDictionarySigns";
 import { prefetchDictionaryVideoUrl } from "../../src/services/dictionary/dictionarySigns.service";
@@ -15,16 +19,32 @@ export default function SavedSignsScreen() {
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  const [savedSnapshots, setSavedSnapshots] = useState<Record<string, Sign>>({});
   const [selectedSign, setSelectedSign] = useState<Sign | null>(null);
 
-  useEffect(() => {
-    getSavedIds().then((ids) => setSavedIds(new Set(ids)));
+  const reloadSaved = useCallback(() => {
+    void Promise.all([getSavedIds(), getSavedSnapshotMap()]).then(([ids, snaps]) => {
+      setSavedIds(new Set(ids));
+      setSavedSnapshots(snaps);
+    });
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      reloadSaved();
+    }, [reloadSaved])
+  );
 
   const filtered: Sign[] = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return signs.filter((s) => {
-      if (!savedIds.has(s.id)) return false;
+    const rows: Sign[] = [];
+    for (const id of savedIds) {
+      const catalog = signs.find((s) => s.id === id);
+      const snap = savedSnapshots[id];
+      const merged = mergeSignWithSnapshot(catalog, snap);
+      if (merged) rows.push(merged);
+    }
+    return rows.filter((s) => {
       if (communityOnly && s.source !== "community") return false;
       if (!q) return true;
       return (
@@ -33,7 +53,7 @@ export default function SavedSignsScreen() {
         (s.note && s.note.toLowerCase().includes(q))
       );
     });
-  }, [query, communityOnly, savedIds, signs]);
+  }, [query, communityOnly, savedIds, signs, savedSnapshots]);
 
   return (
     <View style={styles.container}>

@@ -94,7 +94,7 @@ export default function SignOverlay({ visible, sign, onClose }: SignOverlayProps
 
   const handleToggleSave = async () => {
     if (!sign) return;
-    const newSaved = await toggleSavedId(sign.id);
+    const newSaved = await toggleSavedId(sign.id, sign);
     setSaved(newSaved);
   };
 
@@ -240,7 +240,8 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   saveStateIcon: {
-    fontSize: 20,
+    fontSize: 34,
+    lineHeight: 40,
     color: "#ffd700",
   },
   saveStateText: {

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { readLocalJson, writeLocalJson } from "../storage/localJsonFile";
 
 type AccessibilitySettings = {
   captions: boolean;
@@ -15,7 +15,8 @@ type AccessibilityContextType = AccessibilitySettings & {
   loading: boolean;
 };
 
-const STORAGE_KEY = "signese_accessibility_settings";
+const SETTINGS_FILE = "accessibility_settings.json";
+const WEB_SETTINGS_KEY = "signese_accessibility_settings";
 
 const AccessibilityContext = createContext<AccessibilityContextType | undefined>(undefined);
 
@@ -28,9 +29,12 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
   useEffect(() => {
     const loadSettings = async () => {
       try {
-        const raw = await AsyncStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw) as Partial<AccessibilitySettings>;
+        const parsed = await readLocalJson<Partial<AccessibilitySettings> | null>(
+          SETTINGS_FILE,
+          WEB_SETTINGS_KEY,
+          null
+        );
+        if (parsed) {
           setCaptions(typeof parsed.captions === "boolean" ? parsed.captions : true);
           setTts(typeof parsed.tts === "boolean" ? parsed.tts : true);
           setLargeText(typeof parsed.largeText === "boolean" ? parsed.largeText : false);
@@ -50,10 +54,7 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
 
     const saveSettings = async () => {
       try {
-        await AsyncStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({ captions, tts, largeText })
-        );
+        await writeLocalJson(SETTINGS_FILE, WEB_SETTINGS_KEY, { captions, tts, largeText });
       } catch (error) {
         console.warn("Failed to save accessibility settings", error);
       }

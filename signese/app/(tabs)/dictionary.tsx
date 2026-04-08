@@ -24,7 +24,12 @@ import {
 import SignOverlay from "../../src/components/SignOverlay";
 import { useDictionarySigns } from "../../src/features/dictionary/hooks/useDictionarySigns";
 import { prefetchDictionaryVideoUrl } from "../../src/services/dictionary/dictionarySigns.service";
-import { getSavedIds, toggleSavedId } from "../../src/features/dictionary/storage/saved.local";
+import {
+  getSavedIds,
+  getSavedSnapshotMap,
+  mergeSignWithSnapshot,
+  toggleSavedId,
+} from "../../src/features/dictionary/storage/saved.local";
 import type { Sign } from "../../src/features/dictionary/types";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { getProfileIconById } from "@/src/features/account/types";
@@ -46,22 +51,27 @@ export default function DictionaryScreen() {
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  const [savedSnapshots, setSavedSnapshots] = useState<Record<string, Sign>>({});
   const [selectedSign, setSelectedSign] = useState<Sign | null>(null);
 
   useEffect(() => {
-    getSavedIds().then((ids) => setSavedIds(new Set(ids)));
+    void getSavedIds().then((ids) => setSavedIds(new Set(ids)));
+    void getSavedSnapshotMap().then(setSavedSnapshots);
   }, []);
 
-  const handleToggleSave = async (signId: string) => {
-    const newSaved = await toggleSavedId(signId);
+  const handleToggleSave = async (sign: Sign) => {
+    const newSaved = await toggleSavedId(sign.id, sign);
     setSavedIds((prev) => {
-      const newSet = new Set(prev);
-      if (newSaved) {
-        newSet.add(signId);
-      } else {
-        newSet.delete(signId);
-      }
-      return newSet;
+      const next = new Set(prev);
+      if (newSaved) next.add(sign.id);
+      else next.delete(sign.id);
+      return next;
+    });
+    setSavedSnapshots((prev) => {
+      const next = { ...prev };
+      if (newSaved) next[sign.id] = sign;
+      else delete next[sign.id];
+      return next;
     });
   };
 
@@ -157,21 +167,26 @@ export default function DictionaryScreen() {
             windowSize={7}
             removeClippedSubviews
             renderItem={({ item }) => {
+              const merged = mergeSignWithSnapshot(item, savedSnapshots[item.id]) ?? item;
               const isItemSaved = savedIds.has(item.id);
-              const hasVideo = !!(item.mediaUrl || item.storagePath || item.videoId);
+              const hasVideo = !!(
+                merged.mediaUrl ||
+                merged.storagePath ||
+                merged.videoId
+              );
               return (
                 <Pressable
                   style={[styles.card, item.source === "community" && styles.cardCommunity]}
-                  onPressIn={() => prefetchDictionaryVideoUrl(item)}
-                  onPress={() => setSelectedSign(item)}
+                  onPressIn={() => prefetchDictionaryVideoUrl(merged)}
+                  onPress={() => setSelectedSign(merged)}
                 >
                   <View style={styles.mediaPlaceholder}>
                     <Text style={styles.mediaText}>{hasVideo ? "▶ Video" : "—"}</Text>
                   </View>
                   <Text style={styles.cardWord} numberOfLines={1}>
-                    {item.word}
+                    {merged.word}
                   </Text>
-                  <Pressable onPress={() => handleToggleSave(item.id)} style={styles.saveBtn}>
+                  <Pressable onPress={() => handleToggleSave(item)} style={styles.saveBtn}>
                     <Text style={styles.saveIcon}>{isItemSaved ? "★" : "☆"}</Text>
                   </Pressable>
                 </Pressable>
@@ -334,7 +349,8 @@ const createStyles = (density: number, textScale: number) => {
       padding: ms(4),
     },
     saveIcon: {
-      fontSize: ts(20),
+      fontSize: ts(30),
+      lineHeight: ts(34),
       color: "#ffd700",
     },
 
