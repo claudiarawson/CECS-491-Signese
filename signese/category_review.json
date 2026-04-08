@@ -1,0 +1,12057 @@
+[
+  {
+    "word": "book",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "drink",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "computer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "before",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "chair",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "go",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "clothes",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "who",
+    "categories": [
+      "question"
+    ]
+  },
+  {
+    "word": "candy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cousin",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "deaf",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fine",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "help",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "no",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "thin",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "walk",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "year",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "yes",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "all",
+    "categories": [
+      "function",
+      "number"
+    ]
+  },
+  {
+    "word": "black",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cool",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "finish",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "hot",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "like",
+    "categories": [
+      "action",
+      "emotion"
+    ]
+  },
+  {
+    "word": "many",
+    "categories": [
+      "descriptor",
+      "number"
+    ]
+  },
+  {
+    "word": "mother",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "now",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "orange",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "table",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "thanksgiving",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "what",
+    "categories": [
+      "question"
+    ]
+  },
+  {
+    "word": "woman",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "bed",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "blue",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bowling",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "can",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dog",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "family",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "fish",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "graduate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hearing",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "kiss",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "language",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "later",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "man",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "shirt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "study",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "tall",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "white",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wrong",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "accident",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "apple",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bird",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "change",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "color",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "corn",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cow",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dance",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "dark",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "doctor",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "eat",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "enjoy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "forget",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "give",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "last",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "meet",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "pink",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pizza",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "play",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "school",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "secretary",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "short",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "time",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "want",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "work",
+    "categories": [
+      "action",
+      "place"
+    ]
+  },
+  {
+    "word": "africa",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "basketball",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "birthday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "brown",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "but",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "cheat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "city",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "cook",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "decide",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "full",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "how",
+    "categories": [
+      "question"
+    ]
+  },
+  {
+    "word": "jacket",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "letter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "medicine",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "need",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "paint",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "paper",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pull",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "purple",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "right",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "same",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "son",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "tell",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "thursday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "visit",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "wait",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "water",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wife",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "yellow",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "backpack",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bar",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "brother",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "cat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "check",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "class",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cry",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "different",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "door",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "green",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hair",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "have",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "headache",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "inform",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "knife",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "laugh",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "learn",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "movie",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rabbit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "read",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "red",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "room",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "run",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "show",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sick",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "snow",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "take",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "tea",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "teacher",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "week",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "why",
+    "categories": [
+      "question"
+    ]
+  },
+  {
+    "word": "with",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "write",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "yesterday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "again",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "bad",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "ball",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bathroom",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "blanket",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "buy",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "call",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "coffee",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cold",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "college",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "copy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cute",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "daughter",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "example",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "far",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "first",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "friend",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "good",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "happy",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "home",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "know",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "late",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "leave",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "list",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "name",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "old",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "person",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "police",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "problem",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "remember",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "share",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "soon",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "stay",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sunday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "test",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tired",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "trade",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "travel",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "window",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "you",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "about",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "approve",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "arrive",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "balance",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "banana",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "beard",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "because",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "boy",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "business",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "careful",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "center",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "chat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "children",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "christmas",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "clock",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "close",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "convince",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "country",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "crash",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "day",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "discuss",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dress",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "drive",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "drop",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "fat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "feel",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "football",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "future",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "game",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "girl",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "government",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hear",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "here",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hope",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "house",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "husband",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "interest",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "join",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "light",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "live",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "make",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "mean",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "more",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "most",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "music",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "new",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "none",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "office",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "order",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pants",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "party",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "past",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pencil",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "plan",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "please",
+    "categories": [
+      "social"
+    ]
+  },
+  {
+    "word": "practice",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "president",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "restaurant",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "ride",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "russia",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "salt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sandwich",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sign",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "since",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "small",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "some",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "south",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "student",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "teach",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "theory",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tomato",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "train",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ugly",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "war",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "where",
+    "categories": [
+      "question"
+    ]
+  },
+  {
+    "word": "your",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "always",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "animal",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "argue",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "baby",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "back",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bake",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bath",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "behind",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bring",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "catch",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "cereal",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "champion",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cheese",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cough",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "crazy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "delay",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "delicious",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "disappear",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "divorce",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "draw",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "east",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "easy",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "egg",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "environment",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "father",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "fault",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "flower",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "friendly",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "glasses",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "halloween",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hard",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "heart",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hour",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "humble",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hurry",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "improve",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "internet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "jump",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "kill",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "law",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "match",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "meat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "milk",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "money",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "month",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "moon",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "move",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "near",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "nephew",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "nice",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "niece",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "noon",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "north",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "not",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "nurse",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "off",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "ok",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "patient",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pay",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "perspective",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "potato",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sad",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "saturday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "save",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "scissors",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "secret",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shoes",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shop",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "silly",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sister",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "sleep",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "sorry",
+    "categories": [
+      "social"
+    ]
+  },
+  {
+    "word": "straight",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sweet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "talk",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "temperature",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tent",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "thank you",
+    "categories": [
+      "social"
+    ]
+  },
+  {
+    "word": "think",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "throw",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "today",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "traffic",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "understand",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "use",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "voice",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "vomit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "vote",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wednesday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "west",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wet",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "when",
+    "categories": [
+      "question"
+    ]
+  },
+  {
+    "word": "which",
+    "categories": [
+      "question"
+    ]
+  },
+  {
+    "word": "win",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "word",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "afternoon",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "age",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "alone",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "appointment",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "australia",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "avoid",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "balloon",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "basement",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "bear",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "believe",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "better",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "blind",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bored",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "bowl",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "box",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bracelet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bread",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cafeteria",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "car",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "chicken",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "child",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "choose",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "church",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "cookie",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cup",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cut",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "decorate",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "deep",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "deer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dentist",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dirty",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "dive",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "down",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "dry",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "ear",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "earn",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "earring",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "elephant",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "english",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "escape",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "expensive",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "explain",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fast",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "fight",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "find",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "fishing",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "floor",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fly",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "follow",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "from",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "get",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "happen",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hello",
+    "categories": [
+      "social"
+    ]
+  },
+  {
+    "word": "hit",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "hospital",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "idea",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "important",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "investigate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "japan",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "jealous",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "king",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "kitchen",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "large",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "last year",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "lemon",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lettuce",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "marry",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "meeting",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "minute",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "mirror",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "miss",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "monkey",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "morning",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "motorcycle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "necklace",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "never",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "newspaper",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "night",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "onion",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "people",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "pepper",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "phone",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "picture",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "plus",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "point",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "poor",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "possible",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "quiet",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "rain",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ready",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "research",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "scared",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "science",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "score",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sentence",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shape",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sit",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "slow",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "snake",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "soap",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "soda",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "speech",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "star",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stink",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "struggle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stubborn",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sunset",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "surgery",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "there",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tiger",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "toast",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "toilet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tomorrow",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "town",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "transfer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tree",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "truck",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "uncle",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "vacation",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "weather",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "weekend",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "accept",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "adult",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "after",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "ago",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "allow",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "america",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "angel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "answer",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "any",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "area",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "art",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "asl",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "aunt",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "awful",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "awkward",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bacon",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bark",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bedroom",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "beer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "belt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "big",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "bitter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "both",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "cake",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "california",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "canada",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "carrot",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cause",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "challenge",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cheap",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "chocolate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "clean",
+    "categories": [
+      "action",
+      "descriptor"
+    ]
+  },
+  {
+    "word": "cloud",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "compare",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "complex",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "contact",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "continue",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "corner",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "correct",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "curse",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dead",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "demand",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "depend",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "desert",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "desk",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "develop",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dictionary",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "doll",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "duty",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "easter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "egypt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "elevator",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "email",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "end",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "enter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "europe",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "event",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "exchange",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "experience",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "face",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fail",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "feed",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "few",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "flag",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "food",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "for",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "form",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "freeze",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "friday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "front",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "giraffe",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "god",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "grammar",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "grandfather",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "great",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "greece",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "guess",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "guitar",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hammer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "helicopter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "high",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "history",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hungry",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hurt",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "introduce",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "invest",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lazy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "library",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "lie",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "lobster",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "love",
+    "categories": [
+      "action",
+      "emotion"
+    ]
+  },
+  {
+    "word": "lucky",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "magazine",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "measure",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "microwave",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "my",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "neighbor",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "number",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "one",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "outside",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "peach",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pig",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "polite",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "postpone",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "power",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "present",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "price",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "prison",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "push",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "raccoon",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "really",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "reason",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "religion",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "respect",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rule",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "salad",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "schedule",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sell",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "serious",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "shower",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "single",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "smart",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "smile",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "soft",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "sound",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "soup",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "spain",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "spray",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "squirrel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stomach",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "story",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "strange",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "street",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stress",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "strict",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "strong",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sugar",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "summer",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "suspect",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sweetheart",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tease",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "that",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "themselves",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "therapy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "thirsty",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ticket",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "top",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tuesday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "turkey",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "university",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "until",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "watch",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "weak",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wedding",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "will",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wind",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "world",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "worry",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wow",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "young",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "add",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "airplane",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "already",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "also",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "analyze",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "and",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "angry",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "appear",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "arm",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "army",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "arrest",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "asia",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ask",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "attitude",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "attract",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bald",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "barely",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "baseball",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "beg",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "benefit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bite",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "blame",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "boat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "body",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "borrow",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "boss",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bother",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bottle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bottom",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "brag",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "build",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "bus",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "butter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "calm",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "cancel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "candle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cards",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "choice",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "comb",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "comfortable",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "conflict",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cover",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "deodorant",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dessert",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "destroy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "diamond",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dollar",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "drawer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dream",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "drunk",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "duck",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "during",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "eagle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "early",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "equal",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "every",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "excited",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "exercise",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "experiment",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "expert",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fact",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fear",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "feedback",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fold",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "forest",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "france",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "frog",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "funny",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "garage",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "goal",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "golf",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gone",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gossip",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "grandmother",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "grapes",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "group",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "guilty",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hamburger",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hate",
+    "categories": [
+      "action",
+      "emotion"
+    ]
+  },
+  {
+    "word": "head",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "her",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "horse",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ignore",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "impossible",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "in",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "independent",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "inside",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "insurance",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "island",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lecture",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lesson",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "limit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lion",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "listen",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "march",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "math",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "maybe",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "mechanic",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mom",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "mouse",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "much",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "muscle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "museum",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "must",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mustache",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "negative",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "nervous",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "neutral",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "nose",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "often",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "operate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "opinion",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "other",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "pass",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pillow",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "prepare",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pretty",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "priest",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "program",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "promise",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "put",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "queen",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "quit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "radio",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "reject",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "require",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rest",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "retire",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rise",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "river",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rough",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "see",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "seem",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "send",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "sew",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sheep",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shine",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shock",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "should",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "silent",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "skinny",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "skirt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sky",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sour",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "special",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "spirit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "staff",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stand",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "steal",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stop",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "stupid",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "summon",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sunrise",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "swallow",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "television",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "to",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "together",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "translate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "triangle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "turtle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "underwear",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "up",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "upset",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "violin",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "volunteer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "warm",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "warn",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wash",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "wine",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "witness",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wood",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "zero",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "across",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "actor",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "agree",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "alarm",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "allergy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "almost",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "announce",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "apartment",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "attention",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "audience",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "august",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "autumn",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "away",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "beautiful",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "become",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "below",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "best",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "bet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bicycle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "biology",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "boyfriend",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "break",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "bridge",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "brush",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "building",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "busy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "camera",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "camp",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "caption",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "care",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "carry",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "celebrate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "certificate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "chain",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "chance",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "character",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "chase",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "classroom",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "clear",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "climb",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "command",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "community",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "complain",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "compromise",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "contribute",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cop",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cost",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "couch",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cracker",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "curious",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "curriculum",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dad",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "deny",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "describe",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "diaper",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "diarrhea",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "disagree",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dissolve",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "divide",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dolphin",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "double",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "doubt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dumb",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "earth",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "earthquake",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "eight",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "embarrass",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "emotion",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "encourage",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "energy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "enough",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "evaluate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "evidence",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "exact",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "exaggerate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "expect",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fancy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "favorite",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "finally",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fox",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "french",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fruit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "function",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gather",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "germany",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gloves",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "goat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "goodbye",
+    "categories": [
+      "social"
+    ]
+  },
+  {
+    "word": "grow",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "gum",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "half",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "hawaii",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "herself",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "highway",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "homework",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "honor",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ice cream",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "if",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "increase",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "india",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "information",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "interpret",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "interview",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "invite",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "israel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "jesus",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "keep",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "keyboard",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "land",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lawyer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lead",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lesbian",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "line",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lock",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "loud",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "lousy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lunch",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "machine",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mad",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "memorize",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "minus",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "monday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "mountain",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mouth",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mushroom",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "napkin",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "neck",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "next",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "ocean",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "open",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "overwhelm",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "owe",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "page",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pain",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "parade",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "parents",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "perfect",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "period",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "philosophy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "photographer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "place",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "policy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "popular",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pray",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "predict",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "presentation",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "print",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "printer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "private",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "procrastinate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "project",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "protect",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "prove",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "provide",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "psychology",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "punish",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "puzzled",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "question",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "quick",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rainbow",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rake",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rehearse",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "remove",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "revenge",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "review",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rich",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "roof",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rooster",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rude",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "say",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "scientist",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "scotland",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "screwdriver",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "second",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "senate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "separate",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "service",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shrimp",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "side",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "situation",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "slave",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "soccer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "socks",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "solid",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sometimes",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "spider",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "spin",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "square",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stairs",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stare",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "start",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "store",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "straw",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "structure",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "suggest",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sun",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "support",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "suppose",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sure",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "surprise",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "sweater",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "swim",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "symbol",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "taste",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "team",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "telephone",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tennis",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "their",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "then",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "thermometer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "thing",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "third",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "thousand",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "three",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "tie",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "topic",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "touch",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tournament",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "try",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "two",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "type",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "umbrella",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "vegetable",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "vocabulary",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "waste",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "we",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wear",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "weekly",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "welcome",
+    "categories": [
+      "social"
+    ]
+  },
+  {
+    "word": "winter",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "without",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "wolf",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "worm",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wristwatch",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "yourself",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "above",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "accomplish",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "adopt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "advantage",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "alphabet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "anniversary",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "another",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "appropriate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "arrogant",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "artist",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "background",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bee",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "behavior",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bell",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "birth",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bless",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "blood",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "boots",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "brave",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "breathe",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bright",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "bull",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "butterfly",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "card",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "category",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "catholic",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cent",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "chemistry",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cherry",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "china",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "chop",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "christian",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cigarette",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "clever",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "clown",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "coach",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "coat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cochlear implant",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "coconut",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "common",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "commute",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "control",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "count",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "culture",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "daily",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "defend",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "degree",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "demonstrate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "department",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "die",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "dig",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dinner",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dinosaur",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "diploma",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "director",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "disconnect",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "discover",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "don't want",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "drum",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "each",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "educate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "electrician",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "empty",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "england",
+    "categories": [
+      "place"
+    ]
+  },
+  {
+    "word": "establish",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "excuse",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "eyeglasses",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "faculty",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fall in love",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "famous",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "farm",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fence",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fix",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "flexible",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "flirt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "flood",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fork",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "four",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "fun",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "funeral",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "furniture",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gallaudet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "general",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ghost",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "give up",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "glass",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gorilla",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gray",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "guide",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "habit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "health",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hearing aid",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "heaven",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "heavy",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "helmet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hide",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "high school",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hockey",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hold",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "honest",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hug",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hunt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "image",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "influence",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "interesting",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "interpreter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "iran",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "italy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "jewish",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "judge",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "key",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "label",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "leaf",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "left",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lend",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "less",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "linguistics",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lonely",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "long",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "magic",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mainstream",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "major",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "manager",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "maximum",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "me",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mexico",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "middle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mind",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "misunderstand",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "monster",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "multiply",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "myself",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "nothing",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "october",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "odd",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "offer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "on",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "only",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "opposite",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "out",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "overlook",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "path",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "percent",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "physics",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "piano",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pick",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "pie",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "plate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pocket",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "popcorn",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "positive",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "pregnant",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "prevent",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "proof",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pumpkin",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "purpose",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "race",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "realize",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "recognize",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "refuse",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "relationship",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "repeat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "replace",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "report",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "represent",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "request",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "responsibility",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "result",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "reveal",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ring",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rob",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rock",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "role",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rope",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rush",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "salute",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "satisfy",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "search",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "selfish",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sensitive",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "serve",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "seven",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "shampoo",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "she",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shelf",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shopping",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "sign language",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "similar",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sing",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "six",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "skeleton",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sketch",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "skill",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sleepy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "slip",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "smell",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sneeze",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "snob",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "specific",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stamp",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "steel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "strawberry",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "subtract",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "subway",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "suffer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "surface",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sweep",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "swing",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "switzerland",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tale",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tan",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "teeth",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "terrible",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "thankful",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "they",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "through",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tiptoe",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "title",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tooth",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "toothbrush",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "total",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "tough",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tradition",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "trophy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "trouble",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "true",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "trust",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "under",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "verb",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wall",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "watermelon",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "way",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "weird",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "while",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "wide",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "willing",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "wish",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "wonderful",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "workshop",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "worse",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wrench",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "a",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "a lot",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "abdomen",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "able",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "accountant",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "action",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "active",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "activity",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "address",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "affect",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "afraid",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "against",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "agenda",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ahead",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "aim",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "alcohol",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "algebra",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "all day",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "amazing",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "angle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "apart",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "apostrophe",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "appetite",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "appreciate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "april",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "archery",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "around",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "article",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "assistant",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "attend",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "auction",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "authority",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "average",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "awake",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "b",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "babysitter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "battle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "beginning",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "belief",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bible",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bike",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "blend",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bone",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bra",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "brief",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "broke",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bug",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bully",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "button",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cabbage",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cabinet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "calculate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "calculator",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "calculus",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "camping",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "canoe",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "careless",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ceiling",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cemetery",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "chapter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "choir",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "circle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "come",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "come here",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "company",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "complete",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "concept",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "concern",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "confront",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "confused",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "congress",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "connect",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "conquer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "constitution",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "contract",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "court",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "crab",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cross",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cruel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "crush",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "date",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "december",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "decrease",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "deduct",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "defeat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "deposit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "depressed",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "detach",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "determine",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "diabetes",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dime",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dirt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "disgust",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dismiss",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dizzy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "document",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dorm",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dormitory",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "downstairs",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "economy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "education",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "effort",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "eighteen",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "engage",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "engagement",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "engineer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "envelope",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "erase",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "eternity",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "evening",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "everyday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "expand",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "eye",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "eyes",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fake",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "farmer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "february",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "federal",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "final",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "florida",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "flute",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "forbid",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "forever",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fourth",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "free",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "french fries",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gamble",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gas",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gasoline",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "generation",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "geography",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "german",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "girlfriend",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "gold",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "grandma",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "grass",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "grow up",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gun",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "haircut",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hard of hearing",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "hippopotamus",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "his",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "honey",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hurricane",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "identify",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "include",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "infection",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "innocent",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "insect",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "instead",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "institute",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "international",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "interrupt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "involve",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "jail",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "january",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "joke",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "june",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "kangaroo",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "karate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "kick",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "kneel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "knock",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "laptop",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lift",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lightning",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "lip",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lipstick",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "local",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "manage",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mature",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "member",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "message",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "metal",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "microphone",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mix",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "monthly",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "motor",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "nation",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "network",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "nickel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "nineteen",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "normal",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "november",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "nut",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "octopus",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "once",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "organize",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "over",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "owl",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "p",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "parachute",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "paragraph",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "parallel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pay attention",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "peace",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "peanut butter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "perfume",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "personality",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "philadelphia",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "physician",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "piece",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pity",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "plant",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "plenty",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pneumonia",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "politics",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "position",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pound",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pour",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "praise",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "preach",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "preacher",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "prefer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pressure",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "principal",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "priority",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "professional",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "professor",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "promote",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "prostitute",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "proud",
+    "categories": [
+      "emotion"
+    ]
+  },
+  {
+    "word": "quote",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "receive",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "recent",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "reduce",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "refer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "referee",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "relate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "relax",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "remote control",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rent",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "reputation",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "resign",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "responsible",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ridiculous",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "road",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "robot",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rubber",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "safe",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sauce",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sausage",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "scold",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "senior",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "september",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "several",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "shame",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "shave",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shoot",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shoulder",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "silver",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "simple",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "siren",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "size",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "skate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "skin",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "skunk",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "slice",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "smooth",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "snack",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "snowman",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "society",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "someone",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "song",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sore throat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "south america",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "spanish",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "speak",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "speed",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "spell",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "spoon",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "spring",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "standard",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "statistics",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sticky",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "still",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stretch",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "surgeon",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sweden",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "swimsuit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sympathy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "take turns",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "take up",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "technology",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "temple",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tender",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "thailand",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "theater",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "them",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "theme",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "thick",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "this",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "throat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tissue",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tongue",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tonight",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "tornado",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tower",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tranquil",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "transform",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tutor",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "twin",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "united states",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "value",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "visitor",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "waiter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wake up",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wallet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wander",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wash face",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "weight",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "whale",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "whatever",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "within",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wonder",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "worker",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "worthless",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wrap",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "accent",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "act",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "adapt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "adjective",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "adjust",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "admire",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "admit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "advanced",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "adverb",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "agreement",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "aid",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "alligator",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "amputate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "anatomy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "annoy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "anyway",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "approach",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "arizona",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "assist",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "assume",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "attorney",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "audiologist",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "audiology",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "austria",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "author",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "available",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "award",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "aware",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bank",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "baptize",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "basic",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "battery",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "berry",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "beside",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "between",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "binoculars",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "blow",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "boast",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "boil",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bookshelf",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bookstore",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "boxing",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "braid",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "brain",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "breakdown",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "breakfast",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "breeze",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bribe",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "brochure",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "buffalo",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "burp",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bush",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "bye",
+    "categories": [
+      "social"
+    ]
+  },
+  {
+    "word": "camel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "candidate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cannot",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "captain",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "carnival",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "caterpillar",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cheerleader",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "chemical",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "chicago",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "choke",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "christ",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "click",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "closet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "clueless",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "clumsy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "collect",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "comma",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "comment",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "commit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "committee",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "common sense",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "compete",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "concentrate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "congratulations",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "consider",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "construct",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "consume",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "contest",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "conversation",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "convert",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cooperate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "counsel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "counselor",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "crave",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "create",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "crocodile",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "crown",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "cuba",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "curtain",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "customer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "d",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "damage",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dancer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "danger",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dangerous",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "dawn",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "death",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "debate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "debt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "deliver",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "democrat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "descend",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "design",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "detective",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "devil",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dice",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "difficult",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "dining room",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "discipline",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "discount",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "disgusted",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "disturb",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "division",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "done",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "drag",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dragon",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "drama",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "drug",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "due",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dull",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dusk",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dvd",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "dye",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "e",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "either",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "electricity",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "elementary",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "else",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "emergency",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "engine",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "enormous",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "eraser",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "every monday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "every tuesday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "everything",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "except",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "exhibit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "explode",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "express",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "f",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fairy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "familiar",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "festival",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "finance",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fingerspell",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fire",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "firefighter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "five",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "flatter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "fool",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "forgive",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "former",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "freeway",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "from now on",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "g",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gang",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gay",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "geometry",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "get up",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gift",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "grab",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "graduation",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "grateful",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "grey",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "gymnastics",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "h",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hang up",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hanukkah",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "heap",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "heart attack",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hill",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "holy",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hop",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "host",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "hot dog",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "human",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "i",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ill",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "illegal",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "impact",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "individual",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "inspect",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "inspire",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "intersection",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ireland",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "iron",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "j",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "jewelry",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "journey",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "joy",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "july",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "k",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "kid",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "kindergarten",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lady",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lamp",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "last week",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "laundry",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "leader",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "league",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "leak",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "legal",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "let",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "liability",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "librarian",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "license",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "little bit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "loan",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "look at",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "look for",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "lord",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "m",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "meaning",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "melody",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "melt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mention",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "microscope",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "midnight",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "military",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mine",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mistake",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mock",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "moose",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "mosquito",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "motivate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "murder",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "n",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "narrow",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "necessary",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "negotiate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "new york",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "nine",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "northwest",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "not yet",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "notice",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "numerous",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "nun",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "o",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "objective",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "obsess",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "obtain",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "occur",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "odor",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "olympics",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "or",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "oral",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "our",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "overcome",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pack",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "painter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "part",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pause",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "peaceful",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "pear",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "peel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "penalty",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pennsylvania",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "penny",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "permit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "phrase",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pickle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pilot",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "player",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "polar bear",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "policeman",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "poop",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "post",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "potential",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "poverty",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "precious",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "precipitation",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "precise",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "preschool",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pride",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "prince",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "princess",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "principle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "process",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "profit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "progress",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "propaganda",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "proper",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "psychologist",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "public",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "publish",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "purchase",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pure",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "pursue",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "put off",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "q",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "quality",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "quarrel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "quarter",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "r",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rage",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rather",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "real",
+    "categories": [
+      "descriptor"
+    ]
+  },
+  {
+    "word": "recliner",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "recommend",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "recover",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "regular",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "release",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "relief",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rely",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "reply",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rescue",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "resist",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "restroom",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "retreat",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "roar",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "robber",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "roommate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "rose",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ruin",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "s",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "salary",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "saw",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "scan",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "scream",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sculpture",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sea",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "seldom",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sequence",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "settle",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shout",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "shovel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sin",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "singer",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sixteen",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ski",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "skip",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "smoking",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "sofa",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "soldier",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "solve",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "someday",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "something",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "somewhere",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "soul",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "spill",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "spit",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "spread",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sprint",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "squeeze",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stadium",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stepfather",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "sting",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stir",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stitch",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "stuck",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sue",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "sunshine",
+    "categories": [
+      "time"
+    ]
+  },
+  {
+    "word": "superman",
+    "categories": [
+      "person"
+    ]
+  },
+  {
+    "word": "surrender",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "suspend",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "swimming",
+    "categories": [
+      "descriptor",
+      "emotion"
+    ]
+  },
+  {
+    "word": "t",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "talent",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "telescope",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tempt",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "ten",
+    "categories": [
+      "number"
+    ]
+  },
+  {
+    "word": "tend",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "testify",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "texas",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "text",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "than",
+    "categories": [
+      "function"
+    ]
+  },
+  {
+    "word": "therefore",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "thrill",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tobacco",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "toilet paper",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "tolerate",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "torture",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "towel",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "trip",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "truth",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "turn",
+    "categories": [
+      "action"
+    ]
+  },
+  {
+    "word": "tv",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "u",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "unique",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "upstairs",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "v",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "vacant",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "vague",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "valley",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "vampire",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "very",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "vice president",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "viewpoint",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "visualize",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "vlog",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "volleyball",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "w",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "washington",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "waterfall",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "weigh",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "wheelchair",
+    "categories": [
+      "object"
+    ]
+  },
+  {
+    "word": "whistle",
+    "categories": [
+      "object"
+    ]
+  }
+]

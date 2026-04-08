@@ -6,6 +6,20 @@ export type Category = {
   icon?: string;
 };
 
+/** WLASL / app taxonomy from `build_firestore_records.js` → Firestore `categories`. */
+export type SignCategoryId =
+  | "action"
+  | "object"
+  | "person"
+  | "descriptor"
+  | "time"
+  | "place"
+  | "emotion"
+  | "question"
+  | "function"
+  | "social"
+  | "number";
+
 export type SignSource = "featured" | "community";
 
 /** Provenance for text fields (not the WLASL video host). */
@@ -43,6 +57,8 @@ export type DictionarySignDocument = {
   isActive?: boolean;
   isCommunity?: boolean;
   tags?: string[];
+  /** App taxonomy (verbs, places, feelings, …). */
+  categories?: string[];
   categoryId?: string;
   status?: "draft" | "reviewed" | string;
   createdAt?: unknown;
@@ -65,4 +81,6 @@ export type Sign = {
   /** Copy / editorial status for badges. */
   status?: string;
   contentSource?: ContentSourceMeta;
+  /** Filter / display tags (from Firestore `categories`). */
+  categories?: SignCategoryId[];
 };

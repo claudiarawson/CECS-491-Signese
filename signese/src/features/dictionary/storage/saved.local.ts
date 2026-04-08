@@ -67,6 +67,10 @@ export function mergeSignWithSnapshot(catalog: Sign | undefined, snapshot: Sign 
     storagePath: catalog.storagePath ?? snapshot.storagePath,
     videoId: catalog.videoId ?? snapshot.videoId,
     videoPath: catalog.videoPath ?? snapshot.videoPath,
+    categories:
+      catalog.categories && catalog.categories.length > 0
+        ? catalog.categories
+        : snapshot.categories,
   };
 }
 

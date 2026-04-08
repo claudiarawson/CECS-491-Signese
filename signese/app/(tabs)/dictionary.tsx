@@ -15,6 +15,7 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -30,7 +31,11 @@ import {
   mergeSignWithSnapshot,
   toggleSavedId,
 } from "../../src/features/dictionary/storage/saved.local";
-import type { Sign } from "../../src/features/dictionary/types";
+import type { Sign, SignCategoryId } from "../../src/features/dictionary/types";
+import {
+  SIGN_CATEGORY_LABEL,
+  SIGN_CATEGORY_ORDER,
+} from "../../src/features/dictionary/signCategories";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { getProfileIconById } from "@/src/features/account/types";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
@@ -50,6 +55,8 @@ export default function DictionaryScreen() {
   const styles = createStyles(density, textScale);
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
+  /** Empty = no category filter. Otherwise show signs that match any selected category (OR). */
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<SignCategoryId[]>([]);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [savedSnapshots, setSavedSnapshots] = useState<Record<string, Sign>>({});
   const [selectedSign, setSelectedSign] = useState<Sign | null>(null);
@@ -75,10 +82,21 @@ export default function DictionaryScreen() {
     });
   };
 
+  const toggleCategoryFilter = (id: SignCategoryId) => {
+    setSelectedCategoryIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
   const filtered: Sign[] = useMemo(() => {
     const q = query.trim().toLowerCase();
     return signs.filter((s) => {
       if (communityOnly && s.source !== "community") return false;
+      if (selectedCategoryIds.length > 0) {
+        const cats = s.categories ?? [];
+        const matches = selectedCategoryIds.some((fid) => cats.includes(fid));
+        if (!matches) return false;
+      }
       if (!q) return true;
       return (
         s.word.toLowerCase().includes(q) ||
@@ -86,7 +104,7 @@ export default function DictionaryScreen() {
         (s.note && s.note.toLowerCase().includes(q))
       );
     });
-  }, [query, communityOnly, signs]);
+  }, [query, communityOnly, signs, selectedCategoryIds]);
 
   return (
     <ScreenContainer backgroundColor="#F1F6F5">
@@ -107,32 +125,61 @@ export default function DictionaryScreen() {
       />
 
       <View style={styles.content}>
-        <View style={styles.searchWrap}>
-          <Text style={styles.searchIcon}>🔍</Text>
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Search Sign/Word"
-            placeholderTextColor="#7b8a8b"
-            style={styles.searchInput}
-          />
-          {query.length > 0 && (
-            <Pressable onPress={() => setQuery("")} style={styles.clearBtn}>
-              <Text style={styles.clearText}>✕</Text>
-            </Pressable>
-          )}
-        </View>
+        <View style={styles.filtersBlock}>
+          <View style={styles.searchWrap}>
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search Sign/Word"
+              placeholderTextColor="#7b8a8b"
+              style={styles.searchInput}
+            />
+            {query.length > 0 && (
+              <Pressable onPress={() => setQuery("")} style={styles.clearBtn}>
+                <Text style={styles.clearText}>✕</Text>
+              </Pressable>
+            )}
+          </View>
 
-        <Pressable
-          onPress={() => setCommunityOnly((v) => !v)}
-          style={[styles.togglePill, communityOnly && styles.togglePillOn]}
-        >
-          <Text
-            style={[styles.toggleText, communityOnly && styles.toggleTextOn]}
+          <Pressable
+            onPress={() => setCommunityOnly((v) => !v)}
+            style={[styles.togglePill, communityOnly && styles.togglePillOn]}
           >
-            {communityOnly ? "✓ " : ""}Community Signs
-          </Text>
-        </Pressable>
+            <Text
+              style={[styles.toggleText, communityOnly && styles.toggleTextOn]}
+            >
+              {communityOnly ? "✓ " : ""}Community Signs
+            </Text>
+          </Pressable>
+
+          <Text style={styles.categoryFilterLabel}>Categories</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoryScroll}
+            contentContainerStyle={styles.categoryScrollContent}
+          >
+            {SIGN_CATEGORY_ORDER.map((id) => {
+              const on = selectedCategoryIds.includes(id);
+              return (
+                <Pressable
+                  key={id}
+                  onPress={() => toggleCategoryFilter(id)}
+                  style={[styles.categoryChip, on && styles.categoryChipOn]}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: on }}
+                  accessibilityLabel={`${SIGN_CATEGORY_LABEL[id]}${on ? ", selected" : ""}`}
+                >
+                  <Text style={[styles.categoryChipText, on && styles.categoryChipTextOn]}>
+                    {on ? "✓ " : ""}
+                    {SIGN_CATEGORY_LABEL[id]}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+        </View>
 
         {error ? (
           <View style={styles.banner}>
@@ -157,6 +204,7 @@ export default function DictionaryScreen() {
           </View>
         ) : (
           <FlatList
+            style={styles.signsList}
             data={filtered}
             keyExtractor={(item) => item.id}
             numColumns={2}
@@ -174,6 +222,7 @@ export default function DictionaryScreen() {
                 merged.storagePath ||
                 merged.videoId
               );
+
               return (
                 <Pressable
                   style={[styles.card, item.source === "community" && styles.cardCommunity]}
@@ -186,7 +235,7 @@ export default function DictionaryScreen() {
                   <Text style={styles.cardWord} numberOfLines={1}>
                     {merged.word}
                   </Text>
-                  <Pressable onPress={() => handleToggleSave(item)} style={styles.saveBtn}>
+                  <Pressable onPress={() => handleToggleSave(merged)} style={styles.saveBtn}>
                     <Text style={styles.saveIcon}>{isItemSaved ? "★" : "☆"}</Text>
                   </Pressable>
                 </Pressable>
@@ -224,6 +273,15 @@ const createStyles = (density: number, textScale: number) => {
     content: {
       flex: 1,
       paddingHorizontal: Spacing.xl,
+      minHeight: 0,
+    },
+    /** Keeps search + category chips from shrinking when FlatList scrolls. */
+    filtersBlock: {
+      flexShrink: 0,
+    },
+    signsList: {
+      flex: 1,
+      minHeight: 0,
     },
     searchWrap: {
       marginTop: ms(12),
@@ -271,6 +329,50 @@ const createStyles = (density: number, textScale: number) => {
       color: TEAL_DARK,
     },
     toggleTextOn: {
+      color: "white",
+    },
+
+    categoryFilterLabel: {
+      marginTop: ms(10),
+      marginBottom: ms(6),
+      fontSize: ts(12),
+      lineHeight: ts(16),
+      fontWeight: "700",
+      color: TEAL_DARK,
+    },
+    categoryScroll: {
+      marginBottom: ms(8),
+      flexShrink: 0,
+      flexGrow: 0,
+    },
+    categoryScrollContent: {
+      flexDirection: "row",
+      alignItems: "center",
+      flexWrap: "nowrap",
+      gap: ms(8),
+      paddingVertical: ms(4),
+      paddingRight: ms(8),
+    },
+    categoryChip: {
+      flexShrink: 0,
+      backgroundColor: MINT,
+      borderWidth: 1,
+      borderColor: TEAL,
+      paddingHorizontal: ms(12),
+      paddingVertical: ms(8),
+      borderRadius: ms(18),
+    },
+    categoryChipOn: {
+      backgroundColor: TEAL_DARK,
+      borderColor: TEAL_DARK,
+    },
+    categoryChipText: {
+      fontSize: ts(14),
+      lineHeight: ts(18),
+      fontWeight: "700",
+      color: TEAL_DARK,
+    },
+    categoryChipTextOn: {
       color: "white",
     },
 

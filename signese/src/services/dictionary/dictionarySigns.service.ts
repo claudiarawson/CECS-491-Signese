@@ -2,6 +2,7 @@ import { collection, getDocs, limit, query } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 import { db, storage } from "@/src/services/firebase/firebase.config";
 import type { DictionarySignDocument, Sign } from "@/src/features/dictionary/types";
+import { normalizeSignCategories } from "@/src/features/dictionary/signCategories";
 
 const DICTIONARY_COLLECTION = "dictionarySigns";
 
@@ -43,6 +44,7 @@ export function mapDocumentToSign(
   const path = effectiveStorageObjectPath(data);
 
   const mediaUrl = nonEmpty(data.videoUrl) ? data.videoUrl.trim() : resolvedVideoUrl ?? undefined;
+  const categories = normalizeSignCategories(data.categories);
 
   return {
     id: docId,
@@ -62,6 +64,7 @@ export function mapDocumentToSign(
     storagePath: path,
     status: nonEmpty(data.status) ? data.status : "draft",
     contentSource: data.contentSource,
+    categories,
   };
 }
 
