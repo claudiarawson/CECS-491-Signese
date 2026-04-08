@@ -33,8 +33,8 @@ export function PrimaryActionButton({
 
 const styles = StyleSheet.create({
   button: {
-    height: 56,
-    borderRadius: 24,
+    height: 52,
+    borderRadius: 22,
     backgroundColor: lessonColors.primaryButton,
     alignItems: "center",
     justifyContent: "center",

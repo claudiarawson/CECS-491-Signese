@@ -32,6 +32,13 @@ export function TypeAnswerScreen() {
   const [submitted, setSubmitted] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
 
+  const inputPlaceholder =
+    lessonId === "alphabet"
+      ? "Type a letter (A-Z)"
+      : lessonId === "numbers"
+      ? "Type a number (0-9)"
+      : "Type your answer";
+
   const feedback = useMemo(() => {
     if (!submitted || !sign) {
       return "";
@@ -96,7 +103,7 @@ export function TypeAnswerScreen() {
           <TypingAnswerInput
             value={value}
             onChangeText={setValue}
-            placeholder="Type your answer"
+            placeholder={inputPlaceholder}
             editable={!submitted}
             autoCapitalize="none"
             autoCorrect={false}

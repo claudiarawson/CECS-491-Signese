@@ -140,8 +140,8 @@ export default function GreetingsLearnScreen() {
 
     if (nextStep === 10) {
       router.push({
-        pathname: "/learn/greetings/complete" as any,
-        params: { totalCorrect: String(totalCorrect) },
+        pathname: "/learn/greetings/type" as any,
+        params: { matchScore: String(totalCorrect) },
       });
       return;
     }
@@ -336,7 +336,7 @@ function LearnCard({
   return (
     <View style={styles.card}>
       <View style={styles.gifArea}>
-        <Image source={item.image} style={styles.gifImage} contentFit="cover" />
+        <Image source={item.image} style={styles.gifImage} contentFit="cover" autoplay />
       </View>
       <Text style={styles.caption}>Watch and learn this sign</Text>
       <Text style={styles.signWord}>{item.label}</Text>
@@ -376,51 +376,45 @@ function MatchCard({
       <Text style={styles.matchScore}>Score: {totalCorrect}</Text>
 
       <View style={styles.matchGrid}>
-        {/* GIF column */}
-        <View style={styles.matchCol}>
-          {gifTiles.map((tile) => (
-            <Pressable
-              key={tile.id}
-              style={[
-                styles.gifTile,
-                gifTileStyle(tile.state),
-                { borderWidth: 2 },
-                tile.state === "correct" && styles.tileDisabled,
-              ]}
-              onPress={() => onGifTap(tile.id)}
-              disabled={tile.state === "correct"}
-            >
-              <Image source={tile.image} style={styles.matchGifImage} contentFit="cover" />
-            </Pressable>
-          ))}
-        </View>
-
-        {/* Word column */}
-        <View style={styles.matchCol}>
-          {wordTiles.map((tile) => (
-            <Pressable
-              key={tile.id}
-              style={[
-                styles.wordTile,
-                wordTileStyle(tile.state),
-                { borderWidth: 2 },
-                tile.state === "correct" && styles.tileDisabled,
-              ]}
-              onPress={() => onWordTap(tile.id)}
-              disabled={tile.state === "correct"}
-            >
-              <Text
+        {gifTiles.map((tile, idx) => {
+          const wTile = wordTiles[idx];
+          return (
+            <View key={tile.id} style={styles.matchRow}>
+              <Pressable
                 style={[
-                  styles.wordTileText,
-                  { color: wordTileTextColor(tile.state) },
+                  styles.gifTile,
+                  gifTileStyle(tile.state),
+                  { borderWidth: 2 },
+                  tile.state === "correct" && styles.tileDisabled,
                 ]}
-                numberOfLines={2}
+                onPress={() => onGifTap(tile.id)}
+                disabled={tile.state === "correct"}
               >
-                {tile.label}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
+                <Image source={tile.image} style={styles.matchGifImage} contentFit="cover" autoplay />
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.wordTile,
+                  wordTileStyle(wTile.state),
+                  { borderWidth: 2 },
+                  wTile.state === "correct" && styles.tileDisabled,
+                ]}
+                onPress={() => onWordTap(wTile.id)}
+                disabled={wTile.state === "correct"}
+              >
+                <Text
+                  style={[
+                    styles.wordTileText,
+                    { color: wordTileTextColor(wTile.state) },
+                  ]}
+                  numberOfLines={2}
+                >
+                  {wTile.label}
+                </Text>
+              </Pressable>
+            </View>
+          );
+        })}
       </View>
 
       {/* Feedback pill */}
@@ -528,8 +522,10 @@ const createStyles = (density: number, textScale: number) => {
     },
     // Learn card
     gifArea: {
-      flex: 1,
-      minHeight: ms(120),
+      width: "100%",
+      maxWidth: ms(240),
+      aspectRatio: 1,
+      alignSelf: "center",
       borderRadius: ms(18),
       overflow: "hidden",
       backgroundColor: "#EEF7FA",
@@ -568,16 +564,16 @@ const createStyles = (density: number, textScale: number) => {
     },
     matchGrid: {
       flex: 1,
-      flexDirection: "row",
-      gap: ms(8),
+      gap: ms(6),
       minHeight: 0,
     },
-    matchCol: {
+    matchRow: {
       flex: 1,
+      flexDirection: "row",
       gap: ms(8),
     },
     gifTile: {
-      flex: 1,
+      aspectRatio: 1,
       borderRadius: ms(14),
       overflow: "hidden",
     },
@@ -630,8 +626,8 @@ const createStyles = (density: number, textScale: number) => {
       paddingBottom: ms(16),
     },
     nextButton: {
-      height: ms(56),
-      borderRadius: ms(24),
+      height: ms(52),
+      borderRadius: ms(22),
       backgroundColor: "#56BDB4",
       alignItems: "center",
       justifyContent: "center",
@@ -641,7 +637,7 @@ const createStyles = (density: number, textScale: number) => {
     },
     nextButtonText: {
       color: "#FFFFFF",
-      fontSize: ts(17),
+      fontSize: ts(16),
       fontWeight: "700",
     },
   });

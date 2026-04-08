@@ -6,7 +6,6 @@ import {
   Pressable,
   Image,
   useWindowDimensions,
-  ScrollView,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
@@ -51,7 +50,7 @@ export default function AlphabetLearnScreen() {
     <ScreenContainer backgroundColor="#EEF3F1">
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <MaterialIcons name="chevron-left" size={32} color="#FFFFFF" />
+          <MaterialIcons name="chevron-left" size={28} color="#FFFFFF" />
         </Pressable>
 
         <Text style={styles.headerTitle}>Alphabet</Text>
@@ -68,10 +67,7 @@ export default function AlphabetLearnScreen() {
         </View>
       </View>
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <View style={styles.content}>
         <View style={styles.progressTopRow}>
           <Text style={styles.progressLabel}>Learn</Text>
           <Text style={styles.progressCount}>
@@ -99,7 +95,7 @@ export default function AlphabetLearnScreen() {
             {currentIndex === total - 1 ? "Finish" : "Next"}
           </Text>
         </Pressable>
-      </ScrollView>
+      </View>
     </ScreenContainer>
   );
 }
@@ -112,109 +108,108 @@ const createStyles = (density: number, textScale: number) => {
     header: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: ms(20),
-      paddingTop: ms(8),
-      paddingBottom: ms(10),
       backgroundColor: "#FFFFFF",
+      paddingHorizontal: ms(16),
+      paddingBottom: ms(10),
+      paddingTop: ms(10),
+      gap: ms(12),
     },
     backButton: {
-      width: ms(56),
-      height: ms(56),
-      borderRadius: ms(28),
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
       backgroundColor: "#56BDB4",
       alignItems: "center",
       justifyContent: "center",
     },
     headerTitle: {
       flex: 1,
-      marginLeft: ms(12),
-      fontSize: ts(22),
-      lineHeight: ts(28),
+      fontSize: ts(18),
       fontWeight: "800",
-      color: "#111111",
+      color: "#334155",
     },
     headerRight: {
       flexDirection: "row",
       alignItems: "center",
-      gap: ms(8),
+      gap: ms(6),
     },
-    scrollContent: {
-      paddingBottom: ms(28),
+    content: {
+      flex: 1,
+      paddingBottom: ms(16),
     },
     progressTopRow: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      paddingHorizontal: ms(28),
-      marginTop: ms(8),
+      paddingHorizontal: ms(16),
+      marginTop: ms(6),
     },
     progressLabel: {
-      fontSize: ts(17),
-      lineHeight: ts(22),
-      color: "#64748B",
+      fontSize: ts(12),
+      fontWeight: "700",
+      color: "#334155",
     },
     progressCount: {
-      fontSize: ts(17),
-      lineHeight: ts(22),
-      color: "#64748B",
+      fontSize: ts(12),
+      fontWeight: "700",
+      color: "#334155",
     },
     progressTrack: {
-      height: ms(20),
-      borderRadius: ms(12),
+      height: ms(8),
+      borderRadius: ms(99),
       backgroundColor: "#F4B7A0",
-      marginHorizontal: ms(28),
-      marginTop: ms(12),
+      marginHorizontal: ms(16),
+      marginTop: ms(6),
       overflow: "hidden",
     },
     progressFill: {
       height: "100%",
       backgroundColor: "#56BDB4",
-      borderRadius: ms(12),
+      borderRadius: ms(99),
     },
     card: {
-      marginTop: ms(28),
-      marginHorizontal: ms(28),
+      flex: 1,
+      marginTop: ms(14),
+      marginHorizontal: ms(16),
       backgroundColor: "#FAFAFA",
-      borderRadius: ms(34),
-      paddingHorizontal: ms(20),
-      paddingVertical: ms(22),
+      borderRadius: ms(24),
+      paddingHorizontal: ms(16),
+      paddingVertical: ms(16),
       alignItems: "center",
+      justifyContent: "center",
     },
     lessonImage: {
       width: "100%",
-      maxWidth: ms(340),
-      height: ms(300),
-      marginBottom: ms(18),
+      maxWidth: ms(240),
+      aspectRatio: 1,
+      marginBottom: ms(12),
       backgroundColor: "#F7F7F7",
     },
     subtitle: {
-      fontSize: ts(18),
-      lineHeight: ts(24),
+      fontSize: ts(13),
+      fontWeight: "600",
       color: "#64748B",
       textAlign: "center",
     },
     letterText: {
-      marginTop: ms(6),
-      fontSize: ts(30),
-      lineHeight: ts(36),
+      marginTop: ms(4),
+      fontSize: ts(24),
       fontWeight: "800",
       color: semanticColors.text.primary,
       textAlign: "center",
     },
     nextButton: {
-      marginTop: ms(28),
-      marginHorizontal: ms(28),
-      minHeight: ms(76),
-      borderRadius: ms(28),
+      marginTop: ms(12),
+      marginHorizontal: ms(16),
+      height: ms(52),
+      borderRadius: ms(22),
       backgroundColor: "#56BDB4",
       alignItems: "center",
       justifyContent: "center",
     },
     nextButtonText: {
       color: "#FFFFFF",
-      fontSize: ts(24),
-      lineHeight: ts(30),
+      fontSize: ts(16),
       fontWeight: "700",
     },
   });

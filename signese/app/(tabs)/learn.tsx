@@ -99,6 +99,8 @@ export default function LearnScreen() {
     (lesson) => !unlockedLessons.includes(lesson.id as LessonId)
   );
 
+  const IMPLEMENTED_LESSONS = new Set(["alphabet", "greetings", "numbers"]);
+
   const handleLessonPress = (lesson: LessonNode) => {
     const isUnlocked = unlockedLessons.includes(lesson.id as LessonId);
 
@@ -108,6 +110,11 @@ export default function LearnScreen() {
         "Lesson Locked",
         `${lesson.title} requires ${starsRequired} stars to unlock.`
       );
+      return;
+    }
+
+    if (!IMPLEMENTED_LESSONS.has(lesson.id)) {
+      Alert.alert("Coming Soon", `${lesson.title} is not available yet. Stay tuned!`);
       return;
     }
 

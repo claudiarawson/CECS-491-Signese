@@ -28,9 +28,10 @@ const NEXT_LESSON_ID: LessonId = "family";
 const NEXT_LESSON_ROUTE = "/learn/family";
 
 // Stars logic: ≥7 correct → 3 stars, ≥5 → 2 stars, else → 1 star
+// Stars logic (max 16: 8 match + 8 type): ≥12 → 3 stars, ≥8 → 2 stars, else → 1 star
 function calcStars(totalCorrect: number): number {
-  if (totalCorrect >= 7) return 3;
-  if (totalCorrect >= 5) return 2;
+  if (totalCorrect >= 12) return 3;
+  if (totalCorrect >= 8) return 2;
   return 1;
 }
 

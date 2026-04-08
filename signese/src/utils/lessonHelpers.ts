@@ -2,7 +2,9 @@ import { LESSONS_BY_TYPE, LessonSign, LessonType } from "@/src/data/lessons";
 import { validateTypedAnswer } from "./answerValidation";
 
 export function getLessonSigns(lessonType: LessonType): LessonSign[] {
-  return LESSONS_BY_TYPE[lessonType].signs.slice().sort((a, b) => a.order - b.order);
+  const lesson = LESSONS_BY_TYPE[lessonType];
+  if (!lesson) return [];
+  return lesson.signs.slice().sort((a, b) => a.order - b.order);
 }
 
 export function getSignByOrder(lessonType: LessonType, order: number): LessonSign | undefined {
