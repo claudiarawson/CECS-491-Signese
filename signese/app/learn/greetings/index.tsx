@@ -4,10 +4,10 @@ import {
   Text,
   StyleSheet,
   Pressable,
-  Image,
   useWindowDimensions,
   ScrollView,
 } from "react-native";
+import { Image } from "expo-image";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import {
@@ -336,7 +336,7 @@ function LearnCard({
   return (
     <View style={styles.card}>
       <View style={styles.gifArea}>
-        <Image source={item.image} style={styles.gifImage} resizeMode="cover" />
+        <Image source={item.image} style={styles.gifImage} contentFit="cover" />
       </View>
       <Text style={styles.caption}>Watch and learn this sign</Text>
       <Text style={styles.signWord}>{item.label}</Text>
@@ -390,7 +390,7 @@ function MatchCard({
               onPress={() => onGifTap(tile.id)}
               disabled={tile.state === "correct"}
             >
-              <Image source={tile.image} style={styles.matchGifImage} resizeMode="cover" />
+              <Image source={tile.image} style={styles.matchGifImage} contentFit="cover" />
             </Pressable>
           ))}
         </View>
