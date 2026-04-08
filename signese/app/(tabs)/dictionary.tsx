@@ -4,7 +4,11 @@ import {
   ScreenContainer,
   ScreenHeader,
 } from "@/src/components/layout";
-import { Spacing } from "@/src/theme";
+import {
+  Spacing,
+  getDeviceDensity,
+  moderateScale,
+} from "@/src/theme";
 import { router } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -14,6 +18,7 @@ import {
   Text,
   TextInput,
   View,
+  useWindowDimensions,
 } from "react-native";
 import SignOverlay from "../../src/components/SignOverlay";
 import { SIGNS } from "../../src/features/dictionary/data/signs";
@@ -24,14 +29,20 @@ import {
 import type { Sign } from "../../src/features/dictionary/types";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { getProfileIconById } from "@/src/features/account/types";
+import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 
 const MINT = "#cfe9e6";
 const TEAL = "#48b4a8";
 const TEAL_DARK = "#2c9a8f";
 
 export default function DictionaryScreen() {
+  const { textScale } = useAccessibility();
   const { profile } = useAuthUser();
   const headerProfileIcon = getProfileIconById(profile?.avatar);
+
+  const { height, width } = useWindowDimensions();
+  const density = getDeviceDensity(width, height);
+  const styles = createStyles(density, textScale);
 
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
@@ -150,9 +161,7 @@ export default function DictionaryScreen() {
             );
           }}
           ListEmptyComponent={
-            <Text
-              style={{ textAlign: "center", marginTop: 20, color: "#566" }}
-            >
+            <Text style={styles.emptyText}>
               No results.
             </Text>
           }
@@ -184,90 +193,145 @@ export default function DictionaryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-    paddingHorizontal: Spacing.xl,
-  },
-  searchWrap: {
-    marginTop: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#e6f4f2",
-    borderRadius: 24,
-    paddingHorizontal: 14,
-    height: 46,
-  },
-  searchIcon: { fontSize: 18, marginRight: 8 },
-  searchInput: { flex: 1, fontSize: 16, color: "#111" },
+const createStyles = (density: number, textScale: number) => {
+  const ms = (value: number) => moderateScale(value) * density;
+  const ts = (value: number) => ms(value) * textScale;
 
-  clearBtn: { marginLeft: 8 },
-  clearText: { fontSize: 18, color: "#7b8a8b" },
+  return StyleSheet.create({
+    content: {
+      flex: 1,
+      paddingHorizontal: Spacing.xl,
+    },
+    searchWrap: {
+      marginTop: ms(12),
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: "#e6f4f2",
+      borderRadius: ms(24),
+      paddingHorizontal: ms(14),
+      height: ms(46),
+    },
+    searchIcon: {
+      fontSize: ts(18),
+      marginRight: ms(8),
+    },
+    searchInput: {
+      flex: 1,
+      fontSize: ts(16),
+      lineHeight: ts(20),
+      color: "#111",
+    },
 
-  togglePill: {
-    marginTop: 10,
-    alignSelf: "flex-start",
-    backgroundColor: "#e1f2f0",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 18,
-  },
-  togglePillOn: { backgroundColor: TEAL_DARK },
-  toggleText: { fontSize: 16, fontWeight: "700", color: TEAL_DARK },
-  toggleTextOn: { color: "white" },
+    clearBtn: {
+      marginLeft: ms(8),
+    },
+    clearText: {
+      fontSize: ts(18),
+      color: "#7b8a8b",
+    },
 
-  sectionTitle: {
-    marginTop: 14,
-    marginBottom: 10,
-    fontSize: 20,
-    fontWeight: "800",
-    textAlign: "center",
-  },
+    togglePill: {
+      marginTop: ms(10),
+      alignSelf: "flex-start",
+      backgroundColor: "#e1f2f0",
+      paddingHorizontal: ms(14),
+      paddingVertical: ms(8),
+      borderRadius: ms(18),
+    },
+    togglePillOn: {
+      backgroundColor: TEAL_DARK,
+    },
+    toggleText: {
+      fontSize: ts(16),
+      lineHeight: ts(20),
+      fontWeight: "700",
+      color: TEAL_DARK,
+    },
+    toggleTextOn: {
+      color: "white",
+    },
 
-  card: {
-    flex: 1,
-    backgroundColor: MINT,
-    borderRadius: 22,
-    padding: 12,
-    marginBottom: 14,
-  },
-  cardCommunity: {
-    backgroundColor: "#4ab3a7",
-  },
-  mediaPlaceholder: {
-    height: 120,
-    borderRadius: 18,
-    backgroundColor: "rgba(255,255,255,0.75)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  mediaText: { color: "#4d6", fontWeight: "700" },
-  cardWord: {
-    marginTop: 10,
-    fontSize: 22,
-    fontWeight: "900",
-    textAlign: "center",
-    color: "#111",
-  },
+    sectionTitle: {
+      marginTop: ms(14),
+      marginBottom: ms(10),
+      fontSize: ts(20),
+      lineHeight: ts(24),
+      fontWeight: "800",
+      textAlign: "center",
+    },
 
-  saveBtn: { position: "absolute", top: 8, right: 8, padding: 4 },
-  saveIcon: { fontSize: 20, color: "#ffd700" },
+    card: {
+      flex: 1,
+      backgroundColor: MINT,
+      borderRadius: ms(22),
+      padding: ms(12),
+      marginBottom: ms(14),
+    },
+    cardCommunity: {
+      backgroundColor: "#4ab3a7",
+    },
+    mediaPlaceholder: {
+      height: ms(120),
+      borderRadius: ms(18),
+      backgroundColor: "rgba(255,255,255,0.75)",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    mediaText: {
+      color: "#4d6",
+      fontWeight: "700",
+      fontSize: ts(14),
+      lineHeight: ts(18),
+    },
+    cardWord: {
+      marginTop: ms(10),
+      fontSize: ts(22),
+      lineHeight: ts(26),
+      fontWeight: "900",
+      textAlign: "center",
+      color: "#111",
+    },
 
-  bottomRow: {
-    position: "absolute",
-    left: Spacing.screenPadding,
-    right: Spacing.screenPadding,
-    bottom: 18,
-    flexDirection: "row",
-    gap: 12,
-  },
-  bottomBtn: {
-    flex: 1,
-    backgroundColor: TEAL,
-    borderRadius: 18,
-    paddingVertical: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  bottomBtnText: { color: "white", fontSize: 16, fontWeight: "800" },
-});
+    saveBtn: {
+      position: "absolute",
+      top: ms(8),
+      right: ms(8),
+      padding: ms(4),
+    },
+    saveIcon: {
+      fontSize: ts(20),
+      color: "#ffd700",
+    },
+
+    emptyText: {
+      textAlign: "center",
+      marginTop: ms(20),
+      color: "#566",
+      fontSize: ts(16),
+      lineHeight: ts(20),
+    },
+
+    bottomRow: {
+      position: "absolute",
+      left: Spacing.screenPadding,
+      right: Spacing.screenPadding,
+      bottom: ms(18),
+      flexDirection: "row",
+      gap: ms(12),
+    },
+    bottomBtn: {
+      flex: 1,
+      backgroundColor: TEAL,
+      borderRadius: ms(18),
+      paddingVertical: ms(14),
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    bottomBtnText: {
+      color: "white",
+      fontSize: ts(16),
+      lineHeight: ts(20),
+      fontWeight: "800",
+    },
+  });
+};

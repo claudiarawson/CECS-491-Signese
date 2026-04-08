@@ -28,8 +28,10 @@ import {
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { getProfileIconById } from "@/src/features/account/types";
 import { getCurrentUserStars } from "@/src/features/gamification/stars.services";
+import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 
 export default function HomeScreen() {
+  const { textScale } = useAccessibility();
   const { profile, loading } = useAuthUser();
   const headerProfileIcon = getProfileIconById(profile?.avatar);
   const streakCount = profile?.streak?.current ?? 0;
@@ -59,7 +61,7 @@ export default function HomeScreen() {
 
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const styles = createStyles(density);
+  const styles = createStyles(density, textScale);
 
   if (loading) {
     return (
@@ -154,8 +156,9 @@ export default function HomeScreen() {
   );
 }
 
-const createStyles = (density: number) => {
+const createStyles = (density: number, textScale: number) => {
   const ms = (value: number) => moderateScale(value) * density;
+  const ts = (value: number) => ms(value) * textScale;
 
   return StyleSheet.create({
     content: {
@@ -172,14 +175,14 @@ const createStyles = (density: number) => {
     greetingLine: {
       ...Typography.sectionTitle,
       color: semanticColors.text.primary,
-      fontSize: ms(16),
-      lineHeight: ms(20),
+      fontSize: ts(16),
+      lineHeight: ts(20),
     },
     greetingName: {
       ...Typography.screenTitle,
       color: semanticColors.text.primary,
-      fontSize: ms(26),
-      lineHeight: ms(30),
+      fontSize: ts(26),
+      lineHeight: ts(30),
       textDecorationLine: "underline",
       fontWeight: "700",
     },
@@ -206,19 +209,20 @@ const createStyles = (density: number) => {
       backgroundColor: "#D2F1D8",
     },
     statIcon: {
-      fontSize: ms(18),
+      fontSize: ts(18),
       marginBottom: ms(2),
     },
     statValue: {
       ...Typography.statNumber,
-      fontSize: ms(28),
+      fontSize: ts(28),
       color: semanticColors.text.primary,
-      lineHeight: ms(30),
+      lineHeight: ts(30),
     },
     statLabel: {
       ...Typography.caption,
-      fontSize: ms(12),
+      fontSize: ts(12),
       color: semanticColors.text.secondary,
+      lineHeight: ts(14),
     },
     learningCard: {
       backgroundColor: "#EDEDED",
@@ -240,7 +244,7 @@ const createStyles = (density: number) => {
       justifyContent: "center",
     },
     learningIcon: {
-      fontSize: ms(22),
+      fontSize: ts(22),
     },
     learningTextWrap: {
       flex: 1,
@@ -249,14 +253,14 @@ const createStyles = (density: number) => {
       ...Typography.sectionTitle,
       color: semanticColors.text.primary,
       fontWeight: "700",
-      fontSize: ms(18),
-      lineHeight: ms(22),
+      fontSize: ts(18),
+      lineHeight: ts(22),
     },
     learningSubtitle: {
       ...Typography.body,
       color: semanticColors.text.secondary,
-      fontSize: ms(13),
-      lineHeight: ms(16),
+      fontSize: ts(13),
+      lineHeight: ts(16),
     },
     progressTrack: {
       width: "100%",
@@ -281,6 +285,8 @@ const createStyles = (density: number) => {
     continueBtnText: {
       ...Typography.button,
       color: "#FFFFFF",
+      fontSize: ts(14),
+      lineHeight: ts(18),
     },
     tipsSection: {
       marginTop: 0,
@@ -295,7 +301,8 @@ const createStyles = (density: number) => {
       marginTop: ms(10),
       ...Typography.body,
       color: semanticColors.text.secondary,
-      fontSize: ms(14),
+      fontSize: ts(14),
+      lineHeight: ts(18),
     },
   });
 };
