@@ -4,6 +4,7 @@ import {
   addStarsToCurrentUser,
   ensureStarsDocument,
   getCurrentUserStars,
+  spendStarsForCurrentUser,
 } from "@/src/features/gamification/stars.services";
 
 const FILE_NAME = "lesson_progress.json";
@@ -161,6 +162,58 @@ export async function unlockNextLesson(currentLessonId: LessonId) {
   await setUnlockedLessons(updatedUnlocked);
 
   return nextLessonId;
+}
+
+export async function unlockLessonWithStars(lessonId: LessonId) {
+  const unlocked = await getUnlockedLessons();
+  if (unlocked.includes(lessonId)) {
+    return {
+      lessonId,
+      alreadyUnlocked: true,
+      starsRemaining: await getTotalStars(),
+    };
+  }
+
+  const cost = LESSON_STAR_REQUIREMENTS[lessonId];
+
+  // First lesson should always be free and unlocked.
+  if (lessonId === "alphabet" || cost <= 0) {
+    const updatedUnlocked = [...new Set([...unlocked, lessonId])];
+    await setUnlockedLessons(updatedUnlocked);
+    return {
+      lessonId,
+      alreadyUnlocked: false,
+      starsRemaining: await getTotalStars(),
+    };
+  }
+
+  const totalStars = await getTotalStars();
+  if (totalStars < cost) {
+    throw new Error(
+      `Not enough stars. ${lessonId} requires ${cost} stars, but you only have ${totalStars}.`
+    );
+  }
+
+  let starsRemaining = totalStars;
+  if (auth.currentUser) {
+    await ensureStarsDocument();
+    const updated = await spendStarsForCurrentUser(cost);
+    starsRemaining = updated.balance;
+    // Keep local fallback cache aligned with backend balance.
+    await setTotalStars(starsRemaining);
+  } else {
+    starsRemaining = totalStars - cost;
+    await setTotalStars(starsRemaining);
+  }
+
+  const updatedUnlocked = [...new Set([...unlocked, lessonId])];
+  await setUnlockedLessons(updatedUnlocked);
+
+  return {
+    lessonId,
+    alreadyUnlocked: false,
+    starsRemaining,
+  };
 }
 
 export async function completeLessonOnce(lessonId: LessonId, starsEarned: number) {

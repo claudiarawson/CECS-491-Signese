@@ -26,6 +26,7 @@ import {
   getUnlockedLessons,
   getCompletedLessons,
   LESSON_STAR_REQUIREMENTS,
+  unlockLessonWithStars,
   type LessonId,
 } from "@/src/features/learn/utils/lessonProgress";
 
@@ -55,6 +56,7 @@ export default function LearnScreen() {
 
   const [unlockedLessons, setUnlockedLessons] = useState<LessonId[]>([]);
   const [completedLessons, setCompletedLessons] = useState<LessonId[]>([]);
+  const [unlockingLessonId, setUnlockingLessonId] = useState<LessonId | null>(null);
 
   const loadProgress = async () => {
     try {
@@ -104,9 +106,36 @@ export default function LearnScreen() {
 
     if (!isUnlocked) {
       const starsRequired = LESSON_STAR_REQUIREMENTS[lesson.id as LessonId];
+      const available = profile?.stars?.balance ?? 0;
       Alert.alert(
         "Lesson Locked",
-        `${lesson.title} requires ${starsRequired} stars to unlock.`
+        `${lesson.title} requires ${starsRequired} stars to unlock.\n\nYou have ${available} stars.`,
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Unlock",
+            onPress: () => {
+              void (async () => {
+                try {
+                  setUnlockingLessonId(lesson.id as LessonId);
+                  const result = await unlockLessonWithStars(lesson.id as LessonId);
+                  await loadProgress();
+                  Alert.alert(
+                    "Unlocked",
+                    `${lesson.title} is now unlocked. Stars remaining: ${result.starsRemaining}.`
+                  );
+                } catch (error) {
+                  Alert.alert(
+                    "Cannot unlock",
+                    error instanceof Error ? error.message : "Could not unlock this lesson."
+                  );
+                } finally {
+                  setUnlockingLessonId(null);
+                }
+              })();
+            },
+          },
+        ]
       );
       return;
     }
@@ -186,6 +215,7 @@ export default function LearnScreen() {
                 <Pressable
                   key={lesson.id}
                   onPress={() => handleLessonPress(lesson)}
+                  disabled={unlockingLessonId === (lesson.id as LessonId)}
                   style={({ pressed }) => [
                     styles.lesson,
                     {
@@ -195,7 +225,12 @@ export default function LearnScreen() {
                       height: scale(92),
                       borderRadius: scale(46),
                       borderWidth: scale(5),
-                      opacity: pressed ? 0.88 : 1,
+                      opacity:
+                        unlockingLessonId === (lesson.id as LessonId)
+                          ? 0.65
+                          : pressed
+                            ? 0.88
+                            : 1,
                       backgroundColor: isLocked ? "#EEF2F7" : "#FFFFFF",
                       borderColor: isCurrent
                         ? "#65D8C5"
