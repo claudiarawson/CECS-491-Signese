@@ -68,19 +68,24 @@ export default function LearnScreen() {
   ].join(" ");
 
   const handleLessonPress = (lessonId: number, lessonTitle: string) => {
-    if (lessonId > CURRENT_LESSON_ID) {
-      Alert.alert(
-        "Lesson Locked",
-        `${lessonTitle} is a future lesson. Please complete the earlier lessons first.`
-      );
-      return;
-    }
+  if (lessonId > CURRENT_LESSON_ID) {
+    Alert.alert(
+      "Lesson Locked",
+      `${lessonTitle} is a future lesson. Please complete the earlier lessons first.`
+    );
+    return;
+  }
 
-    router.push({
-      pathname: "/learn/[id]",
-      params: { id: String(lessonId) },
-    } as any);
-  };
+  if (lessonId === 1) {
+    router.push("/learn/alphabet");
+    return;
+  }
+
+  router.push({
+    pathname: "/learn/[id]",
+    params: { id: String(lessonId) },
+  } as any);
+};
 
   const handleCompleteLesson = async (lessonTitle: string) => {
     try {
