@@ -525,15 +525,15 @@ const createStyles = (density: number, textScale: number) => {
       paddingHorizontal: ms(20),
       paddingTop: ms(20),
       paddingBottom: ms(20),
-      gap: ms(16),
     },
     // Learn card
     gifArea: {
-      flex: 1,
-      minHeight: ms(220),
+      width: "100%",
+      height: ms(260),
       borderRadius: ms(20),
       overflow: "hidden",
       backgroundColor: "#EEF7FA",
+      marginBottom: ms(12),
     },
     gifImage: {
       width: "100%",
@@ -544,14 +544,14 @@ const createStyles = (density: number, textScale: number) => {
       fontSize: ts(14),
       fontWeight: "600",
       color: "#94A3B8",
-      marginTop: ms(4),
+      marginBottom: ms(4),
     },
     signWord: {
       textAlign: "center",
       fontSize: ts(26),
       fontWeight: "800",
       color: "#334155",
-      marginBottom: ms(4),
+      marginBottom: ms(8),
     },
     // Match card
     matchTitle: {
