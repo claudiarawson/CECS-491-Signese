@@ -157,6 +157,11 @@ export default function AccountScreen() {
       return;
     }
 
+    if (passwordCurrent === passwordNew) {
+      setPasswordErr("New password must be different from your current password.");
+      return;
+    }
+
     if (passwordNew !== passwordConfirm) {
       setPasswordErr("New passwords do not match.");
       return;

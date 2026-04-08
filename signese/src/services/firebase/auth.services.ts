@@ -186,6 +186,10 @@ export async function updateAccountPassword(
     throw new Error("Password should be at least 6 characters.");
   }
 
+  if (currentPassword === newPassword) {
+    throw new Error("New password must be different from your current password.");
+  }
+
   const credential = EmailAuthProvider.credential(email, currentPassword);
   await reauthenticateWithCredential(liveUser, credential);
   await updatePassword(liveUser, newPassword);
