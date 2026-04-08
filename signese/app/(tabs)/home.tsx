@@ -36,8 +36,6 @@ export default function HomeScreen() {
   const streakCount = profile?.streak?.current ?? 0;
   const stars = profile?.stars?.balance ?? 0;
 
-  const streakCount = profile?.streak?.current ?? 0;
-
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density, textScale);

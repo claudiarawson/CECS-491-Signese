@@ -144,7 +144,7 @@ export default function SignOverlay({ visible, sign, onClose }: SignOverlayProps
                     useNativeControls
                     resizeMode={ResizeMode.CONTAIN}
                     isLooping
-                    shouldPlay={false}
+                    shouldPlay={visible && !!playUri}
                     onLoad={() => setVideoDecodeReady(true)}
                     onError={(e) => {
                       if (__DEV__) console.warn("[SignOverlay] Video playback error", e);

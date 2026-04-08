@@ -26,10 +26,18 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 
 /**
- * Use the default bucket by explicit gs:// URL. Relying only on `storageBucket` in config
- * can mis-resolve with newer `*.firebasestorage.app` host strings and break `getDownloadURL`.
+ * Pass the real default bucket as `gs://…`. New projects (Oct 2024+) use `*.firebasestorage.app`;
+ * older ones use `*.appspot.com`. Hardcoding `appspot.com` breaks `getDownloadURL` / video playback
+ * when files live in the new default bucket.
  * @see https://firebase.google.com/docs/storage/web/start
  */
-export const storage = getStorage(app, `gs://${firebaseConfig.projectId}.appspot.com`);
+function storageBucketGsUrl(): string {
+  const raw = (process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET ?? firebaseConfig.storageBucket ?? "").trim();
+  if (raw.startsWith("gs://")) return raw;
+  if (raw.length > 0) return `gs://${raw}`;
+  return `gs://${firebaseConfig.projectId}.appspot.com`;
+}
+
+export const storage = getStorage(app, storageBucketGsUrl());
 
 export { firebaseConfig };
