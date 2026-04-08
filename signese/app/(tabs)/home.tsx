@@ -27,7 +27,6 @@ import {
 } from "react-native";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { getProfileIconById } from "@/src/features/account/types";
-import { getCurrentUserStars } from "@/src/features/gamification/stars.services";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 
 export default function HomeScreen() {
@@ -35,29 +34,7 @@ export default function HomeScreen() {
   const { profile, loading } = useAuthUser();
   const headerProfileIcon = getProfileIconById(profile?.avatar);
   const streakCount = profile?.streak?.current ?? 0;
-
-  const [stars, setStars] = useState(0);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const loadStars = async () => {
-      try {
-        const result = await getCurrentUserStars();
-        if (mounted) {
-          setStars(result.balance);
-        }
-      } catch (error) {
-        console.warn("Failed to load stars", error);
-      }
-    };
-
-    void loadStars();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const stars = profile?.stars?.balance ?? 0;
 
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
@@ -85,7 +62,7 @@ export default function HomeScreen() {
               onPress={() => router.push("/(tabs)/settings" as any)}
             />
             <HeaderAvatarButton
-              avatar={headerProfileIcon.emoji}
+              avatar={profile?.avatar}
               onPress={() => router.push("/(tabs)/account")}
             />
           </>

@@ -8,16 +8,24 @@ import {
 import { auth, db } from "@/src/services/firebase/firebase.config";
 import type { UserStars } from "./types";
 
-const DEFAULT_STARS: UserStars = {
+const INITIAL_STARS_BALANCE = 5;
+
+const EMPTY_STARS: UserStars = {
   balance: 0,
   lifetimeEarned: 0,
+  lifetimeSpent: 0,
+};
+
+const INITIAL_STARS: UserStars = {
+  balance: INITIAL_STARS_BALANCE,
+  lifetimeEarned: INITIAL_STARS_BALANCE,
   lifetimeSpent: 0,
 };
 
 // Get current user's stars
 export async function getCurrentUserStars(): Promise<UserStars> {
   const user = auth.currentUser;
-  if (!user) return DEFAULT_STARS;
+  if (!user) return EMPTY_STARS;
 
   const snap = await getDoc(doc(db, "users", user.uid));
   const data = snap.data() as { stars?: Partial<UserStars> } | undefined;
@@ -41,14 +49,26 @@ export async function ensureStarsDocument(): Promise<void> {
   const user = auth.currentUser;
   if (!user) return;
 
-  await setDoc(
-    doc(db, "users", user.uid),
-    {
-      stars: DEFAULT_STARS,
-      updatedAt: serverTimestamp(),
-    },
-    { merge: true }
-  );
+  const userRef = doc(db, "users", user.uid);
+
+  await runTransaction(db, async (transaction) => {
+    const snap = await transaction.get(userRef);
+    const data = snap.data() as { stars?: Partial<UserStars> } | undefined;
+
+    // Don't overwrite an existing balance.
+    if (typeof data?.stars?.balance === "number") {
+      return;
+    }
+
+    transaction.set(
+      userRef,
+      {
+        stars: INITIAL_STARS,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+  });
 }
 
 // Spend stars safely (prevents race conditions)

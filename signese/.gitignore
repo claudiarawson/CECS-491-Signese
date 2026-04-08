@@ -61,6 +61,13 @@ app-example
 # sussy api key
 firebase_PRIVATE_API_KEY.json
 
+# Firebase Admin service account (local only)
+serviceAccountKey.js
+serviceAccountKey.json
+
+.env.local
+.env
+
 # ML datasets and generated artifacts
 data/raw/
 # Most ML outputs are generated and should not be committed by default.

@@ -35,7 +35,6 @@ import {
   userHasPasswordProvider,
   signOutUser,
 } from "@/src/services/firebase/auth.services";
-import { getCurrentUserStars } from "@/src/features/gamification/stars.services";
 import { getProfileIconById } from "@/src/features/account/types";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 
@@ -63,30 +62,9 @@ export default function AccountScreen() {
   const [passwordErr, setPasswordErr] = useState("");
   const [signingOut, setSigningOut] = useState(false);
 
-  const [stars, setStars] = useState(0);
+  const stars = profile?.stars?.balance ?? 0;
 
-  useEffect(() => {
-    let mounted = true;
-
-    const loadStars = async () => {
-      try {
-        const result = await getCurrentUserStars();
-        if (mounted) {
-          setStars(result.balance);
-        }
-      } catch (error) {
-        console.warn("Failed to load stars", error);
-      }
-    };
-
-    void loadStars();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  const dayStreak = 1;
+  const dayStreak = profile?.streak?.current ?? 0;
   const canChangeEmailPassword = userHasPasswordProvider(authUser);
 
   useEffect(() => {

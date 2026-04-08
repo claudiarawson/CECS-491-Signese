@@ -1,12 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import {
-  initializeAuth,
-  getReactNativePersistence,
-} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -26,8 +22,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase services
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage),
-});
+export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const storage = getStorage(app);
+
+/**
+ * Pass the real default bucket as `gs://…`. New projects (Oct 2024+) use `*.firebasestorage.app`;
+ * older ones use `*.appspot.com`. Hardcoding `appspot.com` breaks `getDownloadURL` / video playback
+ * when files live in the new default bucket.
+ * @see https://firebase.google.com/docs/storage/web/start
+ */
+function storageBucketGsUrl(): string {
+  const raw = (process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET ?? firebaseConfig.storageBucket ?? "").trim();
+  if (raw.startsWith("gs://")) return raw;
+  if (raw.length > 0) return `gs://${raw}`;
+  return `gs://${firebaseConfig.projectId}.appspot.com`;
+}
+
+export const storage = getStorage(app, storageBucketGsUrl());
+
+export { firebaseConfig };

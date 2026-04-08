@@ -12,6 +12,7 @@ import {
 import { router } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Pressable,
   StyleSheet,
@@ -21,9 +22,12 @@ import {
   useWindowDimensions,
 } from "react-native";
 import SignOverlay from "../../src/components/SignOverlay";
-import { SIGNS } from "../../src/features/dictionary/data/signs";
+import { useDictionarySigns } from "../../src/features/dictionary/hooks/useDictionarySigns";
+import { prefetchDictionaryVideoUrl } from "../../src/services/dictionary/dictionarySigns.service";
 import {
   getSavedIds,
+  getSavedSnapshotMap,
+  mergeSignWithSnapshot,
   toggleSavedId,
 } from "../../src/features/dictionary/storage/saved.local";
 import type { Sign } from "../../src/features/dictionary/types";
@@ -36,6 +40,7 @@ const TEAL = "#48b4a8";
 const TEAL_DARK = "#2c9a8f";
 
 export default function DictionaryScreen() {
+  const { signs, loading, error, reload, datasetCapped, fetchLimit } = useDictionarySigns();
   const { textScale } = useAccessibility();
   const { profile } = useAuthUser();
   const headerProfileIcon = getProfileIconById(profile?.avatar);
@@ -43,40 +48,45 @@ export default function DictionaryScreen() {
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density, textScale);
-
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  const [savedSnapshots, setSavedSnapshots] = useState<Record<string, Sign>>({});
   const [selectedSign, setSelectedSign] = useState<Sign | null>(null);
 
   useEffect(() => {
-    getSavedIds().then((ids) => setSavedIds(new Set(ids)));
+    void getSavedIds().then((ids) => setSavedIds(new Set(ids)));
+    void getSavedSnapshotMap().then(setSavedSnapshots);
   }, []);
 
-  const handleToggleSave = async (signId: string) => {
-    const newSaved = await toggleSavedId(signId);
+  const handleToggleSave = async (sign: Sign) => {
+    const newSaved = await toggleSavedId(sign.id, sign);
     setSavedIds((prev) => {
-      const newSet = new Set(prev);
-      if (newSaved) {
-        newSet.add(signId);
-      } else {
-        newSet.delete(signId);
-      }
-      return newSet;
+      const next = new Set(prev);
+      if (newSaved) next.add(sign.id);
+      else next.delete(sign.id);
+      return next;
+    });
+    setSavedSnapshots((prev) => {
+      const next = { ...prev };
+      if (newSaved) next[sign.id] = sign;
+      else delete next[sign.id];
+      return next;
     });
   };
 
   const filtered: Sign[] = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return SIGNS.filter((s) => {
+    return signs.filter((s) => {
       if (communityOnly && s.source !== "community") return false;
       if (!q) return true;
       return (
         s.word.toLowerCase().includes(q) ||
-        s.definition.toLowerCase().includes(q)
+        s.definition.toLowerCase().includes(q) ||
+        (s.note && s.note.toLowerCase().includes(q))
       );
     });
-  }, [query, communityOnly]);
+  }, [query, communityOnly, signs]);
 
   return (
     <ScreenContainer backgroundColor="#F1F6F5">
@@ -124,70 +134,83 @@ export default function DictionaryScreen() {
           </Text>
         </Pressable>
 
+        {error ? (
+          <View style={styles.banner}>
+            <Text style={styles.bannerText}>{error}</Text>
+            <Pressable onPress={() => void reload()} style={styles.retryBtn}>
+              <Text style={styles.retryText}>Retry</Text>
+            </Pressable>
+          </View>
+        ) : null}
+
         <Text style={styles.sectionTitle}>Featured Signs</Text>
+        {datasetCapped && fetchLimit != null ? (
+          <Text style={styles.demoHint}>
+            Demo: first {fetchLimit} entries — set EXPO_PUBLIC_DICTIONARY_FETCH_LIMIT=all for full list
+          </Text>
+        ) : null}
 
-        <FlatList
-          data={filtered}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          columnWrapperStyle={{ gap: 14 }}
-          contentContainerStyle={{ paddingBottom: 70 }}
-          renderItem={({ item }) => {
-            const isSaved = savedIds.has(item.id);
-
-            return (
-              <Pressable
-                style={[
-                  styles.card,
-                  item.source === "community" && styles.cardCommunity,
-                ]}
-                onPress={() => setSelectedSign(item)}
-              >
-                <View style={styles.mediaPlaceholder}>
-                  <Text style={styles.mediaText}>media</Text>
-                </View>
-
-                <Text style={styles.cardWord} numberOfLines={1}>
-                  {item.word}
-                </Text>
-
+        {loading ? (
+          <View style={styles.loadingBox}>
+            <ActivityIndicator size="large" color={TEAL} />
+            <Text style={styles.loadingText}>Loading dictionary…</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filtered}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            columnWrapperStyle={{ gap: 14 }}
+            contentContainerStyle={{ paddingBottom: 70 }}
+            initialNumToRender={12}
+            maxToRenderPerBatch={16}
+            windowSize={7}
+            removeClippedSubviews
+            renderItem={({ item }) => {
+              const merged = mergeSignWithSnapshot(item, savedSnapshots[item.id]) ?? item;
+              const isItemSaved = savedIds.has(item.id);
+              const hasVideo = !!(
+                merged.mediaUrl ||
+                merged.storagePath ||
+                merged.videoId
+              );
+              return (
                 <Pressable
-                  onPress={() => handleToggleSave(item.id)}
-                  style={styles.saveBtn}
+                  style={[styles.card, item.source === "community" && styles.cardCommunity]}
+                  onPressIn={() => prefetchDictionaryVideoUrl(merged)}
+                  onPress={() => setSelectedSign(merged)}
                 >
-                  <Text style={styles.saveIcon}>{isSaved ? "★" : "☆"}</Text>
+                  <View style={styles.mediaPlaceholder}>
+                    <Text style={styles.mediaText}>{hasVideo ? "▶ Video" : "—"}</Text>
+                  </View>
+                  <Text style={styles.cardWord} numberOfLines={1}>
+                    {merged.word}
+                  </Text>
+                  <Pressable onPress={() => handleToggleSave(item)} style={styles.saveBtn}>
+                    <Text style={styles.saveIcon}>{isItemSaved ? "★" : "☆"}</Text>
+                  </Pressable>
                 </Pressable>
-              </Pressable>
-            );
-          }}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>
-              No results.
-            </Text>
-          }
-        />
+              );
+            }}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>
+                {error ? "Could not load signs." : "No results."}
+              </Text>
+            }
+          />
+        )}
 
         <View style={styles.bottomRow}>
-          <Pressable
-            style={styles.bottomBtn}
-            onPress={() => router.push("/dictionary/add-dialect")}
-          >
+          <Pressable style={styles.bottomBtn} onPress={() => router.push("/dictionary/add-dialect")}>
             <Text style={styles.bottomBtnText}>＋ Add Sign</Text>
           </Pressable>
 
-          <Pressable
-            style={styles.bottomBtn}
-            onPress={() => router.push("/dictionary/saved")}
-          >
+          <Pressable style={styles.bottomBtn} onPress={() => router.push("/dictionary/saved")}>
             <Text style={styles.bottomBtnText}>≡ Saved Signs</Text>
           </Pressable>
         </View>
 
-        <SignOverlay
-          visible={!!selectedSign}
-          sign={selectedSign}
-          onClose={() => setSelectedSign(null)}
-        />
+        <SignOverlay visible={!!selectedSign} sign={selectedSign} onClose={() => setSelectedSign(null)} />
       </View>
     </ScreenContainer>
   );
@@ -251,6 +274,33 @@ const createStyles = (density: number, textScale: number) => {
       color: "white",
     },
 
+    banner: {
+      marginTop: ms(12),
+      padding: ms(12),
+      backgroundColor: "#fde8e8",
+      borderRadius: ms(12),
+      gap: ms(8),
+    },
+    bannerText: { color: "#721c24", fontSize: ts(14), lineHeight: ts(18) },
+    retryBtn: { alignSelf: "flex-start" },
+    retryText: { color: TEAL_DARK, fontWeight: "700", fontSize: ts(14), lineHeight: ts(18) },
+
+    loadingBox: {
+      paddingVertical: ms(40),
+      alignItems: "center",
+      gap: ms(12),
+    },
+    loadingText: { color: "#566", fontSize: ts(15), lineHeight: ts(20) },
+
+    demoHint: {
+      fontSize: ts(12),
+      lineHeight: ts(16),
+      color: "#5a6e6d",
+      textAlign: "center",
+      marginBottom: ms(10),
+      paddingHorizontal: ms(8),
+    },
+
     sectionTitle: {
       marginTop: ms(14),
       marginBottom: ms(10),
@@ -299,7 +349,8 @@ const createStyles = (density: number, textScale: number) => {
       padding: ms(4),
     },
     saveIcon: {
-      fontSize: ts(20),
+      fontSize: ts(30),
+      lineHeight: ts(34),
       color: "#ffd700",
     },
 
