@@ -57,7 +57,7 @@ export default function AlphabetLearnScreen() {
   return (
     <ScreenContainer backgroundColor="#EEF3F1">
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
+        <Pressable style={styles.backButton} onPress={() => router.replace("/(tabs)/learn")}>
           <MaterialIcons name="chevron-left" size={28} color="#FFFFFF" />
         </Pressable>
 
@@ -88,11 +88,13 @@ export default function AlphabetLearnScreen() {
         </View>
 
         <View style={styles.card}>
-          <Image
-            source={currentItem.image}
-            style={styles.lessonImage}
-            resizeMode="contain"
-          />
+          <View style={styles.imageFrame}>
+            <Image
+              source={currentItem.image}
+              style={styles.lessonImage}
+              resizeMode="contain"
+            />
+          </View>
 
           <Text style={styles.subtitle}>Watch and learn this sign</Text>
           <Text style={styles.letterText}>{currentItem.letter}</Text>
@@ -188,10 +190,19 @@ const createStyles = (density: number, textScale: number) => {
     },
     lessonImage: {
       width: "100%",
-      maxWidth: ms(240),
-      aspectRatio: 1,
+      height: "100%",
+    },
+    imageFrame: {
+      width: "100%",
+      maxWidth: ms(260),
+      height: ms(260),
       marginBottom: ms(12),
+      borderRadius: ms(18),
       backgroundColor: "#F7F7F7",
+      overflow: "hidden",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: ms(8),
     },
     subtitle: {
       fontSize: ts(13),

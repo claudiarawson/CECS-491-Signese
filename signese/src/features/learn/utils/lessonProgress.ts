@@ -1,11 +1,13 @@
 import { readLocalJson, writeLocalJson } from "@/src/storage/localJsonFile";
-import { auth } from "@/src/services/firebase/firebase.config";
+import { auth, db } from "@/src/services/firebase/firebase.config";
 import {
   addStarsToCurrentUser,
   ensureStarsDocument,
   getCurrentUserStars,
   spendStarsForCurrentUser,
 } from "@/src/features/gamification/stars.services";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { syncAndGetCurrentUserAchievements } from "@/src/features/account/achievements.service";
 
 const FILE_NAME = "lesson_progress.json";
 const WEB_KEY = "signese_lesson_progress_v1";
@@ -288,6 +290,20 @@ export async function completeLessonOnce(lessonId: LessonId, starsEarned: number
 
     const updatedCompleted = [...completed, lessonId];
     await setCompletedLessons(updatedCompleted);
+    if (auth.currentUser) {
+      await setDoc(
+        doc(db, "users", auth.currentUser.uid),
+        {
+          learningProgress: {
+            completedLessons: updatedCompleted,
+            updatedAt: serverTimestamp(),
+          },
+        },
+        { merge: true }
+      );
+      // Evaluate and persist achievement badges on lesson completion.
+      await syncAndGetCurrentUserAchievements();
+    }
 
     unlockedNextLessonId = await unlockNextLesson(lessonId);
   } else {

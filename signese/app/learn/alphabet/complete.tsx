@@ -122,7 +122,7 @@ export default function AlphabetCompleteScreen() {
 
         <Pressable
           style={styles.continueButton}
-          onPress={() => router.push("/learn")}
+          onPress={() => router.replace("/(tabs)/learn")}
         >
           <Text style={styles.continueText}>Continue</Text>
         </Pressable>
