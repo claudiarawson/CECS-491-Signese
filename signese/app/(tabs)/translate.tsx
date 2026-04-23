@@ -4,7 +4,8 @@ import {
   Text,
   StyleSheet,
   Pressable,
-  Platform, ActivityIndicator,
+  Platform,
+  ActivityIndicator,
   useWindowDimensions,
 } from "react-native";
 import { router } from "expo-router";
@@ -39,6 +40,8 @@ import {
   ShortClipInferenceService,
 } from "@/src/features/translate/inference/shortClipInference";
 import { TranslateInferenceResponse } from "@/src/features/translate/inference/types";
+import { useSessionTranslationHistory } from "@/src/features/translate/sessionHistory/useSessionTranslationHistory";
+import { TranslationSessionHistoryPanel } from "@/src/features/translate/ui/TranslationSessionHistoryPanel";
 
 function CommonResponsesPlaceholder({
   styles,
@@ -81,6 +84,8 @@ export default function TranslateScreen() {
   const [inferenceError, setInferenceError] = useState<string | null>(null);
   const [isTranslateInitializing, setIsTranslateInitializing] = useState(true);
   const { captionText, tokens, append, clear } = useCaptionBuffer(30);
+  const { entries: sessionHistory, appendEntry: appendSessionHistoryEntry, clearHistory } =
+    useSessionTranslationHistory();
   const {
     permission,
     cameraActive,
@@ -261,6 +266,30 @@ export default function TranslateScreen() {
         }
       }
 
+      const clipLabels = response.tokens.map((t) => t.label);
+      const hasHistorySignal =
+        clipLabels.length > 0 || (response.raw_top_k && response.raw_top_k.length > 0);
+      if (hasHistorySignal) {
+        const originalText =
+          clipLabels.length > 0
+            ? clipLabels.join(" ")
+            : (response.raw_top_k?.[0]?.label ?? "No prediction");
+        const prevCaption = captionText.trim();
+        const translatedText =
+          clipLabels.length > 0
+            ? prevCaption
+              ? `${prevCaption} ${clipLabels.join(" ")}`
+              : clipLabels.join(" ")
+            : prevCaption.length > 0
+              ? prevCaption
+              : "—";
+        appendSessionHistoryEntry({
+          createdAtMs: Date.now(),
+          originalText,
+          translatedText,
+        });
+      }
+
       const topScores = response.raw_top_k ?? [];
       if (topScores.length > 0) {
         const best = topScores[0];
@@ -315,6 +344,7 @@ export default function TranslateScreen() {
 
   const recordingSecondsText = `${(recordingElapsedMs / 1000).toFixed(1)}s`;
   const cooldownSecondsText = `${(cooldownRemainingMs / 1000).toFixed(1)}s`;
+  const sessionHistoryMaxHeight = Math.min(280, Math.round(height * 0.32));
 
   const permissionDenied = permission && !permission.granted;
   const captionOutput = captionText.length > 0 ? captionText : "Translation output will appear here.";
@@ -413,6 +443,13 @@ export default function TranslateScreen() {
 
           <CommonResponsesPlaceholder styles={styles} />
         </View>
+
+        <TranslationSessionHistoryPanel
+          entries={sessionHistory}
+          onClearHistory={clearHistory}
+          maxHeight={sessionHistoryMaxHeight}
+          textScale={textScale}
+        />
 
         <View style={styles.captionsControlsRow}>
           <View style={styles.leftControlsWrap}>
@@ -665,7 +702,8 @@ const createStyles = (density: number, textScale: number) => {
     captionsCard: {
       marginTop: Spacing.sm,
       flex: 1,
-      minHeight: ms(180),
+      flexShrink: 1,
+      minHeight: ms(160),
       borderRadius: ms(18),
       borderWidth: 1,
       borderColor: "#C8DDDA",

@@ -54,7 +54,8 @@ export default function SignOverlay({ visible, sign, onClose }: SignOverlayProps
     }
 
     setVideoError(null);
-    const immediate = sign.mediaUrl?.trim();
+    const signForResolve = sign;
+    const immediate = signForResolve.mediaUrl?.trim();
     if (immediate) {
       resolveGenerationRef.current += 1;
       setPlayUri(immediate);
@@ -67,7 +68,7 @@ export default function SignOverlay({ visible, sign, onClose }: SignOverlayProps
 
     async function resolve() {
       try {
-        const url = await resolveVideoUrlFromUiSign(sign);
+        const url = await resolveVideoUrlFromUiSign(signForResolve);
         if (gen !== resolveGenerationRef.current) return;
         if (url) {
           setPlayUri(url);

@@ -30,6 +30,20 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     }
   },
 
+  signUp: async (credentials: SignUpCredentials) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await AuthService.signUp(credentials);
+      if (response.success && response.user) {
+        set({ user: response.user, isLoading: false });
+      } else {
+        set({ error: response.error || 'Sign up failed', isLoading: false });
+      }
+    } catch (_error) {
+      set({ error: 'An unexpected error occurred', isLoading: false });
+    }
+  },
+
   signInWithGoogle: async (idToken: string) => {
     set({ isLoading: true, error: null });
     try {

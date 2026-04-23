@@ -5,7 +5,6 @@ WebBrowser.maybeCompleteAuthSession();
 
 export function useGoogleSignIn() {
   const [request, response, promptAsync] = Google.useAuthRequest({
-    expoClientId: "YOUR_EXPO_CLIENT_ID",
     iosClientId: "YOUR_IOS_CLIENT_ID",
     androidClientId: "YOUR_ANDROID_CLIENT_ID",
     webClientId: "YOUR_WEB_CLIENT_ID",
@@ -13,13 +12,14 @@ export function useGoogleSignIn() {
 
   const handleResponse = () => {
     if (response?.type === "success") {
-      const { id_token } = response.authentication ?? {};
+      const idToken =
+        response.params.id_token ?? response.authentication?.idToken;
 
-      if (!id_token) {
+      if (!idToken) {
         throw new Error("Google sign-in failed: no ID token returned.");
       }
 
-      return id_token;
+      return idToken;
     }
     return null;
   };

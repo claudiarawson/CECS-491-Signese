@@ -25,7 +25,6 @@ export function LessonMenuScreen() {
             <Pressable key={lesson.type} onPress={() => handleOpenLesson(lesson.type)}>
               <LessonNode
                 title={lesson.title}
-                icon={lesson.icon}
                 active={idx === 0}
                 completed={false}
               />

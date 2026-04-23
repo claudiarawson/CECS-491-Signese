@@ -72,7 +72,7 @@ export default function SettingsScreen() {
         icon: "notifications-none",
         iconBg: "#DDEFE9",
         iconColor: "#53B1A3",
-        onPress: () => router.push("/settings/notifications"),
+        onPress: () => router.push("/settings/notifications" as any),
       },
       {
         key: "appearance",
@@ -81,7 +81,7 @@ export default function SettingsScreen() {
         icon: "nightlight",
         iconBg: "#E9E1F1",
         iconColor: "#B192CE",
-        onPress: () => router.push("/settings/appearance"),
+        onPress: () => router.push("/settings/appearance" as any),
       },
       {
         key: "privacy",
@@ -90,7 +90,7 @@ export default function SettingsScreen() {
         icon: "verified-user",
         iconBg: "#F9F0D9",
         iconColor: "#E1B245",
-        onPress: () => router.push("/settings/privacy-security"),
+        onPress: () => router.push("/settings/privacy-security" as any),
       },
       {
         key: "feedback",

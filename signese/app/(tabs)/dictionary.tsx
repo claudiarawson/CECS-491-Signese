@@ -46,7 +46,7 @@ const TEAL = "#48b4a8";
 const TEAL_DARK = "#2c9a8f";
 
 export default function DictionaryScreen() {
-  const { signs, loading, error, reload } = useDictionarySigns();
+  const { signs, loading, loadingMore, error, reload, loadMore } = useDictionarySigns();
   const { textScale } = useAccessibility();
   const { profile } = useAuthUser();
   const headerProfileIcon = getProfileIconById(profile?.avatar);
@@ -193,7 +193,7 @@ export default function DictionaryScreen() {
 
         <Text style={styles.sectionTitle}>Featured Signs</Text>
 
-        {loading ? (
+        {loading && signs.length === 0 ? (
           <View style={styles.loadingBox}>
             <ActivityIndicator size="large" color={TEAL} />
             <Text style={styles.loadingText}>Loading dictionary…</Text>
@@ -210,6 +210,16 @@ export default function DictionaryScreen() {
             maxToRenderPerBatch={16}
             windowSize={7}
             removeClippedSubviews
+            onEndReached={() => void loadMore()}
+            onEndReachedThreshold={0.35}
+            ListFooterComponent={
+              loadingMore ? (
+                <View style={styles.footerLoading}>
+                  <ActivityIndicator size="small" color={TEAL} />
+                  <Text style={styles.footerLoadingText}>Loading more signs…</Text>
+                </View>
+              ) : null
+            }
             renderItem={({ item }) => {
               const merged = mergeSignWithSnapshot(item, savedSnapshots[item.id]) ?? item;
               const isItemSaved = savedIds.has(item.id);
@@ -381,6 +391,13 @@ const createStyles = (density: number, textScale: number) => {
       gap: ms(12),
     },
     loadingText: { color: "#566", fontSize: ts(15), lineHeight: ts(20) },
+
+    footerLoading: {
+      paddingVertical: ms(16),
+      alignItems: "center",
+      gap: ms(8),
+    },
+    footerLoadingText: { color: "#566", fontSize: ts(13), lineHeight: ts(18) },
 
     sectionTitle: {
       marginTop: ms(14),

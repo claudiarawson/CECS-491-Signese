@@ -181,7 +181,7 @@ export class ShortClipInferenceService {
     const now = Date.now();
     const clipId = `recorded-clip-${params.sequence}-${now}`;
     const { fileName, mimeType } = getClipFileMetadata(params.clipUri);
-    const clipInfo = await FileSystem.getInfoAsync(params.clipUri, { size: true });
+    const clipInfo = await FileSystem.getInfoAsync(params.clipUri);
 
     if (!clipInfo.exists) {
       throw new Error("Recorded clip file was not found on device.");

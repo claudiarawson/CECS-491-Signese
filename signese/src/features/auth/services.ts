@@ -6,6 +6,8 @@ import {
   onAuthStateChanged,
   signInWithCredential,
   GoogleAuthProvider,
+  sendPasswordResetEmail,
+  type User as FirebaseUser,
 } from 'firebase/auth';
 import { auth } from '../../services/firebase/firebase.config';
 import { User, SignInCredentials, SignUpCredentials, AuthResponse } from './types';
@@ -62,6 +64,15 @@ export class AuthService {
       const userCredential = await signInWithCredential(auth, credential);
       const user = this.mapFirebaseUser(userCredential.user);
       return { success: true, user };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  static async resetPassword(email: string): Promise<AuthResponse> {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return { success: true };
     } catch (error: any) {
       return { success: false, error: error.message };
     }

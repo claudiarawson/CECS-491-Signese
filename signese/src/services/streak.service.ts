@@ -7,7 +7,7 @@ import {
   type FieldValue,
 } from "firebase/firestore";
 
-type DateKey = `${number}-${number}-${number}`;
+type DateKey = `${number}-${string}-${string}`;
 
 export type UserStreak = {
   current: number;

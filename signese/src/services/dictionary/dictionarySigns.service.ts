@@ -1,4 +1,13 @@
-import { collection, getDocs, limit, query } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  type QueryDocumentSnapshot,
+  type QuerySnapshot,
+} from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 import { db, storage } from "@/src/services/firebase/firebase.config";
 import type { DictionarySignDocument, Sign } from "@/src/features/dictionary/types";
@@ -7,21 +16,26 @@ import { normalizeSignCategories } from "@/src/features/dictionary/signCategorie
 const DICTIONARY_COLLECTION = "dictionarySigns";
 
 /**
- * Demo / fast load: only fetch N Firestore docs (one round trip).
+ * Page size for Firestore dictionary queries (cursor pagination on `word`).
  * Does NOT bulk-resolve Storage URLs — those run when a card opens (one URL at a time).
  *
- * - `EXPO_PUBLIC_DICTIONARY_FETCH_LIMIT=all` — load entire collection (slower; still no bulk Storage).
- * - `EXPO_PUBLIC_DICTIONARY_FETCH_LIMIT=500` — explicit cap.
- * - unset — default **200** for quick demos.
+ * - `EXPO_PUBLIC_DICTIONARY_PAGE_SIZE=200` — override chunk size (default **100**, max 500).
  */
-export function getDictionaryQueryLimit(): number | undefined {
-  const raw = process.env.EXPO_PUBLIC_DICTIONARY_FETCH_LIMIT;
-  if (raw === "all") return undefined;
+export function getDictionaryPageSize(): number {
+  const raw = process.env.EXPO_PUBLIC_DICTIONARY_PAGE_SIZE;
   if (raw != null && String(raw).trim() !== "") {
     const n = Number(raw);
-    if (Number.isFinite(n) && n > 0) return Math.min(Math.floor(n), 10_000);
+    if (Number.isFinite(n) && n > 0) return Math.min(Math.floor(n), 500);
   }
-  return 200;
+  return 100;
+}
+
+/**
+ * @deprecated Prefer `fetchDictionarySignsPage` + paging in the UI. Kept for compatibility.
+ * The app no longer caps the dictionary at 200 documents.
+ */
+export function getDictionaryQueryLimit(): number | undefined {
+  return undefined;
 }
 
 const PLACEHOLDER_DEFINITION = "Definition not added yet.";
@@ -180,29 +194,58 @@ export async function resolveVideoUrlFromUiSign(sign: {
   return tryResolveStorageUrl(path);
 }
 
-/**
- * Loads dictionary signs from Firestore.
- * Intentionally does **not** call `getDownloadURL` for every row (that was freezing cold start).
- * Use `videoUrl` on the document if you pre-compute URLs server-side; otherwise the overlay resolves one URL on open.
- */
-export async function fetchDictionarySigns(): Promise<Sign[]> {
-  const cap = getDictionaryQueryLimit();
-  const col = collection(db, DICTIONARY_COLLECTION);
-  const snap = await getDocs(cap != null ? query(col, limit(cap)) : col);
-
+function snapToSignRows(snap: QuerySnapshot): Sign[] {
   const rows: { id: string; data: DictionarySignDocument }[] = [];
   snap.forEach((d) => {
     const data = d.data() as DictionarySignDocument;
     if (data.isActive === false) return;
     rows.push({ id: d.id, data });
   });
-
-  const out: Sign[] = rows.map(({ id, data }) => {
+  return rows.map(({ id, data }) => {
     const precomputed = nonEmpty(data.videoUrl) ? data.videoUrl.trim() : undefined;
     return mapDocumentToSign(id, data, precomputed);
   });
+}
 
-  return out.sort((a, b) => a.word.localeCompare(b.word, undefined, { sensitivity: "base" }));
+/**
+ * One page of dictionary signs, ordered by Firestore field `word`.
+ * Cursor is the last **raw** document in the snapshot (including inactive), so pagination stays aligned with the server order.
+ */
+export async function fetchDictionarySignsPage(
+  cursor: QueryDocumentSnapshot | null
+): Promise<{
+  signs: Sign[];
+  lastDoc: QueryDocumentSnapshot | null;
+  hasMore: boolean;
+}> {
+  const pageSize = getDictionaryPageSize();
+  const col = collection(db, DICTIONARY_COLLECTION);
+  const q = cursor
+    ? query(col, orderBy("word"), startAfter(cursor), limit(pageSize))
+    : query(col, orderBy("word"), limit(pageSize));
+  const snap = await getDocs(q);
+  const signs = snapToSignRows(snap);
+  const lastDoc =
+    snap.docs.length > 0 ? (snap.docs[snap.docs.length - 1] as QueryDocumentSnapshot) : null;
+  const hasMore = snap.docs.length === pageSize;
+  return { signs, lastDoc, hasMore };
+}
+
+/**
+ * Loads the full dictionary (all pages). Prefer `fetchDictionarySignsPage` in the app for progressive loading.
+ * Intentionally does **not** call `getDownloadURL` for every row (that was freezing cold start).
+ */
+export async function fetchDictionarySigns(): Promise<Sign[]> {
+  const out: Sign[] = [];
+  let cursor: QueryDocumentSnapshot | null = null;
+  let hasMore = true;
+  while (hasMore) {
+    const page = await fetchDictionarySignsPage(cursor);
+    out.push(...page.signs);
+    cursor = page.lastDoc;
+    hasMore = page.hasMore;
+  }
+  return out;
 }
 
 /**
