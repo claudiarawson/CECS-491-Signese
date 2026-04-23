@@ -23,6 +23,7 @@ import {
   HeaderActionButton,
   HeaderAvatarButton,
 } from "@/src/components/layout";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
 
 type SettingsItem = {
   key: string;
@@ -35,6 +36,7 @@ type SettingsItem = {
 };
 
 export default function SettingsScreen() {
+  const { profile } = useAuthUser();
   const [query, setQuery] = useState("");
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
@@ -129,7 +131,7 @@ export default function SettingsScreen() {
               onPress={() => router.push("/(tabs)/settings" as any)}
             />
             <HeaderAvatarButton
-              avatar="🐨"
+              avatar={profile?.avatar}
               onPress={() => router.push("/(tabs)/account" as any)}
             />
           </>
