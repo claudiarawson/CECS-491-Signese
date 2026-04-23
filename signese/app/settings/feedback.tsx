@@ -13,7 +13,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
 import { getDeviceDensity, moderateScale } from "@/src/theme";
@@ -200,10 +199,6 @@ export default function FeedbackScreen() {
           </View>
 
           <View style={styles.buttonRow}>
-            <Pressable style={styles.backButton} onPress={() => router.back()}>
-              <Text style={styles.backButtonText}>&lt;&lt; Back</Text>
-            </Pressable>
-
             <Pressable
               style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
               onPress={() => void handleSubmit()}
@@ -240,9 +235,10 @@ const createStyles = (density: number, textScale: number) => {
     infoCard: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: "#F7F7F7",
+      backgroundColor: "#FFFFFF",
       borderWidth: 1,
-      borderColor: "#D8DDD9",
+      borderColor: "#D8E1E8",
+      borderRadius: ms(16),
       paddingHorizontal: ms(16),
       paddingVertical: ms(14),
       marginBottom: ms(18),
@@ -268,6 +264,11 @@ const createStyles = (density: number, textScale: number) => {
 
     sectionBlock: {
       marginBottom: ms(16),
+      backgroundColor: "#FFFFFF",
+      borderWidth: 1,
+      borderColor: "#D8E1E8",
+      borderRadius: ms(16),
+      padding: ms(14),
     },
 
     sectionTitle: {
@@ -287,10 +288,10 @@ const createStyles = (density: number, textScale: number) => {
     categoryPill: {
       paddingHorizontal: ms(14),
       paddingVertical: ms(10),
-      borderRadius: ms(20),
-      backgroundColor: "#F7F7F7",
-      borderWidth: 1.5,
-      borderColor: "#CFCFCF",
+      borderRadius: ms(14),
+      backgroundColor: "#FFFFFF",
+      borderWidth: 1,
+      borderColor: "#D8E1E8",
     },
 
     categoryPillSelected: {
@@ -311,10 +312,10 @@ const createStyles = (density: number, textScale: number) => {
 
     feedbackInput: {
       minHeight: ms(260),
-      borderWidth: ms(2),
-      borderColor: "#232323",
-      borderRadius: ms(6),
-      backgroundColor: "#DCE8F4",
+      borderWidth: 1,
+      borderColor: "#D8E1E8",
+      borderRadius: ms(14),
+      backgroundColor: "#F8FBFA",
       paddingHorizontal: ms(12),
       paddingVertical: ms(10),
       fontSize: ts(15),
@@ -368,34 +369,14 @@ const createStyles = (density: number, textScale: number) => {
     },
 
     buttonRow: {
-      flexDirection: "row",
-      alignItems: "flex-end",
-      justifyContent: "space-between",
-      gap: ms(14),
-      marginTop: ms(8),
-    },
-
-    backButton: {
-      alignSelf: "flex-start",
-      backgroundColor: "#59B5A7",
-      borderRadius: ms(6),
-      paddingHorizontal: ms(12),
-      paddingVertical: ms(8),
-    },
-
-    backButtonText: {
-      color: "#FFFFFF",
-      fontSize: ts(14),
-      lineHeight: ts(18),
-      fontWeight: "700",
+      marginTop: ms(6),
     },
 
     submitButton: {
-      flex: 1,
-      maxWidth: ms(192),
-      minHeight: ms(88),
-      backgroundColor: "#F5B9A3",
-      borderRadius: ms(6),
+      width: "100%",
+      minHeight: ms(52),
+      backgroundColor: "#43B3A8",
+      borderRadius: ms(14),
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: ms(16),
@@ -407,9 +388,9 @@ const createStyles = (density: number, textScale: number) => {
 
     submitButtonText: {
       color: "#FFFFFF",
-      fontSize: ts(25),
-      lineHeight: ts(30),
-      fontWeight: "800",
+      fontSize: ts(16),
+      lineHeight: ts(20),
+      fontWeight: "700",
     },
   });
 };

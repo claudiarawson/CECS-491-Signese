@@ -1,127 +1,106 @@
-
 import React from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
-import { router } from "expo-router";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { ScreenContainer, ScreenHeader, SectionCard } from "@/src/components/layout";
 
 export default function AboutScreen() {
-	return (
-		<ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
-			{/* Header */}
-			<View style={styles.header}>
-				<Text style={styles.headerText}>About</Text>
-			</View>
+  return (
+    <ScreenContainer backgroundColor="#F1F6F5">
+      <ScreenHeader title="About" showBackButton />
+      <ScrollView contentContainerStyle={styles.container}>
+        <SectionCard style={styles.heroCard}>
+          <Text style={styles.heroEmoji}>ℹ️</Text>
+          <Text style={styles.heroTitle}>About Signese</Text>
+          <Text style={styles.heroSubtitle}>
+            Learn what the app does and the mission behind it.
+          </Text>
+        </SectionCard>
 
-			{/* Section 1 */}
-			<View style={styles.card}>
-				<View style={styles.titleRow}>
-					<View style={styles.iconBox}>
-						<Text style={styles.iconText}>i</Text>
-					</View>
-					<Text style={styles.sectionTitle}>What is Signese?</Text>
-				</View>
-				<Text style={styles.bodyText}>
-					Signese is an all-in-one American Sign Language (ASL) app for learning,
-					community-intertwined dictionary, and live translation to support
-					non-signers better interact with and understand signers.
-				</Text>
-			</View>
+        <SectionCard style={styles.card}>
+          <View style={styles.titleRow}>
+            <View style={styles.iconBox}>
+              <MaterialIcons name="info-outline" size={20} color="#6CB5D1" />
+            </View>
+            <Text style={styles.sectionTitle}>What is Signese?</Text>
+          </View>
+          <Text style={styles.bodyText}>
+            Signese is an all-in-one American Sign Language (ASL) app for learning,
+            community-intertwined dictionary, and live translation to support
+            non-signers better interact with and understand signers.
+          </Text>
+        </SectionCard>
 
-			{/* Section 2 */}
-			<View style={styles.card}>
-				<View style={styles.titleRow}>
-					<View style={styles.iconBox}>
-						<Text style={styles.iconText}>i</Text>
-					</View>
-					<Text style={styles.sectionTitle}>What is our purpose?</Text>
-				</View>
-				<Text style={styles.bodyText}>
-					Our purpose is to create a mobile application that translates ASL
-					into spoken or written language. Our values center on accessibility,
-					inclusivity, and innovation. We aim to address real communication
-					barriers faced by the deaf and hard-of-hearing community by
-					leveraging computer vision and LLMs to make conversations easier,
-					faster, and more natural between signers and non-signers.
-				</Text>
-			</View>
-
-			{/* Back Button */}
-			<Pressable style={styles.backBtn} onPress={() => router.back()}>
-				<Text style={styles.backText}>&lt;&lt; Back</Text>
-			</Pressable>
-		</ScrollView>
-	);
+        <SectionCard style={styles.card}>
+          <View style={styles.titleRow}>
+            <View style={styles.iconBox}>
+              <MaterialIcons name="lightbulb-outline" size={20} color="#6CB5D1" />
+            </View>
+            <Text style={styles.sectionTitle}>What is our purpose?</Text>
+          </View>
+          <Text style={styles.bodyText}>
+            Our purpose is to create a mobile application that translates ASL into
+            spoken or written language. Our values center on accessibility,
+            inclusivity, and innovation. We aim to address real communication
+            barriers faced by the deaf and hard-of-hearing community by leveraging
+            computer vision and LLMs to make conversations easier, faster, and more
+            natural between signers and non-signers.
+          </Text>
+        </SectionCard>
+      </ScrollView>
+    </ScreenContainer>
+  );
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#eef7f6",
-	},
-
-	header: {
-		backgroundColor: "#d9edf7",
-		paddingVertical: 20,
-		alignItems: "center",
-	},
-
-	headerText: {
-		fontSize: 22,
-		fontWeight: "800",
-	},
-
-	card: {
-		backgroundColor: "#ffffff",
-		marginHorizontal: 20,
-		marginTop: 20,
-		padding: 20,
-		borderRadius: 16,
-	},
-
-	titleRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		marginBottom: 12,
-	},
-
-	iconBox: {
-		width: 46,
-		height: 46,
-		borderRadius: 12,
-		backgroundColor: "#d9edf7",
-		alignItems: "center",
-		justifyContent: "center",
-		marginRight: 14,
-	},
-
-	iconText: {
-		fontSize: 20,
-		fontWeight: "700",
-		color: "#2563eb",
-	},
-
-	sectionTitle: {
-		fontSize: 18,
-		fontWeight: "700",
-	},
-
-	bodyText: {
-		fontSize: 15,
-		lineHeight: 22,
-		color: "#333",
-	},
-
-	backBtn: {
-		marginTop: 30,
-		marginLeft: 20,
-		backgroundColor: "#4fa99b",
-		paddingVertical: 10,
-		paddingHorizontal: 18,
-		borderRadius: 8,
-		alignSelf: "flex-start",
-	},
-
-	backText: {
-		color: "white",
-		fontWeight: "700",
-	},
+  container: {
+    padding: 20,
+    gap: 14,
+    paddingBottom: 24,
+  },
+  heroCard: {
+    paddingVertical: 16,
+    alignItems: "center",
+    gap: 4,
+  },
+  heroEmoji: {
+    fontSize: 34,
+  },
+  heroTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#111827",
+  },
+  heroSubtitle: {
+    fontSize: 14,
+    color: "#4B5563",
+    textAlign: "center",
+  },
+  card: {
+    paddingVertical: 16,
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    gap: 10,
+  },
+  iconBox: {
+    width: 34,
+    height: 34,
+    borderRadius: 9,
+    backgroundColor: "#DDF1F8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#111827",
+    flex: 1,
+  },
+  bodyText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: "#374151",
+  },
 });
