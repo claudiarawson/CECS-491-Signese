@@ -22,6 +22,26 @@ export function useCaptionBuffer(maxTokens = 24) {
 		setTokens([]);
 	}, []);
 
+	const replaceCaptionFromText = useCallback((text: string) => {
+		const trimmed = text.trim();
+		if (!trimmed) {
+			setTokens([]);
+			return;
+		}
+		const words = trimmed.split(/\s+/);
+		const now = Date.now();
+		setTokens(
+			words.map((label, i) => ({
+				id: `reuse-${now}-${i}-${label}`,
+				label,
+				source: "single" as const,
+				confidence: 1,
+				timestampMs: now + i,
+				rawTopK: [],
+			}))
+		);
+	}, []);
+
 	const captionText = useMemo(
 		() => (tokens.length > 0 ? tokens.map((token) => token.label).join(" ") : ""),
 		[tokens]
@@ -32,5 +52,6 @@ export function useCaptionBuffer(maxTokens = 24) {
 		captionText,
 		append,
 		clear,
+		replaceCaptionFromText,
 	};
 }

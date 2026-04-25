@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -40,8 +40,17 @@ import {
   ShortClipInferenceService,
 } from "@/src/features/translate/inference/shortClipInference";
 import { TranslateInferenceResponse } from "@/src/features/translate/inference/types";
-import { useSessionTranslationHistory } from "@/src/features/translate/sessionHistory/useSessionTranslationHistory";
-import { TranslationSessionHistoryPanel } from "@/src/features/translate/ui/TranslationSessionHistoryPanel";
+import {
+  useTabTranslationHistory,
+  TranslationHistoryPanel,
+  TRANSLATE_SOURCE_LANG,
+  TRANSLATE_TARGET_LANG,
+  type TranslationHistoryItem,
+} from "@/src/features/translate/translationHistory";
+import {
+  ReportTranslationModal,
+  type ReportTranslationContext,
+} from "@/src/features/translate/ui/ReportTranslationModal";
 
 function CommonResponsesPlaceholder({
   styles,
@@ -83,9 +92,11 @@ export default function TranslateScreen() {
   const [recordingElapsedMs, setRecordingElapsedMs] = useState(0);
   const [inferenceError, setInferenceError] = useState<string | null>(null);
   const [isTranslateInitializing, setIsTranslateInitializing] = useState(true);
-  const { captionText, tokens, append, clear } = useCaptionBuffer(30);
-  const { entries: sessionHistory, appendEntry: appendSessionHistoryEntry, clearHistory } =
-    useSessionTranslationHistory();
+  const { captionText, tokens, append, clear, replaceCaptionFromText } = useCaptionBuffer(30);
+  const { translationHistory, addHistoryItem, clearHistory, sessionId } = useTabTranslationHistory();
+  const lastHistoryEntryIdRef = useRef<string | null>(null);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportContext, setReportContext] = useState<ReportTranslationContext | null>(null);
   const {
     permission,
     cameraActive,
@@ -283,11 +294,13 @@ export default function TranslateScreen() {
             : prevCaption.length > 0
               ? prevCaption
               : "—";
-        appendSessionHistoryEntry({
-          createdAtMs: Date.now(),
+        const newId = addHistoryItem({
           originalText,
           translatedText,
+          sourceLanguage: TRANSLATE_SOURCE_LANG,
+          targetLanguage: TRANSLATE_TARGET_LANG,
         });
+        lastHistoryEntryIdRef.current = newId;
       }
 
       const topScores = response.raw_top_k ?? [];
@@ -332,6 +345,7 @@ export default function TranslateScreen() {
 
   const handleClearCaptions = () => {
     clear();
+    lastHistoryEntryIdRef.current = null;
     setLastDecision(null);
     setLastInference(null);
     setInferenceError(null);
@@ -342,12 +356,57 @@ export default function TranslateScreen() {
     setRecordingElapsedMs(0);
   };
 
+  const openReportForHistoryItem = useCallback(
+    (item: TranslationHistoryItem) => {
+      setReportContext({
+        translationId: item.id,
+        sourceText: item.originalText,
+        translatedText: item.translatedText,
+        sourceLanguage: item.sourceLanguage,
+        targetLanguage: item.targetLanguage,
+        sessionId,
+      });
+      setReportOpen(true);
+    },
+    [sessionId]
+  );
+
+  const openReportForCurrentOutput = useCallback(() => {
+    const cap = captionText.trim();
+    if (!cap) {
+      return;
+    }
+    const clipPart =
+      lastInference?.tokens.map((t) => t.label).join(" ").trim() || lastDecision?.token?.label || "";
+    const sourceText = clipPart.length > 0 ? clipPart : "—";
+    setReportContext({
+      translationId: lastHistoryEntryIdRef.current ?? undefined,
+      sourceText,
+      translatedText: cap,
+      sourceLanguage: TRANSLATE_SOURCE_LANG,
+      targetLanguage: TRANSLATE_TARGET_LANG,
+      sessionId,
+    });
+    setReportOpen(true);
+  }, [captionText, lastDecision?.token?.label, lastInference?.tokens, sessionId]);
+
+  const handleReuseHistoryItem = useCallback(
+    (item: TranslationHistoryItem) => {
+      replaceCaptionFromText(item.translatedText);
+      setLastDecision(null);
+      setLastInference(null);
+      setInferenceError(null);
+    },
+    [replaceCaptionFromText]
+  );
+
   const recordingSecondsText = `${(recordingElapsedMs / 1000).toFixed(1)}s`;
   const cooldownSecondsText = `${(cooldownRemainingMs / 1000).toFixed(1)}s`;
   const sessionHistoryMaxHeight = Math.min(280, Math.round(height * 0.32));
 
   const permissionDenied = permission && !permission.granted;
   const captionOutput = captionText.length > 0 ? captionText : "Translation output will appear here.";
+  const hasReportableCaption = captionText.trim().length > 0;
   const inferenceStatus =
     isRecordCooldown
       ? `Get ready... recording starts in ${cooldownSecondsText}`
@@ -444,10 +503,13 @@ export default function TranslateScreen() {
           <CommonResponsesPlaceholder styles={styles} />
         </View>
 
-        <TranslationSessionHistoryPanel
-          entries={sessionHistory}
-          onClearHistory={clearHistory}
-          maxHeight={sessionHistoryMaxHeight}
+        <TranslationHistoryPanel
+          items={translationHistory}
+          onClear={clearHistory}
+          onReuse={handleReuseHistoryItem}
+          onReportItem={openReportForHistoryItem}
+          variant="stacked"
+          listMaxHeight={sessionHistoryMaxHeight}
           textScale={textScale}
         />
 
@@ -484,6 +546,30 @@ export default function TranslateScreen() {
 
         <View style={styles.captionsCard}>
           <Text style={styles.captionsOutputText}>{captionOutput}</Text>
+          <View style={styles.captionOutputActions}>
+            <Pressable
+              style={[styles.reportOutputBtn, !hasReportableCaption && styles.reportOutputBtnDisabled]}
+              onPress={openReportForCurrentOutput}
+              disabled={!hasReportableCaption}
+              accessibilityRole="button"
+              accessibilityLabel="Report incorrect translation"
+              accessibilityState={{ disabled: !hasReportableCaption }}
+            >
+              <MaterialIcons
+                name="flag"
+                size={16}
+                color={hasReportableCaption ? "#214F46" : "#9CA3AF"}
+              />
+              <Text
+                style={[
+                  styles.reportOutputBtnText,
+                  !hasReportableCaption && styles.reportOutputBtnTextDisabled,
+                ]}
+              >
+                Report
+              </Text>
+            </Pressable>
+          </View>
           <Text style={styles.captionsSubText}>{inferenceStatus}</Text>
           <Text style={styles.captionsSubText}>{confidenceSummary}</Text>
           <Text style={styles.captionsSubText}>
@@ -718,6 +804,35 @@ const createStyles = (density: number, textScale: number) => {
     fontWeight: "700",
     minHeight: 54,
   },
+    captionOutputActions: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: Spacing.sm,
+      gap: Spacing.sm,
+    },
+    reportOutputBtn: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      alignSelf: "flex-start",
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 12,
+      backgroundColor: "#E8F2F0",
+      borderWidth: 1,
+      borderColor: "#C9E1DC",
+    },
+    reportOutputBtnDisabled: {
+      opacity: 0.65,
+    },
+    reportOutputBtnText: {
+      ...Typography.caption,
+      color: "#214F46",
+      fontWeight: "700",
+    },
+    reportOutputBtnTextDisabled: {
+      color: "#9CA3AF",
+    },
     captionsSubText: {
       ...Typography.caption,
       color: semanticColors.text.secondary,

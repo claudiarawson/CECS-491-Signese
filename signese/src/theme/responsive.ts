@@ -18,3 +18,9 @@ export const getDeviceDensity = (screenWidth: number, screenHeight: number) => {
   if (screenHeight <= 760 || screenWidth <= 390) return 0.92;
   return 1;
 };
+
+/** Layout tokens for multi-column / shell UIs (e.g. translate history sidebar). */
+export const AppShell = {
+  sidebarWidth: 300,
+  wideMinWidth: 880,
+} as const;
