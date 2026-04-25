@@ -47,7 +47,8 @@ export default function GreetingsCompleteScreen() {
   const totalCorrect = parseInt(params.totalCorrect ?? "0", 10);
   const starsEarned = calcStars(totalCorrect);
 
-  const [savedTotalStars, setSavedTotalStars] = useState(0);
+  const [balanceStars, setBalanceStars] = useState(0);
+  const [lifetimeEarned, setLifetimeEarned] = useState(0);
   const [nextUnlocked, setNextUnlocked] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -59,7 +60,8 @@ export default function GreetingsCompleteScreen() {
       const unlocked = await isLessonUnlocked(NEXT_LESSON_ID);
 
       if (!mounted) return;
-      setSavedTotalStars(result.totalStars);
+      setBalanceStars(result.userStars?.balance ?? result.totalStars);
+      setLifetimeEarned(result.userStars?.lifetimeEarned ?? result.totalStars);
       setNextUnlocked(unlocked);
       setLoading(false);
     }
@@ -112,9 +114,12 @@ export default function GreetingsCompleteScreen() {
             {loading ? (
               <Text style={styles.scoreNumber}>…</Text>
             ) : (
-              <Text style={styles.scoreNumber}>{savedTotalStars}</Text>
+              <Text style={styles.scoreNumber}>{lifetimeEarned}</Text>
             )}
-            <Text style={styles.scoreLabel}>Total Stars</Text>
+            <Text style={styles.scoreLabel}>Total stars earned</Text>
+            {!loading ? (
+              <Text style={styles.balanceHint}>{balanceStars} available now</Text>
+            ) : null}
           </View>
 
           <Text style={styles.earnedText}>
@@ -223,6 +228,13 @@ const createStyles = (density: number, textScale: number) => {
       fontSize: ts(12),
       fontWeight: "600",
       color: "#94A3B8",
+      marginTop: ms(4),
+    },
+    balanceHint: {
+      fontSize: ts(13),
+      fontWeight: "600",
+      color: "#64748B",
+      marginTop: ms(8),
     },
     earnedText: {
       fontSize: ts(14),

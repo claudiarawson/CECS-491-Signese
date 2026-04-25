@@ -41,7 +41,8 @@ export default function AlphabetCompleteScreen() {
   const headerProfileIcon = getProfileIconById(profile?.avatar);
   const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
 
-  const [totalStars, setTotalStars] = useState(0);
+  const [balanceStars, setBalanceStars] = useState(0);
+  const [lifetimeEarned, setLifetimeEarned] = useState(0);
   const [nextLessonUnlocked, setNextLessonUnlocked] = useState(false);
   const [alreadyCompleted, setAlreadyCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -55,7 +56,8 @@ export default function AlphabetCompleteScreen() {
 
       if (!mounted) return;
 
-      setTotalStars(result.totalStars);
+      setBalanceStars(result.userStars?.balance ?? result.totalStars);
+      setLifetimeEarned(result.userStars?.lifetimeEarned ?? result.totalStars);
       setAlreadyCompleted(result.alreadyCompleted);
       setNextLessonUnlocked(unlockedNow);
       setLoading(false);
@@ -104,7 +106,9 @@ export default function AlphabetCompleteScreen() {
           </Text>
 
           <Text style={styles.totalStarsText}>
-            Total Stars: {loading ? "..." : totalStars}
+            {loading
+              ? "…"
+              : `Total earned: ${lifetimeEarned} · Available: ${balanceStars}`}
           </Text>
         </View>
 

@@ -4,9 +4,10 @@ import {
   runTransaction,
   serverTimestamp,
   setDoc,
+  Timestamp,
 } from "firebase/firestore";
 import { auth, db } from "@/src/services/firebase/firebase.config";
-import type { UserStars } from "./types";
+import type { UserStars, UserStarsProgress } from "./types";
 
 const INITIAL_STARS_BALANCE = 5;
 
@@ -21,6 +22,48 @@ const INITIAL_STARS: UserStars = {
   lifetimeEarned: INITIAL_STARS_BALANCE,
   lifetimeSpent: 0,
 };
+
+function formatDocUpdatedAt(raw: unknown): string {
+  if (raw instanceof Timestamp) {
+    return raw.toDate().toISOString();
+  }
+  if (typeof raw === "string" && raw.trim() !== "") {
+    return raw;
+  }
+  return new Date().toISOString();
+}
+
+/** Read-only progress snapshot for dashboard/profile (authoritative Firestore). */
+export async function getStarsProgressForCurrentUser(): Promise<UserStarsProgress | null> {
+  const user = auth.currentUser;
+  if (!user) {
+    return null;
+  }
+
+  const snap = await getDoc(doc(db, "users", user.uid));
+  const data = snap.data() as { stars?: Partial<UserStars>; updatedAt?: unknown } | undefined;
+  const stars = data?.stars;
+
+  return {
+    userId: user.uid,
+    totalStars:
+      typeof stars?.lifetimeEarned === "number" ? stars.lifetimeEarned : 0,
+    balance: typeof stars?.balance === "number" ? stars.balance : 0,
+    updatedAt: formatDocUpdatedAt(data?.updatedAt),
+  };
+}
+
+/**
+ * Award stars to the signed-in user (transactional). Optional `reason` reserved for future analytics.
+ * Prefer this name in lesson/reward flows; wraps {@link addStarsToCurrentUser}.
+ */
+export async function awardStarsToCurrentUser(
+  starsEarned: number,
+  _reason?: string
+): Promise<UserStars> {
+  void _reason;
+  return addStarsToCurrentUser(starsEarned);
+}
 
 // Get current user's stars
 export async function getCurrentUserStars(): Promise<UserStars> {

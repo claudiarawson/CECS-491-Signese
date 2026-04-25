@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   getDeviceDensity,
   semanticColors,
@@ -37,6 +38,11 @@ import {
 } from "@/src/services/firebase/auth.services";
 import { getProfileIconById } from "@/src/features/account/types";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
+import { StarsProgressPanel } from "@/src/features/gamification/components/StarsProgressPanel";
+import {
+  getNextStarUnlockTarget,
+  getUnlockedLessons,
+} from "@/src/features/learn/utils/lessonProgress";
 
 export default function AccountScreen() {
   const { profile, authUser, refreshProfile } = useAuthUser();
@@ -61,8 +67,9 @@ export default function AccountScreen() {
   const [emailErr, setEmailErr] = useState("");
   const [passwordErr, setPasswordErr] = useState("");
   const [signingOut, setSigningOut] = useState(false);
-
-  const stars = profile?.stars?.balance ?? 0;
+  const [nextUnlockTarget, setNextUnlockTarget] = useState<
+    ReturnType<typeof getNextStarUnlockTarget>
+  >(null);
 
   const dayStreak = profile?.streak?.current ?? 0;
   const canChangeEmailPassword = userHasPasswordProvider(authUser);
@@ -72,6 +79,27 @@ export default function AccountScreen() {
       setUsernameDraft(profile.username);
     }
   }, [profile?.username]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      let cancelled = false;
+      void (async () => {
+        try {
+          const unlocked = await getUnlockedLessons();
+          if (!cancelled) {
+            setNextUnlockTarget(getNextStarUnlockTarget(unlocked));
+          }
+        } catch {
+          if (!cancelled) {
+            setNextUnlockTarget(null);
+          }
+        }
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }, [])
+  );
 
   useEffect(() => {
     if (newEmail.trim() !== "") return;
@@ -226,9 +254,20 @@ export default function AccountScreen() {
               <Text style={styles.heroAvatar}>{selectedProfileIcon.emoji}</Text>
             </View>
 
-            <View style={styles.starPill}>
-              <Text style={styles.starPillText}>⭐ {stars} Stars</Text>
-            </View>
+            <StarsProgressPanel
+              variant="hero"
+              totalEarned={profile?.stars?.lifetimeEarned ?? 0}
+              balance={profile?.stars?.balance ?? 0}
+              nextUnlock={
+                nextUnlockTarget
+                  ? {
+                      title: nextUnlockTarget.title,
+                      starsRequired: nextUnlockTarget.starsRequired,
+                      currentBalance: profile?.stars?.balance ?? 0,
+                    }
+                  : null
+              }
+            />
 
             <SectionCard style={styles.blockCard}>
               <Text style={styles.blockTitle}>Profile Customization</Text>
@@ -256,15 +295,10 @@ export default function AccountScreen() {
             <SectionCard style={styles.blockCard}>
               <Text style={styles.blockTitle}>Your Progress</Text>
               <View style={styles.progressRow}>
-                <View style={[styles.progressCard, styles.progressStreak]}>
+                <View style={[styles.progressCard, styles.progressStreak, styles.progressCardFull]}>
                   <Text style={styles.progressValue}>{dayStreak}</Text>
                   <Text style={styles.progressLabel}>Day Streak</Text>
                   <Text style={styles.progressEmoji}>🔥</Text>
-                </View>
-
-                <View style={[styles.progressCard, styles.progressStars]}>
-                  <Text style={styles.progressValue}>{stars}</Text>
-                  <Text style={styles.progressLabel}>Stars ⭐</Text>
                 </View>
               </View>
             </SectionCard>
@@ -531,21 +565,6 @@ const createStyles = (density: number, textScale: number) => {
       lineHeight: ts(38),
     },
 
-    starPill: {
-      backgroundColor: "#E9DEC1",
-      borderRadius: ms(12),
-      paddingHorizontal: ms(12),
-      paddingVertical: ms(4),
-      alignSelf: "center",
-    },
-
-    starPillText: {
-      ...Typography.caption,
-      color: semanticColors.text.secondary,
-      fontSize: ts(12),
-      lineHeight: ts(16),
-    },
-
     blockCard: {
       backgroundColor: "#FFFFFF",
       borderRadius: ms(20),
@@ -577,12 +596,13 @@ const createStyles = (density: number, textScale: number) => {
       justifyContent: "center",
     },
 
-    progressStreak: {
-      backgroundColor: "#CADBDD",
+    progressCardFull: {
+      flex: 1,
+      width: "100%",
     },
 
-    progressStars: {
-      backgroundColor: "#DDD4E8",
+    progressStreak: {
+      backgroundColor: "#CADBDD",
     },
 
     progressValue: {

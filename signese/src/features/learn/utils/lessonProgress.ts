@@ -1,7 +1,8 @@
 import { readLocalJson, writeLocalJson } from "@/src/storage/localJsonFile";
 import { auth, db } from "@/src/services/firebase/firebase.config";
+import type { UserStars } from "@/src/features/gamification/types";
 import {
-  addStarsToCurrentUser,
+  awardStarsToCurrentUser,
   ensureStarsDocument,
   getCurrentUserStars,
   spendStarsForCurrentUser,
@@ -40,6 +41,31 @@ export const LESSON_ORDER: LessonId[] = [
   "telling-time",
   "food-drink",
 ];
+
+const LESSON_TITLES: Record<LessonId, string> = {
+  alphabet: "Alphabet",
+  numbers: "Numbers",
+  greetings: "Greetings",
+  family: "Family",
+  colors: "Colors",
+  "telling-time": "Telling Time",
+  "food-drink": "Food & Drink",
+};
+
+/** Next lesson that costs stars to unlock, if any (requirements &gt; 0 and still locked). */
+export function getNextStarUnlockTarget(unlocked: LessonId[]): {
+  lessonId: LessonId;
+  starsRequired: number;
+  title: string;
+} | null {
+  for (const id of LESSON_ORDER) {
+    const cost = LESSON_STAR_REQUIREMENTS[id];
+    if (cost > 0 && !unlocked.includes(id)) {
+      return { lessonId: id, starsRequired: cost, title: LESSON_TITLES[id] };
+    }
+  }
+  return null;
+}
 
 const DEFAULT_UNLOCKED: LessonId[] = ["alphabet", "numbers", "greetings", "family", "colors", "telling-time", "food-drink"];
 const DEFAULT_COMPLETED: LessonId[] = [];
@@ -275,12 +301,14 @@ export async function completeLessonOnce(lessonId: LessonId, starsEarned: number
 
   let totalStars = await getTotalStars();
   let unlockedNextLessonId: LessonId | null = null;
+  let userStars: UserStars | undefined;
 
   if (!alreadyCompleted) {
     if (auth.currentUser) {
       await ensureStarsDocument();
-      const updated = await addStarsToCurrentUser(starsEarned);
+      const updated = await awardStarsToCurrentUser(starsEarned, `lesson:${lessonId}`);
       totalStars = updated.balance;
+      userStars = updated;
       // Keep local value in sync for any offline/fallback code paths.
       await setTotalStars(totalStars);
     } else {
@@ -314,5 +342,6 @@ export async function completeLessonOnce(lessonId: LessonId, starsEarned: number
     totalStars,
     alreadyCompleted,
     unlockedNextLessonId,
+    userStars,
   };
 }

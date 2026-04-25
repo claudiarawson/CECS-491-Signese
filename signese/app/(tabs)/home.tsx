@@ -30,33 +30,50 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { getProfileIconById } from "@/src/features/account/types";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
-import { getCurrentUserStars } from "@/src/features/gamification/stars.services";
+import { StarsProgressPanel } from "@/src/features/gamification/components/StarsProgressPanel";
 import {
   getCompletedLessons,
+  getNextStarUnlockTarget,
+  getTotalStars,
+  getUnlockedLessons,
   resetLessonProgress,
 } from "@/src/features/learn/utils/lessonProgress";
 
 export default function HomeScreen() {
   const { textScale } = useAccessibility();
-  const { profile, loading } = useAuthUser();
+  const { profile, loading, authUser } = useAuthUser();
   const headerProfileIcon = getProfileIconById(profile?.avatar);
   const streakCount = profile?.streak?.current ?? 0;
 
-  const [stars, setStars] = useState(0);
   const [completedLessonsCount, setCompletedLessonsCount] = useState(0);
+  const [guestStarTotal, setGuestStarTotal] = useState(0);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState<string | null>(null);
+  const [nextUnlockTarget, setNextUnlockTarget] = React.useState<
+    ReturnType<typeof getNextStarUnlockTarget>
+  >(null);
 
   const refreshHomeStats = React.useCallback(async () => {
+    setStatsLoading(true);
+    setStatsError(null);
     try {
-      const [starResult, completed] = await Promise.all([
-        getCurrentUserStars(),
+      const [completed, unlocked] = await Promise.all([
         getCompletedLessons(),
+        getUnlockedLessons(),
       ]);
-      setStars(starResult.balance);
       setCompletedLessonsCount(completed.length);
+      setNextUnlockTarget(getNextStarUnlockTarget(unlocked));
+      if (!authUser) {
+        const total = await getTotalStars();
+        setGuestStarTotal(total);
+      }
     } catch (error) {
       console.warn("Failed to load home stats", error);
+      setStatsError("Unable to load progress right now.");
+    } finally {
+      setStatsLoading(false);
     }
-  }, []);
+  }, [authUser]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -133,17 +150,32 @@ export default function HomeScreen() {
           </Text>
         </View>
 
+        <StarsProgressPanel
+          variant="hero"
+          totalEarned={
+            authUser ? (profile?.stars?.lifetimeEarned ?? 0) : guestStarTotal
+          }
+          balance={authUser ? (profile?.stars?.balance ?? 0) : guestStarTotal}
+          isLoading={statsLoading}
+          errorMessage={statsError}
+          nextUnlock={
+            nextUnlockTarget
+              ? {
+                  title: nextUnlockTarget.title,
+                  starsRequired: nextUnlockTarget.starsRequired,
+                  currentBalance: authUser
+                    ? (profile?.stars?.balance ?? 0)
+                    : guestStarTotal,
+                }
+              : null
+          }
+        />
+
         <View style={styles.statsRow}>
           <View style={[styles.statCard, styles.statCardStreak]}>
             <Text style={styles.statIcon}>🔥</Text>
             <Text style={styles.statValue}>{streakCount}</Text>
             <Text style={styles.statLabel}>Streak</Text>
-          </View>
-
-          <View style={[styles.statCard, styles.statCardStars]}>
-            <Text style={styles.statIcon}>⭐</Text>
-            <Text style={styles.statValue}>{stars}</Text>
-            <Text style={styles.statLabel}>Stars</Text>
           </View>
 
           <View style={[styles.statCard, styles.statCardLessons]}>
@@ -235,9 +267,6 @@ const createStyles = (density: number, textScale: number) => {
     },
     statCardStreak: {
       backgroundColor: "#F4D5D5",
-    },
-    statCardStars: {
-      backgroundColor: "#F5ECCD",
     },
     statCardLessons: {
       backgroundColor: "#D2F1D8",
