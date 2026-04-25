@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, Image, Pressable, Platform, TextInput, ScrollVi
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { moderateScale } from "react-native-size-matters";
 import { signupColors as c } from "@/src/theme/pages/signup.colors";
 import { signInWithEmail } from "@/src/services/firebase/auth.services";
 
 export default function LoginScreen() {
+  const { redirect: redirectParam } = useLocalSearchParams<{ redirect?: string | string[] }>();
+  const redirect = Array.isArray(redirectParam) ? redirectParam[0] : redirectParam;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +24,9 @@ export default function LoginScreen() {
     }
     try {
       await signInWithEmail(email.trim().toLowerCase(), password);
-      router.replace("/home"); // same route check
+      const next =
+        typeof redirect === "string" && redirect.startsWith("/") ? redirect : "/(tabs)/home";
+      router.replace(next as any);
     } catch (e: any) {
       setError(e?.message ?? "Login failed.");
     }

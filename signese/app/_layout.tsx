@@ -1,12 +1,14 @@
 import { Stack } from "expo-router";
 import { AuthUserProvider } from "@/src/contexts/AuthUserContext";
 import { AccessibilityProvider } from "@/src/contexts/AccessibilityContext";
+import { StreakReminderNotificationBootstrap } from "@/src/services/notifications/StreakReminderNotificationBootstrap";
 import React from "react";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthUserProvider>
       <AccessibilityProvider>
+        <StreakReminderNotificationBootstrap />
         <Stack
           screenOptions={{
             headerShown: false,

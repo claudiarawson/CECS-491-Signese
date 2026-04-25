@@ -14,6 +14,8 @@ export type UserStreak = {
   longest: number;
   lastLoginDate: DateKey;
   lastLoginAt?: Timestamp | FieldValue;
+  /** IANA timezone captured on login (device local) for reminder scheduling / analytics. */
+  timezone?: string;
 };
 
 type UserDocShape = {
@@ -69,6 +71,7 @@ export async function updateLoginStreakForCurrentUser(): Promise<void> {
       longest,
       lastLoginDate: todayKey,
       lastLoginAt: serverTimestamp(),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
 
     transaction.set(

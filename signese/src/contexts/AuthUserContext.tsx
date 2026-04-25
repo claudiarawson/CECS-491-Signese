@@ -13,11 +13,13 @@ import { updateLoginStreakForCurrentUser } from "@/src/services/streak.service";
 import { DEFAULT_PROFILE_ICON_ID } from "@/src/features/account/types";
 import { ensureStarsDocument } from "@/src/features/gamification/stars.services";
 import type { UserStars } from "@/src/features/gamification/types";
+import { refreshStreakLoginReminderScheduleFromPreferences } from "@/src/services/notifications/streakReminderNotifications";
 
 type ProfileStreak = {
   current: number;
   longest: number;
   lastLoginDate?: string;
+  timezone?: string;
 };
 
 type ProfileStars = UserStars;
@@ -37,6 +39,7 @@ type AuthContextType = {
   loading: boolean;
   setProfileAvatar: (avatar: string) => Promise<void>;
   refreshProfile: () => Promise<void>;
+  refreshStreakReminders: () => Promise<void>;
 };
 
 const DEFAULT_AVATAR = DEFAULT_PROFILE_ICON_ID;
@@ -47,6 +50,7 @@ function streakFromDoc(data: Record<string, unknown> | null | undefined): Profil
     current: typeof s?.current === "number" ? s.current : 0,
     longest: typeof s?.longest === "number" ? s.longest : 0,
     lastLoginDate: typeof s?.lastLoginDate === "string" ? s.lastLoginDate : undefined,
+    timezone: typeof s?.timezone === "string" ? s.timezone : undefined,
   };
 }
 
@@ -65,6 +69,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   setProfileAvatar: async () => {},
   refreshProfile: async () => {},
+  refreshStreakReminders: async () => {},
 });
 
 export function AuthUserProvider({ children }: { children: React.ReactNode }) {
@@ -232,6 +237,28 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
     }
   }, [loadProfile]);
 
+  const refreshStreakReminders = useCallback(async () => {
+    try {
+      await refreshStreakLoginReminderScheduleFromPreferences(profile);
+    } catch (e) {
+      console.warn("Streak reminder schedule sync failed", e);
+    }
+  }, [profile]);
+
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+    void refreshStreakReminders();
+  }, [
+    loading,
+    authUser?.uid,
+    profile?.uid,
+    profile?.streak?.lastLoginDate,
+    profile?.streak?.current,
+    refreshStreakReminders,
+  ]);
+
   const setProfileAvatar = async (avatar: string) => {
     if (!authUser) return;
 
@@ -248,8 +275,15 @@ export function AuthUserProvider({ children }: { children: React.ReactNode }) {
   };
 
   const value = useMemo(
-    () => ({ authUser, profile, loading, setProfileAvatar, refreshProfile }),
-    [authUser, profile, loading, refreshProfile]
+    () => ({
+      authUser,
+      profile,
+      loading,
+      setProfileAvatar,
+      refreshProfile,
+      refreshStreakReminders,
+    }),
+    [authUser, profile, loading, refreshProfile, refreshStreakReminders]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

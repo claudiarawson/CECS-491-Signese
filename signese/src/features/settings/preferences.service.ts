@@ -6,6 +6,8 @@ const WEB_SETTINGS_KEY = "signese_settings_preferences";
 export type NotificationPreferences = {
   pushNotifications: boolean;
   dailyLearnReminders: boolean;
+  /** Evening nudge to log in and keep your daily streak (local notification). */
+  streakLoginReminders: boolean;
   dictionaryPostNotifications: boolean;
 };
 
@@ -28,6 +30,7 @@ export const DEFAULT_SETTINGS_PREFERENCES: SettingsPreferences = {
   notifications: {
     pushNotifications: true,
     dailyLearnReminders: false,
+    streakLoginReminders: true,
     dictionaryPostNotifications: false,
   },
   appearance: {
@@ -58,6 +61,10 @@ export async function loadSettingsPreferences(): Promise<SettingsPreferences> {
         typeof raw.notifications?.dailyLearnReminders === "boolean"
           ? raw.notifications.dailyLearnReminders
           : DEFAULT_SETTINGS_PREFERENCES.notifications.dailyLearnReminders,
+      streakLoginReminders:
+        typeof raw.notifications?.streakLoginReminders === "boolean"
+          ? raw.notifications.streakLoginReminders
+          : DEFAULT_SETTINGS_PREFERENCES.notifications.streakLoginReminders,
       dictionaryPostNotifications:
         typeof raw.notifications?.dictionaryPostNotifications === "boolean"
           ? raw.notifications.dictionaryPostNotifications

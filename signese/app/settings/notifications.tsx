@@ -8,6 +8,7 @@ import {
   loadSettingsPreferences,
   saveSettingsPreferences,
 } from "@/src/features/settings/preferences.service";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
 
 type State = {
   loading: boolean;
@@ -15,6 +16,7 @@ type State = {
 };
 
 export default function NotificationsScreen() {
+  const { refreshStreakReminders } = useAuthUser();
   const [state, setState] = useState<State>({
     loading: true,
     prefs: DEFAULT_SETTINGS_PREFERENCES,
@@ -35,6 +37,7 @@ export default function NotificationsScreen() {
   const updatePrefs = async (next: SettingsPreferences) => {
     setState((current) => ({ ...current, prefs: next }));
     await saveSettingsPreferences(next);
+    await refreshStreakReminders();
   };
 
   const notifications = state.prefs.notifications;
@@ -46,7 +49,9 @@ export default function NotificationsScreen() {
         <SectionCard style={styles.heroCard}>
           <Text style={styles.heroTitle}>Notification Preferences</Text>
           <Text style={styles.heroSubtitle}>
-            Choose the alerts and reminders you want from Signese.
+            Choose the alerts and reminders you want from Signese. Streak reminders are a single
+            local notification around 7:00 PM in your time zone (at most once per day on this
+            device).
           </Text>
         </SectionCard>
 
@@ -77,6 +82,21 @@ export default function NotificationsScreen() {
             void updatePrefs({
               ...state.prefs,
               notifications: { ...notifications, dailyLearnReminders: value },
+            })
+          }
+        />
+
+        <SettingsToggleRow
+          iconName="local-fire-department"
+          iconColor="#E25822"
+          iconBg="#FCE7DC"
+          label="Streak login reminders"
+          value={notifications.streakLoginReminders}
+          disabled={state.loading}
+          onChange={(value) =>
+            void updatePrefs({
+              ...state.prefs,
+              notifications: { ...notifications, streakLoginReminders: value },
             })
           }
         />
