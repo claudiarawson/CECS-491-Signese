@@ -6,4 +6,6 @@ export type TranslationHistoryItem = {
   targetLanguage: string;
   originalText: string;
   translatedText: string;
+  timestamp?: string; // ISO string for when the sign was detected
+  confidence?: number; // confidence score 0-1
 };

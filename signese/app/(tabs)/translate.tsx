@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -25,7 +25,6 @@ import {
   HeaderAvatarButton,
 } from "@/src/components/layout";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { getProfileIconById } from "@/src/features/account/types";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import { useTranslateCamera } from "@/src/features/translate/camera/useCamera";
 import {
@@ -42,15 +41,9 @@ import {
 import { TranslateInferenceResponse } from "@/src/features/translate/inference/types";
 import {
   useTabTranslationHistory,
-  TranslationHistoryPanel,
   TRANSLATE_SOURCE_LANG,
   TRANSLATE_TARGET_LANG,
-  type TranslationHistoryItem,
 } from "@/src/features/translate/translationHistory";
-import {
-  ReportTranslationModal,
-  type ReportTranslationContext,
-} from "@/src/features/translate/ui/ReportTranslationModal";
 
 function CommonResponsesPlaceholder({
   styles,
@@ -76,7 +69,6 @@ function CommonResponsesPlaceholder({
 export default function TranslateScreen() {
   const { profile } = useAuthUser();
   const { textScale } = useAccessibility();
-  const headerProfileIcon = getProfileIconById(profile?.avatar);
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density, textScale);
@@ -92,11 +84,9 @@ export default function TranslateScreen() {
   const [recordingElapsedMs, setRecordingElapsedMs] = useState(0);
   const [inferenceError, setInferenceError] = useState<string | null>(null);
   const [isTranslateInitializing, setIsTranslateInitializing] = useState(true);
-  const { captionText, tokens, append, clear, replaceCaptionFromText } = useCaptionBuffer(30);
-  const { translationHistory, addHistoryItem, clearHistory, sessionId } = useTabTranslationHistory();
+  const { captionText, tokens, append, clear } = useCaptionBuffer(30);
+  const { addHistoryItem } = useTabTranslationHistory();
   const lastHistoryEntryIdRef = useRef<string | null>(null);
-  const [reportOpen, setReportOpen] = useState(false);
-  const [reportContext, setReportContext] = useState<ReportTranslationContext | null>(null);
   const {
     permission,
     cameraActive,
@@ -281,26 +271,17 @@ export default function TranslateScreen() {
       const hasHistorySignal =
         clipLabels.length > 0 || (response.raw_top_k && response.raw_top_k.length > 0);
       if (hasHistorySignal) {
-        const originalText =
-          clipLabels.length > 0
-            ? clipLabels.join(" ")
-            : (response.raw_top_k?.[0]?.label ?? "No prediction");
-        const prevCaption = captionText.trim();
-        const translatedText =
-          clipLabels.length > 0
-            ? prevCaption
-              ? `${prevCaption} ${clipLabels.join(" ")}`
-              : clipLabels.join(" ")
-            : prevCaption.length > 0
-              ? prevCaption
-              : "—";
-        const newId = addHistoryItem({
-          originalText,
-          translatedText,
-          sourceLanguage: TRANSLATE_SOURCE_LANG,
-          targetLanguage: TRANSLATE_TARGET_LANG,
-        });
-        lastHistoryEntryIdRef.current = newId;
+        // Add individual tokens to history instead of the full text
+        for (const token of response.tokens) {
+          addHistoryItem({
+            originalText: token.label,
+            translatedText: token.label, // For ASL to English, they're the same
+            sourceLanguage: TRANSLATE_SOURCE_LANG,
+            targetLanguage: TRANSLATE_TARGET_LANG,
+            timestamp: new Date(token.end_ms).toISOString(),
+            confidence: token.confidence,
+          });
+        }
       }
 
       const topScores = response.raw_top_k ?? [];
@@ -356,57 +337,11 @@ export default function TranslateScreen() {
     setRecordingElapsedMs(0);
   };
 
-  const openReportForHistoryItem = useCallback(
-    (item: TranslationHistoryItem) => {
-      setReportContext({
-        translationId: item.id,
-        sourceText: item.originalText,
-        translatedText: item.translatedText,
-        sourceLanguage: item.sourceLanguage,
-        targetLanguage: item.targetLanguage,
-        sessionId,
-      });
-      setReportOpen(true);
-    },
-    [sessionId]
-  );
-
-  const openReportForCurrentOutput = useCallback(() => {
-    const cap = captionText.trim();
-    if (!cap) {
-      return;
-    }
-    const clipPart =
-      lastInference?.tokens.map((t) => t.label).join(" ").trim() || lastDecision?.token?.label || "";
-    const sourceText = clipPart.length > 0 ? clipPart : "—";
-    setReportContext({
-      translationId: lastHistoryEntryIdRef.current ?? undefined,
-      sourceText,
-      translatedText: cap,
-      sourceLanguage: TRANSLATE_SOURCE_LANG,
-      targetLanguage: TRANSLATE_TARGET_LANG,
-      sessionId,
-    });
-    setReportOpen(true);
-  }, [captionText, lastDecision?.token?.label, lastInference?.tokens, sessionId]);
-
-  const handleReuseHistoryItem = useCallback(
-    (item: TranslationHistoryItem) => {
-      replaceCaptionFromText(item.translatedText);
-      setLastDecision(null);
-      setLastInference(null);
-      setInferenceError(null);
-    },
-    [replaceCaptionFromText]
-  );
-
   const recordingSecondsText = `${(recordingElapsedMs / 1000).toFixed(1)}s`;
   const cooldownSecondsText = `${(cooldownRemainingMs / 1000).toFixed(1)}s`;
-  const sessionHistoryMaxHeight = Math.min(280, Math.round(height * 0.32));
 
   const permissionDenied = permission && !permission.granted;
   const captionOutput = captionText.length > 0 ? captionText : "Translation output will appear here.";
-  const hasReportableCaption = captionText.trim().length > 0;
   const inferenceStatus =
     isRecordCooldown
       ? `Get ready... recording starts in ${cooldownSecondsText}`
@@ -433,6 +368,12 @@ export default function TranslateScreen() {
     <ScreenContainer backgroundColor="#F1F6F5">
       <ScreenHeader
         title="Translate"
+        left={
+          <HeaderActionButton
+            iconName="history"
+            onPress={() => router.push("/translate/history")}
+          />
+        }
         right={
           <>
             <HeaderActionButton
@@ -503,16 +444,6 @@ export default function TranslateScreen() {
           <CommonResponsesPlaceholder styles={styles} />
         </View>
 
-        <TranslationHistoryPanel
-          items={translationHistory}
-          onClear={clearHistory}
-          onReuse={handleReuseHistoryItem}
-          onReportItem={openReportForHistoryItem}
-          variant="stacked"
-          listMaxHeight={sessionHistoryMaxHeight}
-          textScale={textScale}
-        />
-
         <View style={styles.captionsControlsRow}>
           <View style={styles.leftControlsWrap}>
             <Pressable style={styles.smallControlBtn} onPress={toggleCamera}>
@@ -546,30 +477,6 @@ export default function TranslateScreen() {
 
         <View style={styles.captionsCard}>
           <Text style={styles.captionsOutputText}>{captionOutput}</Text>
-          <View style={styles.captionOutputActions}>
-            <Pressable
-              style={[styles.reportOutputBtn, !hasReportableCaption && styles.reportOutputBtnDisabled]}
-              onPress={openReportForCurrentOutput}
-              disabled={!hasReportableCaption}
-              accessibilityRole="button"
-              accessibilityLabel="Report incorrect translation"
-              accessibilityState={{ disabled: !hasReportableCaption }}
-            >
-              <MaterialIcons
-                name="flag"
-                size={16}
-                color={hasReportableCaption ? "#214F46" : "#9CA3AF"}
-              />
-              <Text
-                style={[
-                  styles.reportOutputBtnText,
-                  !hasReportableCaption && styles.reportOutputBtnTextDisabled,
-                ]}
-              >
-                Report
-              </Text>
-            </Pressable>
-          </View>
           <Text style={styles.captionsSubText}>{inferenceStatus}</Text>
           <Text style={styles.captionsSubText}>{confidenceSummary}</Text>
           <Text style={styles.captionsSubText}>

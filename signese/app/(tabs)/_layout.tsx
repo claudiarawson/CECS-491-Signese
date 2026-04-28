@@ -2,13 +2,11 @@ import { Tabs } from "expo-router";
 import React from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Sizes, navigationStyles, navigationTheme } from "@/src/theme";
-import { TranslationHistoryProvider } from "@/src/features/translate/translationHistory";
 
 const TAB_ICON_SIZE = Sizes.iconMd;
 
 export default function TabLayout() {
   return (
-    <TranslationHistoryProvider>
     <Tabs
       screenOptions={{
         headerShown: false,
@@ -60,6 +58,5 @@ export default function TabLayout() {
       <Tabs.Screen name="settings" options={{ href: null }} />
       <Tabs.Screen name="account" options={{ href: null }} />
     </Tabs>
-    </TranslationHistoryProvider>
   );
 }

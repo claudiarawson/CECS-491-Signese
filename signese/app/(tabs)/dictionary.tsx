@@ -9,7 +9,7 @@ import {
   getDeviceDensity,
   moderateScale,
 } from "@/src/theme";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -38,7 +38,6 @@ import {
   SIGN_CATEGORY_ORDER,
 } from "../../src/features/dictionary/signCategories";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { getProfileIconById } from "@/src/features/account/types";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 
 const MINT = "#cfe9e6";
@@ -49,13 +48,19 @@ export default function DictionaryScreen() {
   const { signs, loading, loadingMore, error, reload, loadMore } = useDictionarySigns();
   const { textScale } = useAccessibility();
   const { profile } = useAuthUser();
-  const headerProfileIcon = getProfileIconById(profile?.avatar);
+  const { q } = useLocalSearchParams<{ q?: string }>();
 
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density, textScale);
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
+
+  useEffect(() => {
+    if (typeof q === "string" && q.trim().length > 0) {
+      setQuery(q);
+    }
+  }, [q]);
   /** Empty = no category filter. Otherwise show signs that match any selected category (OR). */
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<SignCategoryId[]>([]);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
