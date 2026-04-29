@@ -1,22 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { View, Text, StyleSheet, Alert, useWindowDimensions } from "react-native";
-import { router } from "expo-router";
-import { useFocusEffect } from "@react-navigation/native";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { useAccessibility } from "@/src/contexts/AccessibilityContext";
-import { getDeviceDensity, moderateScale } from "@/src/theme";
-import { asl } from "@/src/theme/aslConnectTheme";
 import { AppShell, AslTabHeader, LessonCard } from "@/src/components/asl";
+import { useAccessibility } from "@/src/contexts/AccessibilityContext";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import {
-  getUnlockedLessons,
   getCompletedLessons,
   getLessonProgressPercent,
   getLessonStepProgress,
-  setLessonStepProgress,
+  getUnlockedLessons,
   LESSON_STAR_REQUIREMENTS,
+  setLessonStepProgress,
   unlockLessonWithStars,
   type LessonId,
 } from "@/src/features/learn/utils/lessonProgress";
+import { getDeviceDensity, moderateScale } from "@/src/theme";
+import { useFocusEffect } from "@react-navigation/native";
+import { router } from "expo-router";
+import React, { useEffect, useMemo, useState } from "react";
+import { Alert, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 
 const LESSON_ROWS = [
   { id: "alphabet", title: "Alphabet", blurb: "Hand shapes A–Z", level: 1, emoji: "🔤", route: "/learn/alphabet" },
@@ -35,9 +35,10 @@ const IMPLEMENTED_LESSONS = new Set(["alphabet", "greetings", "numbers"]);
 export default function LearnScreen() {
   const { profile } = useAuthUser();
   const { textScale } = useAccessibility();
+  const { colors } = useTheme();
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
+  const styles = useMemo(() => createStyles(density, textScale, colors), [density, textScale, colors]);
 
   const [unlockedLessons, setUnlockedLessons] = useState<LessonId[]>([]);
   const [completedLessons, setCompletedLessons] = useState<LessonId[]>([]);
@@ -160,49 +161,63 @@ export default function LearnScreen() {
         <AslTabHeader title="Learn" onSettings={() => router.push("/(tabs)/settings" as any)} />
       }
     >
-      <Text style={styles.sectionLabel}>All classes</Text>
-      <Text style={styles.subtle}>Tap a row to start or review.</Text>
-      {LESSON_ROWS.map((row) => {
-        const isUnlocked = unlockedLessons.includes(row.id as LessonId);
-        const isComplete = completedLessons.includes(row.id as LessonId);
-        const progress = lessonProgressPct[row.id as LessonId] ?? 0;
-        const status: "locked" | "in_progress" | "complete" = !isUnlocked
-          ? "locked"
-          : isComplete
-            ? "complete"
-            : "in_progress";
-        const right =
-          !isUnlocked
-            ? `⭐ ${LESSON_STAR_REQUIREMENTS[row.id as LessonId]}`
-            : progress > 0 && !isComplete
-              ? `${progress}%`
-              : undefined;
-        return (
-          <LessonCard
-            key={row.id}
-            title={row.title}
-            subtitle={`L${row.level} · ${row.blurb}`}
-            emoji={row.emoji}
-            status={status}
-            rightDetail={right}
-            disabled={unlockingLessonId === (row.id as LessonId)}
-            onPress={() => handleLessonPress(row)}
-          />
-        );
-      })}
+      <View style={styles.screenContent}>
+        <Text style={styles.sectionLabel}>All classes</Text>
+        <Text style={styles.subtle}>Tap a row to start or review.</Text>
+
+        {LESSON_ROWS.map((row) => {
+          const isUnlocked = unlockedLessons.includes(row.id as LessonId);
+          const isComplete = completedLessons.includes(row.id as LessonId);
+          const progress = lessonProgressPct[row.id as LessonId] ?? 0;
+
+          const status: "locked" | "in_progress" | "complete" = !isUnlocked
+            ? "locked"
+            : isComplete
+              ? "complete"
+              : "in_progress";
+
+          const right =
+            !isUnlocked
+              ? `⭐ ${LESSON_STAR_REQUIREMENTS[row.id as LessonId]}`
+              : progress > 0 && !isComplete
+                ? `${progress}%`
+                : undefined;
+
+          return (
+            <LessonCard
+              key={row.id}
+              title={row.title}
+              subtitle={`L${row.level} · ${row.blurb}`}
+              emoji={row.emoji}
+              status={status}
+              rightDetail={right}
+              disabled={unlockingLessonId === (row.id as LessonId)}
+              onPress={() => handleLessonPress(row)}
+            />
+          );
+        })}
+      </View>
     </AppShell>
   );
 }
 
-const createStyles = (density: number, textScale: number) => {
+const createStyles = (density: number, textScale: number, colors: any) => {
   const ts = (v: number) => moderateScale(v) * density * textScale;
+
   return StyleSheet.create({
+    screenContent: {
+      flex: 1,
+    },
     sectionLabel: {
-      color: asl.text.primary,
+      color: colors.text,
       fontSize: ts(20),
       fontWeight: "800",
       marginTop: 4,
     },
-    subtle: { color: asl.text.muted, marginBottom: 8, fontSize: ts(14) },
+    subtle: {
+      color: colors.subtext,
+      marginBottom: 8,
+      fontSize: ts(14),
+    },
   });
 };

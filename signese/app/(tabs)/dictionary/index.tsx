@@ -1,7 +1,7 @@
 import { AppShell, AslTabHeader, FilterChips, SearchBar, ToggleSwitch } from "@/src/components/asl";
 import { DictionaryFooter, dictionaryChromePadBottom } from "@/src/components/DictionaryFooter";
-import { asl } from "@/src/theme/aslConnectTheme";
-import { getDeviceDensity, moderateScale, Spacing } from "@/src/theme";
+import { useTheme } from "@/src/contexts/ThemeContext";
+import { Spacing, getDeviceDensity, moderateScale } from "@/src/theme";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -15,8 +15,10 @@ import {
 } from "react-native";
 import SignOverlay from "../../../src/components/SignOverlay";
 import { useDictionarySigns } from "../../../src/features/dictionary/hooks/useDictionarySigns";
-import { DictionarySignCard } from "../../../src/features/dictionary/ui/DictionarySignCard";
-import { prefetchDictionaryVideoUrl } from "../../../src/services/dictionary/dictionarySigns.service";
+import {
+  SIGN_CATEGORY_LABEL,
+  SIGN_CATEGORY_ORDER,
+} from "../../../src/features/dictionary/signCategories";
 import {
   getSavedIds,
   getSavedSnapshotMap,
@@ -24,10 +26,8 @@ import {
   toggleSavedId,
 } from "../../../src/features/dictionary/storage/saved.local";
 import type { Sign, SignCategoryId } from "../../../src/features/dictionary/types";
-import {
-  SIGN_CATEGORY_LABEL,
-  SIGN_CATEGORY_ORDER,
-} from "../../../src/features/dictionary/signCategories";
+import { DictionarySignCard } from "../../../src/features/dictionary/ui/DictionarySignCard";
+import { prefetchDictionaryVideoUrl } from "../../../src/services/dictionary/dictionarySigns.service";
 
 const CATEGORY_CHIPS = SIGN_CATEGORY_ORDER.map((id) => ({
   id,
@@ -35,12 +35,13 @@ const CATEGORY_CHIPS = SIGN_CATEGORY_ORDER.map((id) => ({
 }));
 
 export default function DictionaryScreen() {
+  const { colors } = useTheme();
   const { signs, loading, loadingMore, error, reload, loadMore } = useDictionarySigns();
   const { q } = useLocalSearchParams<{ q?: string }>();
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const listContentBottomPad = useMemo(() => dictionaryChromePadBottom(density), [density]);
-  const styles = useMemo(() => createStyles(density), [density]);
+  const styles = useMemo(() => createStyles(density, colors), [density, colors]);
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
 
@@ -78,7 +79,9 @@ export default function DictionaryScreen() {
 
   const toggleCategoryFilter = (id: string) => {
     setSelectedCategoryIds((prev) =>
-      prev.includes(id as SignCategoryId) ? prev.filter((x) => x !== id) : [...prev, id as SignCategoryId]
+      prev.includes(id as SignCategoryId)
+        ? prev.filter((x) => x !== id)
+        : [...prev, id as SignCategoryId]
     );
   };
 
@@ -133,8 +136,8 @@ export default function DictionaryScreen() {
 
         {loading && signs.length === 0 ? (
           <View style={styles.loadingBox}>
-            <ActivityIndicator size="large" color={asl.accentCyan} />
-            <Text style={styles.loadingText}>Loading dictionary…</Text>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={styles.loadingText}>Loading dictionary...</Text>
           </View>
         ) : (
           <FlatList
@@ -153,8 +156,8 @@ export default function DictionaryScreen() {
             ListFooterComponent={
               loadingMore ? (
                 <View style={styles.footerLoading}>
-                  <ActivityIndicator size="small" color={asl.accentCyan} />
-                  <Text style={styles.footerLoadingText}>Loading more signs…</Text>
+                  <ActivityIndicator size="small" color={colors.primary} />
+                  <Text style={styles.footerLoadingText}>Loading more signs...</Text>
                 </View>
               ) : null
             }
@@ -183,14 +186,19 @@ export default function DictionaryScreen() {
 
         <DictionaryFooter />
 
-        <SignOverlay visible={!!selectedSign} sign={selectedSign} onClose={() => setSelectedSign(null)} />
+        <SignOverlay
+          visible={!!selectedSign}
+          sign={selectedSign}
+          onClose={() => setSelectedSign(null)}
+        />
       </View>
     </AppShell>
   );
 }
 
-const createStyles = (density: number) => {
+const createStyles = (density: number, colors: any) => {
   const ms = (value: number) => moderateScale(value) * density;
+
   return StyleSheet.create({
     root: {
       flex: 1,
@@ -212,7 +220,7 @@ const createStyles = (density: number) => {
       marginBottom: ms(6),
       fontSize: ms(12),
       fontWeight: "700",
-      color: asl.accentCyan,
+      color: colors.primary,
     },
     banner: {
       marginTop: ms(12),
@@ -223,33 +231,49 @@ const createStyles = (density: number) => {
       borderWidth: 1,
       borderColor: "rgba(248, 113, 113, 0.35)",
     },
-    bannerText: { color: "#FECACA", fontSize: ms(14), lineHeight: ms(18) },
-    retryBtn: { alignSelf: "flex-start" },
-    retryText: { color: asl.accentCyan, fontWeight: "700", fontSize: ms(14) },
+    bannerText: {
+      color: "#FECACA",
+      fontSize: ms(14),
+      lineHeight: ms(18),
+    },
+    retryBtn: {
+      alignSelf: "flex-start",
+    },
+    retryText: {
+      color: colors.primary,
+      fontWeight: "700",
+      fontSize: ms(14),
+    },
     loadingBox: {
       paddingVertical: ms(40),
       alignItems: "center",
       gap: ms(12),
     },
-    loadingText: { color: asl.text.secondary, fontSize: ms(15) },
+    loadingText: {
+      color: colors.subtext,
+      fontSize: ms(15),
+    },
     footerLoading: {
       paddingVertical: ms(16),
       alignItems: "center",
       gap: ms(8),
     },
-    footerLoadingText: { color: asl.text.muted, fontSize: ms(13) },
+    footerLoadingText: {
+      color: colors.subtext,
+      fontSize: ms(13),
+    },
     sectionTitle: {
       marginTop: ms(14),
       marginBottom: ms(10),
       fontSize: ms(20),
       fontWeight: "800",
       textAlign: "center",
-      color: asl.text.primary,
+      color: colors.text,
     },
     emptyText: {
       textAlign: "center",
       marginTop: ms(20),
-      color: asl.text.muted,
+      color: colors.subtext,
       fontSize: ms(16),
     },
   });

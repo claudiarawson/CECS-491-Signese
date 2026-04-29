@@ -1,51 +1,30 @@
+import { useTheme } from "@/src/contexts/ThemeContext";
 import React from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  type ScrollViewProps,
-} from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { GradientBackground } from "./GradientBackground";
+import { StyleSheet, View } from "react-native";
 
 type Props = {
   children: React.ReactNode;
-  header: React.ReactNode;
-  variant?: "default" | "welcome";
+  header?: React.ReactNode;
   scroll?: boolean;
-  scrollViewProps?: ScrollViewProps;
 };
 
-export function AppShell({ children, header, variant = "default", scroll = true, scrollViewProps }: Props) {
-  const insets = useSafeAreaInsets();
+export function AppShell({ children, header }: Props) {
+  const { colors } = useTheme();
+
   return (
-    <GradientBackground
-      variant={variant}
-      style={{ paddingTop: insets.top }}
-    >
-      <SafeAreaView style={styles.fill} edges={["left", "right", "bottom"]}>
-        {header}
-        {scroll ? (
-          <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={[styles.content, { paddingBottom: 100 + insets.bottom }]}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-            {...scrollViewProps}
-          >
-            {children}
-          </ScrollView>
-        ) : (
-          children
-        )}
-      </SafeAreaView>
-    </GradientBackground>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {header}
+      <View style={styles.content}>{children}</View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  fill: { flex: 1 },
-  scroll: { flex: 1 },
+  container: {
+    flex: 1,
+  },
   content: {
-    paddingHorizontal: 18,
+    flex: 1,
+    paddingHorizontal: 16,
   },
 });
