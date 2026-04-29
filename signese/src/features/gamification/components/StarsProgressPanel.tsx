@@ -1,5 +1,5 @@
 import React from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View, type ViewStyle } from "react-native";
 import { Radius, semanticColors, Spacing, Typography } from "@/src/theme";
 import { Surfaces } from "@/src/theme/surfaces";
 
@@ -10,6 +10,8 @@ export type StarsNextUnlock = {
 };
 
 type Props = {
+  /** Optional style merged into the root container (e.g. margin). */
+  style?: ViewStyle;
   /** Lifetime stars earned (never decreases when user spends). */
   totalEarned: number;
   /** Current spendable balance. */
@@ -42,6 +44,7 @@ const darkAppearance = StyleSheet.create({
 });
 
 export function StarsProgressPanel({
+  style,
   totalEarned,
   balance,
   isLoading = false,
@@ -71,6 +74,7 @@ export function StarsProgressPanel({
           styles.wrap,
           variant === "compact" && styles.wrapCompact,
           d && darkAppearance.wrap,
+          style,
         ]}
         accessibilityRole="progressbar"
         accessibilityLabel="Loading stars progress"
@@ -97,6 +101,7 @@ export function StarsProgressPanel({
         styles.wrap,
         variant === "compact" && styles.wrapCompact,
         d && darkAppearance.wrap,
+        style,
       ]}
       accessibilityRole="summary"
       accessibilityLabel={summaryA11y}

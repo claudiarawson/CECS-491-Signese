@@ -7,118 +7,165 @@ import {
   StyleSheet,
   Text,
   View,
-  useWindowDimensions} from "react-native";
+  useWindowDimensions,
+  type DimensionValue,
+} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useFocusEffect } from "expo-router";
 import { CameraView } from "expo-camera";
 import * as Speech from "expo-speech";
-import { Spacing, Typography, getDeviceDensity, moderateScale } from "@/src/theme";
+import { Spacing, Typography, getDeviceDensity, moderateScale, fontWeight } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { AppShell, AslTabHeader, GlassCard, TranslationOverlay } from "@/src/components/asl";
+import { GradientBackground } from "@/src/components/asl";
+import { ScreenContainer } from "@/src/components/layout";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
-import { fontWeight } from "@/src/theme";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import { getProfileIconById } from "@/src/features/account/types";
 import { useTranslateCamera } from "@/src/features/translate/camera/useCamera";
 import {
   GREETING_INTRO_V0_LABELS,
-  RUNTIME_V0_LABELS} from "@/src/features/translate/model/supportedSigns";
-import { PostprocessDecision } from "@/src/features/translate/model/types";
+  RUNTIME_V0_LABELS,
+} from "@/src/features/translate/model/supportedSigns";
 import { useCaptionBuffer } from "@/src/features/translate/state";
-import { formatTopScores } from "@/src/features/translate/utils";
 import {
   createShortClipInferenceService,
-  ShortClipInferenceService} from "@/src/features/translate/inference/shortClipInference";
+  ShortClipInferenceService,
+} from "@/src/features/translate/inference/shortClipInference";
 import { TranslateInferenceResponse } from "@/src/features/translate/inference/types";
 import {
   useTabTranslationHistory,
   TRANSLATE_SOURCE_LANG,
-  TRANSLATE_TARGET_LANG} from "@/src/features/translate/translationHistory";
-import {
-  ReportTranslationModal,
-  type ReportTranslationContext} from "@/src/features/translate/ui/ReportTranslationModal";
+  TRANSLATE_TARGET_LANG,
+} from "@/src/features/translate/translationHistory";
 
-function CommonResponsesPlaceholder({
-  styles,
-  historyCount,
-  onOpenRecent}: {
-  styles: ReturnType<typeof createStyles>;
-  historyCount: number;
-  onOpenRecent: () => void;
-}) {
-  const items = useMemo(() => GREETING_INTRO_V0_LABELS.slice(0, 3), []);
+function TranslateScreenHeader() {
+  const { profile } = useAuthUser();
+  const avatarRaw = profile?.avatar;
+  const looksLikeEmoji = typeof avatarRaw === "string" && avatarRaw.length <= 3;
+  const avatarEmoji = looksLikeEmoji ? avatarRaw! : getProfileIconById(avatarRaw).emoji;
 
   return (
-    <View style={styles.sideColumn}>
-      <Text style={styles.sideColumnLabel}>Ideas</Text>
-      <GlassCard style={styles.responsesPanel} contentStyle={styles.responsesPanelInner}>
+    <View style={stylesStatic.screenHeader}>
+      <View style={stylesStatic.screenHeaderSide}>
         <Pressable
-          style={styles.recentTranslationsBtn}
-          onPress={onOpenRecent}
+          onPress={() => router.push("/translate/history" as any)}
+          style={({ pressed }) => [stylesStatic.headerIconBtn, pressed && { opacity: 0.8 }]}
           accessibilityRole="button"
-          accessibilityLabel="View all recent translations"
+          accessibilityLabel="Translation history"
         >
-          <MaterialIcons name="history" size={18} color={asl.accentCyan} />
-          <Text style={styles.recentTranslationsBtnText}>Recent</Text>
-          {historyCount > 0 ? (
-            <View style={styles.recentCountPill}>
-              <Text style={styles.recentCountPillText}>{historyCount}</Text>
-            </View>
-          ) : null}
-          <MaterialIcons name="chevron-right" size={20} color={asl.text.muted} />
+          <MaterialIcons name="history" size={20} color={asl.accentCyan} />
         </Pressable>
-        <Text style={styles.responsesTitle}>Common responses</Text>
-        {items.map((item) => (
-          <View key={item} style={styles.responseItem}>
-            <MaterialIcons name="tips-and-updates" size={16} color={asl.accentCyan} />
-            <Text style={styles.responseText} numberOfLines={2}>
-              {item}
-            </Text>
-          </View>
-        ))}
-        <Text style={styles.responsesHint}>Placeholders · GIFs later</Text>
-      </GlassCard>
+      </View>
+      <Text style={stylesStatic.screenHeaderTitle} numberOfLines={1}>
+        Translate
+      </Text>
+      <View style={[stylesStatic.screenHeaderSide, stylesStatic.screenHeaderRight]}>
+        <Pressable
+          onPress={() => router.push("/(tabs)/settings" as any)}
+          style={({ pressed }) => [stylesStatic.headerIconBtn, pressed && { opacity: 0.8 }]}
+          accessibilityRole="button"
+          accessibilityLabel="Open settings"
+        >
+          <MaterialIcons name="settings" size={20} color={asl.text.secondary} />
+        </Pressable>
+        <Pressable
+          onPress={() => router.push("/(tabs)/account" as any)}
+          style={({ pressed }) => [stylesStatic.headerAvatarBtn, pressed && { opacity: 0.8 }]}
+          accessibilityRole="button"
+          accessibilityLabel="Open profile"
+        >
+          <Text style={stylesStatic.headerAvatarEmoji}>{avatarEmoji}</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
 
+const stylesStatic = StyleSheet.create({
+  screenHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.screenPadding,
+    minHeight: 48,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: asl.glass.border,
+    backgroundColor: "rgba(8,2,10,0.2)",
+  },
+  screenHeaderSide: {
+    flexDirection: "row",
+    alignItems: "center",
+    minWidth: 72,
+  },
+  screenHeaderRight: {
+    justifyContent: "flex-end",
+  },
+  screenHeaderTitle: {
+    flex: 1,
+    textAlign: "center",
+    color: asl.text.primary,
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: fontWeight.emphasis,
+  },
+  headerIconBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: asl.glass.bg,
+    borderWidth: 1,
+    borderColor: asl.glass.border,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 4,
+  },
+  headerAvatarBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(236, 72, 153, 0.2)",
+    borderWidth: 1,
+    borderColor: "rgba(244, 114, 182, 0.45)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 8,
+  },
+  headerAvatarEmoji: {
+    fontSize: 18,
+  },
+});
+
 export default function TranslateScreen() {
-  const { textScale, tts: accessibilityTtsEnabled } = useAccessibility();
+  const { textScale } = useAccessibility();
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const styles = createStyles(density, textScale);
+  const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
 
   const [isVolumeOn, setIsVolumeOn] = useState(true);
-  const [lastDecision, setLastDecision] = useState<PostprocessDecision | null>(null);
-  const [lastInference, setLastInference] = useState<TranslateInferenceResponse | null>(null);
   const [isInferring, setIsInferring] = useState(false);
   const [isRecordingClip, setIsRecordingClip] = useState(false);
   const [isRecordCooldown, setIsRecordCooldown] = useState(false);
   const [cooldownRemainingMs, setCooldownRemainingMs] = useState(0);
   const [recordingStartedAtMs, setRecordingStartedAtMs] = useState<number | null>(null);
   const [recordingElapsedMs, setRecordingElapsedMs] = useState(0);
-  const [sequenceChunkIndex, setSequenceChunkIndex] = useState(0);
   const [sequencePrompt, setSequencePrompt] = useState<"sign-now" | "move-next" | null>(null);
   const [nextChunkStartsInMs, setNextChunkStartsInMs] = useState(0);
   const [stopAfterCurrentInference, setStopAfterCurrentInference] = useState(false);
   const [showCommonResponses, setShowCommonResponses] = useState(false);
+  const [showCommonResponsesInfo, setShowCommonResponsesInfo] = useState(false);
   const [inferenceError, setInferenceError] = useState<string | null>(null);
   const [isTranslateInitializing, setIsTranslateInitializing] = useState(true);
-  const { captionText, tokens, append, clear, replaceCaptionFromText } = useCaptionBuffer(30);
-  const {
-    translationHistory,
-    addHistoryItem,
-    sessionId,
-    consumePendingReuseCaption} = useTabTranslationHistory();
+  const { captionText, append, clear, replaceCaptionFromText } = useCaptionBuffer(30);
+  const { translationHistory, addHistoryItem, consumePendingReuseCaption } = useTabTranslationHistory();
   const lastHistoryEntryIdRef = useRef<string | null>(null);
-  const [reportOpen, setReportOpen] = useState(false);
-  const [reportContext, setReportContext] = useState<ReportTranslationContext | null>(null);
   const {
     permission,
     cameraActive,
     cameraFacing,
     activateCamera,
-    deactivateCamera,
     toggleCamera,
-    reverseCamera} = useTranslateCamera();
+    reverseCamera,
+  } = useTranslateCamera();
   const sequenceRef = useRef(0);
   const cameraRef = useRef<CameraView | null>(null);
   const continueSequenceRef = useRef(false);
@@ -138,8 +185,6 @@ export default function TranslateScreen() {
       const text = consumePendingReuseCaption();
       if (text != null && text.length > 0) {
         replaceCaptionFromText(text);
-        setLastDecision(null);
-        setLastInference(null);
         setInferenceError(null);
       }
       return () => {
@@ -161,11 +206,11 @@ export default function TranslateScreen() {
       setCooldownRemainingMs(0);
       setRecordingStartedAtMs(null);
       setRecordingElapsedMs(0);
-      setSequenceChunkIndex(0);
       setSequencePrompt(null);
       setNextChunkStartsInMs(0);
       setStopAfterCurrentInference(false);
       setShowCommonResponses(false);
+      setShowCommonResponsesInfo(false);
       continueSequenceRef.current = false;
       if (chunkStopTimeoutRef.current) {
         clearTimeout(chunkStopTimeoutRef.current);
@@ -237,7 +282,6 @@ export default function TranslateScreen() {
 
     const applyInferenceResponse = (response: TranslateInferenceResponse, clipDurationMs: number) => {
       sequenceRef.current += 1;
-      setLastInference(response);
 
       if (response.mode === "single" && response.tokens.length > 0) {
         for (const token of response.tokens) {
@@ -247,7 +291,8 @@ export default function TranslateScreen() {
             source: "single",
             confidence: token.confidence,
             timestampMs: token.end_ms,
-            rawTopK: response.raw_top_k ?? []});
+            rawTopK: response.raw_top_k ?? [],
+          });
         }
       }
 
@@ -259,27 +304,10 @@ export default function TranslateScreen() {
             sourceLanguage: TRANSLATE_SOURCE_LANG,
             targetLanguage: TRANSLATE_TARGET_LANG,
             timestamp: new Date(token.end_ms || clipDurationMs).toISOString(),
-            confidence: token.confidence});
+            confidence: token.confidence,
+          });
           lastHistoryEntryIdRef.current = entryId;
         }
-      }
-
-      const topScores = response.raw_top_k ?? [];
-      if (topScores.length > 0) {
-        const best = topScores[0];
-        const primaryToken = response.tokens[0];
-        setLastDecision({
-          token: primaryToken
-            ? {
-                id: `resp-${Date.now()}-${primaryToken.label}`,
-                label: primaryToken.label,
-                source: "single",
-                confidence: primaryToken.confidence,
-                timestampMs: primaryToken.end_ms,
-                rawTopK: topScores}
-            : undefined,
-          smoothedScores: topScores,
-          reason: primaryToken && best.score >= 0.45 ? "accepted" : "below-threshold"});
       }
     };
 
@@ -292,7 +320,8 @@ export default function TranslateScreen() {
         .recordAsync({
           maxDuration: 6,
           quality: "480p",
-          mute: true})
+          mute: true,
+        })
         .then((result: { uri: string } | undefined) => ({ result }))
         .catch((error: unknown) => ({ error }));
 
@@ -331,7 +360,6 @@ export default function TranslateScreen() {
         setSequencePrompt("sign-now");
         setStopAfterCurrentInference(false);
         while (continueSequenceRef.current && !cancelled) {
-          setSequenceChunkIndex((prev) => prev + 1);
           setSequencePrompt("sign-now");
           setRecordingStartedAtMs(Date.now());
           setRecordingElapsedMs(0);
@@ -353,7 +381,8 @@ export default function TranslateScreen() {
               sequence: sequenceRef.current,
               clipUri: chunk.uri,
               startMs: 0,
-              endMs: CHUNK_DURATION_MS});
+              endMs: CHUNK_DURATION_MS,
+            });
             applyInferenceResponse(response, CHUNK_DURATION_MS);
           } finally {
             setIsInferring(false);
@@ -418,7 +447,6 @@ export default function TranslateScreen() {
         setInferenceError("Open camera preview first, then tap Record Clip.");
         return;
       }
-      setSequenceChunkIndex(0);
       setSequencePrompt("sign-now");
       setIsRecordCooldown(true);
       return;
@@ -470,25 +498,10 @@ export default function TranslateScreen() {
     });
   };
 
-  const handleSpeakCaption = useCallback(() => {
-    const text = captionText.trim();
-    if (!text || !isVolumeOn || !accessibilityTtsEnabled) {
-      return;
-    }
-    try {
-      Speech.stop();
-      Speech.speak(text, { language: "en-US" });
-    } catch {
-      // Web or unsupported environment
-    }
-  }, [captionText, isVolumeOn, accessibilityTtsEnabled]);
-
   const handleClearCaptions = () => {
     Speech.stop();
     clear();
     lastHistoryEntryIdRef.current = null;
-    setLastDecision(null);
-    setLastInference(null);
     setInferenceError(null);
     setIsRecordingClip(false);
     setIsRecordCooldown(false);
@@ -497,32 +510,17 @@ export default function TranslateScreen() {
     setRecordingElapsedMs(0);
   };
 
-  const openReportForCurrentOutput = useCallback(() => {
-    const cap = captionText.trim();
-    if (!cap) {
-      return;
-    }
-    const clipPart =
-      lastInference?.tokens.map((t) => t.label).join(" ").trim() || lastDecision?.token?.label || "";
-    const sourceText = clipPart.length > 0 ? clipPart : "—";
-    setReportContext({
-      translationId: lastHistoryEntryIdRef.current ?? undefined,
-      sourceText,
-      translatedText: cap,
-      sourceLanguage: TRANSLATE_SOURCE_LANG,
-      targetLanguage: TRANSLATE_TARGET_LANG,
-      sessionId});
-    setReportOpen(true);
-  }, [captionText, lastDecision?.token?.label, lastInference?.tokens, sessionId]);
-
-  const recordingSecondsText = `${(recordingElapsedMs / 1000).toFixed(1)}s`;
   const cooldownSecondsText = `${(cooldownRemainingMs / 1000).toFixed(1)}s`;
   const chunkProgress = Math.max(0, Math.min(1, recordingElapsedMs / CHUNK_DURATION_MS));
-  const nextChunkSecondsText = `${Math.max(0, nextChunkStartsInMs / 1000).toFixed(1)}s`;
   const prepProgress = Math.max(
     0,
     Math.min(1, 1 - nextChunkStartsInMs / Math.max(1, BETWEEN_CHUNKS_MS))
   );
+  const activeProgressValue = 1 - chunkProgress;
+  const verticalProgressHeight: DimensionValue =
+    sequencePrompt === "move-next"
+      ? "100%"
+      : (`${Math.round(Math.max(0, Math.min(1, activeProgressValue)) * 100)}%` as const);
   const prepRed = Math.round(244 + (107 - 244) * prepProgress);
   const prepGreen = Math.round(80 + (226 - 80) * prepProgress);
   const prepBlue = Math.round(93 + (193 - 93) * prepProgress);
@@ -530,61 +528,16 @@ export default function TranslateScreen() {
 
   const permissionDenied = permission && !permission.granted;
   const captionOutput = captionText.length > 0 ? captionText : "Translation output will appear here.";
-  const inferenceStatus =
-    isRecordCooldown
-      ? `Get ready... recording starts in ${cooldownSecondsText}`
-      : isRecordingClip
-      ? sequencePrompt === "move-next"
-        ? `Move to the next sign... next recording starts in ${nextChunkSecondsText}.`
-        : `Sign now (window ${sequenceChunkIndex > 0 ? sequenceChunkIndex : 1}, 1.5s each).`
-      : isInferring
-      ? stopAfterCurrentInference
-        ? "Recognizing current sign, then stopping..."
-        : "Recognizing current sign..."
-      : inferenceError
-        ? `Error: ${inferenceError}`
-        : lastInference && lastInference.tokens.length === 0
-          ? "No prediction"
-        : lastDecision?.reason === "accepted"
-      ? `Recognized: ${lastDecision.token?.label ?? "No prediction"}`
-      : lastDecision?.reason === "duplicate-suppressed"
-        ? "Duplicate token suppressed"
-        : cameraActive
-          ? "Camera preview is on. Tap Record Clip when ready."
-          : "Camera is off. Tap Open Preview in camera area.";
-  const confidenceSummary = lastDecision
-    ? `Top scores: ${formatTopScores(lastDecision.smoothedScores)}`
-    : "Top scores: n/a";
-
-  const hasReportableCaption = captionText.trim().length > 0;
-  const canSpeakCaption = hasReportableCaption && isVolumeOn && accessibilityTtsEnabled;
 
   return (
-    <AppShell
-      scroll={false}
-      header={
-        <AslTabHeader
-          title="Translate"
-          rightExtra={
-            <Pressable
-              onPress={() => router.push("/translate/history" as any)}
-              hitSlop={8}
-              accessibilityRole="button"
-              accessibilityLabel="Translation history"
-            >
-              <MaterialIcons name="history" size={24} color={asl.text.secondary} />
-            </Pressable>
-          }
-        />
-      }
-    >
-      <View style={styles.content}>
-        {isTranslateInitializing ? (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="small" color={asl.accentCyan} />
-            <Text style={styles.loadingText}>Preparing translate…</Text>
-          </View>
-        ) : null}
+    <GradientBackground variant="default" style={{ flex: 1 }}>
+      <ScreenContainer
+        backgroundColor="transparent"
+        safeStyle={{ backgroundColor: "transparent" }}
+        contentStyle={{ flex: 1, backgroundColor: "transparent" }}
+        contentPadded={false}
+      >
+        <TranslateScreenHeader />
 
         <ScrollView
           style={styles.mainScroll}
@@ -592,231 +545,208 @@ export default function TranslateScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          <Text style={[styles.sectionLabel, styles.sectionLabelFlush]}>Live preview</Text>
-          <View style={styles.topSection}>
-            <View style={styles.previewColumn}>
-              <View style={styles.previewChromeRow}>
-                <View style={styles.langBarShrink}>
-                  <TranslationOverlay topLeft={TRANSLATE_SOURCE_LANG} topRight={TRANSLATE_TARGET_LANG} />
-                </View>
-                <View style={styles.previewCamIconRow}>
-                  <Pressable
-                    style={({ pressed }) => [styles.chromeIconBtn, pressed && { opacity: 0.75 }]}
-                    onPress={toggleCamera}
-                  >
-                    <MaterialIcons
-                      name={cameraActive ? "videocam-off" : "videocam"}
-                      size={18}
-                      color={asl.accentCyan}
-                    />
-                  </Pressable>
-                  {Platform.OS !== "web" ? (
-                    <Pressable
-                      style={({ pressed }) => [styles.chromeIconBtn, pressed && { opacity: 0.75 }]}
-                      onPress={reverseCamera}
-                    >
-                      <MaterialIcons name="flip-camera-ios" size={18} color={asl.accentCyan} />
-                    </Pressable>
-                  ) : null}
-                </View>
-              </View>
-
-              <View style={styles.videoSurface}>
-                {cameraActive && permission?.granted ? (
-                  <CameraView ref={cameraRef} style={styles.cameraPreview} facing={cameraFacing} mode="video" />
-                ) : (
-                  <View style={styles.videoPlaceholderWrap}>
-                    <MaterialIcons name="videocam" size={34} color={asl.text.secondary} />
-                    <Text style={styles.videoPlaceholderTitle}>Tap to open camera</Text>
-                    <Text style={styles.videoPlaceholderSubtitle}>
-                      {permissionDenied
-                        ? "Camera permission is needed to start live preview."
-                        : "Live translation preview will appear here."}
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-              {cameraActive && isRecordingClip ? (
-                <View style={styles.recordingProgressSection} pointerEvents="none">
-                  <View style={styles.recordingProgressTrack}>
-                    <View
-                      style={[
-                        styles.recordingProgressFill,
-                        {
-                          width:
-                            sequencePrompt === "move-next" ? `${prepProgress * 100}%` : `${chunkProgress * 100}%`,
-                          backgroundColor:
-                            sequencePrompt === "move-next" ? prepTransitionColor : asl.accentCyan},
-                      ]}
-                    />
-                  </View>
-                </View>
-              ) : null}
-
-              <View style={styles.liveActionsRow}>
-                {cameraActive ? (
-                  <View style={styles.bottomVideoControlsRow}>
-                    {!isRecordingClip ? (
-                      <Pressable
-                        style={[styles.recordClipButton, isInferring && styles.recordClipButtonDisabled]}
-                        onPress={handleRecordClipToggle}
-                        disabled={isInferring || isRecordCooldown}
-                      >
-                        <MaterialIcons
-                          name={isRecordCooldown ? "hourglass-top" : "fiber-manual-record"}
-                          size={16}
-                          color="#FFFFFF"
-                        />
-                        <Text style={styles.recordClipButtonText}>
-                          {isRecordCooldown ? `Get Ready (${cooldownSecondsText})` : "Record Clip"}
-                        </Text>
-                      </Pressable>
-                    ) : (
-                      <Pressable
-                        style={[
-                          styles.cancelCornerButton,
-                          stopAfterCurrentInference && styles.cancelCornerButtonPressed,
-                        ]}
-                        onPress={handleCancelNextClip}
-                      >
-                        <MaterialIcons name="close" size={16} color="#FFFFFF" />
-                        <Text style={styles.cancelCornerButtonText}>Stop</Text>
-                      </Pressable>
-                    )}
-                    <Pressable
-                      style={styles.commonResponsesControlArrow}
-                      onPress={() => setShowCommonResponses((prev) => !prev)}
-                    >
-                      <Text style={styles.commonResponsesControlArrowLabel}>Responses</Text>
-                      <MaterialIcons
-                        name={showCommonResponses ? "keyboard-arrow-down" : "keyboard-arrow-up"}
-                        size={18}
-                        color="#FFFFFF"
-                      />
-                    </Pressable>
-                  </View>
-                ) : (
-                  <Pressable style={styles.previewCameraButton} onPress={handlePreviewCamera}>
-                    <MaterialIcons name="videocam" size={16} color="#FFFFFF" />
-                    <Text style={styles.recordClipButtonText}>Open Preview</Text>
-                  </Pressable>
-                )}
-              </View>
-            </View>
-
-            <CommonResponsesPlaceholder
-              styles={styles}
-              historyCount={translationHistory.length}
-              onOpenRecent={() => router.push("/translate/history" as any)}
-            />
-          </View>
-
-          <Text style={styles.sectionLabel}>Translation output</Text>
-          <GlassCard style={styles.outputCard}>
-            <ScrollView
-              style={styles.outputScroll}
-              nestedScrollEnabled
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.outputScrollContent}
-            >
-              <Text
-                style={
-                  captionText.length > 0 ? styles.captionsOutputTextPrimary : styles.captionsOutputPlaceholderPrimary
-                }
-              >
-                {captionOutput}
-              </Text>
-            </ScrollView>
-
-            <View style={styles.outputActionsRow}>
-              <Pressable
-                style={[styles.outputChipBtn, !hasReportableCaption && styles.outputChipBtnDisabled]}
-                onPress={openReportForCurrentOutput}
-                disabled={!hasReportableCaption}
-                accessibilityRole="button"
-                accessibilityLabel="Report incorrect translation"
-                accessibilityState={{ disabled: !hasReportableCaption }}
-              >
-                <MaterialIcons
-                  name="flag"
-                  size={18}
-                  color={hasReportableCaption ? asl.accentCyan : asl.text.muted}
-                />
-                <Text
-                  style={[
-                    styles.outputChipBtnText,
-                    !hasReportableCaption && styles.outputChipBtnTextDisabled,
-                  ]}
-                >
-                  Report
-                </Text>
-              </Pressable>
-              <Pressable style={styles.outputChipBtn} onPress={handleClearCaptions} accessibilityRole="button">
-                <MaterialIcons name="delete-outline" size={18} color={asl.accentCyan} />
-                <Text style={styles.outputChipBtnText}>Clear</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.outputChipBtn, !canSpeakCaption && styles.outputChipBtnDisabled]}
-                onPress={handleSpeakCaption}
-                disabled={!canSpeakCaption}
-                accessibilityRole="button"
-                accessibilityLabel="Speak translation"
-                accessibilityState={{ disabled: !canSpeakCaption }}
-              >
-                <MaterialIcons
-                  name="record-voice-over"
-                  size={18}
-                  color={canSpeakCaption ? asl.accentCyan : asl.text.muted}
-                />
-                <Text
-                  style={[
-                    styles.outputChipBtnText,
-                    !canSpeakCaption && styles.outputChipBtnTextDisabled,
-                  ]}
-                >
-                  Listen
-                </Text>
-              </Pressable>
-              <Pressable
-                style={styles.outputChipBtn}
-                onPress={handleToggleVolume}
-                accessibilityRole="button"
-                accessibilityLabel={isVolumeOn ? "Mute translation speech" : "Unmute translation speech"}
-              >
-                <MaterialIcons
-                  name={isVolumeOn ? "volume-up" : "volume-off"}
-                  size={18}
-                  color={asl.accentCyan}
-                />
-                <Text style={styles.outputChipBtnText}>{isVolumeOn ? "Sound on" : "Muted"}</Text>
-              </Pressable>
-            </View>
-
-            <Text style={styles.statusLinePrimary}>{inferenceStatus}</Text>
-            <Text style={styles.statusLineSecondary}>{confidenceSummary}</Text>
-            {__DEV__ ? (
-              <View style={styles.devMetaBlock}>
-                <Text style={styles.devMetaText}>
-                  Mode: {lastInference?.mode ?? "single"} · Tokens: {lastInference?.tokens.length ?? 0} ·{" "}
-                  {lastInference?.adapter_name ?? "—"} · Caption tokens: {tokens.length} ·{" "}
-                  {isVolumeOn ? "Sound on" : "Muted"}
-                </Text>
+          <View style={styles.contentInner}>
+            {isTranslateInitializing ? (
+              <View style={styles.loadingOverlay}>
+                <ActivityIndicator size="small" color={asl.accentCyan} />
+                <Text style={styles.loadingText}>Preparing Translate…</Text>
               </View>
             ) : null}
-          </GlassCard>
-        </ScrollView>
-      </View>
 
-      <ReportTranslationModal
-        visible={reportOpen}
-        onClose={() => {
-          setReportOpen(false);
-          setReportContext(null);
-        }}
-        context={reportContext}
-      />
-    </AppShell>
+            <View style={styles.topSection}>
+              <View style={styles.videoCard}>
+                <View style={styles.videoStage}>
+                  {cameraActive && permission?.granted ? (
+                    <CameraView ref={cameraRef} style={styles.cameraPreview} facing={cameraFacing} mode="video" />
+                  ) : (
+                    <View style={styles.videoPlaceholderWrap}>
+                      <MaterialIcons name="videocam" size={38} color={asl.text.secondary} />
+                      <Text style={styles.videoPlaceholderTitle}>Tap to open camera</Text>
+                      <Text style={styles.videoPlaceholderSubtitle}>
+                        {permissionDenied
+                          ? "Camera permission is needed to start live preview."
+                          : "Live translation preview will appear here."}
+                      </Text>
+                    </View>
+                  )}
+
+                  <View style={styles.videoTopSettingsOverlay}>
+                    <View style={styles.videoTopSettingsRow}>
+                      <Pressable style={styles.smallControlBtnOverlay} onPress={toggleCamera}>
+                        <MaterialIcons
+                          name={cameraActive ? "videocam-off" : "videocam"}
+                          size={20}
+                          color="#FFFFFF"
+                        />
+                      </Pressable>
+                      {Platform.OS !== "web" ? (
+                        <Pressable style={styles.smallControlBtnOverlay} onPress={reverseCamera}>
+                          <MaterialIcons name="flip-camera-ios" size={20} color="#FFFFFF" />
+                        </Pressable>
+                      ) : null}
+                    </View>
+                  </View>
+
+                  {cameraActive && isRecordingClip ? (
+                    <View style={styles.sequenceProgressVerticalOverlay} pointerEvents="none">
+                      <View style={styles.sequenceProgressVerticalTrack}>
+                        <View
+                          style={[
+                            styles.sequenceProgressVerticalFill,
+                            sequencePrompt === "move-next" && { backgroundColor: prepTransitionColor },
+                            { height: verticalProgressHeight },
+                          ]}
+                        />
+                      </View>
+                    </View>
+                  ) : null}
+                </View>
+
+                <View style={styles.captionsStrip}>
+                  <View style={styles.captionsStripInner}>
+                    <ScrollView
+                      style={styles.captionsStripScroll}
+                      contentContainerStyle={styles.captionsStripScrollContent}
+                      showsVerticalScrollIndicator={false}
+                      nestedScrollEnabled
+                    >
+                      <Text
+                        style={
+                          captionText.length > 0
+                            ? styles.captionsOutputText
+                            : styles.captionsOutputPlaceholderText
+                        }
+                      >
+                        {captionOutput}
+                      </Text>
+                    </ScrollView>
+                    <View style={styles.captionsStripActions}>
+                      <Pressable style={styles.captionsStripIconBtn} onPress={handleToggleVolume}>
+                        <MaterialIcons
+                          name={isVolumeOn ? "volume-up" : "volume-off"}
+                          size={20}
+                          color="#FFFFFF"
+                        />
+                      </Pressable>
+                      <Pressable style={styles.captionsStripIconBtnDanger} onPress={handleClearCaptions}>
+                        <MaterialIcons name="delete-outline" size={20} color="#FFFFFF" />
+                      </Pressable>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.controlsStrip}>
+                  {cameraActive ? (
+                    <View style={styles.bottomVideoControlsRow}>
+                      {!isRecordingClip ? (
+                        <Pressable
+                          style={[styles.recordClipButton, isInferring && styles.recordClipButtonDisabled]}
+                          onPress={handleRecordClipToggle}
+                          disabled={isInferring || isRecordCooldown}
+                        >
+                          <MaterialIcons
+                            name={isRecordCooldown ? "hourglass-top" : "fiber-manual-record"}
+                            size={18}
+                            color="#FFFFFF"
+                          />
+                          <Text style={styles.recordClipButtonText}>
+                            {isRecordCooldown ? `Get Ready (${cooldownSecondsText})` : "Record Clip"}
+                          </Text>
+                        </Pressable>
+                      ) : (
+                        <Pressable
+                          style={[
+                            styles.cancelCornerButton,
+                            stopAfterCurrentInference && styles.cancelCornerButtonPressed,
+                          ]}
+                          onPress={handleCancelNextClip}
+                        >
+                          <MaterialIcons name="close" size={18} color="#FFFFFF" />
+                          <Text style={styles.cancelCornerButtonText}>Stop</Text>
+                        </Pressable>
+                      )}
+                      <Pressable
+                        style={styles.commonResponsesControlArrow}
+                        onPress={() => setShowCommonResponses((prev) => !prev)}
+                      >
+                        <Text style={styles.commonResponsesControlArrowLabel}>Responses</Text>
+                        <MaterialIcons
+                          name={showCommonResponses ? "keyboard-arrow-down" : "keyboard-arrow-up"}
+                          size={20}
+                          color="#FFFFFF"
+                        />
+                      </Pressable>
+                    </View>
+                  ) : (
+                    <Pressable style={styles.previewCameraButton} onPress={handlePreviewCamera}>
+                      <MaterialIcons name="videocam" size={18} color="#FFFFFF" />
+                      <Text style={styles.recordClipButtonText}>Open Preview</Text>
+                    </Pressable>
+                  )}
+                </View>
+              </View>
+            </View>
+
+            {inferenceError ? (
+              <View style={styles.inferenceErrorBanner} accessibilityRole="alert">
+                <MaterialIcons name="error-outline" size={18} color="#fca5a5" />
+                <Text style={styles.inferenceErrorText}>{inferenceError}</Text>
+              </View>
+            ) : null}
+
+            <View style={styles.bottomResponsesArea}>
+              <View style={styles.commonResponsesHeaderRow}>
+                <Text style={styles.commonResponsesHeaderText}>Common Responses</Text>
+                {showCommonResponses ? (
+                  <Pressable
+                    style={styles.commonResponsesInfoButton}
+                    onPress={() => setShowCommonResponsesInfo((prev) => !prev)}
+                  >
+                    <MaterialIcons name="info-outline" size={14} color={asl.accentCyan} />
+                  </Pressable>
+                ) : null}
+              </View>
+              {!showCommonResponses ? (
+                <View style={styles.commonResponsesInfoPopup}>
+                  <Text style={styles.commonResponsesInfoPopupText}>
+                    Suggested follow-up signs based on your recent recognized output. Tap the Responses arrow to
+                    show or hide them.
+                  </Text>
+                </View>
+              ) : showCommonResponsesInfo ? (
+                <View style={styles.commonResponsesInfoPopup}>
+                  <Text style={styles.commonResponsesInfoPopupText}>
+                    Suggested follow-up signs based on your recent recognized output.
+                  </Text>
+                </View>
+              ) : null}
+              {showCommonResponses ? (
+                <View style={styles.commonResponsesBottomStrip}>
+                  {GREETING_INTRO_V0_LABELS.slice(0, 2).map((item) => (
+                    <View key={item} style={styles.commonResponseImageCard}>
+                      <MaterialIcons name="image" size={20} color={asl.text.muted} />
+                      <Text style={styles.commonResponseImageLabel}>{item}</Text>
+                    </View>
+                  ))}
+                </View>
+              ) : null}
+              {translationHistory.length > 0 ? (
+                <Pressable
+                  style={styles.recentHistoryLink}
+                  onPress={() => router.push("/translate/history" as any)}
+                >
+                  <MaterialIcons name="history" size={16} color={asl.accentCyan} />
+                  <Text style={styles.recentHistoryLinkText}>
+                    Recent translations ({translationHistory.length})
+                  </Text>
+                  <MaterialIcons name="chevron-right" size={18} color={asl.text.muted} />
+                </Pressable>
+              ) : null}
+            </View>
+          </View>
+        </ScrollView>
+      </ScreenContainer>
+    </GradientBackground>
   );
 }
 
@@ -825,10 +755,18 @@ const createStyles = (density: number, textScale: number) => {
   const ts = (value: number) => ms(value) * textScale;
 
   return StyleSheet.create({
-    content: {
+    mainScroll: {
       flex: 1,
       minHeight: 0,
-      paddingHorizontal: Spacing.screenPadding},
+    },
+    mainScrollContent: {
+      flexGrow: 1,
+      paddingBottom: ms(100),
+    },
+    contentInner: {
+      paddingHorizontal: Spacing.screenPadding,
+      paddingTop: ms(8),
+    },
     loadingOverlay: {
       marginTop: Spacing.sm,
       marginBottom: Spacing.sm,
@@ -842,118 +780,330 @@ const createStyles = (density: number, textScale: number) => {
       borderRadius: asl.radius.md,
       paddingHorizontal: 12,
       paddingVertical: 8,
-      ...asl.shadow.card},
+      ...asl.shadow.card,
+    },
     loadingText: {
       ...Typography.caption,
       color: asl.text.secondary,
-      fontWeight: fontWeight.medium},
-    mainScroll: {
-      flex: 1,
-      minHeight: 0},
-    mainScrollContent: {
-      paddingBottom: ms(112),
-      paddingTop: ms(4)},
-    sectionLabel: {
       fontWeight: fontWeight.medium,
-      color: asl.text.muted,
-      fontSize: ts(11),
-      letterSpacing: 1.2,
-      textTransform: "uppercase",
-      marginTop: ms(16),
-      marginBottom: ms(8)},
-    sectionLabelFlush: {
-      marginTop: ms(4)},
+      fontSize: ts(14),
+      lineHeight: ts(20),
+    },
     topSection: {
-      flexDirection: "row",
-      gap: ms(10),
-      alignItems: "stretch"},
-    previewColumn: {
       flex: 1,
-      minWidth: 0,
-      gap: ms(10)},
-    previewChromeRow: {
       flexDirection: "row",
-      alignItems: "center",
-      gap: ms(8)},
-    langBarShrink: {
-      flex: 1,
-      minWidth: 0},
-    previewCamIconRow: {
+      marginTop: Spacing.md,
+      minHeight: 0,
+    },
+    inferenceErrorBanner: {
       flexDirection: "row",
-      alignItems: "center",
-      gap: ms(6),
-      flexShrink: 0},
-    chromeIconBtn: {
-      width: ms(36),
-      height: ms(36),
-      borderRadius: ms(18),
-      backgroundColor: "rgba(255,255,255,0.08)",
+      alignItems: "flex-start",
+      gap: Spacing.sm,
+      marginTop: Spacing.sm,
+      padding: Spacing.sm,
+      borderRadius: asl.radius.md,
+      backgroundColor: "rgba(214, 64, 69, 0.12)",
       borderWidth: 1,
-      borderColor: asl.glass.border,
-      alignItems: "center",
-      justifyContent: "center"},
-    videoSurface: {
+      borderColor: "rgba(214, 64, 69, 0.35)",
+    },
+    inferenceErrorText: {
+      ...Typography.caption,
+      flex: 1,
+      color: "#fecaca",
+      fontSize: ts(14),
+      lineHeight: ts(20),
+    },
+    videoCard: {
+      flex: 1,
       width: "100%",
-      aspectRatio: 4 / 5,
-      borderRadius: ms(18),
+      borderRadius: ms(20),
       overflow: "hidden",
       backgroundColor: "rgba(0,0,0,0.35)",
       borderWidth: 1,
       borderColor: asl.glass.border,
-      ...asl.shadow.card},
+      ...asl.shadow.card,
+    },
+    videoStage: {
+      width: "100%",
+      aspectRatio: 4 / 5,
+      position: "relative",
+      backgroundColor: "rgba(0,0,0,0.25)",
+    },
     cameraPreview: {
-      flex: 1,
-      width: "100%",
-      height: "100%"},
+      ...StyleSheet.absoluteFillObject,
+    },
     videoPlaceholderWrap: {
-      flex: 1,
-      width: "100%",
+      ...StyleSheet.absoluteFillObject,
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: Spacing.md,
-      minHeight: ms(140)},
+    },
     videoPlaceholderTitle: {
       ...Typography.sectionTitle,
       color: asl.text.primary,
       marginTop: Spacing.xs,
       textAlign: "center",
-      fontSize: ts(18),
-      lineHeight: ts(22)},
+      fontSize: ts(20),
+      lineHeight: ts(26),
+    },
     videoPlaceholderSubtitle: {
       ...Typography.caption,
       color: asl.text.muted,
       marginTop: ms(6),
       textAlign: "center",
-      fontSize: ts(12),
-      lineHeight: ts(16)},
-    recordingProgressSection: {
-      width: "100%",
-      marginTop: ms(2)},
-    recordingProgressTrack: {
-      height: ms(6),
-      borderRadius: ms(99),
-      backgroundColor: "rgba(255,255,255,0.14)",
-      overflow: "hidden",
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: "rgba(255,255,255,0.22)"},
-    recordingProgressFill: {
-      height: "100%",
-      borderRadius: ms(99)},
-    liveActionsRow: {
-      width: "100%",
+      fontSize: ts(14),
+      lineHeight: ts(20),
+    },
+    videoTopSettingsOverlay: {
+      position: "absolute",
+      top: Spacing.sm,
+      left: Spacing.sm,
+      right: Spacing.sm,
+      alignItems: "center",
+    },
+    videoTopSettingsRow: {
+      flexDirection: "row",
+      gap: Spacing.xs,
+      paddingHorizontal: 8,
+      paddingVertical: 6,
+      borderRadius: 16,
+      backgroundColor: "rgba(20, 34, 31, 0.35)",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.22)",
+    },
+    smallControlBtnOverlay: {
+      width: ms(34),
+      height: ms(34),
+      borderRadius: ms(17),
+      backgroundColor: "rgba(44, 93, 86, 0.55)",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.35)",
       alignItems: "center",
       justifyContent: "center",
-      paddingBottom: ms(4)},
+    },
+    sequenceProgressVerticalOverlay: {
+      position: "absolute",
+      left: Spacing.sm,
+      top: "50%",
+      transform: [{ translateY: -40 }],
+      width: 12,
+      height: 80,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    sequenceProgressVerticalTrack: {
+      width: 8,
+      height: 80,
+      borderRadius: 999,
+      backgroundColor: "rgba(255,255,255,0.22)",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.28)",
+      overflow: "hidden",
+      justifyContent: "flex-end",
+    },
+    sequenceProgressVerticalFill: {
+      width: "100%",
+      borderRadius: 999,
+      backgroundColor: asl.accentCyan,
+    },
+    captionsStrip: {
+      width: "100%",
+      backgroundColor: "rgba(12, 28, 24, 0.92)",
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: "rgba(255,255,255,0.12)",
+    },
+    captionsStripInner: {
+      flexDirection: "row",
+      alignItems: "stretch",
+      paddingHorizontal: Spacing.sm,
+      paddingVertical: Spacing.sm,
+      gap: Spacing.sm,
+    },
+    captionsStripScroll: {
+      flex: 1,
+      minWidth: 0,
+      maxHeight: ms(96),
+    },
+    captionsStripScrollContent: {
+      flexGrow: 1,
+      paddingVertical: 2,
+    },
+    captionsStripActions: {
+      justifyContent: "center",
+      gap: Spacing.xs,
+    },
+    captionsStripIconBtn: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      backgroundColor: "rgba(44, 93, 86, 0.75)",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.35)",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    captionsStripIconBtnDanger: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      backgroundColor: "rgba(214, 64, 69, 0.35)",
+      borderWidth: 1,
+      borderColor: "rgba(214, 64, 69, 0.5)",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    captionsOutputText: {
+      ...Typography.body,
+      color: "#FFFFFF",
+      fontSize: ts(17),
+      lineHeight: ts(24),
+      fontWeight: fontWeight.emphasis,
+    },
+    captionsOutputPlaceholderText: {
+      ...Typography.caption,
+      color: "rgba(255,255,255,0.88)",
+      fontSize: ts(14),
+      lineHeight: ts(20),
+    },
+    controlsStrip: {
+      width: "100%",
+      paddingHorizontal: Spacing.sm,
+      paddingTop: Spacing.sm,
+      paddingBottom: Spacing.sm,
+      alignItems: "center",
+      backgroundColor: "rgba(0,0,0,0.35)",
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: "rgba(255,255,255,0.08)",
+    },
+    bottomVideoControlsRow: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: Spacing.sm,
+      maxWidth: "100%",
+    },
+    commonResponsesControlArrow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      paddingHorizontal: ms(12),
+      minHeight: ms(40),
+      paddingVertical: ms(8),
+      borderRadius: ms(20),
+      backgroundColor: "rgba(44, 93, 86, 0.86)",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.45)",
+      justifyContent: "center",
+    },
+    commonResponsesControlArrowLabel: {
+      ...Typography.caption,
+      color: "#FFFFFF",
+      fontWeight: fontWeight.strong,
+      fontSize: ts(13),
+      lineHeight: ts(18),
+    },
+    bottomResponsesArea: {
+      marginTop: Spacing.sm,
+      alignItems: "stretch",
+      justifyContent: "flex-start",
+      minHeight: ms(62),
+    },
+    commonResponsesHeaderRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: Spacing.xs,
+    },
+    commonResponsesHeaderText: {
+      ...Typography.caption,
+      color: asl.text.primary,
+      fontWeight: fontWeight.strong,
+      fontSize: ts(12),
+      lineHeight: ts(16),
+    },
+    commonResponsesInfoPopup: {
+      backgroundColor: asl.glass.bg,
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+      borderRadius: 10,
+      paddingHorizontal: Spacing.sm,
+      paddingVertical: Spacing.xs,
+      marginBottom: Spacing.xs,
+    },
+    commonResponsesInfoPopupText: {
+      ...Typography.caption,
+      color: asl.text.secondary,
+      fontSize: ts(12),
+      lineHeight: ts(17),
+    },
+    commonResponsesInfoButton: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: asl.glass.bg,
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+    },
+    commonResponsesBottomStrip: {
+      width: "100%",
+      flexDirection: "row",
+      gap: Spacing.xs,
+      paddingHorizontal: 0,
+      height: ms(130),
+      marginBottom: Spacing.xs,
+    },
+    commonResponseImageCard: {
+      flex: 1,
+      borderRadius: 16,
+      backgroundColor: asl.glass.bg,
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: Spacing.xs,
+      padding: Spacing.sm,
+    },
+    commonResponseImageLabel: {
+      ...Typography.caption,
+      color: asl.text.primary,
+      fontWeight: fontWeight.strong,
+      textAlign: "center",
+      fontSize: ts(13),
+      lineHeight: ts(18),
+    },
+    recentHistoryLink: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: ms(8),
+      marginTop: ms(8),
+      paddingVertical: ms(10),
+      paddingHorizontal: ms(12),
+      borderRadius: ms(12),
+      backgroundColor: asl.glass.bg,
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+    },
+    recentHistoryLinkText: {
+      ...Typography.caption,
+      flex: 1,
+      color: asl.accentCyan,
+      fontWeight: fontWeight.medium,
+      fontSize: ts(13),
+    },
     recordClipButton: {
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
-      backgroundColor: "rgba(219, 39, 119, 0.92)",
+      backgroundColor: "rgba(33, 79, 70, 0.92)",
       borderRadius: 14,
       paddingHorizontal: 14,
       paddingVertical: 9,
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.35)"},
+      borderColor: "rgba(255,255,255,0.45)",
+    },
     previewCameraButton: {
       flexDirection: "row",
       alignItems: "center",
@@ -963,215 +1113,40 @@ const createStyles = (density: number, textScale: number) => {
       paddingHorizontal: 14,
       paddingVertical: 9,
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.35)"},
-    bottomVideoControlsRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: Spacing.xs},
-    commonResponsesControlArrow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 4,
-      paddingHorizontal: 10,
-      height: 36,
-      borderRadius: 18,
-      backgroundColor: "rgba(44, 93, 86, 0.86)",
-      borderWidth: 1,
       borderColor: "rgba(255,255,255,0.45)",
-      justifyContent: "center"},
-    commonResponsesControlArrowLabel: {
+    },
+    recordClipButtonDisabled: {
+      opacity: 0.6,
+    },
+    cancelCornerButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+      paddingHorizontal: 10,
+      height: 34,
+      borderRadius: 17,
+      backgroundColor: "#D64045",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.65)",
+      justifyContent: "center",
+    },
+    cancelCornerButtonPressed: {
+      backgroundColor: "#7D8790",
+      borderColor: "rgba(255,255,255,0.35)",
+    },
+    cancelCornerButtonText: {
       ...Typography.caption,
       color: "#FFFFFF",
       fontWeight: fontWeight.strong,
-      fontSize: ts(11),
-      lineHeight: ts(14)},
-  recordClipButtonDisabled: {
-    opacity: 0.6},
-  cancelCornerButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    paddingHorizontal: 10,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: "#D64045",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.65)",
-    justifyContent: "center"},
-  cancelCornerButtonPressed: {
-    backgroundColor: "#7D8790",
-    borderColor: "rgba(255,255,255,0.35)"},
-  cancelCornerButtonText: {
-    ...Typography.caption,
-    color: "#FFFFFF",
-    fontWeight: fontWeight.strong,
-    fontSize: ts(11),
-    lineHeight: ts(14)},
-  recordClipButtonText: {
-    ...Typography.caption,
-    color: "#FFFFFF",
-    fontWeight: fontWeight.strong},
-  responsesPanel: {
-    flex: 1,
-    width: "100%",
-    minHeight: ms(140),
-    alignSelf: "stretch"},
-  responsesPanelInner: {
-    flex: 1,
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.xs,
-    gap: ms(6),
-    justifyContent: "flex-start"},
-  sideColumn: {
-    width: "26%",
-    maxWidth: ms(148),
-    minWidth: ms(112),
-    flexShrink: 0,
-    flexGrow: 0,
-    alignSelf: "stretch",
-    minHeight: 0,
-    justifyContent: "flex-start"},
-  sideColumnLabel: {
-    fontWeight: fontWeight.medium,
-    color: asl.text.muted,
-    fontSize: ts(11),
-    letterSpacing: 1,
-    textTransform: "uppercase",
-    marginBottom: ms(8)},
-  outputCard: {
-    marginBottom: ms(8)},
-  outputScroll: {
-    maxHeight: ms(120)},
-  outputScrollContent: {
-    paddingBottom: ms(4)},
-  captionsOutputTextPrimary: {
-    ...Typography.body,
-    color: asl.text.primary,
-    fontSize: ts(17),
-    lineHeight: ts(24),
-    fontWeight: fontWeight.emphasis,
-    minHeight: ms(48)},
-  captionsOutputPlaceholderPrimary: {
-    ...Typography.caption,
-    color: asl.text.secondary,
-    fontSize: ts(14),
-    lineHeight: ts(20),
-    minHeight: ms(48)},
-  outputActionsRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignItems: "center",
-    gap: ms(10),
-    marginTop: ms(14),
-    marginBottom: ms(10),
-    paddingTop: ms(12),
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: asl.glass.border},
-  outputChipBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: ms(8),
-    paddingVertical: ms(10),
-    paddingHorizontal: ms(14),
-    borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.08)",
-    borderWidth: 1,
-    borderColor: asl.glass.border},
-  outputChipBtnDisabled: {
-    opacity: 0.55},
-  outputChipBtnText: {
-    fontWeight: fontWeight.medium,
-    color: asl.accentCyan,
-    fontSize: ts(14)},
-  outputChipBtnTextDisabled: {
-    color: asl.text.muted},
-  statusLinePrimary: {
-    ...Typography.caption,
-    color: asl.text.secondary,
-    fontSize: ts(13),
-    lineHeight: ts(19),
-    fontWeight: fontWeight.medium},
-  statusLineSecondary: {
-    ...Typography.caption,
-    color: asl.text.muted,
-    fontSize: ts(11),
-    lineHeight: ts(15),
-    marginTop: ms(6)},
-  devMetaBlock: {
-    marginTop: ms(12),
-    padding: ms(10),
-    borderRadius: ms(10),
-    backgroundColor: "rgba(255,165,0,0.08)",
-    borderWidth: 1,
-    borderColor: "rgba(251,191,36,0.25)"},
-  devMetaText: {
-    fontSize: ts(10),
-    lineHeight: ts(14),
-    color: asl.text.muted},
-  recentTranslationsBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: ms(4),
-    borderRadius: ms(12),
-    backgroundColor: "rgba(0,0,0,0.22)",
-    borderWidth: 1,
-    borderColor: asl.glass.border,
-    paddingVertical: ms(8),
-    paddingHorizontal: ms(6),
-    marginBottom: Spacing.sm},
-  recentTranslationsBtnText: {
-    ...Typography.caption,
-    flex: 1,
-    flexShrink: 1,
-    color: asl.text.primary,
-    fontWeight: fontWeight.strong,
-    fontSize: ts(11),
-    lineHeight: ts(14)},
-  recentCountPill: {
-    minWidth: ms(20),
-    paddingHorizontal: ms(5),
-    paddingVertical: ms(2),
-    borderRadius: ms(10),
-    backgroundColor: "rgba(56, 189, 248, 0.22)",
-    alignItems: "center",
-    justifyContent: "center"},
-  recentCountPillText: {
-    ...Typography.caption,
-    fontSize: ts(10),
-    fontWeight: fontWeight.emphasis,
-    color: asl.accentCyan},
-  responsesTitle: {
-    ...Typography.caption,
-    fontWeight: fontWeight.strong,
-    color: asl.text.primary,
-    textAlign: "center",
-    marginBottom: Spacing.sm,
-    fontSize: ts(12),
-    lineHeight: ts(16)},
-  responseItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: ms(12),
-    backgroundColor: "rgba(0,0,0,0.2)",
-    borderWidth: 1,
-    borderColor: asl.glass.border,
-    minHeight: ms(44),
-    marginBottom: Spacing.xs,
-    paddingVertical: ms(6),
-    paddingHorizontal: ms(8),
-    gap: ms(6)},
-  responseText: {
-    ...Typography.caption,
-    flex: 1,
-    color: asl.text.primary,
-    fontWeight: fontWeight.medium,
-    fontSize: ts(11),
-    lineHeight: ts(15)},
-  responsesHint: {
-    ...Typography.caption,
-    color: asl.text.muted,
-    textAlign: "center",
-    marginTop: Spacing.xs,
-    fontSize: ts(10),
-    lineHeight: ts(13)}});
+      fontSize: ts(13),
+      lineHeight: ts(18),
+    },
+    recordClipButtonText: {
+      ...Typography.caption,
+      color: "#FFFFFF",
+      fontWeight: fontWeight.strong,
+      fontSize: ts(14),
+      lineHeight: ts(20),
+    },
+  });
 };
