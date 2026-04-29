@@ -142,3 +142,4 @@ export function createAuthScreenStyles(density: number) {
     },
   });
 }
+

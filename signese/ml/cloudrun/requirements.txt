@@ -1,0 +1,9 @@
+fastapi>=0.116.0
+uvicorn>=0.35.0
+numpy>=2.0.0
+torch>=2.7.0
+pydantic>=2.11.0
+opencv-python>=4.10.0
+mediapipe>=0.10.14
+python-multipart>=0.0.9
+
