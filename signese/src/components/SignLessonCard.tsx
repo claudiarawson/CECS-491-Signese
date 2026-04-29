@@ -28,10 +28,11 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: lessonColors.surface,
     borderRadius: Radius.lg,
-    padding: lessonSpacing.lg,
+    paddingVertical: lessonSpacing.sm,
+    paddingHorizontal: lessonSpacing.md,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 300,
+    minHeight: 210,
     shadowColor: "#000",
     shadowOpacity: 0.06,
     shadowOffset: { width: 0, height: 4 },
@@ -40,16 +41,16 @@ const styles = StyleSheet.create({
   },
   mediaWrap: {
     width: "100%",
-    height: 180,
+    height: 116,
     borderRadius: Radius.md,
     backgroundColor: "#F7FAFC",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: lessonSpacing.md,
+    marginBottom: lessonSpacing.sm,
   },
   media: {
-    width: "88%",
-    height: "88%",
+    width: "74%",
+    height: "74%",
   },
   fallbackText: {
     ...lessonTypography.caption,
@@ -57,11 +58,13 @@ const styles = StyleSheet.create({
   },
   label: {
     ...lessonTypography.subtitle,
+    fontSize: 13,
     color: lessonColors.textPrimary,
     textAlign: "center",
   },
   instruction: {
     ...lessonTypography.body,
+    fontSize: 11,
     color: lessonColors.textSecondary,
     textAlign: "center",
     marginTop: lessonSpacing.sm,

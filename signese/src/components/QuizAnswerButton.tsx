@@ -37,9 +37,9 @@ export function QuizAnswerButton({
 
 const styles = StyleSheet.create({
   base: {
-    width: 138,
-    height: 60,
-    borderRadius: 24,
+    width: 124,
+    height: 52,
+    borderRadius: 18,
     backgroundColor: lessonColors.answerButton,
     alignItems: "center",
     justifyContent: "center",
@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
   },
   label: {
     ...lessonTypography.button,
+    fontSize: 14,
     color: lessonColors.textPrimary,
     textAlign: "center",
   },

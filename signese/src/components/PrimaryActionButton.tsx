@@ -33,13 +33,13 @@ export function PrimaryActionButton({
 
 const styles = StyleSheet.create({
   button: {
-    height: 52,
-    borderRadius: 22,
+    height: 46,
+    borderRadius: 18,
     backgroundColor: lessonColors.primaryButton,
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    maxWidth: 288,
+    maxWidth: 260,
   },
   pressed: {
     opacity: 0.9,
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
   },
   label: {
     ...lessonTypography.button,
+    fontSize: 14,
     color: lessonColors.textPrimary,
     fontWeight: "700",
   },

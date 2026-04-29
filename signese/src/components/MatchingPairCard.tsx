@@ -37,8 +37,8 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: lessonColors.surface,
     borderRadius: Radius.lg,
-    minHeight: 60,
-    paddingHorizontal: 14,
+    minHeight: 52,
+    paddingHorizontal: 12,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
   },
   label: {
     ...lessonTypography.body,
+    fontSize: 13,
     color: lessonColors.textPrimary,
     textAlign: "center",
   },

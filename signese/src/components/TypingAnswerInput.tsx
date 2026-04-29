@@ -21,13 +21,14 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   input: {
-    height: 56,
+    height: 48,
     borderRadius: Radius.lg,
     backgroundColor: lessonColors.surface,
     borderWidth: 1,
     borderColor: "#DCE3E9",
     paddingHorizontal: lessonSpacing.md,
     ...lessonTypography.body,
+    fontSize: 13,
     color: lessonColors.textPrimary,
   },
 });
