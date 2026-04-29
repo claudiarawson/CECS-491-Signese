@@ -1,13 +1,11 @@
-import { LESSONS_BY_TYPE, LessonSign, LessonType } from "@/src/data/lessons";
+import { LESSONS_BY_TYPE, LessonSign } from "@/src/data/lessons";
 import { validateTypedAnswer } from "./answerValidation";
 
-export function getLessonSigns(lessonType: LessonType): LessonSign[] {
   const lesson = LESSONS_BY_TYPE[lessonType];
   if (!lesson) return [];
   return lesson.signs.slice().sort((a, b) => a.order - b.order);
 }
 
-export function getSignByOrder(lessonType: LessonType, order: number): LessonSign | undefined {
   return getLessonSigns(lessonType).find((sign) => sign.order === order);
 }
 
@@ -45,7 +43,7 @@ function shuffleStrings(items: string[]): string[] {
 }
 
 export function calculateProgress(
-  lessonType: LessonType,
+  lessonType: string,
   signOrder: number,
   phase: "learn" | "quiz" | "type" | "match"
 ): { currentStep: number; totalSteps: number } {
