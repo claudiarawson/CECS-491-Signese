@@ -1,5 +1,6 @@
 import { LESSON_DEFINITIONS } from "@/src/data/lessons";
 import { LessonType } from "@/src/data/lessons/types";
+import { NUMBER_GROUPS, ALPHABET_GROUPS } from "@/src/data/lessonGroups";
 import { AppShell, LearnFlowHeader } from "@/src/components/asl";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { router } from "expo-router";
@@ -11,10 +12,22 @@ import { Spacing } from "@/src/theme";
 
 export function LessonMenuScreen() {
   const handleOpenLesson = (lessonType: LessonType) => {
-    router.push({
-      pathname: "/learn/[lessonId]",
-      params: { lessonId: lessonType, order: "1", score: "0" },
-    } as any);
+    if (lessonType === "numbers") {
+      router.push({
+        pathname: "/learn/lesson-group-launcher",
+        params: { category: "numbers" },
+      });
+    } else if (lessonType === "alphabet") {
+      router.push({
+        pathname: "/learn/lesson-group-launcher",
+        params: { category: "alphabet" },
+      });
+    } else {
+      router.push({
+        pathname: "/learn/[lessonId]",
+        params: { lessonId: lessonType, order: "1", score: "0" },
+      });
+    }
   };
 
   const headerRight = (

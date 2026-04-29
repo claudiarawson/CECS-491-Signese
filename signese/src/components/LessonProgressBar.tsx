@@ -23,10 +23,10 @@ export function LessonProgressBar({ currentStep, totalSteps }: LessonProgressBar
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: lessonSpacing.lg,
+    marginBottom: lessonSpacing.md,
   },
   track: {
-    height: 10,
+    height: 8,
     borderRadius: Radius.lg,
     backgroundColor: lessonColors.progressBackground,
     overflow: "hidden",
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     marginTop: lessonSpacing.xs,
     textAlign: "right",
     color: lessonColors.textSecondary,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "600",
   },
 });

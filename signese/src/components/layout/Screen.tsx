@@ -22,7 +22,7 @@ export function ScreenContainer({
 	return (
 		<SafeAreaView 
 			style={[styles.safe, { backgroundColor: navigationTheme.surface }, safeStyle]}
-			edges={["top", "left", "right"]}
+			edges={["top", "left", "right", "bottom"]}
 		>
 			<View style={[styles.content, { backgroundColor }, contentPadded && styles.padded, contentStyle]}>
 				{children}
