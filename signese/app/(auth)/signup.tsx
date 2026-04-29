@@ -20,7 +20,7 @@ import { asl } from "@/src/theme/aslConnectTheme";
 import { GlassCard, GradientBackground, InputField } from "@/src/components/asl";
 import { signUpWithEmail } from "@/src/services/firebase/auth.services";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { createAuthScreenStyles } from "./authStyles";
+import { createAuthScreenStyles } from "@/src/features/auth/authStyles";
 
 export default function SignupScreen() {
   const [username, setUsername] = useState("");
