@@ -74,9 +74,9 @@ export function QuizSignScreen() {
 
   return (
     <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-      <ScreenHeader title="Quiz" showBackButton />
+      <ScreenHeader title={lessonId === "numbers" ? "Quiz Numbers" : "Quiz"} showBackButton />
       <View style={styles.content}>
-        <LessonHeader title="Choose the correct meaning" />
+        <LessonHeader title={lessonId === "numbers" ? "Choose the correct number" : "Choose the correct meaning"} />
         <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
         <SignLessonCard gif={sign.gif} instruction={sign.prompt ?? "What does this sign mean?"} />
 

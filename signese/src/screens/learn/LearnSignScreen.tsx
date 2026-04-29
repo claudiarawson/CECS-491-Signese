@@ -33,6 +33,7 @@ export function LearnSignScreen() {
   }
 
   const handleNext = () => {
+    // For numbers, alphabet, greetings: always go to quiz next
     router.push({
       pathname: "/learn/quiz-sign",
       params: {
@@ -43,14 +44,21 @@ export function LearnSignScreen() {
     } as any);
   };
 
+  // Consistent UI for all lessons
   return (
     <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-      <ScreenHeader title="Learn" showBackButton />
+      <ScreenHeader title={lessonId === "numbers" ? "Learn Numbers" : "Learn"} showBackButton />
       <View style={styles.content}>
-        <LessonHeader title={sign.label} subtitle="Watch the sign and remember the meaning." />
+        <LessonHeader
+          title={sign.label}
+          subtitle={lessonId === "numbers" ? "Watch the sign and remember the meaning." : "Watch and learn this sign"}
+        />
         <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
-        <SignLessonCard gif={sign.gif} label={sign.label} instruction="Tap Next when you are ready." />
-
+        <SignLessonCard
+          gif={sign.gif}
+          label={sign.label}
+          instruction={lessonId === "numbers" ? "Tap Next when you are ready." : "Watch and learn this sign"}
+        />
         <View style={styles.footer}>
           <PrimaryActionButton label="Next" onPress={handleNext} />
         </View>

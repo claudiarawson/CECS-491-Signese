@@ -1,29 +1,8 @@
-import {
-  LessonHeader,
-  LessonProgressBar,
-  PrimaryActionButton,
-  SignLessonCard,
-  TypingAnswerInput,
-} from "@/src/components/lesson-index";
-import { LessonType } from "@/src/data/lessons";
-import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
-import { lessonColors, lessonSpacing, lessonTypography } from "@/src/theme";
-import {
-  calculateProgress,
-  getNextSign,
-  getSignByOrder,
-  isTypedAnswerCorrect,
-} from "../../utils/lessonHelpers";
-import { router, useLocalSearchParams } from "expo-router";
-import React, { useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useState, useMemo } from "react";
+// ...other imports...
 
 export function TypeAnswerScreen() {
-  const params = useLocalSearchParams<{ lessonId?: string; order?: string; score?: string }>();
-  const lessonId = (params.lessonId ?? "greetings") as LessonType;
-  const order = Number(params.order ?? "1");
-  const score = Number(params.score ?? "0");
-
+  // ...existing code...
   const sign = getSignByOrder(lessonId, order);
   const nextSign = getNextSign(lessonId, order);
   const progress = calculateProgress(lessonId, order, "type");
@@ -52,7 +31,7 @@ export function TypeAnswerScreen() {
   if (!sign) {
     return (
       <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-        <ScreenHeader title="Type Answer" showBackButton />
+        <ScreenHeader title={lessonId === "numbers" ? "Type Number" : "Type Answer"} showBackButton />
         <View style={styles.emptyWrap}>
           <Text style={styles.emptyText}>Could not find this sign.</Text>
         </View>
@@ -69,35 +48,17 @@ export function TypeAnswerScreen() {
     }
 
     const updatedScore = score + (isCorrect ? 1 : 0);
-    if (nextSign) {
-      router.push({
-        pathname: "/learn/[lessonId]",
-        params: {
-          lessonId,
-          order: String(order + 1),
-          score: String(updatedScore),
-        },
-      } as any);
-      return;
-    }
-
-    router.push({
-      pathname: "/learn/match-signs",
-      params: {
-        lessonId,
-        score: String(updatedScore),
-      },
-    } as any);
+    // ...navigation or next logic here...
   };
 
   return (
     <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-      <ScreenHeader title="Type Answer" showBackButton />
+      <ScreenHeader title={lessonId === "numbers" ? "Type Number" : "Type Answer"} showBackButton />
       <View style={styles.content}>
-        <LessonHeader title="Type the meaning" />
+        <LessonHeader title={lessonId === "numbers" ? "Type the number" : "Type the meaning"} />
         <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
 
-        <SignLessonCard gif={sign.gif} instruction="Type what this sign means." />
+        <SignLessonCard gif={sign.gif} instruction={lessonId === "numbers" ? "Type what this number is." : "Type what this sign means."} />
 
         <View style={styles.inputWrap}>
           <TypingAnswerInput
@@ -118,45 +79,10 @@ export function TypeAnswerScreen() {
           <PrimaryActionButton
             label={submitted ? "Continue" : "Submit"}
             onPress={handleSubmitOrContinue}
-            disabled={!submitted && value.trim().length === 0}
+            disabled={!value && !submitted}
           />
         </View>
       </View>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-  },
-  inputWrap: {
-    marginTop: lessonSpacing.md,
-  },
-  feedback: {
-    ...lessonTypography.body,
-    marginTop: lessonSpacing.md,
-    textAlign: "center",
-  },
-  correct: {
-    color: lessonColors.success,
-  },
-  incorrect: {
-    color: lessonColors.error,
-  },
-  footer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
-    paddingBottom: lessonSpacing.lg,
-  },
-  emptyWrap: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  emptyText: {
-    ...lessonTypography.body,
-    color: lessonColors.textSecondary,
-  },
-});
