@@ -9,7 +9,11 @@ import {
   View,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
-import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { ScreenContainer } from "@/src/components/layout";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { GlassCard, GradientBackground } from "@/src/components/asl";
+import { Typography, fontWeight, Spacing } from "@/src/theme";
 
 import {
   DEFAULT_PROFILE_ICON_ID,
@@ -32,6 +36,60 @@ type ScreenState = {
   selectedIcon: string;
   unlockedIconIds: string[];
 };
+
+function EditProfileHeader() {
+  return (
+    <View style={headerStyles.row}>
+      <Pressable
+        onPress={() => router.back()}
+        style={({ pressed }) => [headerStyles.iconBtn, pressed && { opacity: 0.85 }]}
+        accessibilityRole="button"
+        accessibilityLabel="Go back"
+      >
+        <MaterialIcons name="arrow-back" size={22} color={asl.text.primary} />
+      </Pressable>
+      <Text style={headerStyles.title} numberOfLines={1}>
+        Edit Profile
+      </Text>
+      <View style={headerStyles.iconBtnPlaceholder} />
+    </View>
+  );
+}
+
+const headerStyles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.screenPadding,
+    minHeight: 52,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: asl.glass.border,
+    backgroundColor: "rgba(8,2,10,0.2)",
+  },
+  title: {
+    flex: 1,
+    textAlign: "center",
+    color: asl.text.primary,
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: fontWeight.emphasis,
+  },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: asl.glass.bg,
+    borderWidth: 1,
+    borderColor: asl.glass.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconBtnPlaceholder: {
+    width: 40,
+    height: 40,
+  },
+});
 
 export default function EditProfileScreen() {
   const { profile, refreshProfile } = useAuthUser();
@@ -123,79 +181,124 @@ export default function EditProfileScreen() {
 
   if (state.loading) {
     return (
-      <ScreenContainer backgroundColor="#F1F6F5">
-        <ScreenHeader title="Edit Profile" showBackButton />
+      <GradientBackground variant="default" style={{ flex: 1 }}>
+        <ScreenContainer
+          backgroundColor="transparent"
+          safeStyle={{ backgroundColor: "transparent" }}
+          contentStyle={styles.screenContent}
+          contentPadded={false}
+        >
+          <EditProfileHeader />
         <View style={styles.centered}>
-          <ActivityIndicator size="large" />
+          <ActivityIndicator size="large" color={asl.accentCyan} />
           <Text style={styles.loadingText}>Loading profile icons...</Text>
         </View>
-      </ScreenContainer>
+        </ScreenContainer>
+      </GradientBackground>
     );
   }
 
   return (
-    <ScreenContainer backgroundColor="#F1F6F5">
-      <ScreenHeader title="Edit Profile" showBackButton />
-      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Edit Profile Icon</Text>
+    <GradientBackground variant="default" style={{ flex: 1 }}>
+      <ScreenContainer
+        backgroundColor="transparent"
+        safeStyle={{ backgroundColor: "transparent" }}
+        contentStyle={styles.screenContent}
+        contentPadded={false}
+      >
+        <EditProfileHeader />
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={styles.stack}>
+            <GlassCard style={styles.cardOuter} contentStyle={styles.cardInnerFlush}>
+              <View style={styles.profileRow}>
+                <View style={styles.heroAvatarWrap}>
+                  <Text style={styles.heroEmoji}>{selectedIcon.emoji}</Text>
+                </View>
+                <View style={styles.profileTexts}>
+                  <Text style={styles.heroLabel}>Selected: {selectedIcon.label}</Text>
+                  <Text style={styles.starsText}>⭐ Available stars: {liveStars}</Text>
+                </View>
+              </View>
+            </GlassCard>
 
-        <View style={styles.heroCard}>
-          <Text style={styles.heroEmoji}>{selectedIcon.emoji}</Text>
-          <Text style={styles.heroLabel}>Selected: {selectedIcon.label}</Text>
-          <Text style={styles.starsText}>⭐ Available Stars: {liveStars}</Text>
-        </View>
+            <GlassCard style={styles.cardOuter} contentStyle={styles.cardInnerTight}>
+              <Text style={styles.sectionKicker}>Profile Icons</Text>
+              {PROFILE_ICONS.map((icon, index) => {
+                const isUnlocked = state.unlockedIconIds.includes(icon.id);
+                const isSelected = state.selectedIcon === icon.id;
+                const isBusy = state.savingId === icon.id;
 
-        <View style={styles.grid}>
-          {PROFILE_ICONS.map((icon) => {
-            const isUnlocked = state.unlockedIconIds.includes(icon.id);
-            const isSelected = state.selectedIcon === icon.id;
-            const isBusy = state.savingId === icon.id;
+                return (
+                  <React.Fragment key={icon.id}>
+                    <Pressable
+                      style={({ pressed }) => [
+                        styles.iconRow,
+                        isSelected && styles.iconRowSelected,
+                        !isUnlocked && styles.iconRowLocked,
+                        pressed && { opacity: 0.9 },
+                      ]}
+                      onPress={() => void handlePress(icon.id)}
+                      disabled={isBusy}
+                    >
+                      <View style={styles.iconWrap}>
+                        <Text style={styles.iconEmoji}>{icon.emoji}</Text>
+                      </View>
 
-            return (
-              <Pressable
-                key={icon.id}
-                style={[
-                  styles.iconCard,
-                  isSelected && styles.iconCardSelected,
-                  !isUnlocked && styles.iconCardLocked,
-                ]}
-                onPress={() => void handlePress(icon.id)}
-                disabled={isBusy}
-              >
-                <Text style={styles.iconEmoji}>{icon.emoji}</Text>
-                <Text style={styles.iconLabel}>{icon.label}</Text>
+                      <View style={styles.iconTextCol}>
+                        <Text style={styles.iconLabel}>{icon.label}</Text>
+                        <Text style={styles.statusText}>
+                          {isUnlocked
+                            ? isSelected
+                              ? "Selected"
+                              : "Tap to select"
+                            : `Unlock for ${icon.starsRequired} stars`}
+                        </Text>
+                      </View>
 
-                {isUnlocked ? (
-                  <Text style={styles.statusText}>
-                    {isSelected ? "Selected" : "Tap to select"}
-                  </Text>
-                ) : (
-                  <Text style={styles.statusText}>
-                    🔒 Unlock for {icon.starsRequired} stars
-                  </Text>
-                )}
+                      {isBusy ? (
+                        <ActivityIndicator color={asl.accentCyan} />
+                      ) : isSelected ? (
+                        <MaterialIcons name="check-circle" size={22} color={asl.accentCyan} />
+                      ) : (
+                        <MaterialIcons name="chevron-right" size={22} color={asl.text.muted} />
+                      )}
+                    </Pressable>
+                    {index < PROFILE_ICONS.length - 1 ? <View style={styles.rowDivider} /> : null}
+                  </React.Fragment>
+                );
+              })}
+            </GlassCard>
 
-                {isBusy ? <ActivityIndicator style={styles.inlineLoader} /> : null}
-              </Pressable>
-            );
-          })}
-        </View>
-
-        <Pressable
-          style={styles.secondaryButton}
-          onPress={() => router.push("/account/achievements")}
-        >
-          <Text style={styles.secondaryButtonText}>View Achievements</Text>
-        </Pressable>
-      </ScrollView>
-    </ScreenContainer>
+          </View>
+        </ScrollView>
+      </ScreenContainer>
+    </GradientBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    gap: 16,
+  screenContent: {
+    flex: 1,
+    backgroundColor: "transparent",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 40,
+  },
+  stack: {
+    paddingHorizontal: Spacing.screenPadding,
+    paddingTop: 16,
+    gap: 14,
+  },
+  cardOuter: {
+    marginBottom: 0,
+  },
+  cardInnerFlush: {
+    padding: 16,
+  },
+  cardInnerTight: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
   },
   centered: {
     flex: 1,
@@ -206,70 +309,105 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 16,
+    color: asl.text.secondary,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
+    color: asl.text.primary,
   },
-  heroCard: {
-    padding: 20,
-    borderRadius: 16,
-    backgroundColor: "#F2F5F7",
+  profileRow: {
+    flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 14,
+  },
+  heroAvatarWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: "rgba(244, 114, 182, 0.18)",
+    borderWidth: 2,
+    borderColor: "rgba(244, 114, 182, 0.4)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  profileTexts: {
+    flex: 1,
+    minWidth: 0,
   },
   heroEmoji: {
-    fontSize: 48,
+    fontSize: 36,
   },
   heroLabel: {
-    fontSize: 18,
-    fontWeight: "600",
+    ...Typography.sectionTitle,
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: fontWeight.emphasis,
+    color: asl.text.primary,
   },
   starsText: {
-    fontSize: 16,
+    ...Typography.caption,
+    marginTop: 6,
+    fontSize: 14,
+    lineHeight: 20,
+    color: asl.text.secondary,
   },
-  grid: {
+  sectionKicker: {
+    ...Typography.caption,
+    color: asl.text.muted,
+    fontWeight: fontWeight.strong,
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    marginBottom: 10,
+  },
+  iconRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    minHeight: 56,
+    paddingVertical: 10,
     gap: 12,
   },
-  iconCard: {
-    padding: 16,
-    borderRadius: 14,
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#D8E1E8",
-    gap: 6,
+  iconRowSelected: {
+    backgroundColor: "rgba(34, 211, 238, 0.06)",
+    borderRadius: 12,
+    paddingHorizontal: 8,
   },
-  iconCardSelected: {
-    borderColor: "#43B3A8",
-    backgroundColor: "#EAF8F6",
+  iconRowLocked: {
+    opacity: 0.86,
   },
-  iconCardLocked: {
-    opacity: 0.9,
+  iconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "rgba(34, 211, 238, 0.12)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   iconEmoji: {
-    fontSize: 34,
+    fontSize: 24,
+  },
+  iconTextCol: {
+    flex: 1,
+    minWidth: 0,
   },
   iconLabel: {
-    fontSize: 18,
-    fontWeight: "600",
+    ...Typography.body,
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: fontWeight.medium,
+    color: asl.text.primary,
   },
   statusText: {
-    fontSize: 14,
-    color: "#51606D",
+    ...Typography.caption,
+    marginTop: 2,
+    fontSize: 13,
+    lineHeight: 18,
+    color: asl.text.muted,
   },
-  inlineLoader: {
-    marginTop: 8,
-  },
-  secondaryButton: {
-    marginTop: 8,
-    paddingVertical: 14,
-    borderRadius: 12,
-    backgroundColor: "#1F2937",
-    alignItems: "center",
-  },
-  secondaryButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
+  rowDivider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: asl.glass.border,
+    marginLeft: 52,
   },
 });

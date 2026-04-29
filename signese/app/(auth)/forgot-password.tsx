@@ -15,7 +15,7 @@ import { getDeviceDensity, moderateScale } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { GlassCard, GradientBackground, InputField, PrimaryButton } from "@/src/components/asl";
 import { resetPassword } from "@/src/services/firebase/auth.services";
-import { createAuthScreenStyles } from "./authStyles";
+import { createAuthScreenStyles } from "@/src/features/auth/authStyles";
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");

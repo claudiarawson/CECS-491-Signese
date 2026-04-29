@@ -1,9 +1,9 @@
-import React from "react";
-import { View, Text, Pressable, StyleSheet, type TextStyle, type ViewStyle } from "react-native";
-import { router } from "expo-router";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { asl } from "@/src/theme/aslConnectTheme";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { fontWeight } from "@/src/theme";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
+import React from "react";
+import { Pressable, StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
 
 type Props = {
   title: string;
@@ -20,31 +20,37 @@ export function AslTabHeader({
   onProfile = () => router.push("/(tabs)/account" as any),
   rightExtra,
   titleStyle,
-  containerStyle}: Props) {
+  containerStyle,
+}: Props) {
+  const { colors } = useTheme();
+
   return (
     <View style={[styles.row, containerStyle]}>
       <View style={styles.left}>
-        <Text style={[styles.title, titleStyle]} numberOfLines={1}>
+        <Text style={[styles.title, { color: colors.text }, titleStyle]} numberOfLines={1}>
           {title}
         </Text>
       </View>
+
       <View style={styles.right}>
         {rightExtra}
+
         <Pressable
           onPress={onSettings}
           hitSlop={8}
           accessibilityLabel="Open settings"
           style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.7 }]}
         >
-          <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+          <MaterialIcons name="settings" size={24} color={colors.text} />
         </Pressable>
+
         <Pressable
           onPress={onProfile}
           hitSlop={8}
           accessibilityLabel="Open profile"
           style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.7 }]}
         >
-          <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+          <MaterialIcons name="account-circle" size={26} color={colors.text} />
         </Pressable>
       </View>
     </View>
@@ -58,12 +64,23 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between"},
-  left: { flex: 1, minWidth: 0 },
+    justifyContent: "space-between",
+  },
+  left: {
+    flex: 1,
+    minWidth: 0,
+  },
   title: {
-    color: asl.text.primary,
     fontSize: 24,
     letterSpacing: 0.2,
-    fontWeight: fontWeight.emphasis},
-  right: { flexDirection: "row", alignItems: "center", gap: 4 },
-  iconBtn: { padding: 4 }});
+    fontWeight: fontWeight.emphasis,
+  },
+  right: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  iconBtn: {
+    padding: 4,
+  },
+});

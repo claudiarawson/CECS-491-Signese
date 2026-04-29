@@ -1,8 +1,8 @@
-import React from "react";
-import { Text, View, Pressable, StyleSheet } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { asl } from "@/src/theme/aslConnectTheme";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { fontWeight } from "@/src/theme";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import React from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   title: string;
@@ -14,33 +14,64 @@ type Props = {
   disabled?: boolean;
 };
 
-export function LessonCard({ title, subtitle, emoji, onPress, status, rightDetail, disabled }: Props) {
+export function LessonCard({
+  title,
+  subtitle,
+  emoji,
+  onPress,
+  status,
+  rightDetail,
+  disabled,
+}: Props) {
+  const { colors } = useTheme();
+
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
       style={({ pressed }) => [
         styles.card,
+        {
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+        },
         (pressed || disabled) && { opacity: disabled ? 0.55 : 0.9 },
       ]}
     >
       <View style={styles.left}>
-        <View style={styles.emojiWrap}>
+        <View
+          style={[
+            styles.emojiWrap,
+            {
+              backgroundColor: colors.background,
+              borderColor: colors.border,
+            },
+          ]}
+        >
           <Text style={styles.emoji}>{emoji}</Text>
         </View>
+
         <View>
-          <Text style={styles.title}>{title}</Text>
-          {subtitle ? <Text style={styles.sub}>{subtitle}</Text> : null}
+          <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+          {subtitle ? (
+            <Text style={[styles.sub, { color: colors.subtext }]}>{subtitle}</Text>
+          ) : null}
         </View>
       </View>
+
       <View style={styles.right}>
-        {rightDetail ? <Text style={styles.detail}>{rightDetail}</Text> : null}
+        {rightDetail ? (
+          <Text style={[styles.detail, { color: colors.subtext }]}>
+            {rightDetail}
+          </Text>
+        ) : null}
+
         {status === "locked" ? (
-          <MaterialIcons name="lock" size={20} color={asl.text.muted} />
+          <MaterialIcons name="lock" size={20} color={colors.subtext} />
         ) : status === "complete" ? (
           <MaterialIcons name="check-circle" size={22} color="#4ADE80" />
         ) : (
-          <MaterialIcons name="chevron-right" size={22} color={asl.text.secondary} />
+          <MaterialIcons name="chevron-right" size={22} color={colors.subtext} />
         )}
       </View>
     </Pressable>
@@ -52,22 +83,51 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    borderRadius: asl.radius.lg,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: asl.glass.border,
-    backgroundColor: "rgba(255,255,255,0.06)",
     padding: 14,
-    marginBottom: 10},
-  left: { flexDirection: "row", alignItems: "center", gap: 12, flex: 1, minWidth: 0 },
+    marginBottom: 10,
+  },
+
+  left: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    flex: 1,
+    minWidth: 0,
+  },
+
   emojiWrap: {
     width: 44,
     height: 44,
     borderRadius: 14,
-    backgroundColor: "rgba(0,0,0,0.3)",
     alignItems: "center",
-    justifyContent: "center"},
-  emoji: { fontSize: 20 },
-  title: { color: asl.text.primary, fontSize: 16, fontWeight: fontWeight.emphasis },
-  sub: { color: asl.text.muted, fontSize: 12, marginTop: 2},
-  right: { flexDirection: "row", alignItems: "center", gap: 8 },
-  detail: { color: asl.text.secondary, fontSize: 12, fontWeight: fontWeight.medium }});
+    justifyContent: "center",
+    borderWidth: 1,
+  },
+
+  emoji: {
+    fontSize: 20,
+  },
+
+  title: {
+    fontSize: 16,
+    fontWeight: fontWeight.emphasis,
+  },
+
+  sub: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+
+  right: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  detail: {
+    fontSize: 12,
+    fontWeight: fontWeight.medium,
+  },
+});

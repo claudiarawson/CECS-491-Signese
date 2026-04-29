@@ -1,14 +1,12 @@
 import {
-  HeaderActionButton,
-  HeaderAvatarButton,
   ScreenContainer,
-  ScreenHeader,
 } from "@/src/components/layout";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { useTheme } from "@/src/contexts/ThemeContext";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { GlassCard, GradientBackground } from "@/src/components/asl";
 import {
   Spacing,
   Typography,
+  fontWeight,
   getDeviceDensity,
   moderateScale,
 } from "@/src/theme";
@@ -35,14 +33,85 @@ type SettingsItem = {
   onPress: () => void;
 };
 
+function normalizeSearchText(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9 ]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function SettingsHeader() {
+  return (
+    <View style={headerStyles.row}>
+      <Pressable
+        onPress={() => router.back()}
+        style={({ pressed }) => [headerStyles.iconBtn, pressed && { opacity: 0.85 }]}
+      >
+        <MaterialIcons name="arrow-back" size={22} color={asl.text.primary} />
+      </Pressable>
+      <Text style={headerStyles.title}>Settings</Text>
+      <View style={headerStyles.right}>
+        <Pressable
+          onPress={() => router.push("/(tabs)/settings" as any)}
+          style={({ pressed }) => [headerStyles.iconBtn, pressed && { opacity: 0.85 }]}
+        >
+          <MaterialIcons name="settings" size={22} color={asl.text.secondary} />
+        </Pressable>
+        <Pressable
+          onPress={() => router.push("/(tabs)/account" as any)}
+          style={({ pressed }) => [headerStyles.iconBtn, pressed && { opacity: 0.85 }]}
+        >
+          <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+const headerStyles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.screenPadding,
+    minHeight: 52,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: asl.glass.border,
+    backgroundColor: "rgba(8,2,10,0.2)",
+  },
+  title: {
+    flex: 1,
+    textAlign: "center",
+    color: asl.text.primary,
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: fontWeight.emphasis,
+  },
+  right: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: asl.glass.bg,
+    borderWidth: 1,
+    borderColor: asl.glass.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
+
 export default function SettingsScreen() {
-  const { profile } = useAuthUser();
-  const { colors } = useTheme();
   const [query, setQuery] = useState("");
 
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const styles = createStyles(density, colors);
+  const styles = createStyles(density);
 
   const searchIconSize = moderateScale(18) * density;
   const cardIconSize = moderateScale(18) * density;
@@ -109,66 +178,81 @@ export default function SettingsScreen() {
   );
 
   const filteredItems = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = normalizeSearchText(query);
     if (!q) return items;
 
-    return items.filter((item) =>
-      [item.label, ...(item.keywords ?? [])].join(" ").toLowerCase().includes(q)
-    );
+    return items.filter((item) => {
+      const searchable = normalizeSearchText(
+        [item.key, item.label, ...(item.keywords ?? [])].join(" ")
+      );
+      return searchable.includes(q);
+    });
   }, [items, query]);
 
   return (
-    <ScreenContainer backgroundColor={colors.background} contentStyle={styles.safeContent}>
-      <ScreenHeader
-        title="Settings"
-        showBackButton
-        right={
-          <>
-            <HeaderActionButton
-              iconName="settings"
-              onPress={() => router.push("/(tabs)/settings" as any)}
-            />
-            <HeaderAvatarButton
-              avatar={profile?.avatar}
-              onPress={() => router.push("/(tabs)/account" as any)}
-            />
-          </>
-        }
-      />
+    <GradientBackground variant="default" style={{ flex: 1 }}>
+      <ScreenContainer
+        backgroundColor="transparent"
+        safeStyle={{ backgroundColor: "transparent" }}
+        contentStyle={styles.safeContent}
+        contentPadded={false}
+      >
+        <SettingsHeader />
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.stack}>
+          <GlassCard style={styles.heroCard}>
+          <Text style={styles.heroTitle}>Customize your experience</Text>
+          <Text style={styles.heroSubtitle}>
+            Notifications, appearance, privacy, and account preferences.
+          </Text>
+          </GlassCard>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.searchWrap}>
-          <MaterialIcons name="search" size={searchIconSize} color={colors.subtext} />
+        <GlassCard style={styles.searchWrap}>
+          <MaterialIcons name="search" size={searchIconSize} color={asl.text.muted} />
           <TextInput
             value={query}
             onChangeText={setQuery}
             placeholder="Search Settings"
-            placeholderTextColor={colors.subtext}
+            placeholderTextColor={asl.text.muted}
             style={styles.searchInput}
+            autoCapitalize="none"
+            autoCorrect={false}
+            clearButtonMode="while-editing"
+            returnKeyType="search"
           />
-        </View>
+        </GlassCard>
 
         {filteredItems.map((item) => (
-          <Pressable key={item.key} style={styles.itemCard} onPress={item.onPress}>
+          <Pressable
+            key={item.key}
+            style={({ pressed }) => [styles.itemCard, pressed && { opacity: 0.9 }]}
+            onPress={item.onPress}
+          >
             <View style={styles.itemLeft}>
               <View style={[styles.iconChip, { backgroundColor: item.iconBg }]}>
                 <MaterialIcons name={item.icon} size={cardIconSize} color={item.iconColor} />
               </View>
               <Text style={styles.itemLabel}>{item.label}</Text>
             </View>
-            <MaterialIcons name="chevron-right" size={chevronSize} color={colors.text} />
+            <MaterialIcons name="chevron-right" size={chevronSize} color={asl.text.secondary} />
           </Pressable>
         ))}
 
         {filteredItems.length === 0 && (
           <Text style={styles.emptyText}>No matching settings found.</Text>
         )}
+          </View>
       </ScrollView>
-    </ScreenContainer>
+      </ScreenContainer>
+    </GradientBackground>
   );
 }
 
-const createStyles = (density: number, colors: any) => {
+const createStyles = (density: number) => {
   const ms = (v: number) => moderateScale(v) * density;
 
   return StyleSheet.create({
@@ -176,26 +260,44 @@ const createStyles = (density: number, colors: any) => {
 
     scrollView: {
       flex: 1,
-      paddingTop: Spacing.xs,
+    },
+    stack: {
+      paddingHorizontal: Spacing.screenPadding,
+      paddingTop: ms(16),
+      paddingBottom: ms(32),
+      gap: ms(10),
+    },
+    heroCard: {
+      paddingHorizontal: Spacing.sm,
+      paddingVertical: ms(14),
+      ...asl.shadow.card,
+    },
+    heroTitle: {
+      color: asl.text.primary,
+      fontSize: ms(18),
+      fontWeight: fontWeight.emphasis,
+    },
+    heroSubtitle: {
+      marginTop: ms(4),
+      color: asl.text.secondary,
+      fontSize: ms(13),
+      lineHeight: ms(18),
+      fontWeight: fontWeight.medium,
     },
 
     searchWrap: {
-      marginBottom: Spacing.cardGap,
       height: ms(42),
       borderRadius: ms(21),
-      backgroundColor: colors.card,
       paddingHorizontal: Spacing.sm,
       flexDirection: "row",
       alignItems: "center",
-      borderWidth: 1,
-      borderColor: colors.border,
     },
 
     searchInput: {
       ...Typography.body,
       flex: 1,
       fontSize: ms(14),
-      color: colors.text,
+      color: asl.text.primary,
       marginLeft: 8,
     },
 
@@ -205,11 +307,10 @@ const createStyles = (density: number, colors: any) => {
       justifyContent: "space-between",
       paddingHorizontal: Spacing.sm,
       paddingVertical: ms(11),
-      backgroundColor: colors.card,
       borderRadius: ms(18),
-      marginBottom: Spacing.xs,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: asl.glass.border,
+      backgroundColor: asl.glass.bg,
     },
 
     itemLeft: {
@@ -231,12 +332,12 @@ const createStyles = (density: number, colors: any) => {
       ...Typography.sectionTitle,
       fontSize: ms(16),
       fontWeight: "700",
-      color: colors.text,
+      color: asl.text.primary,
     },
 
     emptyText: {
       ...Typography.body,
-      color: colors.subtext,
+      color: asl.text.secondary,
       textAlign: "center",
       marginTop: ms(10),
     },

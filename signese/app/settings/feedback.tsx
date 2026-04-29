@@ -13,11 +13,15 @@ import {
   ActivityIndicator,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
-import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
+import { ScreenContainer } from "@/src/components/layout";
 import { getDeviceDensity, moderateScale } from "@/src/theme";
+import { Spacing, fontWeight } from "@/src/theme";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import { submitFeedback } from "@/src/services/firebase/feedback.service";
+import { GradientBackground, GlassCard } from "@/src/components/asl";
+import { asl } from "@/src/theme/aslConnectTheme";
 
 const FEEDBACK_CATEGORIES = ["Bug", "Suggestion", "Improvement", "Other"] as const;
 type FeedbackCategory = (typeof FEEDBACK_CATEGORIES)[number];
@@ -103,8 +107,22 @@ export default function FeedbackScreen() {
   };
 
   return (
-    <ScreenContainer backgroundColor="#E9EEEC">
-      <ScreenHeader title="Feedback" showBackButton />
+    <GradientBackground variant="default" style={{ flex: 1 }}>
+    <ScreenContainer
+      backgroundColor="transparent"
+      safeStyle={{ backgroundColor: "transparent" }}
+      contentPadded={false}
+    >
+      <View style={styles.headerRow}>
+        <Pressable
+          onPress={() => router.back()}
+          style={({ pressed }) => [styles.headerBtn, pressed && { opacity: 0.85 }]}
+        >
+          <MaterialIcons name="arrow-back" size={22} color={asl.text.primary} />
+        </Pressable>
+        <Text style={styles.headerTitle}>Feedback</Text>
+        <View style={styles.headerSpacer} />
+      </View>
 
       <KeyboardAvoidingView
         style={styles.keyboardWrap}
@@ -115,7 +133,7 @@ export default function FeedbackScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.infoCard}>
+          <GlassCard style={styles.infoCard}>
             <View style={styles.iconWrap}>
               <MaterialIcons
                 name="chat-bubble-outline"
@@ -128,9 +146,9 @@ export default function FeedbackScreen() {
               Please leave us any and all feedback so we can better make this
               app in better supporting our community!
             </Text>
-          </View>
+          </GlassCard>
 
-          <View style={styles.sectionBlock}>
+          <GlassCard style={styles.sectionBlock}>
             <Text style={styles.sectionTitle}>Feedback Type</Text>
             <View style={styles.categoryWrap}>
               {FEEDBACK_CATEGORIES.map((category) => {
@@ -157,9 +175,9 @@ export default function FeedbackScreen() {
                 );
               })}
             </View>
-          </View>
+          </GlassCard>
 
-          <View style={styles.sectionBlock}>
+          <GlassCard style={styles.sectionBlock}>
             <Text style={styles.sectionTitle}>Details</Text>
             <TextInput
               value={feedback}
@@ -170,9 +188,9 @@ export default function FeedbackScreen() {
               textAlignVertical="top"
               style={styles.feedbackInput}
             />
-          </View>
+          </GlassCard>
 
-          <View style={styles.sectionBlock}>
+          <GlassCard style={styles.sectionBlock}>
             <Text style={styles.sectionTitle}>Attach Media</Text>
 
             <View style={styles.mediaRow}>
@@ -196,7 +214,7 @@ export default function FeedbackScreen() {
                 ? `Attached: ${selectedImageName}`
                 : "No media attached yet."}
             </Text>
-          </View>
+          </GlassCard>
 
           <View style={styles.buttonRow}>
             <Pressable
@@ -214,6 +232,7 @@ export default function FeedbackScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
     </ScreenContainer>
+    </GradientBackground>
   );
 }
 
@@ -225,19 +244,48 @@ const createStyles = (density: number, textScale: number) => {
     keyboardWrap: {
       flex: 1,
     },
+    headerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: Spacing.screenPadding,
+      minHeight: ms(52),
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: asl.glass.border,
+      backgroundColor: "rgba(8,2,10,0.2)",
+    },
+    headerBtn: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      backgroundColor: asl.glass.bg,
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headerTitle: {
+      flex: 1,
+      textAlign: "center",
+      color: asl.text.primary,
+      fontSize: ts(20),
+      lineHeight: ts(26),
+      fontWeight: fontWeight.emphasis,
+    },
+    headerSpacer: {
+      width: ms(40),
+      height: ms(40),
+    },
 
     scrollContent: {
-      paddingHorizontal: ms(24),
-      paddingTop: ms(10),
-      paddingBottom: ms(24),
+      paddingHorizontal: Spacing.screenPadding,
+      paddingTop: ms(16),
+      paddingBottom: ms(40),
     },
 
     infoCard: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: "#FFFFFF",
-      borderWidth: 1,
-      borderColor: "#D8E1E8",
       borderRadius: ms(16),
       paddingHorizontal: ms(16),
       paddingVertical: ms(14),
@@ -258,15 +306,12 @@ const createStyles = (density: number, textScale: number) => {
       fontSize: ts(15),
       lineHeight: ts(20),
       fontWeight: "700",
-      color: "#111111",
+      color: asl.text.primary,
       textAlign: "center",
     },
 
     sectionBlock: {
       marginBottom: ms(16),
-      backgroundColor: "#FFFFFF",
-      borderWidth: 1,
-      borderColor: "#D8E1E8",
       borderRadius: ms(16),
       padding: ms(14),
     },
@@ -275,7 +320,7 @@ const createStyles = (density: number, textScale: number) => {
       fontSize: ts(15),
       lineHeight: ts(19),
       fontWeight: "800",
-      color: "#222222",
+      color: asl.text.primary,
       marginBottom: ms(10),
     },
 
@@ -289,9 +334,9 @@ const createStyles = (density: number, textScale: number) => {
       paddingHorizontal: ms(14),
       paddingVertical: ms(10),
       borderRadius: ms(14),
-      backgroundColor: "#FFFFFF",
+      backgroundColor: asl.glass.bg,
       borderWidth: 1,
-      borderColor: "#D8E1E8",
+      borderColor: asl.glass.border,
     },
 
     categoryPillSelected: {
@@ -303,7 +348,7 @@ const createStyles = (density: number, textScale: number) => {
       fontSize: ts(14),
       lineHeight: ts(18),
       fontWeight: "700",
-      color: "#444444",
+      color: asl.text.primary,
     },
 
     categoryTextSelected: {
@@ -313,14 +358,14 @@ const createStyles = (density: number, textScale: number) => {
     feedbackInput: {
       minHeight: ms(260),
       borderWidth: 1,
-      borderColor: "#D8E1E8",
+      borderColor: asl.glass.border,
       borderRadius: ms(14),
-      backgroundColor: "#F8FBFA",
+      backgroundColor: "rgba(255,255,255,0.06)",
       paddingHorizontal: ms(12),
       paddingVertical: ms(10),
       fontSize: ts(15),
       lineHeight: ts(20),
-      color: "#111111",
+      color: asl.text.primary,
     },
 
     mediaRow: {
@@ -349,10 +394,12 @@ const createStyles = (density: number, textScale: number) => {
     },
 
     removeMediaButton: {
-      backgroundColor: "#E8D5CE",
+      backgroundColor: "rgba(232, 213, 206, 0.2)",
       borderRadius: ms(8),
       paddingHorizontal: ms(12),
       paddingVertical: ms(10),
+      borderWidth: 1,
+      borderColor: asl.glass.border,
     },
 
     removeMediaText: {
@@ -365,7 +412,7 @@ const createStyles = (density: number, textScale: number) => {
     mediaHint: {
       fontSize: ts(13),
       lineHeight: ts(17),
-      color: "#5F6770",
+      color: asl.text.secondary,
     },
 
     buttonRow: {

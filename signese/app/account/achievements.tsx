@@ -1,19 +1,78 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import { useFocusEffect } from "expo-router";
-import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router, useFocusEffect } from "expo-router";
+import { ScreenContainer } from "@/src/components/layout";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { GlassCard, GradientBackground } from "@/src/components/asl";
+import { Typography, fontWeight, Spacing } from "@/src/theme";
 import {
   BADGE_DEFINITIONS,
   type BadgeDefinition,
   syncAndGetCurrentUserAchievements,
   type AchievementSummary,
 } from "@/src/features/account/achievements.service";
+
+function AchievementsHeader() {
+  return (
+    <View style={headerStyles.row}>
+      <Pressable
+        onPress={() => router.back()}
+        style={({ pressed }) => [headerStyles.iconBtn, pressed && { opacity: 0.85 }]}
+        accessibilityRole="button"
+        accessibilityLabel="Go back"
+      >
+        <MaterialIcons name="arrow-back" size={22} color={asl.text.primary} />
+      </Pressable>
+      <Text style={headerStyles.title} numberOfLines={1}>
+        Achievements
+      </Text>
+      <View style={headerStyles.iconBtnPlaceholder} />
+    </View>
+  );
+}
+
+const headerStyles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.screenPadding,
+    minHeight: 52,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: asl.glass.border,
+    backgroundColor: "rgba(8,2,10,0.2)",
+  },
+  title: {
+    flex: 1,
+    textAlign: "center",
+    color: asl.text.primary,
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: fontWeight.emphasis,
+  },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: asl.glass.bg,
+    borderWidth: 1,
+    borderColor: asl.glass.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconBtnPlaceholder: {
+    width: 40,
+    height: 40,
+  },
+});
 
 export default function AchievementsScreen() {
   const [loading, setLoading] = useState(true);
@@ -41,13 +100,20 @@ export default function AchievementsScreen() {
 
   if (loading) {
     return (
-      <ScreenContainer backgroundColor="#F1F6F5">
-        <ScreenHeader title="Achievements" showBackButton />
-        <View style={styles.centered}>
-          <ActivityIndicator size="large" />
-          <Text style={styles.helper}>Loading achievements...</Text>
-        </View>
-      </ScreenContainer>
+      <GradientBackground variant="default" style={{ flex: 1 }}>
+        <ScreenContainer
+          backgroundColor="transparent"
+          safeStyle={{ backgroundColor: "transparent" }}
+          contentStyle={styles.screenContent}
+          contentPadded={false}
+        >
+          <AchievementsHeader />
+          <View style={styles.centered}>
+            <ActivityIndicator size="large" color={asl.accentCyan} />
+            <Text style={styles.helper}>Loading achievements...</Text>
+          </View>
+        </ScreenContainer>
+      </GradientBackground>
     );
   }
 
@@ -62,61 +128,86 @@ export default function AchievementsScreen() {
   };
 
   return (
-    <ScreenContainer backgroundColor="#F1F6F5">
-      <ScreenHeader title="Achievements" showBackButton />
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Badge Collection</Text>
+    <GradientBackground variant="default" style={{ flex: 1 }}>
+      <ScreenContainer
+        backgroundColor="transparent"
+        safeStyle={{ backgroundColor: "transparent" }}
+        contentStyle={styles.screenContent}
+        contentPadded={false}
+      >
+        <AchievementsHeader />
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={styles.stack}>
+            <GlassCard style={styles.cardOuter} contentStyle={styles.cardInnerFlush}>
+              <Text style={styles.title}>Badge Collection</Text>
+              <View style={styles.heroMetaRow}>
+                <Text style={styles.heroEmoji}>🏅</Text>
+                <Text style={styles.metaText}>
+                  Earned {earnedBadges.length}/{BADGE_DEFINITIONS.length} badges
+                </Text>
+              </View>
+              <View style={styles.statsGrid}>
+                <MilestonePill title="Lessons" value={summary?.metrics.lessonsCompleted ?? 0} />
+                <MilestonePill title="Stars" value={summary?.metrics.starsEarned ?? 0} />
+                <MilestonePill title="Streak" value={summary?.metrics.currentStreak ?? 0} />
+              </View>
+            </GlassCard>
 
-        <View style={styles.heroCard}>
-          <Text style={styles.heroEmoji}>🏅</Text>
-          <Text style={styles.heroTitle}>Your Progress</Text>
-          <Text style={styles.helper}>
-            Lessons completed: {summary?.metrics.lessonsCompleted ?? 0}
-          </Text>
-          <Text style={styles.helper}>
-            Lifetime stars earned: ⭐ {summary?.metrics.starsEarned ?? 0}
-          </Text>
-          <Text style={styles.helper}>
-            Current streak: 🔥 {summary?.metrics.currentStreak ?? 0}
-          </Text>
-          <Text style={styles.metaText}>
-            Earned {earnedBadges.length}/{BADGE_DEFINITIONS.length} badges
-          </Text>
-        </View>
+            <GlassCard style={styles.cardOuter} contentStyle={styles.cardInnerTight}>
+              <Text style={styles.sectionKicker}>Milestones</Text>
+              <View style={styles.milestoneGroupRow}>
+                <MilestoneGroupPill title="Lessons" badges={grouped.lessons} earned={earned} />
+                <MilestoneGroupPill title="Stars" badges={grouped.stars} earned={earned} />
+                <MilestoneGroupPill title="Streaks" badges={grouped.streak} earned={earned} />
+              </View>
+            </GlassCard>
 
-        <View style={styles.miniSection}>
-          <Text style={styles.sectionTitle}>Milestones</Text>
-          <View style={styles.milestoneGrid}>
-            <MilestonePill title="Lessons" badges={grouped.lessons} earned={earned} />
-            <MilestonePill title="Stars" badges={grouped.stars} earned={earned} />
-            <MilestonePill title="Streaks" badges={grouped.streak} earned={earned} />
+            <GlassCard style={styles.cardOuter} contentStyle={styles.cardInnerTight}>
+              <Text style={styles.sectionKicker}>Earned Badges</Text>
+              {earnedBadges.length === 0 ? (
+                <Text style={styles.emptyText}>No badges earned yet. Keep learning!</Text>
+              ) : (
+                earnedBadges.map((badge, index) => (
+                  <React.Fragment key={badge.id}>
+                    <BadgeRow badge={badge} earned />
+                    {index < earnedBadges.length - 1 ? <View style={styles.rowDivider} /> : null}
+                  </React.Fragment>
+                ))
+              )}
+            </GlassCard>
+
+            <GlassCard style={styles.cardOuter} contentStyle={styles.cardInnerTight}>
+              <Text style={styles.sectionKicker}>Locked Badges</Text>
+              {lockedBadges.map((badge, index) => (
+                <React.Fragment key={badge.id}>
+                  <BadgeRow badge={badge} earned={false} />
+                  {index < lockedBadges.length - 1 ? <View style={styles.rowDivider} /> : null}
+                </React.Fragment>
+              ))}
+            </GlassCard>
           </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Earned Badges</Text>
-          {earnedBadges.length === 0 ? (
-            <Text style={styles.emptyText}>No badges earned yet. Keep learning!</Text>
-          ) : (
-            earnedBadges.map((badge) => (
-              <BadgeCard key={badge.id} badge={badge} earned />
-            ))
-          )}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Locked Badges</Text>
-          {lockedBadges.map((badge) => (
-            <BadgeCard key={badge.id} badge={badge} earned={false} />
-          ))}
-        </View>
-
-      </ScrollView>
-    </ScreenContainer>
+        </ScrollView>
+      </ScreenContainer>
+    </GradientBackground>
   );
 }
 
 function MilestonePill({
+  title,
+  value,
+}: {
+  title: string;
+  value: number;
+}) {
+  return (
+    <View style={styles.statPill}>
+      <Text style={styles.statPillTitle}>{title}</Text>
+      <Text style={styles.statPillValue}>{value}</Text>
+    </View>
+  );
+}
+
+function MilestoneGroupPill({
   title,
   badges,
   earned,
@@ -127,33 +218,55 @@ function MilestonePill({
 }) {
   const completed = badges.filter((badge) => earned.includes(badge.id)).length;
   return (
-    <View style={styles.milestonePill}>
-      <Text style={styles.milestoneTitle}>{title}</Text>
-      <Text style={styles.milestoneCount}>
+    <View style={styles.groupPill}>
+      <Text style={styles.groupPillTitle}>{title}</Text>
+      <Text style={styles.groupPillValue}>
         {completed}/{badges.length}
       </Text>
     </View>
   );
 }
 
-function BadgeCard({ badge, earned }: { badge: BadgeDefinition; earned: boolean }) {
+function BadgeRow({ badge, earned }: { badge: BadgeDefinition; earned: boolean }) {
   return (
-    <View style={[styles.badgeCard, earned ? styles.badgeEarned : styles.badgeLocked]}>
-      <Text style={styles.emoji}>{earned ? badge.icon : "🔒"}</Text>
+    <View style={styles.badgeRow}>
+      <View style={styles.badgeIconWrap}>
+        <Text style={styles.emoji}>{earned ? badge.icon : "🔒"}</Text>
+      </View>
       <View style={styles.textWrap}>
         <Text style={styles.rowTitle}>{badge.title}</Text>
         <Text style={styles.rowText}>{badge.description}</Text>
-        <Text style={styles.statusText}>{earned ? "Earned" : "Not earned yet"}</Text>
       </View>
+      <Text style={[styles.statusText, earned ? styles.statusEarned : styles.statusLocked]}>
+        {earned ? "Earned" : "Locked"}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    gap: 16,
-    paddingBottom: 24,
+  screenContent: {
+    flex: 1,
+    backgroundColor: "transparent",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 40,
+  },
+  stack: {
+    paddingHorizontal: Spacing.screenPadding,
+    paddingTop: 16,
+    gap: 14,
+  },
+  cardOuter: {
+    marginBottom: 0,
+  },
+  cardInnerFlush: {
+    padding: 16,
+  },
+  cardInnerTight: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
   },
   centered: {
     flex: 1,
@@ -161,106 +274,145 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    fontSize: 28,
-    fontWeight: "700",
+    ...Typography.sectionTitle,
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: fontWeight.emphasis,
+    color: asl.text.primary,
   },
-  heroCard: {
-    padding: 20,
-    borderRadius: 16,
-    backgroundColor: "#F2F5F7",
+  heroMetaRow: {
+    flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    marginTop: 8,
+    gap: 8,
   },
   heroEmoji: {
-    fontSize: 42,
-  },
-  heroTitle: {
-    fontSize: 19,
-    fontWeight: "700",
+    fontSize: 24,
   },
   helper: {
     fontSize: 15,
-    color: "#374151",
+    color: asl.text.secondary,
   },
   metaText: {
     marginTop: 4,
     fontSize: 13,
-    color: "#6B7280",
-    fontWeight: "600",
+    color: asl.text.muted,
+    fontWeight: fontWeight.medium,
   },
-  miniSection: {
-    gap: 10,
-  },
-  milestoneGrid: {
+  statsGrid: {
     flexDirection: "row",
+    marginTop: 12,
     gap: 8,
   },
-  milestonePill: {
+  statPill: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: asl.glass.bg,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#D8E1E8",
+    borderColor: asl.glass.border,
     paddingVertical: 10,
     alignItems: "center",
     gap: 2,
   },
-  milestoneTitle: {
+  statPillTitle: {
     fontSize: 13,
     fontWeight: "700",
-    color: "#334155",
+    color: asl.text.secondary,
   },
-  milestoneCount: {
+  statPillValue: {
     fontSize: 13,
-    color: "#0F766E",
-    fontWeight: "700",
+    color: asl.accentCyan,
+    fontWeight: fontWeight.emphasis,
   },
-  section: {
-    gap: 10,
+  sectionKicker: {
+    ...Typography.caption,
+    color: asl.text.muted,
+    fontWeight: fontWeight.strong,
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    marginBottom: 10,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
+  milestoneGroupRow: {
+    flexDirection: "row",
+    gap: 8,
   },
-  badgeCard: {
+  groupPill: {
+    flex: 1,
+    backgroundColor: "rgba(34, 211, 238, 0.08)",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: asl.accentCyan,
+    paddingVertical: 10,
+    alignItems: "center",
+    gap: 2,
+  },
+  groupPillTitle: {
+    fontSize: 13,
+    fontWeight: fontWeight.strong,
+    color: asl.text.secondary,
+  },
+  groupPillValue: {
+    fontSize: 13,
+    color: asl.accentCyan,
+    fontWeight: fontWeight.emphasis,
+  },
+  badgeRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    borderRadius: 14,
-    borderWidth: 1,
-    padding: 14,
+    minHeight: 56,
+    paddingVertical: 10,
+    gap: 12,
   },
-  badgeEarned: {
-    backgroundColor: "#EAF8F6",
-    borderColor: "#43B3A8",
-  },
-  badgeLocked: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8E1E8",
+  badgeIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "rgba(34, 211, 238, 0.12)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   textWrap: {
     flex: 1,
+    minWidth: 0,
   },
   emoji: {
-    fontSize: 30,
+    fontSize: 22,
   },
   rowTitle: {
+    ...Typography.body,
     fontSize: 16,
-    fontWeight: "700",
+    lineHeight: 22,
+    fontWeight: fontWeight.medium,
+    color: asl.text.primary,
   },
   rowText: {
-    fontSize: 14,
-    color: "#4B5563",
+    ...Typography.caption,
+    marginTop: 2,
+    fontSize: 13,
+    lineHeight: 18,
+    color: asl.text.muted,
   },
   emptyText: {
+    ...Typography.caption,
     fontSize: 14,
-    color: "#6B7280",
+    color: asl.text.secondary,
+    paddingBottom: 6,
   },
   statusText: {
-    marginTop: 4,
     fontSize: 12,
-    color: "#51606D",
-    fontWeight: "600",
+    fontWeight: fontWeight.strong,
+  },
+  statusEarned: {
+    color: asl.accentCyan,
+  },
+  statusLocked: {
+    color: asl.text.muted,
+  },
+  rowDivider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: asl.glass.border,
+    marginLeft: 52,
   },
 });
 
