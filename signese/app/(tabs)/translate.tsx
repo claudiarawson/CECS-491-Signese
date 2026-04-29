@@ -98,7 +98,9 @@ export default function TranslateScreen() {
   } = useTranslateCamera();
   const sequenceRef = useRef(0);
   const cameraRef = useRef<CameraView | null>(null);
-  const recordingPromiseRef = useRef<Promise<{ uri: string } | undefined> | null>(null);
+  const recordingPromiseRef = useRef<
+    Promise<{ result?: { uri: string }; error?: unknown }> | null
+  >(null);
 
   const shortClipService = useMemo<ShortClipInferenceService>(() => {
     return createShortClipInferenceService(RUNTIME_V0_LABELS);
@@ -174,11 +176,14 @@ export default function TranslateScreen() {
             setInferenceError("Video recording is not available on this device.");
             setIsRecordingClip(false);
           } else {
-            recordingPromiseRef.current = recorder.recordAsync({
-              maxDuration: 6,
-              quality: "480p",
-              mute: true,
-            });
+            recordingPromiseRef.current = recorder
+              .recordAsync({
+                maxDuration: 6,
+                quality: "480p",
+                mute: true,
+              })
+              .then((result: { uri: string } | undefined) => ({ result }))
+              .catch((error: unknown) => ({ error }));
           }
         }
       }
@@ -218,18 +223,29 @@ export default function TranslateScreen() {
           recorder.stopRecording();
         }
 
-        const recordingResult = recordingPromiseRef.current
-          ? await recordingPromiseRef.current
-          : undefined;
+        const recordingOutcome = recordingPromiseRef.current
+          ? await Promise.race([
+              recordingPromiseRef.current,
+              new Promise<{ result?: { uri: string }; error?: unknown }>((resolve) => {
+                setTimeout(() => resolve({ error: new Error("Recording timed out.") }), 8000);
+              }),
+            ])
+          : { error: new Error("No recording was started.") };
         recordingPromiseRef.current = null;
 
-        if (!recordingResult?.uri) {
+        if (recordingOutcome?.error) {
+          throw recordingOutcome.error instanceof Error
+            ? recordingOutcome.error
+            : new Error("An error occurred while recording a video.");
+        }
+
+        if (!recordingOutcome?.result?.uri) {
           throw new Error("No recorded clip was captured.");
         }
 
         response = await shortClipService.inferRecordedClip({
           sequence: sequenceRef.current,
-          clipUri: recordingResult.uri,
+          clipUri: recordingOutcome.result.uri,
           startMs: 0,
           endMs: clipDurationMs,
         });
@@ -308,7 +324,8 @@ export default function TranslateScreen() {
       setInferenceError(message);
     } finally {
       setIsInferring(false);
-      deactivateCamera();
+      // Keep preview live after each inference so the camera feed doesn't appear frozen.
+      // Users can still manually close preview using the camera toggle button.
     }
   };
 
