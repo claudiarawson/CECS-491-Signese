@@ -1,8 +1,30 @@
 import React, { useState, useMemo } from "react";
-// ...other imports...
+import { View, Text } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
+import { lessonColors } from "@/src/theme";
+import {
+  LessonHeader,
+  LessonProgressBar,
+  SignLessonCard,
+  PrimaryActionButton,
+  TypingAnswerInput,
+} from "@/src/components/lesson-index";
+import {
+  getSignByOrder,
+  getNextSign,
+  calculateProgress,
+} from "../../utils/lessonHelpers";
+import { validateTypedAnswer } from "../../utils/answerValidation";
+import { LessonType } from "@/src/data/lessons";
 
 export function TypeAnswerScreen() {
-  // ...existing code...
+  const params = useLocalSearchParams<{ lessonId?: string; order?: string; score?: string }>();
+  const lessonId = (params.lessonId ?? "alphabet") as LessonType;
+  const order = Number(params.order ?? "1");
+  const score = Number(params.score ?? "0");
+
+  const handleBackToLearn = () => router.replace("/learn");
   const sign = getSignByOrder(lessonId, order);
   const nextSign = getNextSign(lessonId, order);
   const progress = calculateProgress(lessonId, order, "type");
@@ -31,9 +53,9 @@ export function TypeAnswerScreen() {
   if (!sign) {
     return (
       <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-        <ScreenHeader title={lessonId === "numbers" ? "Type Number" : "Type Answer"} showBackButton />
-        <View style={styles.emptyWrap}>
-          <Text style={styles.emptyText}>Could not find this sign.</Text>
+        <ScreenHeader title={lessonId === "numbers" ? "Type Number" : "Type Answer"} showBackButton onBackPress={handleBackToLearn} />
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <Text style={{ color: "#888", fontSize: 16 }}>Could not find this sign.</Text>
         </View>
       </ScreenContainer>
     );
@@ -41,26 +63,37 @@ export function TypeAnswerScreen() {
 
   const handleSubmitOrContinue = () => {
     if (!submitted) {
-      const correct = isTypedAnswerCorrect(value, sign.acceptedAnswers);
+      const correct = validateTypedAnswer(value, sign.acceptedAnswers);
       setIsCorrect(correct);
       setSubmitted(true);
       return;
     }
-
     const updatedScore = score + (isCorrect ? 1 : 0);
-    // ...navigation or next logic here...
+    if (nextSign) {
+      router.replace({
+        pathname: "/learn/type-answer",
+        params: {
+          lessonId,
+          order: String(order + 1),
+          score: String(updatedScore),
+        },
+      } as any);
+    } else {
+      router.replace({
+        pathname: "/learn/lesson-complete",
+        params: { lessonId, score: String(updatedScore) },
+      } as any);
+    }
   };
 
   return (
     <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-      <ScreenHeader title={lessonId === "numbers" ? "Type Number" : "Type Answer"} showBackButton />
-      <View style={styles.content}>
-        <LessonHeader title={lessonId === "numbers" ? "Type the number" : "Type the meaning"} />
+      <ScreenHeader title={lessonId === "numbers" ? "Type Number" : "Type Answer"} showBackButton onBackPress={handleBackToLearn} />
+      <View style={{ flex: 1 }}>
+        <LessonHeader title={sign.label} subtitle={lessonId === "numbers" ? "Type the number you see" : "Type the meaning"} />
         <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
-
         <SignLessonCard gif={sign.gif} instruction={lessonId === "numbers" ? "Type what this number is." : "Type what this sign means."} />
-
-        <View style={styles.inputWrap}>
+        <View style={{ marginVertical: 16 }}>
           <TypingAnswerInput
             value={value}
             onChangeText={setValue}
@@ -70,14 +103,12 @@ export function TypeAnswerScreen() {
             autoCorrect={false}
           />
         </View>
-
         {submitted ? (
-          <Text style={[styles.feedback, isCorrect ? styles.correct : styles.incorrect]}>{feedback}</Text>
+          <Text style={{ textAlign: "center", color: isCorrect ? "green" : "red", fontSize: 16, marginBottom: 8 }}>{feedback}</Text>
         ) : null}
-
-        <View style={styles.footer}>
+        <View style={{ marginTop: 16 }}>
           <PrimaryActionButton
-            label={submitted ? "Continue" : "Submit"}
+            label={submitted ? (nextSign ? "Continue" : "Finish") : "Submit"}
             onPress={handleSubmitOrContinue}
             disabled={!value && !submitted}
           />
