@@ -1,6 +1,17 @@
 import { ImageSourcePropType } from "react-native";
 
-export type LessonType = "alphabet" | "numbers" | "greetings";
+export type LessonType =
+  | "alphabet"
+  | "numbers"
+  | "greetings"
+  | "numbers-1-5"
+  | "numbers-6-10"
+  | "alphabet-a-d"
+  | "alphabet-e-h"
+  | "alphabet-i-m"
+  | "alphabet-n-r"
+  | "alphabet-s-v"
+  | "alphabet-w-z";
 
 export type LessonSign = {
   id: string;

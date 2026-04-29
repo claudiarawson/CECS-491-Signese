@@ -1,15 +1,20 @@
 import { LESSONS_BY_TYPE, LessonSign } from "@/src/data/lessons";
 import { validateTypedAnswer } from "./answerValidation";
 
+export function getLessonSigns(lessonType: string): LessonSign[] {
   const lesson = LESSONS_BY_TYPE[lessonType];
   if (!lesson) return [];
   return lesson.signs.slice().sort((a, b) => a.order - b.order);
 }
 
+export function getSignByOrder(
+  lessonType: string,
+  order: number
+): LessonSign | undefined {
   return getLessonSigns(lessonType).find((sign) => sign.order === order);
 }
 
-export function getNextSign(lessonType: LessonType, currentOrder: number): LessonSign | undefined {
+export function getNextSign(lessonType: string, currentOrder: number): LessonSign | undefined {
   return getSignByOrder(lessonType, currentOrder + 1);
 }
 
