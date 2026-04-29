@@ -87,19 +87,19 @@ export const colors = {
 } as const;
 
 /**
- * Lesson flow color tokens.
- * These are used by the new Learn lesson screens/components.
+ * Lesson flow color tokens (dark / glass ASL shell).
+ * Screens use AppShell gradients; surfaces are frosted glass over the gradient.
  */
 export const lessonColors = {
-  background: "#F5F6F8",
-  surface: "#FFFFFF",
-  primaryButton: "#58C8B8",
-  answerButton: "#DDF5F1",
-  textPrimary: "#1F2937",
-  textSecondary: "#4B5563",
-  progressBackground: "#E9EEF2",
-  progressFill: "#58C8B8",
-  success: "#27AE60",
-  error: "#E35D6A",
-  star: "#F4B942",
+  background: "transparent",
+  surface: "rgba(255,255,255,0.08)",
+  primaryButton: "#EC4899",
+  answerButton: "rgba(255,255,255,0.1)",
+  textPrimary: "#FFFFFF",
+  textSecondary: "rgba(255,255,255,0.72)",
+  progressBackground: "rgba(255,255,255,0.14)",
+  progressFill: "#22D3EE",
+  success: "#4ADE80",
+  error: "#FCA5A5",
+  star: "#FBBF24",
 } as const;

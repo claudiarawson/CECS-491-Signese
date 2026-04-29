@@ -7,15 +7,19 @@ type Props = {
   icon: string;
   value: string | number;
   label: string;
-  accent?: "pink" | "cyan" | "warm";
+  accent?: "pink" | "cyan" | "warm" | "glass";
   style?: ViewStyle;
   valueStyle?: TextStyle;
 };
 
 const accentMap = {
-  pink: "rgba(244, 114, 182, 0.2)",
-  cyan: "rgba(56, 189, 248, 0.2)",
-  warm: "rgba(251, 191, 36, 0.2)",
+  /** Rose glass fill (lifetime stars, highlights) */
+  pink: "rgba(244, 114, 182, 0.16)",
+  cyan: "rgba(56, 189, 248, 0.16)",
+  /** Streak / heat */
+  warm: "rgba(251, 191, 36, 0.16)",
+  /** Neutral frost—matches primary glass surfaces */
+  glass: "rgba(255,255,255,0.08)",
 } as const;
 
 export function StatCard({ icon, value, label, accent = "pink", style, valueStyle }: Props) {

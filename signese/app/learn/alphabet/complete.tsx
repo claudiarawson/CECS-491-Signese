@@ -1,31 +1,21 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  useWindowDimensions,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, Pressable, useWindowDimensions, ScrollView } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
-import {
-  ScreenContainer,
-  HeaderActionButton,
-  HeaderAvatarButton,
-} from "@/src/components/layout";
-import {
-  getDeviceDensity,
-  moderateScale,
-} from "@/src/theme";
-import { useAccessibility } from "@/src/contexts/AccessibilityContext";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { getProfileIconById } from "@/src/features/account/types";
+import { AppShell, LearnFlowHeader } from "@/src/components/asl";
+import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
+import { asl } from "@/src/theme/aslConnectTheme";
 import {
   completeLessonOnce,
   isLessonUnlocked,
   type LessonId,
 } from "@/src/features/learn/utils/lessonProgress";
+import {
+  fontFamily,
+  getDeviceDensity,
+  moderateScale,
+  Spacing,
+} from "@/src/theme";
 
 const CURRENT_LESSON_ID: LessonId = "alphabet";
 const CURRENT_LESSON_TITLE = "Alphabet";
@@ -36,10 +26,8 @@ const STARS_EARNED = 3;
 export default function AlphabetCompleteScreen() {
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const { textScale } = useAccessibility();
-  const { profile } = useAuthUser();
-  const headerProfileIcon = getProfileIconById(profile?.avatar);
-  const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
+  const ms = useMemo(() => (v: number) => moderateScale(v) * density, [density]);
+  const styles = useMemo(() => createStyles(ms), [ms]);
 
   const [balanceStars, setBalanceStars] = useState(0);
   const [lifetimeEarned, setLifetimeEarned] = useState(0);
@@ -70,53 +58,49 @@ export default function AlphabetCompleteScreen() {
     };
   }, []);
 
+  const headerRight = (
+    <>
+      <Pressable onPress={() => router.push("/(tabs)/settings" as any)} hitSlop={8} style={styles.headerIcon}>
+        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+      </Pressable>
+      <Pressable onPress={() => router.push("/(tabs)/account")} hitSlop={8} style={styles.headerIcon}>
+        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+      </Pressable>
+    </>
+  );
+
   return (
-    <ScreenContainer backgroundColor="#DCE8F3">
-      <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.replace("/(tabs)/learn")}>
-          <MaterialIcons name="chevron-left" size={32} color="#FFFFFF" />
-        </Pressable>
-
-        <Text style={styles.headerTitle}>{CURRENT_LESSON_TITLE}</Text>
-
-        <View style={styles.headerRight}>
-          <HeaderActionButton
-            iconName="settings"
-            onPress={() => router.push("/(tabs)/settings" as any)}
-          />
-          <HeaderAvatarButton
-            avatar={headerProfileIcon.emoji}
-            onPress={() => router.push("/(tabs)/account")}
-          />
-        </View>
-      </View>
-
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={styles.completeText}>Lesson Complete!</Text>
+    <AppShell
+      scroll={false}
+      header={
+        <LearnFlowHeader
+          title={CURRENT_LESSON_TITLE}
+          onBackPress={() => router.replace("/(tabs)/learn")}
+          rightExtra={headerRight}
+        />
+      }
+    >
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <Text style={styles.completeText}>Lesson complete!</Text>
 
         <Text style={styles.starsRow}>⭐ ⭐ ⭐</Text>
 
         <View style={styles.starsCard}>
           <Text style={styles.bigStarsNumber}>{STARS_EARNED}</Text>
           <Text style={styles.starsLabel}>
-            {alreadyCompleted ? "Stars Already Earned" : "Stars Earned"}
+            {alreadyCompleted ? "Stars already earned" : "Stars earned"}
           </Text>
 
           <Text style={styles.totalStarsText}>
-            {loading
-              ? "…"
-              : `Total earned: ${lifetimeEarned} · Available: ${balanceStars}`}
+            {loading ? "…" : `Total earned: ${lifetimeEarned} · Available: ${balanceStars}`}
           </Text>
         </View>
 
         <View style={styles.unlockCard}>
-          <Text style={styles.unlockTitle}>Next Lesson: {NEXT_LESSON_TITLE}</Text>
+          <Text style={styles.unlockTitle}>Next lesson: {NEXT_LESSON_TITLE}</Text>
 
           {loading ? (
-            <Text style={styles.unlockSubtitle}>Checking unlock status...</Text>
+            <Text style={styles.unlockSubtitle}>Checking unlock status…</Text>
           ) : nextLessonUnlocked ? (
             <Text style={styles.unlockSuccess}>Unlocked!</Text>
           ) : (
@@ -124,142 +108,100 @@ export default function AlphabetCompleteScreen() {
           )}
         </View>
 
-        <Pressable
-          style={styles.continueButton}
-          onPress={() => router.replace("/(tabs)/learn")}
-        >
-          <Text style={styles.continueText}>Continue</Text>
-        </Pressable>
+        <PrimaryActionButton label="Continue" onPress={() => router.replace("/(tabs)/learn")} />
       </ScrollView>
-    </ScreenContainer>
+    </AppShell>
   );
 }
 
-const createStyles = (density: number, textScale: number) => {
-  const ms = (value: number) => moderateScale(value) * density;
-  const ts = (value: number) => ms(value) * textScale;
-
-  return StyleSheet.create({
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: ms(20),
-      paddingTop: ms(8),
-      paddingBottom: ms(10),
-      backgroundColor: "#FFFFFF",
+const createStyles = (ms: (n: number) => number) =>
+  StyleSheet.create({
+    headerIcon: {
+      padding: ms(4),
     },
-    backButton: {
-      width: ms(56),
-      height: ms(56),
-      borderRadius: ms(28),
-      backgroundColor: "#56BDB4",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    headerTitle: {
+    scroll: {
       flex: 1,
-      marginLeft: ms(12),
-      fontSize: ts(22),
-      lineHeight: ts(28),
-      fontWeight: "800",
-      color: "#111111",
-    },
-    headerRight: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: ms(8),
+      minHeight: 0,
     },
     scrollContent: {
       alignItems: "center",
-      paddingHorizontal: ms(28),
-      paddingTop: ms(60),
-      paddingBottom: ms(60),
+      paddingHorizontal: Spacing.screenPadding,
+      paddingTop: ms(32),
+      paddingBottom: ms(56),
+      gap: ms(8),
     },
     completeText: {
-      fontSize: ts(34),
-      lineHeight: ts(42),
-      fontWeight: "700",
-      color: "#5B5B5B",
+      fontSize: ms(28),
+      fontFamily: fontFamily.heading,
+      color: asl.text.primary,
       textAlign: "center",
     },
     starsRow: {
-      marginTop: ms(28),
-      fontSize: ts(42),
-      lineHeight: ts(50),
+      marginTop: ms(18),
+      fontSize: ms(36),
+      lineHeight: ms(42),
     },
     starsCard: {
-      marginTop: ms(40),
+      marginTop: ms(24),
       width: "100%",
-      backgroundColor: "#FFFFFF",
-      borderRadius: ms(32),
-      paddingVertical: ms(28),
+      backgroundColor: asl.glass.bg,
+      borderRadius: ms(26),
+      borderWidth: StyleSheet.hairlineWidth + 1,
+      borderColor: asl.glass.border,
+      paddingVertical: ms(26),
       alignItems: "center",
+      ...asl.shadow.card,
     },
     bigStarsNumber: {
-      fontSize: ts(44),
-      lineHeight: ts(50),
-      fontWeight: "800",
-      color: "#F2C318",
+      fontSize: ms(44),
+      lineHeight: ms(52),
+      fontFamily: fontFamily.heading,
+      color: "#FBBF24",
     },
     starsLabel: {
       marginTop: ms(8),
-      fontSize: ts(24),
-      lineHeight: ts(30),
-      color: "#5B5B5B",
-      fontWeight: "600",
+      fontSize: ms(20),
+      fontFamily: fontFamily.medium,
+      color: asl.text.secondary,
     },
     totalStarsText: {
-      marginTop: ms(14),
-      fontSize: ts(18),
-      lineHeight: ts(24),
-      color: "#64748B",
+      marginTop: ms(12),
+      fontSize: ms(15),
+      lineHeight: ms(21),
+      color: asl.text.muted,
+      fontFamily: fontFamily.body,
     },
     unlockCard: {
-      marginTop: ms(24),
+      marginTop: ms(20),
       width: "100%",
-      backgroundColor: "#FFFFFF",
-      borderRadius: ms(28),
+      backgroundColor: asl.glass.strong,
+      borderRadius: ms(22),
+      borderWidth: 1,
+      borderColor: asl.glass.border,
       paddingVertical: ms(22),
-      paddingHorizontal: ms(18),
+      paddingHorizontal: ms(16),
       alignItems: "center",
     },
     unlockTitle: {
-      fontSize: ts(20),
-      lineHeight: ts(26),
-      fontWeight: "700",
-      color: "#111111",
+      fontSize: ms(18),
+      lineHeight: ms(24),
+      fontFamily: fontFamily.medium,
+      color: asl.text.primary,
       textAlign: "center",
     },
     unlockSubtitle: {
       marginTop: ms(8),
-      fontSize: ts(17),
-      lineHeight: ts(23),
-      color: "#64748B",
+      fontSize: ms(15),
+      lineHeight: ms(21),
+      color: asl.text.muted,
       textAlign: "center",
     },
     unlockSuccess: {
       marginTop: ms(8),
-      fontSize: ts(18),
-      lineHeight: ts(24),
-      color: "#15803D",
-      fontWeight: "700",
+      fontSize: ms(16),
+      lineHeight: ms(22),
+      color: "#4ADE80",
+      fontFamily: fontFamily.medium,
       textAlign: "center",
     },
-    continueButton: {
-      marginTop: ms(50),
-      width: "85%",
-      minHeight: ms(72),
-      borderRadius: ms(30),
-      backgroundColor: "#56BDB4",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    continueText: {
-      color: "#4B5563",
-      fontSize: ts(28),
-      lineHeight: ts(34),
-      fontWeight: "700",
-    },
   });
-};

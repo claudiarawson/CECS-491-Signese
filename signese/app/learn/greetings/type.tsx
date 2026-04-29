@@ -8,23 +8,23 @@ import {
   useWindowDimensions,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from "react-native";
 import { Image } from "expo-image";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useLocalSearchParams } from "expo-router";
+import { AppShell, LearnFlowHeader } from "@/src/components/asl";
+import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { lessonColors } from "@/src/theme/colors";
 import {
-  ScreenContainer,
-  HeaderActionButton,
-  HeaderAvatarButton,
-} from "@/src/components/layout";
-import { getDeviceDensity, moderateScale } from "@/src/theme";
-import { useAccessibility } from "@/src/contexts/AccessibilityContext";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { getProfileIconById } from "@/src/features/account/types";
+  fontFamily,
+  getDeviceDensity,
+  moderateScale,
+  Spacing,
+} from "@/src/theme";
 import { GREETINGS_LEARN_ITEMS } from "@/src/features/learn/data/greetings";
 
-// Normalize: trim, lowercase, strip all non-letter characters
-// Matches "Whats your name", "what's your name?", "WHATS YOUR NAME" etc.
 function normalize(input: string): string {
   return input.trim().toLowerCase().replace(/[^a-z]/g, "");
 }
@@ -41,10 +41,8 @@ function shuffleArray<T>(arr: T[]): T[] {
 export default function GreetingsTypeScreen() {
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const { textScale } = useAccessibility();
-  const { profile } = useAuthUser();
-  const headerProfileIcon = getProfileIconById(profile?.avatar);
-  const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
+  const ms = useMemo(() => (v: number) => moderateScale(v) * density, [density]);
+  const styles = useMemo(() => createStyles(ms), [ms]);
 
   const params = useLocalSearchParams<{ matchScore?: string }>();
   const matchScore = parseInt(params.matchScore ?? "0", 10);
@@ -94,7 +92,6 @@ export default function GreetingsTypeScreen() {
       return;
     }
 
-    // All done — go to complete
     router.push({
       pathname: "/learn/greetings/complete" as any,
       params: { totalCorrect: String(matchScore + typeCorrect + (isCorrect ? 1 : 0)) },
@@ -103,188 +100,153 @@ export default function GreetingsTypeScreen() {
 
   const isLast = currentIndex === total - 1;
 
+  const headerRight = (
+    <>
+      <Pressable onPress={() => router.push("/(tabs)/settings" as any)} hitSlop={8} style={styles.headerIcon}>
+        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+      </Pressable>
+      <Pressable onPress={() => router.push("/(tabs)/account")} hitSlop={8} style={styles.headerIcon}>
+        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+      </Pressable>
+    </>
+  );
+
   return (
-    <ScreenContainer backgroundColor="#EEF3F1">
-      {/* Header */}
-      <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <MaterialIcons name="chevron-left" size={28} color="#FFFFFF" />
-        </Pressable>
-        <Text style={styles.headerTitle}>Greetings</Text>
-        <View style={styles.headerRight}>
-          <HeaderActionButton
-            iconName="settings"
-            onPress={() => router.push("/(tabs)/settings" as any)}
-          />
-          <HeaderAvatarButton
-            avatar={headerProfileIcon.emoji}
-            onPress={() => router.push("/(tabs)/account" as any)}
-          />
-        </View>
-      </View>
-
-      {/* Progress strip */}
-      <View style={styles.progressStrip}>
-        <View style={styles.progressLabels}>
-          <Text style={styles.progressLabel}>Type</Text>
-          <Text style={styles.progressLabel}>{currentIndex + 1}/{total}</Text>
-        </View>
-        <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: `${progress}%` }]} />
-        </View>
-      </View>
-
+    <AppShell
+      scroll={false}
+      header={<LearnFlowHeader title="Greetings" onBackPress={() => router.back()} rightExtra={headerRight} />}
+    >
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={styles.kb}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={0}
       >
-        {/* Card */}
-        <View style={styles.card}>
-          <View style={styles.gifArea}>
-            <Image
-              source={currentItem.image}
-              style={styles.gifImage}
-              contentFit="cover"
-              autoplay
-            />
+        <View style={styles.shell}>
+          <View style={styles.progressStrip}>
+            <View style={styles.progressLabels}>
+              <Text style={styles.progressLabel}>Type</Text>
+              <Text style={styles.progressLabel}>
+                {currentIndex + 1}/{total}
+              </Text>
+            </View>
+            <View style={styles.progressTrack}>
+              <View style={[styles.progressFill, { width: `${progress}%` }]} />
+            </View>
           </View>
-          <Text style={styles.subtitle}>What does this sign mean?</Text>
+
+          <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollInner} showsVerticalScrollIndicator={false}>
+            <View style={styles.card}>
+              <View style={styles.gifArea}>
+                <Image source={currentItem.image} style={styles.gifImage} contentFit="cover" autoplay />
+              </View>
+              <Text style={styles.subtitle}>What does this sign mean?</Text>
+            </View>
+
+            <TextInput
+              value={inputValue}
+              onChangeText={(text) => {
+                setInputValue(text);
+                if (answered) {
+                  setFeedback("");
+                  setIsCorrect(null);
+                  setAnswered(false);
+                }
+              }}
+              placeholder="Type your answer"
+              placeholderTextColor={asl.text.muted}
+              autoCapitalize="none"
+              autoCorrect={false}
+              editable={!answered}
+              style={[
+                styles.answerInput,
+                isCorrect === true && styles.answerInputCorrect,
+                isCorrect === false && answered && styles.answerInputWrong,
+              ]}
+              onSubmitEditing={!answered ? handleCheckAnswer : undefined}
+              returnKeyType="done"
+            />
+
+            {!!feedback ? (
+              <Text
+                style={[styles.feedbackText, isCorrect === true ? styles.correctText : styles.incorrectText]}
+              >
+                {feedback}
+              </Text>
+            ) : null}
+
+            {!answered ? (
+              <PrimaryActionButton label="Check answer" onPress={handleCheckAnswer} disabled={!inputValue.trim()} />
+            ) : (
+              <PrimaryActionButton label={isLast ? "Finish" : "Next"} onPress={handleNext} />
+            )}
+          </ScrollView>
         </View>
-
-        {/* Input */}
-        <TextInput
-          value={inputValue}
-          onChangeText={(text) => {
-            setInputValue(text);
-            if (answered) {
-              setFeedback("");
-              setIsCorrect(null);
-              setAnswered(false);
-            }
-          }}
-          placeholder="Type your answer"
-          placeholderTextColor="#7B8794"
-          autoCapitalize="none"
-          autoCorrect={false}
-          editable={!answered}
-          style={[
-            styles.answerInput,
-            isCorrect === true && styles.answerInputCorrect,
-            isCorrect === false && answered && styles.answerInputWrong,
-          ]}
-          onSubmitEditing={!answered ? handleCheckAnswer : undefined}
-          returnKeyType="done"
-        />
-
-        {/* Feedback */}
-        {!!feedback && (
-          <Text
-            style={[
-              styles.feedbackText,
-              isCorrect ? styles.correctText : styles.incorrectText,
-            ]}
-          >
-            {feedback}
-          </Text>
-        )}
-
-        {/* Button */}
-        {!answered ? (
-          <Pressable
-            style={[styles.actionButton, !inputValue.trim() && styles.actionButtonDisabled]}
-            onPress={handleCheckAnswer}
-            disabled={!inputValue.trim()}
-          >
-            <Text style={styles.actionButtonText}>Check Answer</Text>
-          </Pressable>
-        ) : (
-          <Pressable style={styles.actionButton} onPress={handleNext}>
-            <Text style={styles.actionButtonText}>
-              {isLast ? "Finish" : "Next"}
-            </Text>
-          </Pressable>
-        )}
       </KeyboardAvoidingView>
-    </ScreenContainer>
+    </AppShell>
   );
 }
 
-const createStyles = (density: number, textScale: number) => {
-  const ms = (v: number) => moderateScale(v) * density;
-  const ts = (v: number) => ms(v) * textScale;
-
-  return StyleSheet.create({
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: "#FFFFFF",
-      paddingHorizontal: ms(16),
-      paddingVertical: ms(10),
-      gap: ms(12),
-    },
-    backButton: {
-      width: ms(40),
-      height: ms(40),
-      borderRadius: ms(20),
-      backgroundColor: "#56BDB4",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    headerTitle: {
+const createStyles = (ms: (v: number) => number) =>
+  StyleSheet.create({
+    kb: {
       flex: 1,
-      fontSize: ts(18),
-      fontWeight: "800",
-      color: "#334155",
+      minHeight: 0,
     },
-    headerRight: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: ms(6),
+    shell: {
+      flex: 1,
+      minHeight: 0,
+      paddingHorizontal: Spacing.screenPadding,
+    },
+    headerIcon: {
+      padding: ms(4),
     },
     progressStrip: {
-      backgroundColor: "#EEF3F1",
-      paddingHorizontal: ms(16),
-      paddingTop: ms(6),
+      paddingBottom: ms(12),
+      paddingTop: ms(8),
     },
     progressLabels: {
       flexDirection: "row",
       justifyContent: "space-between",
-      marginBottom: ms(4),
+      marginBottom: ms(10),
     },
     progressLabel: {
-      fontSize: ts(12),
-      fontWeight: "700",
-      color: "#334155",
+      fontSize: ms(12),
+      fontFamily: fontFamily.medium,
+      color: asl.text.secondary,
     },
     progressTrack: {
-      height: ms(8),
+      height: ms(10),
       borderRadius: ms(99),
-      backgroundColor: "#F4B7A0",
+      backgroundColor: lessonColors.progressBackground,
       overflow: "hidden",
-      marginBottom: ms(12),
     },
     progressFill: {
       height: "100%",
       borderRadius: ms(99),
-      backgroundColor: "#56BDB4",
+      backgroundColor: lessonColors.progressFill,
+    },
+    scrollInner: {
+      paddingBottom: ms(32),
+      gap: ms(12),
     },
     card: {
-      marginHorizontal: ms(16),
-      marginBottom: ms(8),
-      backgroundColor: "#FAFAFA",
-      borderRadius: ms(24),
+      marginTop: ms(8),
+      backgroundColor: asl.glass.bg,
+      borderRadius: ms(26),
+      borderWidth: StyleSheet.hairlineWidth + 1,
+      borderColor: asl.glass.border,
       padding: ms(16),
       alignItems: "center",
+      ...asl.shadow.card,
     },
     gifArea: {
       width: "100%",
-      maxWidth: ms(240),
+      maxWidth: ms(260),
       aspectRatio: 1,
       alignSelf: "center",
-      borderRadius: ms(16),
+      borderRadius: ms(18),
       overflow: "hidden",
-      backgroundColor: "#EEF7FA",
+      backgroundColor: "rgba(0,0,0,0.35)",
       marginBottom: ms(12),
     },
     gifImage: {
@@ -292,60 +254,42 @@ const createStyles = (density: number, textScale: number) => {
       height: "100%",
     },
     subtitle: {
-      fontSize: ts(15),
-      fontWeight: "600",
-      color: "#64748B",
+      fontSize: ms(15),
+      fontFamily: fontFamily.medium,
+      color: asl.text.muted,
       textAlign: "center",
     },
     answerInput: {
-      marginHorizontal: ms(28),
       minHeight: ms(52),
-      borderRadius: ms(26),
-      borderWidth: 2,
-      borderColor: "#DCE7E7",
-      backgroundColor: "#F7FAFA",
+      borderRadius: ms(14),
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+      backgroundColor: "rgba(0,0,0,0.25)",
       paddingHorizontal: ms(20),
-      fontSize: ts(16),
-      color: "#334155",
+      fontSize: ms(16),
+      fontFamily: fontFamily.medium,
+      color: asl.text.primary,
     },
     answerInputCorrect: {
-      borderColor: "#56BDB4",
-      backgroundColor: "#E1F5EE",
+      borderColor: lessonColors.success,
+      backgroundColor: "rgba(74,222,128,0.12)",
     },
     answerInputWrong: {
-      borderColor: "#E24B4A",
-      backgroundColor: "#FCEBEB",
+      borderColor: lessonColors.error,
+      backgroundColor: "rgba(252,165,165,0.1)",
     },
     feedbackText: {
-      marginTop: ms(10),
+      marginTop: ms(4),
       textAlign: "center",
-      fontSize: ts(14),
-      fontWeight: "700",
-      marginHorizontal: ms(28),
+      fontSize: ms(14),
+      fontFamily: fontFamily.medium,
+      marginHorizontal: ms(16),
+      lineHeight: ms(20),
     },
     correctText: {
-      color: "#15803D",
+      color: lessonColors.success,
     },
     incorrectText: {
-      color: "#B91C1C",
-    },
-    actionButton: {
-      marginTop: ms(16),
-      marginHorizontal: ms(28),
-      marginBottom: ms(16),
-      height: ms(52),
-      borderRadius: ms(22),
-      backgroundColor: "#56BDB4",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    actionButtonDisabled: {
-      backgroundColor: "#B0D4D1",
-    },
-    actionButtonText: {
-      color: "#FFFFFF",
-      fontSize: ts(16),
-      fontWeight: "700",
+      color: lessonColors.error,
     },
   });
-};

@@ -1,5 +1,6 @@
-import { AppShell } from "@/src/components/asl";
-import { Spacing, getDeviceDensity, moderateScale, Typography } from "@/src/theme";
+import { AppShell, GlassCard, ToggleSwitch } from "@/src/components/asl";
+import { MainTabRail } from "@/src/components/navigation";
+import { Spacing, fontFamily, getDeviceDensity, moderateScale, Typography } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import {
@@ -14,7 +15,7 @@ import {
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
-import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Platform, Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TranslateHistoryScreen() {
@@ -30,13 +31,19 @@ export default function TranslateHistoryScreen() {
     deleteHistoryItem,
     sessionId,
     keepHistoryOnDevice,
+    setKeepHistoryOnDevice,
+    historyPrefsLoaded,
     requestReuseCaption,
   } = useTabTranslationHistory();
 
   const [reportOpen, setReportOpen] = useState(false);
   const [reportContext, setReportContext] = useState<ReportTranslationContext | null>(null);
 
-  const listMaxHeight = Math.max(280, height - insets.bottom - moderateScale(120) * density);
+  const reservedForPrefsAndTab = moderateScale(200) * density;
+  const listMaxHeight = Math.max(
+    220,
+    height - insets.bottom - moderateScale(120) * density - reservedForPrefsAndTab
+  );
 
   const openReportForHistoryItem = useCallback(
     (item: TranslationHistoryItem) => {
@@ -95,20 +102,45 @@ export default function TranslateHistoryScreen() {
 
   return (
     <AppShell scroll={false} header={header} variant="default">
-      <View style={styles.body}>
-        <TranslationHistoryPanel
-          items={translationHistory}
-          onClear={clearHistory}
-          onReuse={handleReuseHistoryItem}
-          onDictionary={handleDictionaryLookup}
-          onDelete={handleDeleteHistoryItem}
-          onReportItem={openReportForHistoryItem}
-          variant="stacked"
-          listMaxHeight={listMaxHeight}
-          textScale={textScale}
-          appearance="dark"
-          keepHistoryOnDevice={keepHistoryOnDevice}
-        />
+      <View style={styles.shellColumn}>
+        <View style={styles.panelSlot}>
+          <TranslationHistoryPanel
+            items={translationHistory}
+            onClear={clearHistory}
+            onReuse={handleReuseHistoryItem}
+            onDictionary={handleDictionaryLookup}
+            onDelete={handleDeleteHistoryItem}
+            onReportItem={openReportForHistoryItem}
+            variant="stacked"
+            listMaxHeight={listMaxHeight}
+            textScale={textScale}
+            appearance="dark"
+            keepHistoryOnDevice={keepHistoryOnDevice}
+          />
+        </View>
+
+        <GlassCard style={styles.historyPrefsCard} contentStyle={styles.historyPrefsInner}>
+          <ToggleSwitch
+            value={keepHistoryOnDevice}
+            onValueChange={setKeepHistoryOnDevice}
+            label="Keep history on device"
+            description="Recent translations stay on this phone."
+          />
+          {!historyPrefsLoaded ? (
+            <Text style={styles.prefsLoadingHint} accessibilityLiveRegion="polite">
+              Loading preference…
+            </Text>
+          ) : null}
+        </GlassCard>
+
+        <View
+          style={[
+            styles.tabRailOuter,
+            { marginBottom: Platform.OS === "ios" ? Math.max(insets.bottom, 10) : Math.max(insets.bottom, 12) },
+          ]}
+        >
+          <MainTabRail />
+        </View>
       </View>
 
       <ReportTranslationModal
@@ -150,10 +182,34 @@ const createStyles = (density: number, textScale: number) => {
     headerSpacer: {
       width: ms(32),
     },
-    body: {
+    shellColumn: {
       flex: 1,
       minHeight: 0,
       paddingHorizontal: Spacing.screenPadding,
+      justifyContent: "flex-start",
+    },
+    panelSlot: {
+      flex: 1,
+      minHeight: 0,
+    },
+    historyPrefsCard: {
+      marginTop: Spacing.sm,
+      width: "100%",
+    },
+    historyPrefsInner: {
+      paddingVertical: Spacing.sm,
+      paddingHorizontal: Spacing.md,
+    },
+    prefsLoadingHint: {
+      ...Typography.caption,
+      color: asl.text.muted,
+      marginTop: ms(8),
+      fontSize: ts(11),
+      fontFamily: fontFamily.body,
+    },
+    tabRailOuter: {
+      marginTop: Spacing.md,
+      paddingHorizontal: ms(2),
     },
   });
 };

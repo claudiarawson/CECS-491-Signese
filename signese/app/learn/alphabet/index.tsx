@@ -1,27 +1,17 @@
 import React, { useMemo, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Image,
-  useWindowDimensions,
-} from "react-native";
+import { View, Text, StyleSheet, Pressable, Image, useWindowDimensions, ScrollView } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
+import { AppShell, LearnFlowHeader } from "@/src/components/asl";
+import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { lessonColors } from "@/src/theme/colors";
 import {
-  ScreenContainer,
-  HeaderActionButton,
-  HeaderAvatarButton,
-} from "@/src/components/layout";
-import {
+  fontFamily,
   getDeviceDensity,
   moderateScale,
-  semanticColors,
+  Spacing,
 } from "@/src/theme";
-import { useAccessibility } from "@/src/contexts/AccessibilityContext";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { getProfileIconById } from "@/src/features/account/types";
 import { ALPHABET_LEARN_ITEMS } from "@/src/features/learn/data/alphabet";
 import { setLessonStepProgress } from "@/src/features/learn/utils/lessonProgress";
 
@@ -29,14 +19,11 @@ export default function AlphabetLearnScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const { textScale } = useAccessibility();
-  const { profile } = useAuthUser();
-  const headerProfileIcon = getProfileIconById(profile?.avatar);
-  const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
+  const ms = useMemo(() => (v: number) => moderateScale(v) * density, [density]);
+  const styles = useMemo(() => createStyles(ms), [ms]);
 
   const currentItem = ALPHABET_LEARN_ITEMS[currentIndex];
   React.useEffect(() => {
-    // Entering the first screen means 0/3 screens completed so far.
     void setLessonStepProgress("alphabet", 0);
   }, []);
 
@@ -49,144 +36,126 @@ export default function AlphabetLearnScreen() {
       return;
     }
 
-    // Only mark screen 1 complete after the final card.
     void setLessonStepProgress("alphabet", 1);
     router.push("/learn/alphabet/type");
   };
 
+  const headerRight = (
+    <>
+      <Pressable
+        onPress={() => router.push("/(tabs)/settings" as any)}
+        hitSlop={8}
+        accessibilityLabel="Open settings"
+        style={styles.headerIcon}
+      >
+        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+      </Pressable>
+      <Pressable
+        onPress={() => router.push("/(tabs)/account")}
+        hitSlop={8}
+        accessibilityLabel="Open profile"
+        style={styles.headerIcon}
+      >
+        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+      </Pressable>
+    </>
+  );
+
   return (
-    <ScreenContainer backgroundColor="#EEF3F1">
-      <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.replace("/(tabs)/learn")}>
-          <MaterialIcons name="chevron-left" size={28} color="#FFFFFF" />
-        </Pressable>
-
-        <Text style={styles.headerTitle}>Alphabet</Text>
-
-        <View style={styles.headerRight}>
-          <HeaderActionButton
-            iconName="settings"
-            onPress={() => router.push("/(tabs)/settings" as any)}
-          />
-          <HeaderAvatarButton
-            avatar={headerProfileIcon.emoji}
-            onPress={() => router.push("/(tabs)/account")}
-          />
-        </View>
-      </View>
-
-      <View style={styles.content}>
-        <View style={styles.progressTopRow}>
-          <Text style={styles.progressLabel}>Learn</Text>
-          <Text style={styles.progressCount}>
-            {currentIndex + 1}/{total}
-          </Text>
-        </View>
-
-        <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: `${progress}%` }]} />
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.imageFrame}>
-            <Image
-              source={currentItem.image}
-              style={styles.lessonImage}
-              resizeMode="contain"
-            />
+    <AppShell
+      scroll={false}
+      header={
+        <LearnFlowHeader
+          title="Alphabet"
+          onBackPress={() => router.replace("/(tabs)/learn")}
+          rightExtra={headerRight}
+        />
+      }
+    >
+      <View style={styles.inner}>
+        <ScrollView contentContainerStyle={styles.scrollInner} showsVerticalScrollIndicator={false}>
+          <View style={styles.progressTopRow}>
+            <Text style={styles.progressLabel}>Learn</Text>
+            <Text style={styles.progressCount}>
+              {currentIndex + 1}/{total}
+            </Text>
           </View>
 
-          <Text style={styles.subtitle}>Watch and learn this sign</Text>
-          <Text style={styles.letterText}>{currentItem.letter}</Text>
-        </View>
+          <View style={styles.progressTrack}>
+            <View style={[styles.progressFill, { width: `${progress}%` }]} />
+          </View>
 
-        <Pressable style={styles.nextButton} onPress={handleNext}>
-          <Text style={styles.nextButtonText}>
-            {currentIndex === total - 1 ? "Finish" : "Next"}
-          </Text>
-        </Pressable>
+          <View style={styles.card}>
+            <View style={styles.imageFrame}>
+              <Image source={currentItem.image} style={styles.lessonImage} resizeMode="contain" />
+            </View>
+
+            <Text style={styles.subtitle}>Watch and learn this sign</Text>
+            <Text style={styles.letterText}>{currentItem.letter}</Text>
+          </View>
+        </ScrollView>
+
+        <View style={styles.footer}>
+          <PrimaryActionButton label={currentIndex === total - 1 ? "Finish" : "Next"} onPress={handleNext} />
+        </View>
       </View>
-    </ScreenContainer>
+    </AppShell>
   );
 }
 
-const createStyles = (density: number, textScale: number) => {
-  const ms = (value: number) => moderateScale(value) * density;
-  const ts = (value: number) => ms(value) * textScale;
-
-  return StyleSheet.create({
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: "#FFFFFF",
-      paddingHorizontal: ms(16),
-      paddingBottom: ms(10),
-      paddingTop: ms(10),
-      gap: ms(12),
+const createStyles = (ms: (n: number) => number) =>
+  StyleSheet.create({
+    headerIcon: {
+      padding: ms(4),
     },
-    backButton: {
-      width: ms(40),
-      height: ms(40),
-      borderRadius: ms(20),
-      backgroundColor: "#56BDB4",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    headerTitle: {
+    inner: {
       flex: 1,
-      fontSize: ts(18),
-      fontWeight: "800",
-      color: "#334155",
+      minHeight: 0,
+      paddingHorizontal: Spacing.screenPadding,
     },
-    headerRight: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: ms(6),
-    },
-    content: {
-      flex: 1,
+    scrollInner: {
+      flexGrow: 1,
       paddingBottom: ms(16),
     },
     progressTopRow: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      paddingHorizontal: ms(16),
-      marginTop: ms(6),
+      marginTop: ms(4),
     },
     progressLabel: {
-      fontSize: ts(12),
-      fontWeight: "700",
-      color: "#334155",
+      fontSize: ms(12),
+      fontFamily: fontFamily.medium,
+      color: asl.text.secondary,
     },
     progressCount: {
-      fontSize: ts(12),
-      fontWeight: "700",
-      color: "#334155",
+      fontSize: ms(12),
+      fontFamily: fontFamily.medium,
+      color: asl.text.secondary,
     },
     progressTrack: {
       height: ms(8),
       borderRadius: ms(99),
-      backgroundColor: "#F4B7A0",
-      marginHorizontal: ms(16),
-      marginTop: ms(6),
+      backgroundColor: lessonColors.progressBackground,
+      marginTop: ms(10),
       overflow: "hidden",
     },
     progressFill: {
       height: "100%",
-      backgroundColor: "#56BDB4",
+      backgroundColor: lessonColors.progressFill,
       borderRadius: ms(99),
     },
     card: {
-      flex: 1,
-      marginTop: ms(14),
-      marginHorizontal: ms(16),
-      backgroundColor: "#FAFAFA",
-      borderRadius: ms(24),
+      marginTop: ms(16),
+      backgroundColor: asl.glass.bg,
+      borderRadius: ms(22),
+      borderWidth: StyleSheet.hairlineWidth + 1,
+      borderColor: asl.glass.border,
       paddingHorizontal: ms(16),
       paddingVertical: ms(16),
       alignItems: "center",
       justifyContent: "center",
+      ...asl.shadow.card,
     },
     lessonImage: {
       width: "100%",
@@ -198,38 +167,29 @@ const createStyles = (density: number, textScale: number) => {
       height: ms(260),
       marginBottom: ms(12),
       borderRadius: ms(18),
-      backgroundColor: "#F7F7F7",
+      backgroundColor: "rgba(0,0,0,0.35)",
       overflow: "hidden",
       alignItems: "center",
       justifyContent: "center",
       padding: ms(8),
     },
     subtitle: {
-      fontSize: ts(13),
-      fontWeight: "600",
-      color: "#64748B",
+      fontSize: ms(13),
+      fontFamily: fontFamily.medium,
+      color: asl.text.muted,
       textAlign: "center",
     },
     letterText: {
-      marginTop: ms(4),
-      fontSize: ts(24),
-      fontWeight: "800",
-      color: semanticColors.text.primary,
+      marginTop: ms(6),
+      fontSize: ms(26),
+      fontFamily: fontFamily.heading,
+      color: asl.text.primary,
       textAlign: "center",
     },
-    nextButton: {
-      marginTop: ms(12),
-      marginHorizontal: ms(16),
-      height: ms(52),
-      borderRadius: ms(22),
-      backgroundColor: "#56BDB4",
+    footer: {
+      flexShrink: 0,
+      paddingBottom: ms(12),
+      paddingTop: ms(8),
       alignItems: "center",
-      justifyContent: "center",
-    },
-    nextButtonText: {
-      color: "#FFFFFF",
-      fontSize: ts(16),
-      fontWeight: "700",
     },
   });
-};

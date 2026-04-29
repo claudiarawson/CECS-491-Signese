@@ -1,6 +1,7 @@
 import { lessonColors, lessonTypography, Radius } from "@/src/theme";
+import { fontFamily } from "@/src/theme";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text } from "react-native";
 
 type MatchingPairCardProps = {
   label: string;
@@ -26,9 +27,7 @@ export function MatchingPairCard({
         pressed && !isMatched && styles.pressed,
       ]}
     >
-      <View>
-        <Text style={styles.label}>{label}</Text>
-      </View>
+      <Text style={styles.label}>{label}</Text>
     </Pressable>
   );
 }
@@ -42,23 +41,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#DFE5EA",
+    borderColor: "rgba(255,255,255,0.14)",
   },
   selected: {
-    borderColor: lessonColors.progressFill,
-    backgroundColor: "#E8F8F5",
+    borderColor: "rgba(34, 211, 238, 0.55)",
+    backgroundColor: "rgba(34, 211, 238, 0.14)",
   },
   matched: {
     borderColor: lessonColors.success,
-    backgroundColor: "#EAF9F0",
-    opacity: 0.86,
+    backgroundColor: "rgba(74, 222, 128, 0.14)",
+    opacity: 0.92,
   },
   pressed: {
-    opacity: 0.9,
+    opacity: 0.92,
   },
   label: {
     ...lessonTypography.body,
     color: lessonColors.textPrimary,
     textAlign: "center",
+    fontFamily: fontFamily.body,
   },
 });

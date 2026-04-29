@@ -1,4 +1,5 @@
 import { lessonColors, lessonTypography } from "@/src/theme";
+import { fontFamily } from "@/src/theme";
 import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
@@ -38,24 +39,24 @@ export function QuizAnswerButton({
 const styles = StyleSheet.create({
   base: {
     width: 138,
-    height: 60,
-    borderRadius: 24,
+    minHeight: 60,
+    borderRadius: 20,
     backgroundColor: lessonColors.answerButton,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "transparent",
+    borderColor: "rgba(255,255,255,0.14)",
   },
   selected: {
-    borderColor: lessonColors.progressFill,
-    backgroundColor: "#CBEFE9",
+    borderColor: "rgba(34, 211, 238, 0.65)",
+    backgroundColor: "rgba(34, 211, 238, 0.15)",
   },
   correct: {
-    backgroundColor: "#DCF6E7",
+    backgroundColor: "rgba(74, 222, 128, 0.2)",
     borderColor: lessonColors.success,
   },
   incorrect: {
-    backgroundColor: "#FBE3E6",
+    backgroundColor: "rgba(248, 113, 113, 0.18)",
     borderColor: lessonColors.error,
   },
   pressed: {
@@ -68,5 +69,6 @@ const styles = StyleSheet.create({
     ...lessonTypography.button,
     color: lessonColors.textPrimary,
     textAlign: "center",
+    fontFamily: fontFamily.medium,
   },
 });

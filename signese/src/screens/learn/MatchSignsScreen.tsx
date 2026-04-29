@@ -5,12 +5,13 @@ import {
   PrimaryActionButton,
 } from "@/src/components/lesson-index";
 import { LessonType } from "@/src/data/lessons";
-import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
-import { lessonColors, lessonSpacing, lessonTypography } from "@/src/theme";
+import { AppShell, LearnFlowHeader } from "@/src/components/asl";
+import { lessonSpacing, Spacing } from "@/src/theme";
+import { lessonColors } from "@/src/theme/colors";
 import { calculateProgress, getLessonSigns } from "../../utils/lessonHelpers";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 type PairMap = Record<string, string>;
 
@@ -83,58 +84,71 @@ export function MatchSignsScreen() {
   };
 
   return (
-    <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-      <ScreenHeader title="Matching Review" showBackButton />
-      <View style={styles.content}>
-        <LessonHeader title="Match signs to labels" subtitle="Tap one sign then one label." />
-        <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
+    <AppShell scroll={false} header={<LearnFlowHeader title="Matching review" />}>
+      <View style={styles.shell}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <LessonHeader title="Match signs to labels" subtitle="Tap one sign then one label." />
+          <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
 
-        <View style={styles.columns}>
-          <View style={styles.column}>
-            {signs.map((sign) => {
-              const matched = Boolean(pairs[sign.id]);
-              return (
+          <View style={styles.columns}>
+            <View style={styles.column}>
+              {signs.map((sign) => {
+                const matched = Boolean(pairs[sign.id]);
+                return (
+                  <MatchingPairCard
+                    key={sign.id}
+                    label={`Sign ${sign.order}`}
+                    isSelected={selectedSignId === sign.id}
+                    isMatched={matched}
+                    onPress={() => onSignPress(sign.id)}
+                  />
+                );
+              })}
+            </View>
+
+            <View style={styles.column}>
+              {shuffledLabels.map((label) => (
                 <MatchingPairCard
-                  key={sign.id}
-                  label={`Sign ${sign.order}`}
-                  isSelected={selectedSignId === sign.id}
-                  isMatched={matched}
-                  onPress={() => onSignPress(sign.id)}
+                  key={label}
+                  label={label}
+                  isSelected={selectedLabel === label}
+                  isMatched={pairedLabels.has(label)}
+                  onPress={() => onLabelPress(label)}
                 />
-              );
-            })}
+              ))}
+            </View>
           </View>
 
-          <View style={styles.column}>
-            {shuffledLabels.map((label) => (
-              <MatchingPairCard
-                key={label}
-                label={label}
-                isSelected={selectedLabel === label}
-                isMatched={pairedLabels.has(label)}
-                onPress={() => onLabelPress(label)}
-              />
-            ))}
-          </View>
-        </View>
-
-        {complete ? (
-          <Text style={[styles.feedback, allCorrect ? styles.correct : styles.incorrect]}>
-            {allCorrect ? "Great matching" : "Some pairs are incorrect. You can still finish."}
-          </Text>
-        ) : null}
+          {complete ? (
+            <Text style={[styles.feedback, allCorrect ? styles.correct : styles.incorrect]}>
+              {allCorrect ? "Great matching" : "Some pairs are incorrect. You can still finish."}
+            </Text>
+          ) : null}
+        </ScrollView>
 
         <View style={styles.footer}>
           <PrimaryActionButton label="Finish lesson" onPress={handleFinish} disabled={!complete} />
         </View>
       </View>
-    </ScreenContainer>
+    </AppShell>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
+  shell: {
     flex: 1,
+    minHeight: 0,
+    paddingHorizontal: Spacing.screenPadding,
+  },
+  scroll: { flex: 1 },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: lessonSpacing.sm,
   },
   columns: {
     flexDirection: "row",
@@ -146,9 +160,11 @@ const styles = StyleSheet.create({
     rowGap: lessonSpacing.sm,
   },
   feedback: {
-    ...lessonTypography.body,
     textAlign: "center",
     marginTop: lessonSpacing.md,
+    fontSize: 16,
+    lineHeight: 22,
+    color: lessonColors.textSecondary,
   },
   correct: {
     color: lessonColors.success,
@@ -157,9 +173,9 @@ const styles = StyleSheet.create({
     color: lessonColors.error,
   },
   footer: {
-    flex: 1,
-    justifyContent: "flex-end",
+    flexShrink: 0,
     alignItems: "center",
     paddingBottom: lessonSpacing.lg,
+    paddingTop: lessonSpacing.sm,
   },
 });

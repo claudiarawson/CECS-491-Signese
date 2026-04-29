@@ -9,9 +9,12 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Video, ResizeMode } from "expo-av";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import type { Sign } from "../features/dictionary/types";
 import { toggleSavedId, isSaved } from "../features/dictionary/storage/saved.local";
 import { resolveVideoUrlFromUiSign } from "../services/dictionary/dictionarySigns.service";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { fontFamily } from "@/src/theme";
 
 interface SignOverlayProps {
   visible: boolean;
@@ -25,7 +28,6 @@ export default function SignOverlay({ visible, sign, onClose }: SignOverlayProps
   const [resolvingVideo, setResolvingVideo] = useState(false);
   const [videoDecodeReady, setVideoDecodeReady] = useState(false);
   const [videoError, setVideoError] = useState<string | null>(null);
-  /** Bumps when the modal closes or a new resolve starts so stale async work cannot leave loading stuck. */
   const resolveGenerationRef = useRef(0);
 
   const signId = sign?.id;
@@ -40,10 +42,6 @@ export default function SignOverlay({ visible, sign, onClose }: SignOverlayProps
     }
   }, [visible, signId]);
 
-  /**
-   * Resolve Storage download URL when opening a sign.
-   * Uses a generation counter so Strict Mode / overlapping requests do not leave `resolvingVideo` stuck true.
-   */
   useEffect(() => {
     if (!visible || !sign) {
       resolveGenerationRef.current += 1;
@@ -107,35 +105,57 @@ export default function SignOverlay({ visible, sign, onClose }: SignOverlayProps
   return (
     <Modal visible={visible} transparent={true} onRequestClose={onClose} animationType="fade">
       <View style={styles.overlay}>
-        <Pressable style={styles.backdropTap} onPress={onClose} />
+        <Pressable style={styles.backdropTap} onPress={onClose} accessibilityLabel="Close sign details" />
         <View style={styles.content}>
-          <Pressable onPress={onClose} style={styles.closeBtn}>
-            <Text style={styles.closeText}>✕</Text>
-          </Pressable>
-
-          <Pressable onPress={handleToggleSave} style={styles.saveStateContainer}>
-            <Text style={styles.saveStateIcon}>{saved ? "★" : "☆"}</Text>
-            <Text style={styles.saveStateText}>{saved ? "Saved" : "Not saved"}</Text>
-          </Pressable>
+          <View style={styles.topBar}>
+            <Pressable
+              onPress={onClose}
+              style={({ pressed }) => [styles.iconCircle, pressed && styles.pressedDim]}
+              accessibilityRole="button"
+              accessibilityLabel="Close"
+            >
+              <MaterialIcons name="close" size={22} color={asl.text.primary} />
+            </Pressable>
+            <Pressable
+              onPress={() => void handleToggleSave()}
+              style={({ pressed }) => [styles.savePill, saved && styles.savePillOn, pressed && styles.pressedDim]}
+              accessibilityRole="button"
+              accessibilityLabel={saved ? "Remove from saved" : "Save sign"}
+            >
+              <Text style={styles.savePillIcon}>{saved ? "★" : "☆"}</Text>
+              <Text style={styles.savePillText}>{saved ? "Saved" : "Save"}</Text>
+            </Pressable>
+          </View>
 
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             <Text style={styles.word}>{sign.word}</Text>
 
             {sign.status && sign.status !== "reviewed" ? (
-              <Text style={styles.statusBadge}>{sign.status === "draft" ? "Draft metadata" : sign.status}</Text>
+              <View style={styles.statusBadgeWrap}>
+                <Text style={styles.statusBadgeText}>
+                  {sign.status === "draft" ? "Draft metadata" : sign.status}
+                </Text>
+              </View>
+            ) : null}
+
+            {sign.source === "community" ? (
+              <View style={styles.communityRow}>
+                <MaterialIcons name="groups" size={16} color={asl.accentCyan} />
+                <Text style={styles.communityText}>Community sign</Text>
+              </View>
             ) : null}
 
             <View style={styles.mediaSection}>
               {resolvingVideo ? (
-                <View style={styles.media}>
-                  <ActivityIndicator size="large" color={TEAL} />
+                <View style={styles.mediaLoading}>
+                  <ActivityIndicator size="large" color={asl.accentCyan} />
                   <Text style={styles.mediaHint}>Getting video link…</Text>
                 </View>
               ) : playUri ? (
                 <View style={styles.videoWrap}>
                   {!videoDecodeReady ? (
                     <View style={styles.videoBuffering}>
-                      <ActivityIndicator size="large" color="#fff" />
+                      <ActivityIndicator size="large" color={asl.accentCyan} />
                       <Text style={styles.videoBufferingText}>Buffering…</Text>
                     </View>
                   ) : null}
@@ -156,8 +176,9 @@ export default function SignOverlay({ visible, sign, onClose }: SignOverlayProps
                   />
                 </View>
               ) : (
-                <View style={styles.media}>
-                  <Text style={styles.mediaText}>Video unavailable</Text>
+                <View style={styles.mediaUnavailable}>
+                  <MaterialIcons name="videocam-off" size={40} color={asl.text.muted} />
+                  <Text style={styles.mediaUnavailableTitle}>Video unavailable</Text>
                   {videoError ? <Text style={styles.mediaHint}>{videoError}</Text> : null}
                 </View>
               )}
@@ -165,22 +186,24 @@ export default function SignOverlay({ visible, sign, onClose }: SignOverlayProps
 
             <View style={styles.section}>
               <Text style={styles.sectionLabel}>Definition</Text>
-              <View style={[styles.mintBlock, isPlaceholderDefinition && styles.placeholderBlock]}>
-                <Text style={styles.mintText}>{sign.definition}</Text>
+              <View style={[styles.glassBlock, isPlaceholderDefinition && styles.placeholderBlock]}>
+                <Text style={styles.bodyText}>{sign.definition}</Text>
               </View>
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionLabel}>How to Sign</Text>
-              <View style={[styles.mintBlock, isPlaceholderHowTo && styles.placeholderBlock]}>
-                <Text style={styles.mintText}>{sign.howToSign}</Text>
+              <Text style={styles.sectionLabel}>How to sign</Text>
+              <View style={[styles.glassBlock, isPlaceholderHowTo && styles.placeholderBlock]}>
+                <Text style={styles.bodyText}>{sign.howToSign}</Text>
               </View>
             </View>
 
             <View style={styles.section}>
               <Text style={styles.sectionLabel}>Note</Text>
-              <View style={styles.mintBlock}>
-                <Text style={styles.mintText}>{sign.note || "No additional notes"}</Text>
+              <View style={styles.glassBlock}>
+                <Text style={[styles.bodyText, !sign.note && styles.bodyTextMuted]}>
+                  {sign.note || "No additional notes"}
+                </Text>
               </View>
             </View>
           </ScrollView>
@@ -190,13 +213,10 @@ export default function SignOverlay({ visible, sign, onClose }: SignOverlayProps
   );
 }
 
-const MINT = "#cfe9e6";
-const TEAL = "#48b4a8";
-
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(5, 2, 8, 0.72)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -208,152 +228,207 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   content: {
-    backgroundColor: "white",
-    borderRadius: 24,
-    padding: 20,
-    width: "85%",
-    maxHeight: "80%",
-    position: "relative",
+    backgroundColor: "rgba(14, 8, 22, 0.94)",
+    borderRadius: asl.radius.xl,
+    paddingHorizontal: 18,
+    paddingTop: 16,
+    paddingBottom: 22,
+    width: "88%",
+    maxHeight: "82%",
+    borderWidth: 1,
+    borderColor: asl.glass.border,
+    ...asl.shadow.card,
   },
-  closeBtn: {
-    position: "absolute",
-    top: 12,
-    left: 12,
-    width: 44,
-    height: 44,
-    borderRadius: 8,
-    backgroundColor: TEAL,
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 10,
-  },
-  closeText: {
-    fontSize: 24,
-    color: "white",
-    fontWeight: "bold",
-  },
-  saveStateContainer: {
-    marginTop: 8,
-    marginLeft: 60,
-    marginBottom: 16,
+  topBar: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-  },
-  saveStateIcon: {
-    fontSize: 34,
-    lineHeight: 40,
-    color: "#ffd700",
-  },
-  saveStateText: {
-    fontSize: 14,
-    color: TEAL,
-    fontWeight: "600",
-  },
-  scrollContent: {
-    paddingBottom: 20,
-  },
-  word: {
-    fontSize: 32,
-    fontWeight: "900",
-    textAlign: "center",
-    color: "#111",
+    justifyContent: "space-between",
     marginBottom: 8,
   },
-  statusBadge: {
+  iconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: asl.glass.border,
+    backgroundColor: "rgba(0,0,0,0.35)",
+  },
+  savePill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: asl.glass.border,
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  savePillOn: {
+    borderColor: "rgba(251, 191, 36, 0.55)",
+    backgroundColor: "rgba(251, 191, 36, 0.12)",
+  },
+  savePillIcon: {
+    fontSize: 22,
+    color: "#FBBF24",
+  },
+  savePillText: {
+    fontSize: 15,
+    fontFamily: fontFamily.heading,
+    color: asl.text.primary,
+  },
+  pressedDim: {
+    opacity: 0.85,
+  },
+  scrollContent: {
+    paddingBottom: 12,
+  },
+  word: {
+    fontSize: 28,
+    fontFamily: fontFamily.heading,
+    textAlign: "center",
+    color: asl.text.primary,
+    marginBottom: 10,
+    letterSpacing: 0.2,
+  },
+  statusBadgeWrap: {
     alignSelf: "center",
+    marginBottom: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 10,
+    backgroundColor: "rgba(251, 191, 36, 0.12)",
+    borderWidth: 1,
+    borderColor: "rgba(251, 191, 36, 0.35)",
+  },
+  statusBadgeText: {
     fontSize: 12,
-    fontWeight: "700",
-    color: "#856404",
-    backgroundColor: "#fff3cd",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginBottom: 12,
+    fontFamily: fontFamily.medium,
+    color: "#FCD34D",
+    textTransform: "capitalize",
+  },
+  communityRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    marginBottom: 14,
+  },
+  communityText: {
+    fontSize: 13,
+    fontFamily: fontFamily.medium,
+    color: asl.accentCyan,
   },
   mediaSection: {
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 18,
   },
   videoWrap: {
     width: "100%",
     minHeight: 200,
-    borderRadius: 16,
+    borderRadius: asl.radius.md,
     overflow: "hidden",
-    backgroundColor: "#111",
+    backgroundColor: "rgba(0,0,0,0.85)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.12)",
   },
   videoBuffering: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.85)",
+    backgroundColor: "rgba(0,0,0,0.75)",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 2,
-    borderRadius: 16,
+    borderRadius: asl.radius.md,
   },
   videoBufferingText: {
-    color: "#ddd",
+    color: asl.text.secondary,
     marginTop: 10,
     fontSize: 13,
+    fontFamily: fontFamily.body,
   },
   video: {
     width: "100%",
     height: 200,
-    borderRadius: 16,
-    backgroundColor: "#111",
+    borderRadius: asl.radius.md,
+    backgroundColor: "#000",
   },
   videoHidden: {
     opacity: 0,
   },
-  media: {
+  mediaLoading: {
     width: "100%",
-    minHeight: 160,
-    borderRadius: 16,
-    backgroundColor: MINT,
-    borderWidth: 2,
-    borderColor: TEAL,
+    minHeight: 168,
+    borderRadius: asl.radius.md,
+    backgroundColor: "rgba(0,0,0,0.35)",
+    borderWidth: 1,
+    borderColor: asl.glass.border,
     justifyContent: "center",
     alignItems: "center",
-    padding: 12,
+    padding: 16,
+    gap: 12,
   },
-  mediaText: {
-    fontSize: 15,
-    color: "#333",
-    fontWeight: "700",
-    textAlign: "center",
+  mediaUnavailable: {
+    width: "100%",
+    minHeight: 160,
+    borderRadius: asl.radius.md,
+    backgroundColor: "rgba(0,0,0,0.32)",
+    borderWidth: 1,
+    borderColor: asl.glass.border,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+    gap: 10,
+  },
+  mediaUnavailableTitle: {
+    fontSize: 16,
+    fontFamily: fontFamily.heading,
+    color: asl.text.secondary,
   },
   mediaHint: {
     fontSize: 12,
-    color: "#666",
+    color: asl.text.muted,
     textAlign: "center",
-    marginTop: 8,
+    marginTop: 4,
     lineHeight: 18,
+    fontFamily: fontFamily.body,
   },
   section: {
-    marginBottom: 18,
+    marginBottom: 16,
   },
   sectionLabel: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#111",
+    fontSize: 13,
+    fontFamily: fontFamily.medium,
+    color: asl.text.secondary,
     textAlign: "center",
     marginBottom: 8,
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
-  mintBlock: {
-    backgroundColor: MINT,
-    borderRadius: 16,
-    padding: 12,
-    minHeight: 60,
+  glassBlock: {
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderRadius: asl.radius.md,
+    padding: 14,
+    minHeight: 56,
     justifyContent: "center",
+    borderWidth: 1,
+    borderColor: asl.glass.border,
   },
   placeholderBlock: {
     borderStyle: "dashed",
-    borderWidth: 1,
-    borderColor: "#9cc",
+    borderColor: "rgba(34, 211, 238, 0.35)",
+    backgroundColor: "rgba(34, 211, 238, 0.06)",
   },
-  mintText: {
-    fontSize: 14,
-    color: "#111",
-    lineHeight: 20,
+  bodyText: {
+    fontSize: 15,
+    fontFamily: fontFamily.body,
+    color: asl.text.primary,
+    lineHeight: 22,
     textAlign: "center",
+  },
+  bodyTextMuted: {
+    color: asl.text.muted,
+    fontStyle: "italic",
   },
 });

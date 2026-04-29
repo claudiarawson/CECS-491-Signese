@@ -6,8 +6,9 @@ import {
   TypingAnswerInput,
 } from "@/src/components/lesson-index";
 import { LessonType } from "@/src/data/lessons";
-import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
-import { lessonColors, lessonSpacing, lessonTypography } from "@/src/theme";
+import { AppShell, LearnFlowHeader } from "@/src/components/asl";
+import { lessonSpacing, Spacing } from "@/src/theme";
+import { lessonColors } from "@/src/theme/colors";
 import {
   calculateProgress,
   getNextSign,
@@ -16,7 +17,7 @@ import {
 } from "../../utils/lessonHelpers";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export function TypeAnswerScreen() {
   const params = useLocalSearchParams<{ lessonId?: string; order?: string; score?: string }>();
@@ -36,8 +37,8 @@ export function TypeAnswerScreen() {
     lessonId === "alphabet"
       ? "Type a letter (A-Z)"
       : lessonId === "numbers"
-      ? "Type a number (0-9)"
-      : "Type your answer";
+        ? "Type a number (0-9)"
+        : "Type your answer";
 
   const feedback = useMemo(() => {
     if (!submitted || !sign) {
@@ -51,12 +52,11 @@ export function TypeAnswerScreen() {
 
   if (!sign) {
     return (
-      <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-        <ScreenHeader title="Type Answer" showBackButton />
+      <AppShell scroll={false} header={<LearnFlowHeader title="Type answer" />}>
         <View style={styles.emptyWrap}>
           <Text style={styles.emptyText}>Could not find this sign.</Text>
         </View>
-      </ScreenContainer>
+      </AppShell>
     );
   }
 
@@ -91,28 +91,34 @@ export function TypeAnswerScreen() {
   };
 
   return (
-    <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-      <ScreenHeader title="Type Answer" showBackButton />
-      <View style={styles.content}>
-        <LessonHeader title="Type the meaning" />
-        <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
+    <AppShell scroll={false} header={<LearnFlowHeader title="Type answer" />}>
+      <View style={styles.shell}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <LessonHeader title="Type the meaning" />
+          <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
 
-        <SignLessonCard gif={sign.gif} instruction="Type what this sign means." />
+          <SignLessonCard gif={sign.gif} instruction="Type what this sign means." />
 
-        <View style={styles.inputWrap}>
-          <TypingAnswerInput
-            value={value}
-            onChangeText={setValue}
-            placeholder={inputPlaceholder}
-            editable={!submitted}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-        </View>
+          <View style={styles.inputWrap}>
+            <TypingAnswerInput
+              value={value}
+              onChangeText={setValue}
+              placeholder={inputPlaceholder}
+              editable={!submitted}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          </View>
 
-        {submitted ? (
-          <Text style={[styles.feedback, isCorrect ? styles.correct : styles.incorrect]}>{feedback}</Text>
-        ) : null}
+          {submitted ? (
+            <Text style={[styles.feedbackLine, isCorrect ? styles.correct : styles.incorrect]}>{feedback}</Text>
+          ) : null}
+        </ScrollView>
 
         <View style={styles.footer}>
           <PrimaryActionButton
@@ -122,21 +128,30 @@ export function TypeAnswerScreen() {
           />
         </View>
       </View>
-    </ScreenContainer>
+    </AppShell>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
+  shell: {
     flex: 1,
+    minHeight: 0,
+    paddingHorizontal: Spacing.screenPadding,
+  },
+  scroll: { flex: 1 },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: lessonSpacing.sm,
   },
   inputWrap: {
     marginTop: lessonSpacing.md,
   },
-  feedback: {
-    ...lessonTypography.body,
+  feedbackLine: {
     marginTop: lessonSpacing.md,
     textAlign: "center",
+    fontSize: 16,
+    lineHeight: 22,
+    color: lessonColors.textSecondary,
   },
   correct: {
     color: lessonColors.success,
@@ -145,18 +160,21 @@ const styles = StyleSheet.create({
     color: lessonColors.error,
   },
   footer: {
-    flex: 1,
-    justifyContent: "flex-end",
+    flexShrink: 0,
     alignItems: "center",
     paddingBottom: lessonSpacing.lg,
+    paddingTop: lessonSpacing.sm,
   },
   emptyWrap: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: Spacing.screenPadding,
+    minHeight: 200,
   },
   emptyText: {
-    ...lessonTypography.body,
     color: lessonColors.textSecondary,
+    fontSize: 16,
+    textAlign: "center",
   },
 });

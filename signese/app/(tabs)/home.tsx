@@ -1,7 +1,7 @@
 import { DailyTipsCarousel } from "@/src/components/layout";
 import { AppShell, AslTabHeader, ProgressCard, StatCard } from "@/src/components/asl";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { getDeviceDensity, moderateScale, Spacing } from "@/src/theme";
+import { fontFamily, getDeviceDensity, moderateScale, Spacing } from "@/src/theme";
 import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
@@ -100,42 +100,37 @@ export default function HomeScreen() {
   }
 
   return (
-    <AppShell
-      variant="default"
-      header={
-        <AslTabHeader title="Home" onSettings={() => router.push("/(tabs)/settings" as any)} />
-      }
-    >
+    <AppShell variant="default" header={<AslTabHeader title="Home" onSettings={() => router.push("/(tabs)/settings" as any)} />}>
       <View style={styles.greetingWrap}>
         <Text style={styles.greetingLine}>Welcome back</Text>
         <Text style={styles.greetingName}>{profile?.username ?? "learner"}</Text>
       </View>
 
-      {statsLoading ? (
-        <View style={styles.starsBox}>
-          <ActivityIndicator color={asl.accentCyan} />
-          <Text style={styles.starsBoxHint}>Loading stars…</Text>
+      {statsError ? (
+        <View style={styles.statsErrorBanner} accessibilityRole="alert">
+          <Text style={styles.statsErrorBannerText}>{statsError}</Text>
         </View>
-      ) : statsError ? (
-        <View style={[styles.starsBox, styles.starsBoxError]} accessibilityRole="alert">
-          <Text style={styles.starsBoxErrorText}>{statsError}</Text>
+      ) : null}
+
+      {statsLoading ? (
+        <View style={styles.statsRow}>
+          <View style={styles.statSkeleton}>
+            <ActivityIndicator color={asl.accentCyan} />
+          </View>
+          <View style={styles.statSkeleton}>
+            <ActivityIndicator color={asl.accentCyan} />
+          </View>
+          <View style={styles.statSkeleton}>
+            <ActivityIndicator color={asl.accentCyan} />
+          </View>
         </View>
       ) : (
-        <View
-          style={styles.starsBox}
-          accessibilityRole="text"
-          accessibilityLabel={`${starCount} stars`}
-        >
-          <Text style={styles.starsBoxLine}>
-            {starCount} stars ⭐
-          </Text>
+        <View style={styles.statsRow}>
+          <StatCard icon="⭐️" value={starCount} label="Stars" accent="pink" />
+          <StatCard icon="🔥" value={streakCount} label="Streak" accent="warm" />
+          <StatCard icon="📖" value={completedLessonsCount} label="Lessons" accent="cyan" />
         </View>
       )}
-
-      <View style={styles.statsRow}>
-        <StatCard icon="🔥" value={streakCount} label="Streak" accent="warm" />
-        <StatCard icon="📖" value={completedLessonsCount} label="Lessons" accent="cyan" />
-      </View>
 
       <Pressable style={styles.resetButton} onPress={handleResetProgress}>
         <Text style={styles.resetButtonText}>Reset progress (local only)</Text>
@@ -173,63 +168,62 @@ const createStyles = (density: number, textScale: number) => {
       marginTop: ms(10),
       color: asl.text.secondary,
       fontSize: ts(14),
+      fontFamily: fontFamily.body,
     },
-    greetingWrap: { marginBottom: ms(8) },
-    greetingLine: { color: asl.text.secondary, fontSize: ts(16) },
+    greetingWrap: { marginBottom: ms(14) },
+    greetingLine: { color: asl.text.muted, fontSize: ts(15), fontFamily: fontFamily.medium },
     greetingName: {
       color: asl.text.primary,
-      fontSize: ts(28),
-      fontWeight: "800",
-      textDecorationLine: "underline",
+      fontSize: ts(26),
+      fontFamily: fontFamily.heading,
     },
-    starsBox: {
-      borderRadius: ms(16),
-      borderWidth: 1,
-      borderColor: asl.glass.border,
-      backgroundColor: "rgba(0,0,0,0.25)",
-      paddingVertical: ms(14),
-      paddingHorizontal: ms(16),
+    statsErrorBanner: {
       marginBottom: ms(10),
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: ms(52),
-    },
-    starsBoxLine: {
-      color: asl.text.primary,
-      fontSize: ts(18),
-      lineHeight: ts(24),
-      fontWeight: "800",
-      textAlign: "center",
-    },
-    starsBoxHint: {
-      marginTop: ms(8),
-      color: asl.text.muted,
-      fontSize: ts(13),
-    },
-    starsBoxError: {
-      borderColor: "rgba(248, 113, 113, 0.45)",
+      paddingVertical: ms(10),
+      paddingHorizontal: ms(14),
+      borderRadius: ms(14),
+      borderWidth: 1,
+      borderColor: "rgba(248, 113, 113, 0.35)",
       backgroundColor: "rgba(248, 113, 113, 0.12)",
     },
-    starsBoxErrorText: {
+    statsErrorBannerText: {
       color: "#FCA5A5",
-      fontSize: ts(14),
-      fontWeight: "600",
+      fontSize: ts(13),
+      fontFamily: fontFamily.medium,
       textAlign: "center",
     },
-    statsRow: { flexDirection: "row", gap: 10, marginTop: 8, marginBottom: 12 },
+    statsRow: {
+      flexDirection: "row",
+      gap: ms(10),
+      marginBottom: ms(14),
+      alignItems: "stretch",
+    },
+    statSkeleton: {
+      flex: 1,
+      minHeight: 96,
+      borderRadius: asl.radius.md,
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+      backgroundColor: asl.glass.bg,
+      alignItems: "center",
+      justifyContent: "center",
+      ...asl.shadow.card,
+    },
     resetButton: {
       alignSelf: "flex-start",
-      marginBottom: 12,
-      backgroundColor: "rgba(248, 113, 113, 0.3)",
+      marginBottom: ms(14),
+      backgroundColor: "rgba(248, 113, 113, 0.18)",
       paddingHorizontal: ms(12),
       paddingVertical: ms(8),
-      borderRadius: 12,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: "rgba(248,113,113,0.35)",
     },
     resetButtonText: {
       color: "#FCA5A5",
-      fontSize: ts(14),
-      fontWeight: "700",
+      fontSize: ts(13),
+      fontFamily: fontFamily.medium,
     },
-    tipsSection: { marginTop: 8 },
+    tipsSection: { marginTop: ms(12) },
   });
 };

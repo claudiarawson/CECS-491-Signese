@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import SignOverlay from "../../src/components/SignOverlay";
 import { useDictionarySigns } from "../../src/features/dictionary/hooks/useDictionarySigns";
+import { DictionarySignCard } from "../../src/features/dictionary/ui/DictionarySignCard";
 import { prefetchDictionaryVideoUrl } from "../../src/services/dictionary/dictionarySigns.service";
 import {
   getSavedIds,
@@ -160,24 +161,16 @@ export default function DictionaryScreen() {
             renderItem={({ item }) => {
               const merged = mergeSignWithSnapshot(item, savedSnapshots[item.id]) ?? item;
               const isItemSaved = savedIds.has(item.id);
-              const hasVideo = !!(merged.mediaUrl || merged.storagePath || merged.videoId);
-
               return (
-                <Pressable
-                  style={[styles.card, item.source === "community" && styles.cardCommunity]}
-                  onPressIn={() => prefetchDictionaryVideoUrl(merged)}
+                <DictionarySignCard
+                  density={density}
+                  item={item}
+                  merged={merged}
+                  isItemSaved={isItemSaved}
+                  prefetch={() => prefetchDictionaryVideoUrl(merged)}
                   onPress={() => setSelectedSign(merged)}
-                >
-                  <View style={styles.mediaPlaceholder}>
-                    <Text style={styles.mediaText}>{hasVideo ? "▶ Video" : "—"}</Text>
-                  </View>
-                  <Text style={styles.cardWord} numberOfLines={1}>
-                    {merged.word}
-                  </Text>
-                  <Pressable onPress={() => handleToggleSave(merged)} style={styles.saveBtn}>
-                    <Text style={styles.saveIcon}>{isItemSaved ? "★" : "☆"}</Text>
-                  </Pressable>
-                </Pressable>
+                  onToggleSave={() => handleToggleSave(merged)}
+                />
               );
             }}
             ListEmptyComponent={
@@ -252,48 +245,6 @@ const createStyles = (density: number) => {
       fontWeight: "800",
       textAlign: "center",
       color: asl.text.primary,
-    },
-    card: {
-      flex: 1,
-      backgroundColor: "rgba(255,255,255,0.08)",
-      borderRadius: ms(22),
-      padding: ms(12),
-      marginBottom: ms(12),
-      borderWidth: 1,
-      borderColor: asl.glass.border,
-    },
-    cardCommunity: {
-      backgroundColor: "rgba(56, 189, 248, 0.18)",
-      borderColor: "rgba(56, 189, 248, 0.35)",
-    },
-    mediaPlaceholder: {
-      height: ms(120),
-      borderRadius: ms(18),
-      backgroundColor: "rgba(0,0,0,0.25)",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    mediaText: {
-      color: asl.text.secondary,
-      fontWeight: "700",
-      fontSize: ms(14),
-    },
-    cardWord: {
-      marginTop: ms(10),
-      fontSize: ms(22),
-      fontWeight: "900",
-      textAlign: "center",
-      color: asl.text.primary,
-    },
-    saveBtn: {
-      position: "absolute",
-      top: ms(8),
-      right: ms(8),
-      padding: ms(4),
-    },
-    saveIcon: {
-      fontSize: ms(30),
-      color: "#FBBF24",
     },
     emptyText: {
       textAlign: "center",

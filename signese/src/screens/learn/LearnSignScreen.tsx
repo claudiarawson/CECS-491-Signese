@@ -5,12 +5,13 @@ import {
   SignLessonCard,
 } from "@/src/components/lesson-index";
 import { LessonType } from "@/src/data/lessons";
-import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
-import { lessonColors, lessonSpacing, lessonTypography } from "@/src/theme";
+import { AppShell, LearnFlowHeader } from "@/src/components/asl";
+import { lessonSpacing, Spacing } from "@/src/theme";
+import { lessonColors } from "@/src/theme/colors";
 import { calculateProgress, getSignByOrder } from "../../utils/lessonHelpers";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export function LearnSignScreen() {
   const params = useLocalSearchParams<{ lessonId?: string; order?: string; score?: string }>();
@@ -23,12 +24,11 @@ export function LearnSignScreen() {
 
   if (!sign) {
     return (
-      <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-        <ScreenHeader title="Learn" showBackButton />
+      <AppShell scroll={false} header={<LearnFlowHeader title="Learn" />}>
         <View style={styles.emptyWrap}>
           <Text style={styles.emptyText}>This lesson does not have signs yet.</Text>
         </View>
-      </ScreenContainer>
+      </AppShell>
     );
   }
 
@@ -44,38 +44,56 @@ export function LearnSignScreen() {
   };
 
   return (
-    <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-      <ScreenHeader title="Learn" showBackButton />
-      <View style={styles.content}>
-        <LessonHeader title={sign.label} subtitle="Watch the sign and remember the meaning." />
-        <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
-        <SignLessonCard gif={sign.gif} label={sign.label} instruction="Tap Next when you are ready." />
+    <AppShell scroll={false} header={<LearnFlowHeader title="Learn" />}>
+      <View style={styles.shell}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <LessonHeader title={sign.label} subtitle="Watch the sign and remember the meaning." />
+          <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
+          <SignLessonCard gif={sign.gif} label={sign.label} instruction="Tap Next when you are ready." />
+        </ScrollView>
 
         <View style={styles.footer}>
           <PrimaryActionButton label="Next" onPress={handleNext} />
         </View>
       </View>
-    </ScreenContainer>
+    </AppShell>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
+  shell: {
+    flex: 1,
+    minHeight: 0,
+    paddingHorizontal: Spacing.screenPadding,
+  },
+  scroll: {
     flex: 1,
   },
+  scrollContent: {
+    paddingBottom: lessonSpacing.sm,
+    flexGrow: 1,
+  },
   footer: {
-    flex: 1,
-    justifyContent: "flex-end",
+    flexShrink: 0,
     alignItems: "center",
     paddingBottom: lessonSpacing.lg,
+    paddingTop: lessonSpacing.sm,
   },
   emptyWrap: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: Spacing.screenPadding,
+    minHeight: 200,
   },
   emptyText: {
-    ...lessonTypography.body,
     color: lessonColors.textSecondary,
+    fontSize: 16,
+    textAlign: "center",
   },
 });

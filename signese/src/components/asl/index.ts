@@ -4,6 +4,7 @@ export { FilterChips } from "./FilterChips";
 export { GlassCard } from "./GlassCard";
 export { GradientBackground } from "./GradientBackground";
 export { InputField } from "./InputField";
+export { LearnFlowHeader } from "./LearnFlowHeader";
 export { LessonCard } from "./LessonCard";
 export { PrimaryButton } from "./PrimaryButton";
 export { ProgressCard } from "./ProgressCard";

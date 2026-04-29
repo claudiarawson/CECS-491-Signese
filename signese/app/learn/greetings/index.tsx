@@ -1,24 +1,18 @@
 import React, { useMemo, useRef, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  useWindowDimensions,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, Pressable, useWindowDimensions } from "react-native";
 import { Image } from "expo-image";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
+import { AppShell, LearnFlowHeader } from "@/src/components/asl";
+import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { lessonColors } from "@/src/theme/colors";
 import {
-  ScreenContainer,
-  HeaderActionButton,
-  HeaderAvatarButton,
-} from "@/src/components/layout";
-import { getDeviceDensity, moderateScale } from "@/src/theme";
-import { useAccessibility } from "@/src/contexts/AccessibilityContext";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { getProfileIconById } from "@/src/features/account/types";
+  fontFamily,
+  getDeviceDensity,
+  moderateScale,
+  Spacing,
+} from "@/src/theme";
 import {
   GREETINGS_LEARN_ITEMS,
   GREETINGS_BATCH_1,
@@ -89,10 +83,19 @@ function buildMatchTiles(batch: GreetingLearnItem[]): {
 export default function GreetingsLearnScreen() {
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const { textScale } = useAccessibility();
-  const { profile } = useAuthUser();
-  const headerProfileIcon = getProfileIconById(profile?.avatar);
-  const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
+  const ms = useMemo(() => (v: number) => moderateScale(v) * density, [density]);
+  const styles = useMemo(() => createStyles(ms), [ms]);
+
+  const headerRight = (
+    <>
+      <Pressable onPress={() => router.push("/(tabs)/settings" as any)} hitSlop={8} style={styles.headerIcon}>
+        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+      </Pressable>
+      <Pressable onPress={() => router.push("/(tabs)/account")} hitSlop={8} style={styles.headerIcon}>
+        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+      </Pressable>
+    </>
+  );
 
   // ── Step state ──────────────────────────────────────────────────────────────
   const [step, setStep] = useState(1);
@@ -231,97 +234,80 @@ export default function GreetingsLearnScreen() {
 
   // ── Tile border/bg helpers ──────────────────────────────────────────────────
   const gifTileStyle = (state: TileState) => {
-    if (state === "selected") return { borderColor: "#56BDB4", backgroundColor: "#E1F5EE" };
-    if (state === "correct") return { borderColor: "#56BDB4", backgroundColor: "#E1F5EE" };
-    if (state === "wrong") return { borderColor: "#E24B4A", backgroundColor: "#FCEBEB" };
-    return { borderColor: "#E2EDF3", backgroundColor: "#EEF7FA" };
+    if (state === "selected") return { borderColor: lessonColors.progressFill, backgroundColor: "rgba(34,211,238,0.14)" };
+    if (state === "correct") return { borderColor: lessonColors.success, backgroundColor: "rgba(74,222,128,0.14)" };
+    if (state === "wrong") return { borderColor: lessonColors.error, backgroundColor: "rgba(252,165,165,0.14)" };
+    return { borderColor: asl.glass.border, backgroundColor: "rgba(255,255,255,0.06)" };
   };
 
   const wordTileStyle = (state: TileState) => {
-    if (state === "selected") return { borderColor: "#7DD3FC", backgroundColor: "#EBF4F8" };
-    if (state === "correct") return { borderColor: "#56BDB4", backgroundColor: "#E1F5EE" };
-    if (state === "wrong") return { borderColor: "#E24B4A", backgroundColor: "#FCEBEB" };
-    return { borderColor: "#E2EDF3", backgroundColor: "#EEF7FA" };
+    if (state === "selected") return { borderColor: asl.linkPink, backgroundColor: "rgba(236,72,153,0.14)" };
+    if (state === "correct") return { borderColor: lessonColors.success, backgroundColor: "rgba(74,222,128,0.14)" };
+    if (state === "wrong") return { borderColor: lessonColors.error, backgroundColor: "rgba(252,165,165,0.14)" };
+    return { borderColor: asl.glass.border, backgroundColor: "rgba(255,255,255,0.06)" };
   };
 
   const wordTileTextColor = (state: TileState) => {
-    if (state === "correct") return "#0F6E56";
-    if (state === "wrong") return "#A32D2D";
-    return "#334155";
+    if (state === "correct") return lessonColors.success;
+    if (state === "wrong") return lessonColors.error;
+    return asl.text.primary;
   };
 
   // ── Layout ──────────────────────────────────────────────────────────────────
   return (
-    <ScreenContainer backgroundColor="#EEF3F1">
-      {/* Top bar */}
-      <View style={styles.header}>
-        <Pressable
-          style={styles.backButton}
-          onPress={() => (step === 1 ? router.back() : setStep((s) => s - 1))}
-        >
-          <MaterialIcons name="chevron-left" size={28} color="#FFFFFF" />
-        </Pressable>
+    <AppShell
+      scroll={false}
+      header={
+        <LearnFlowHeader
+          title="Greetings"
+          onBackPress={() => (step === 1 ? router.back() : setStep((s) => s - 1))}
+          rightExtra={headerRight}
+        />
+      }
+    >
+      <View style={styles.shell}>
+        {/* Progress strip */}
+        <View style={styles.progressStrip}>
+          <View style={styles.progressLabels}>
+            <Text style={styles.progressLabel}>{progressLabel}</Text>
+            <Text style={styles.progressLabel}>
+              {step}/{TOTAL_STEPS}
+            </Text>
+          </View>
+          <View style={styles.progressTrack}>
+            <View style={[styles.progressFill, { width: `${progressFill * 100}%` }]} />
+          </View>
+        </View>
 
-        <Text style={styles.headerTitle}>Greetings</Text>
+        {/* Content card + button */}
+        <View style={styles.cardWrapper}>
+          {phase === "learn" && currentLearnItem ? (
+            <LearnCard item={currentLearnItem} styles={styles} />
+          ) : null}
 
-        <View style={styles.headerRight}>
-          <HeaderActionButton
-            iconName="settings"
-            onPress={() => router.push("/(tabs)/settings" as any)}
-          />
-          <HeaderAvatarButton
-            avatar={headerProfileIcon.emoji}
-            onPress={() => router.push("/(tabs)/account" as any)}
-          />
+          {phase === "match" ? (
+            <MatchCard
+              gifTiles={gifTiles}
+              wordTiles={wordTiles}
+              onGifTap={handleGifTap}
+              onWordTap={handleWordTap}
+              feedbackMsg={feedbackMsg}
+              feedbackCorrect={feedbackCorrect}
+              gifTileStyle={gifTileStyle}
+              wordTileStyle={wordTileStyle}
+              wordTileTextColor={wordTileTextColor}
+              totalCorrect={totalCorrect}
+              styles={styles}
+            />
+          ) : null}
+        </View>
+
+        {/* Next button */}
+        <View style={styles.buttonRow}>
+          <PrimaryActionButton label={step === 9 ? "Finish" : "Next"} onPress={handleNext} disabled={!nextEnabled} />
         </View>
       </View>
-
-      {/* Progress strip */}
-      <View style={styles.progressStrip}>
-        <View style={styles.progressLabels}>
-          <Text style={styles.progressLabel}>{progressLabel}</Text>
-          <Text style={styles.progressLabel}>{step}/{TOTAL_STEPS}</Text>
-        </View>
-        <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: `${progressFill * 100}%` }]} />
-        </View>
-      </View>
-
-      {/* Content card + button */}
-      <View style={styles.cardWrapper}>
-        {phase === "learn" && currentLearnItem ? (
-          <LearnCard item={currentLearnItem} styles={styles} />
-        ) : null}
-
-        {phase === "match" ? (
-          <MatchCard
-            gifTiles={gifTiles}
-            wordTiles={wordTiles}
-            onGifTap={handleGifTap}
-            onWordTap={handleWordTap}
-            feedbackMsg={feedbackMsg}
-            feedbackCorrect={feedbackCorrect}
-            gifTileStyle={gifTileStyle}
-            wordTileStyle={wordTileStyle}
-            wordTileTextColor={wordTileTextColor}
-            totalCorrect={totalCorrect}
-            styles={styles}
-          />
-        ) : null}
-      </View>
-
-      {/* Next button */}
-      <View style={styles.buttonRow}>
-        <Pressable
-          style={[styles.nextButton, !nextEnabled && styles.nextButtonDisabled]}
-          onPress={nextEnabled ? handleNext : undefined}
-        >
-          <Text style={styles.nextButtonText}>
-            {step === 9 ? "Finish" : "Next"}
-          </Text>
-        </Pressable>
-      </View>
-    </ScreenContainer>
+    </AppShell>
   );
 }
 
@@ -429,7 +415,7 @@ function MatchCard({
             <Text
               style={[
                 styles.feedbackText,
-                { color: feedbackCorrect ? "#0F6E56" : "#A32D2D" },
+                { color: feedbackCorrect ? lessonColors.success : lessonColors.error },
               ]}
             >
               {feedbackMsg}
@@ -441,86 +427,57 @@ function MatchCard({
   );
 }
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
-const createStyles = (density: number, textScale: number) => {
-  const ms = (v: number) => moderateScale(v) * density;
-  const ts = (v: number) => ms(v) * textScale;
-
-  return StyleSheet.create({
-    // Header
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: "#FFFFFF",
-      paddingHorizontal: ms(16),
-      paddingVertical: ms(10),
-      gap: ms(12),
-    },
-    backButton: {
-      width: ms(40),
-      height: ms(40),
-      borderRadius: ms(20),
-      backgroundColor: "#56BDB4",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    headerTitle: {
+const createStyles = (ms: (v: number) => number) =>
+  StyleSheet.create({
+    shell: {
       flex: 1,
-      fontSize: ts(18),
-      fontWeight: "800",
-      color: "#334155",
+      minHeight: 0,
+      paddingHorizontal: Spacing.screenPadding,
     },
-    headerRight: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: ms(6),
+    headerIcon: {
+      padding: ms(4),
     },
-    // Progress strip
     progressStrip: {
-      backgroundColor: "#EEF3F1",
-      paddingHorizontal: ms(16),
-      paddingTop: ms(6),
+      paddingTop: ms(8),
+      paddingBottom: ms(12),
     },
     progressLabels: {
       flexDirection: "row",
       justifyContent: "space-between",
-      marginBottom: ms(4),
+      marginBottom: ms(8),
     },
     progressLabel: {
-      fontSize: ts(12),
-      fontWeight: "700",
-      color: "#334155",
+      fontSize: ms(12),
+      fontFamily: fontFamily.medium,
+      color: asl.text.secondary,
     },
     progressTrack: {
-      height: ms(8),
+      height: ms(10),
       borderRadius: ms(99),
-      backgroundColor: "#F4B7A0",
+      backgroundColor: lessonColors.progressBackground,
       overflow: "hidden",
-      marginBottom: ms(16),
+      marginBottom: ms(12),
     },
     progressFill: {
       height: "100%",
       borderRadius: ms(99),
-      backgroundColor: "#56BDB4",
+      backgroundColor: lessonColors.progressFill,
     },
-    // Card wrapper (fills between progress and button)
     cardWrapper: {
       flex: 1,
-      backgroundColor: "#EEF3F1",
+      minHeight: 0,
     },
-    // White card
     card: {
       flex: 1,
-      backgroundColor: "#FFFFFF",
-      borderTopLeftRadius: ms(24),
-      borderTopRightRadius: ms(24),
-      borderBottomLeftRadius: 0,
-      borderBottomRightRadius: 0,
-      paddingHorizontal: ms(16),
+      backgroundColor: asl.glass.bg,
+      borderRadius: ms(26),
+      borderWidth: StyleSheet.hairlineWidth + 1,
+      borderColor: asl.glass.border,
+      paddingHorizontal: ms(14),
       paddingTop: ms(16),
       paddingBottom: ms(12),
+      ...asl.shadow.card,
     },
-    // Learn card
     gifArea: {
       width: "100%",
       maxWidth: ms(240),
@@ -528,7 +485,7 @@ const createStyles = (density: number, textScale: number) => {
       alignSelf: "center",
       borderRadius: ms(18),
       overflow: "hidden",
-      backgroundColor: "#EEF7FA",
+      backgroundColor: "rgba(0,0,0,0.35)",
       marginBottom: ms(10),
     },
     gifImage: {
@@ -537,34 +494,33 @@ const createStyles = (density: number, textScale: number) => {
     },
     caption: {
       textAlign: "center",
-      fontSize: ts(13),
-      fontWeight: "600",
-      color: "#94A3B8",
+      fontSize: ms(13),
+      fontFamily: fontFamily.medium,
+      color: asl.text.muted,
     },
     signWord: {
       textAlign: "center",
-      fontSize: ts(22),
-      fontWeight: "800",
-      color: "#334155",
-      marginBottom: ms(4),
+      fontSize: ms(22),
+      fontFamily: fontFamily.heading,
+      color: asl.text.primary,
+      marginBottom: ms(6),
     },
-    // Match card
     matchTitle: {
-      fontSize: ts(16),
-      fontWeight: "800",
-      color: "#334155",
+      fontSize: ms(16),
+      fontFamily: fontFamily.heading,
+      color: asl.text.primary,
       textAlign: "center",
     },
     matchScore: {
-      fontSize: ts(12),
-      fontWeight: "600",
-      color: "#94A3B8",
+      fontSize: ms(12),
+      fontFamily: fontFamily.medium,
+      color: asl.text.secondary,
       textAlign: "center",
-      marginBottom: ms(6),
+      marginBottom: ms(10),
     },
     matchGrid: {
       flex: 1,
-      gap: ms(6),
+      gap: ms(8),
       minHeight: 0,
     },
     matchRow: {
@@ -590,55 +546,43 @@ const createStyles = (density: number, textScale: number) => {
       paddingVertical: ms(6),
     },
     wordTileText: {
-      fontSize: ts(12),
-      fontWeight: "700",
+      fontSize: ms(12),
+      fontFamily: fontFamily.medium,
       textAlign: "center",
+      color: asl.text.primary,
     },
     tileDisabled: {
-      opacity: 0.9,
+      opacity: 0.92,
     },
-    // Feedback
     feedbackRow: {
-      height: ms(28),
+      height: ms(34),
       alignItems: "center",
       justifyContent: "center",
+      marginTop: ms(8),
     },
     feedbackPill: {
       paddingHorizontal: ms(14),
-      paddingVertical: ms(4),
+      paddingVertical: ms(6),
       borderRadius: ms(99),
     },
     feedbackCorrect: {
-      backgroundColor: "#E1F5EE",
+      backgroundColor: "rgba(74,222,128,0.15)",
+      borderWidth: 1,
+      borderColor: "rgba(74,222,128,0.35)",
     },
     feedbackWrong: {
-      backgroundColor: "#FCEBEB",
+      backgroundColor: "rgba(248,113,113,0.14)",
+      borderWidth: 1,
+      borderColor: "rgba(248,113,113,0.35)",
     },
     feedbackText: {
-      fontSize: ts(12),
-      fontWeight: "700",
+      fontSize: ms(12),
+      fontFamily: fontFamily.medium,
     },
-    // Next button
     buttonRow: {
-      backgroundColor: "#EEF3F1",
-      paddingTop: ms(14),
-      paddingHorizontal: ms(16),
-      paddingBottom: ms(16),
-    },
-    nextButton: {
-      height: ms(52),
-      borderRadius: ms(22),
-      backgroundColor: "#56BDB4",
+      paddingTop: ms(16),
+      paddingBottom: ms(24),
       alignItems: "center",
-      justifyContent: "center",
-    },
-    nextButtonDisabled: {
-      backgroundColor: "#B0D4D1",
-    },
-    nextButtonText: {
-      color: "#FFFFFF",
-      fontSize: ts(16),
-      fontWeight: "700",
+      flexShrink: 0,
     },
   });
-};
