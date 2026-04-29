@@ -97,6 +97,7 @@ export default function TranslateScreen() {
   const [nextChunkStartsInMs, setNextChunkStartsInMs] = useState(0);
   const [stopAfterCurrentInference, setStopAfterCurrentInference] = useState(false);
   const [showCommonResponses, setShowCommonResponses] = useState(false);
+  const [showCommonResponsesInfo, setShowCommonResponsesInfo] = useState(false);
   const [inferenceError, setInferenceError] = useState<string | null>(null);
   const [isTranslateInitializing, setIsTranslateInitializing] = useState(true);
   const { captionText, tokens, append, clear } = useCaptionBuffer(30);
@@ -143,6 +144,7 @@ export default function TranslateScreen() {
       setNextChunkStartsInMs(0);
       setStopAfterCurrentInference(false);
       setShowCommonResponses(false);
+      setShowCommonResponsesInfo(false);
       continueSequenceRef.current = false;
       if (chunkStopTimeoutRef.current) {
         clearTimeout(chunkStopTimeoutRef.current);
@@ -463,8 +465,20 @@ export default function TranslateScreen() {
   const recordingSecondsText = `${(recordingElapsedMs / 1000).toFixed(1)}s`;
   const cooldownSecondsText = `${(cooldownRemainingMs / 1000).toFixed(1)}s`;
   const chunkProgress = Math.max(0, Math.min(1, recordingElapsedMs / CHUNK_DURATION_MS));
-  const chunkProgressPercent = `${Math.round(chunkProgress * 100)}%`;
   const nextChunkSecondsText = `${Math.max(0, nextChunkStartsInMs / 1000).toFixed(1)}s`;
+  const prepProgress = Math.max(
+    0,
+    Math.min(1, 1 - nextChunkStartsInMs / Math.max(1, BETWEEN_CHUNKS_MS))
+  );
+  const activeProgressValue = 1 - chunkProgress;
+  const verticalProgressHeight =
+    sequencePrompt === "move-next"
+      ? "100%"
+      : `${Math.round(Math.max(0, Math.min(1, activeProgressValue)) * 100)}%`;
+  const prepRed = Math.round(244 + (107 - 244) * prepProgress);
+  const prepGreen = Math.round(80 + (226 - 80) * prepProgress);
+  const prepBlue = Math.round(93 + (193 - 93) * prepProgress);
+  const prepTransitionColor = `rgb(${prepRed}, ${prepGreen}, ${prepBlue})`;
 
   const permissionDenied = permission && !permission.granted;
   const captionOutput = captionText.length > 0 ? captionText : "Translation output will appear here.";
@@ -542,82 +556,107 @@ export default function TranslateScreen() {
               </View>
             )}
 
+            <View style={styles.videoTopSettingsOverlay}>
+              <View style={styles.videoTopSettingsRow}>
+                <Pressable style={styles.smallControlBtnOverlay} onPress={toggleCamera}>
+                  <MaterialIcons
+                    name={cameraActive ? "videocam-off" : "videocam"}
+                    size={18}
+                    color="#FFFFFF"
+                  />
+                </Pressable>
+                {Platform.OS !== "web" ? (
+                  <Pressable style={styles.smallControlBtnOverlay} onPress={reverseCamera}>
+                    <MaterialIcons name="flip-camera-ios" size={18} color="#FFFFFF" />
+                  </Pressable>
+                ) : null}
+              </View>
+            </View>
+
             {cameraActive && isRecordingClip ? (
-              <View style={styles.sequenceProgressOverlay} pointerEvents="none">
-                <View style={styles.sequenceProgressHeader}>
-                  <Text
-                    style={[
-                      styles.sequenceProgressLabel,
-                      sequencePrompt === "move-next" && styles.sequenceProgressLabelMoveNext,
-                    ]}
-                  >
-                    {sequencePrompt === "move-next"
-                      ? `Move next (starts in ${nextChunkSecondsText})`
-                      : `Sign ${Math.max(1, sequenceChunkIndex)} now`}
-                  </Text>
-                  <Text style={styles.sequenceProgressLabel}>{recordingSecondsText}</Text>
-                </View>
-                <View style={styles.sequenceProgressTrack}>
+              <View style={styles.sequenceProgressVerticalOverlay} pointerEvents="none">
+                <View style={styles.sequenceProgressVerticalTrack}>
                   <View
                     style={[
-                      styles.sequenceProgressFill,
-                      sequencePrompt === "move-next" && styles.sequenceProgressFillMoveNext,
-                      { width: sequencePrompt === "move-next" ? "100%" : chunkProgressPercent },
+                      styles.sequenceProgressVerticalFill,
+                      sequencePrompt === "move-next" && { backgroundColor: prepTransitionColor },
+                      { height: verticalProgressHeight },
                     ]}
                   />
                 </View>
               </View>
             ) : null}
-            {cameraActive && showCommonResponses ? (
-              <View style={styles.commonResponsesOverlay}>
-                <CommonResponsesPlaceholder styles={styles} />
+
+            <View style={styles.captionsOverlayBox}>
+              <View style={styles.captionsOverlayContent}>
+                <ScrollView
+                  style={styles.captionsOverlayScrollArea}
+                  contentContainerStyle={styles.captionsOverlayScrollContent}
+                  showsVerticalScrollIndicator={false}
+                >
+                  <Text
+                    style={captionText.length > 0 ? styles.captionsOutputText : styles.captionsOutputPlaceholderText}
+                  >
+                    {captionOutput}
+                  </Text>
+                </ScrollView>
               </View>
-            ) : null
-            }
-            {cameraActive && isRecordingClip ? (
-              <Pressable
-                style={[
-                  styles.cancelCornerButton,
-                  stopAfterCurrentInference && styles.cancelCornerButtonPressed,
-                ]}
-                onPress={handleCancelNextClip}
-              >
-                <MaterialIcons name="close" size={16} color="#FFFFFF" />
-              </Pressable>
-            ) : null}
-            <Pressable
-              style={styles.commonResponsesToggle}
-              onPress={() => setShowCommonResponses((prev) => !prev)}
-            >
-              <MaterialIcons
-                name={showCommonResponses ? "chevron-right" : "chevron-left"}
-                size={20}
-                color="#FFFFFF"
-              />
-            </Pressable>
+              <View style={styles.captionsOverlayActionColumn}>
+                <Pressable style={styles.captionsOverlayVolumeButton} onPress={handleToggleVolume}>
+                  <MaterialIcons
+                    name={isVolumeOn ? "volume-up" : "volume-off"}
+                    size={16}
+                    color="#FFFFFF"
+                  />
+                </Pressable>
+                <Pressable style={styles.captionsOverlayClearButton} onPress={handleClearCaptions}>
+                  <MaterialIcons name="delete-outline" size={16} color="#FFFFFF" />
+                </Pressable>
+              </View>
+            </View>
 
             <View style={styles.cameraOverlayControls}>
               {cameraActive ? (
-                !isRecordingClip ? (
+                <View style={styles.bottomVideoControlsRow}>
+                  {!isRecordingClip ? (
+                    <Pressable
+                      style={[styles.recordClipButton, isInferring && styles.recordClipButtonDisabled]}
+                      onPress={handleRecordClipToggle}
+                      disabled={isInferring || isRecordCooldown}
+                    >
+                      <MaterialIcons
+                        name={isRecordCooldown ? "hourglass-top" : "fiber-manual-record"}
+                        size={16}
+                        color="#FFFFFF"
+                      />
+                      <Text style={styles.recordClipButtonText}>
+                        {isRecordCooldown ? `Get Ready (${cooldownSecondsText})` : "Record Clip"}
+                      </Text>
+                    </Pressable>
+                  ) : (
+                    <Pressable
+                      style={[
+                        styles.cancelCornerButton,
+                        stopAfterCurrentInference && styles.cancelCornerButtonPressed,
+                      ]}
+                      onPress={handleCancelNextClip}
+                    >
+                      <MaterialIcons name="close" size={16} color="#FFFFFF" />
+                      <Text style={styles.cancelCornerButtonText}>Stop</Text>
+                    </Pressable>
+                  )}
                   <Pressable
-                    style={[styles.recordClipButton, isInferring && styles.recordClipButtonDisabled]}
-                    onPress={handleRecordClipToggle}
-                    disabled={isInferring || isRecordCooldown}
+                    style={styles.commonResponsesControlArrow}
+                    onPress={() => setShowCommonResponses((prev) => !prev)}
                   >
+                    <Text style={styles.commonResponsesControlArrowLabel}>Responses</Text>
                     <MaterialIcons
-                      name={isRecordingClip ? "stop-circle" : isRecordCooldown ? "hourglass-top" : "fiber-manual-record"}
-                      size={16}
+                      name={showCommonResponses ? "keyboard-arrow-down" : "keyboard-arrow-up"}
+                      size={18}
                       color="#FFFFFF"
                     />
-                    <Text style={styles.recordClipButtonText}>
-                      {isRecordCooldown
-                        ? `Get Ready (${cooldownSecondsText})`
-                        : isRecordingClip
-                          ? `Stop & Infer (${recordingSecondsText})`
-                          : "Record Clip"}
-                    </Text>
                   </Pressable>
-                ) : null
+                </View>
               ) : (
                 <Pressable style={styles.previewCameraButton} onPress={handlePreviewCamera}>
                   <MaterialIcons name="videocam" size={16} color="#FFFFFF" />
@@ -628,62 +667,42 @@ export default function TranslateScreen() {
           </View>
         </View>
 
-        <View style={styles.captionsControlsRow}>
-          <View style={styles.leftControlsWrap}>
-            <Pressable style={styles.smallControlBtn} onPress={toggleCamera}>
-              <MaterialIcons
-                name={cameraActive ? "videocam-off" : "videocam"}
-                size={18}
-                color="#2C5D56"
-              />
-            </Pressable>
-            {Platform.OS !== "web" ? (
-              <Pressable style={styles.smallControlBtn} onPress={reverseCamera}>
-                <MaterialIcons name="flip-camera-ios" size={18} color="#2C5D56" />
+        <View style={styles.bottomResponsesArea}>
+          <View style={styles.commonResponsesHeaderRow}>
+            <Text style={styles.commonResponsesHeaderText}>Common Responses</Text>
+            {showCommonResponses ? (
+              <Pressable
+                style={styles.commonResponsesInfoButton}
+                onPress={() => setShowCommonResponsesInfo((prev) => !prev)}
+              >
+                <MaterialIcons name="info-outline" size={14} color="#2C5D56" />
               </Pressable>
             ) : null}
           </View>
-
-          <View style={styles.captionsLabelWrap} pointerEvents="none">
-            <Text style={styles.captionsLabel}>Captions</Text>
-          </View>
-
-          <View style={styles.rightControlsWrap}>
-            <Pressable style={styles.smallControlBtn} onPress={handleToggleVolume}>
-              <MaterialIcons
-                name={isVolumeOn ? "volume-up" : "volume-off"}
-                size={18}
-                color="#2C5D56"
-              />
-            </Pressable>
-          </View>
-        </View>
-
-        <View style={styles.captionsCard}>
-          <ScrollView style={styles.captionsScroll} contentContainerStyle={styles.captionsScrollContent}>
-            <Text
-              style={
-                captionText.length > 0 ? styles.captionsOutputText : styles.captionsOutputPlaceholderText
-              }
-            >
-              {captionOutput}
-            </Text>
-            <Text style={styles.captionsSubText}>{inferenceStatus}</Text>
-            <Text style={styles.captionsSubText}>{confidenceSummary}</Text>
-            <Text style={styles.captionsSubText}>
-              Mode: {lastInference?.mode ?? "single"} | Last token count: {lastInference?.tokens.length ?? 0}
-            </Text>
-            <Text style={styles.captionsSubText}>
-              Inference adapter: {lastInference?.adapter_name ?? "not-run-yet"}
-            </Text>
-            <Text style={styles.captionsSubText}>
-              {isVolumeOn ? "Volume is on." : "Volume is muted."} Tokens: {tokens.length}
-            </Text>
-          </ScrollView>
-          <Pressable style={styles.clearCaptionsButton} onPress={handleClearCaptions}>
-            <MaterialIcons name="delete-outline" size={16} color="#2C5D56" />
-            <Text style={styles.clearCaptionsButtonText}>Clear captions</Text>
-          </Pressable>
+          {!showCommonResponses ? (
+            <View style={styles.commonResponsesInfoPopup}>
+              <Text style={styles.commonResponsesInfoPopupText}>
+                Suggested follow-up signs based on your recent recognized output. Tap the Responses arrow to show or
+                hide them.
+              </Text>
+            </View>
+          ) : showCommonResponsesInfo ? (
+            <View style={styles.commonResponsesInfoPopup}>
+              <Text style={styles.commonResponsesInfoPopupText}>
+                Suggested follow-up signs based on your recent recognized output.
+              </Text>
+            </View>
+          ) : null}
+          {showCommonResponses ? (
+            <View style={styles.commonResponsesBottomStrip}>
+              {GREETING_INTRO_V0_LABELS.slice(0, 2).map((item) => (
+                <View key={item} style={styles.commonResponseImageCard}>
+                  <MaterialIcons name="image" size={20} color="#6C7A89" />
+                  <Text style={styles.commonResponseImageLabel}>{item}</Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
         </View>
       </View>
 
@@ -770,72 +789,200 @@ const createStyles = (density: number, textScale: number) => {
     bottom: Spacing.sm,
     alignItems: "center",
   },
-  sequenceProgressOverlay: {
+  videoTopSettingsOverlay: {
     position: "absolute",
     top: Spacing.sm,
     left: Spacing.sm,
     right: Spacing.sm,
-    backgroundColor: "rgba(20, 34, 31, 0.55)",
-    borderRadius: 12,
+    alignItems: "center",
+  },
+  videoTopSettingsRow: {
+    flexDirection: "row",
+    gap: Spacing.xs,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: "rgba(20, 34, 31, 0.35)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.22)",
+  },
+  smallControlBtnOverlay: {
+    width: ms(34),
+    height: ms(34),
+    borderRadius: ms(17),
+    backgroundColor: "rgba(44, 93, 86, 0.55)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.35)",
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
-  commonResponsesOverlay: {
-    position: "absolute",
-    top: "50%",
-    right: Spacing.sm,
-    transform: [{ translateY: -ms(110) }],
-    backgroundColor: "rgba(20, 34, 31, 0.14)",
-    borderRadius: 16,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.14)",
-  },
-  commonResponsesToggle: {
-    position: "absolute",
-    right: Spacing.xs,
-    top: "50%",
-    marginTop: -18,
-    width: 28,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "rgba(44, 93, 86, 0.82)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.45)",
     alignItems: "center",
     justifyContent: "center",
   },
-  sequenceProgressHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  sequenceProgressVerticalOverlay: {
+    position: "absolute",
+    left: Spacing.xs,
+    top: "50%",
+    transform: [{ translateY: -40 }],
+    width: 12,
+    height: 80,
     alignItems: "center",
-    marginBottom: 6,
+    justifyContent: "center",
   },
-  sequenceProgressLabel: {
+  sequenceProgressVerticalTrack: {
+    width: 8,
+    height: 80,
+    borderRadius: 999,
+    backgroundColor: "rgba(255,255,255,0.22)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
+    overflow: "hidden",
+    justifyContent: "flex-end",
+  },
+  sequenceProgressVerticalFill: {
+    width: "100%",
+    borderRadius: 999,
+    backgroundColor: "#6BE2C1",
+  },
+  captionsOverlayBox: {
+    position: "absolute",
+    left: Spacing.sm,
+    right: Spacing.sm,
+    bottom: ms(58),
+    maxHeight: ms(120),
+    borderRadius: 14,
+    backgroundColor: "rgba(20, 34, 31, 0.22)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.22)",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  captionsOverlayContent: {
+    paddingRight: 38,
+    paddingBottom: 2,
+  },
+  captionsOverlayScrollArea: {
+    maxHeight: ms(64),
+  },
+  captionsOverlayScrollContent: {
+    paddingBottom: 2,
+  },
+  captionsOverlayActionColumn: {
+    position: "absolute",
+    right: 8,
+    bottom: 8,
+    alignItems: "center",
+    gap: 6,
+  },
+  captionsOverlayClearButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "rgba(214, 64, 69, 0.28)",
+    borderWidth: 1,
+    borderColor: "rgba(214, 64, 69, 0.45)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  captionsOverlayVolumeButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "rgba(44, 93, 86, 0.7)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.35)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bottomVideoControlsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  commonResponsesControlArrow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(44, 93, 86, 0.86)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.45)",
+    justifyContent: "center",
+  },
+  commonResponsesControlArrowLabel: {
     ...Typography.caption,
     color: "#FFFFFF",
     fontWeight: "700",
     fontSize: ts(11),
     lineHeight: ts(14),
   },
-  sequenceProgressLabelMoveNext: {
-    color: "#FFE7A3",
+  bottomResponsesArea: {
+    marginTop: Spacing.sm,
+    alignItems: "stretch",
+    justifyContent: "flex-start",
+    minHeight: ms(62),
   },
-  sequenceProgressTrack: {
-    height: 8,
-    borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.22)",
-    overflow: "hidden",
+  commonResponsesHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: Spacing.xs,
   },
-  sequenceProgressFill: {
-    height: "100%",
-    borderRadius: 999,
-    backgroundColor: "#6BE2C1",
+  commonResponsesHeaderText: {
+    ...Typography.caption,
+    color: semanticColors.text.primary,
+    fontWeight: "700",
+    fontSize: ts(12),
+    lineHeight: ts(16),
   },
-  sequenceProgressFillMoveNext: {
-    backgroundColor: "#F4B740",
+  commonResponsesInfoPopup: {
+    backgroundColor: "rgba(255,255,255,0.92)",
+    borderWidth: 1,
+    borderColor: "rgba(201, 225, 220, 0.9)",
+    borderRadius: 10,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    marginBottom: Spacing.xs,
+  },
+  commonResponsesInfoPopupText: {
+    ...Typography.caption,
+    color: semanticColors.text.secondary,
+    fontSize: ts(10),
+    lineHeight: ts(13),
+  },
+  commonResponsesInfoButton: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.85)",
+    borderWidth: 1,
+    borderColor: "rgba(201, 225, 220, 0.9)",
+  },
+  commonResponsesBottomStrip: {
+    width: "100%",
+    flexDirection: "row",
+    gap: Spacing.xs,
+    paddingHorizontal: 0,
+    height: ms(130),
+    marginBottom: Spacing.xs,
+  },
+  commonResponseImageCard: {
+    flex: 1,
+    borderRadius: 16,
+    backgroundColor: "rgba(237, 245, 243, 0.7)",
+    borderWidth: 1,
+    borderColor: "rgba(216, 232, 228, 0.6)",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.xs,
+    padding: Spacing.sm,
+  },
+  commonResponseImageLabel: {
+    ...Typography.caption,
+    color: semanticColors.text.primary,
+    fontWeight: "700",
+    textAlign: "center",
   },
   recordClipButton: {
     flexDirection: "row",
@@ -863,21 +1010,27 @@ const createStyles = (density: number, textScale: number) => {
     opacity: 0.6,
   },
   cancelCornerButton: {
-    position: "absolute",
-    left: Spacing.sm,
-    bottom: Spacing.sm,
-    width: 34,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingHorizontal: 10,
     height: 34,
     borderRadius: 17,
     backgroundColor: "#D64045",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.65)",
-    alignItems: "center",
     justifyContent: "center",
   },
   cancelCornerButtonPressed: {
     backgroundColor: "#7D8790",
     borderColor: "rgba(255,255,255,0.35)",
+  },
+  cancelCornerButtonText: {
+    ...Typography.caption,
+    color: "#FFFFFF",
+    fontWeight: "700",
+    fontSize: ts(11),
+    lineHeight: ts(14),
   },
   recordClipButtonText: {
     ...Typography.caption,
@@ -1003,7 +1156,7 @@ const createStyles = (density: number, textScale: number) => {
     },
     captionsOutputText: {
       ...Typography.body,
-      color: semanticColors.text.primary,
+      color: "#FFFFFF",
       fontSize: ts(16),
       lineHeight: ts(20),
     fontWeight: "700",
@@ -1011,7 +1164,7 @@ const createStyles = (density: number, textScale: number) => {
   },
     captionsOutputPlaceholderText: {
       ...Typography.caption,
-      color: semanticColors.text.secondary,
+      color: "rgba(255,255,255,0.9)",
       fontSize: ts(12),
       lineHeight: ts(16),
       minHeight: 54,
@@ -1053,21 +1206,19 @@ const createStyles = (density: number, textScale: number) => {
       lineHeight: ts(16),
     },
     clearCaptionsButton: {
-    marginTop: Spacing.md,
-    alignSelf: "flex-start",
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    backgroundColor: "#E8F2F0",
-    borderRadius: 12,
+    justifyContent: "center",
+    width: ms(34),
+    height: ms(34),
+    borderRadius: ms(17),
+    backgroundColor: "rgba(44, 93, 86, 0.55)",
     borderWidth: 1,
-    borderColor: "#C9E1DC",
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    borderColor: "rgba(255,255,255,0.35)",
   },
   clearCaptionsButtonText: {
     ...Typography.caption,
-    color: "#2C5D56",
+    color: "#FFFFFF",
     fontWeight: "700",
   },
 });
