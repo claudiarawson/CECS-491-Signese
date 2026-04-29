@@ -6,8 +6,9 @@ import {
   SignLessonCard,
 } from "@/src/components/lesson-index";
 import { LessonType } from "@/src/data/lessons";
-import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
-import { lessonColors, lessonSpacing, lessonTypography } from "@/src/theme";
+import { AppShell, LearnFlowHeader } from "@/src/components/asl";
+import { lessonSpacing, Spacing } from "@/src/theme";
+import { lessonColors } from "@/src/theme/colors";
 import {
   buildQuizOptions,
   calculateProgress,
@@ -16,7 +17,7 @@ import {
 } from "../../utils/lessonHelpers";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export function QuizSignScreen() {
   const params = useLocalSearchParams<{ lessonId?: string; order?: string; score?: string }>();
@@ -40,12 +41,11 @@ export function QuizSignScreen() {
 
   if (!sign) {
     return (
-      <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-        <ScreenHeader title="Quiz" showBackButton />
+      <AppShell scroll={false} header={<LearnFlowHeader title="Quiz" />}>
         <View style={styles.emptyWrap}>
           <Text style={styles.emptyText}>Could not find this sign.</Text>
         </View>
-      </ScreenContainer>
+      </AppShell>
     );
   }
 
@@ -73,43 +73,49 @@ export function QuizSignScreen() {
   };
 
   return (
-    <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-      <ScreenHeader title={lessonId === "numbers" ? "Quiz Numbers" : "Quiz"} showBackButton />
-      <View style={styles.content}>
-        <LessonHeader title={lessonId === "numbers" ? "Choose the correct number" : "Choose the correct meaning"} />
-        <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
-        <SignLessonCard gif={sign.gif} instruction={sign.prompt ?? "What does this sign mean?"} />
+    <AppShell scroll={false} header={<LearnFlowHeader title="Quiz" />}>
+      <View style={styles.shell}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <LessonHeader title="Choose the correct meaning" />
+          <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
+          <SignLessonCard gif={sign.gif} instruction={sign.prompt ?? "What does this sign mean?"} />
 
-        <View style={styles.grid}>
-          {options.map((option) => {
-            let state: "default" | "selected" | "correct" | "incorrect" = "default";
-            if (selected === option && !submitted) {
-              state = "selected";
-            }
-            if (submitted && option === sign.label) {
-              state = "correct";
-            }
-            if (submitted && selected === option && option !== sign.label) {
-              state = "incorrect";
-            }
+          <View style={styles.grid}>
+            {options.map((option) => {
+              let state: "default" | "selected" | "correct" | "incorrect" = "default";
+              if (selected === option && !submitted) {
+                state = "selected";
+              }
+              if (submitted && option === sign.label) {
+                state = "correct";
+              }
+              if (submitted && selected === option && option !== sign.label) {
+                state = "incorrect";
+              }
 
-            return (
-              <QuizAnswerButton
-                key={option}
-                label={option}
-                state={state}
-                onPress={() => !submitted && setSelected(option)}
-                disabled={submitted}
-              />
-            );
-          })}
-        </View>
+              return (
+                <QuizAnswerButton
+                  key={option}
+                  label={option}
+                  state={state}
+                  onPress={() => !submitted && setSelected(option)}
+                  disabled={submitted}
+                />
+              );
+            })}
+          </View>
 
-        {submitted ? (
-          <Text style={[styles.feedback, isCorrect ? styles.correct : styles.incorrect]}>
-            {isCorrect ? "Correct" : `Not quite. Correct answer: ${sign.label}`}
-          </Text>
-        ) : null}
+          {submitted ? (
+            <Text style={[styles.feedback, isCorrect ? styles.correct : styles.incorrect]}>
+              {isCorrect ? "Correct" : `Not quite. Correct answer: ${sign.label}`}
+            </Text>
+          ) : null}
+        </ScrollView>
 
         <View style={styles.footer}>
           <PrimaryActionButton
@@ -119,13 +125,20 @@ export function QuizSignScreen() {
           />
         </View>
       </View>
-    </ScreenContainer>
+    </AppShell>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
+  shell: {
     flex: 1,
+    minHeight: 0,
+    paddingHorizontal: Spacing.screenPadding,
+  },
+  scroll: { flex: 1 },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: lessonSpacing.sm,
   },
   grid: {
     marginTop: lessonSpacing.md,
@@ -135,9 +148,11 @@ const styles = StyleSheet.create({
     rowGap: lessonSpacing.sm,
   },
   feedback: {
-    ...lessonTypography.body,
-    textAlign: "center",
     marginTop: lessonSpacing.md,
+    textAlign: "center",
+    fontSize: 16,
+    lineHeight: 22,
+    color: lessonColors.textSecondary,
   },
   correct: {
     color: lessonColors.success,
@@ -146,18 +161,21 @@ const styles = StyleSheet.create({
     color: lessonColors.error,
   },
   footer: {
-    flex: 1,
-    justifyContent: "flex-end",
+    flexShrink: 0,
     alignItems: "center",
     paddingBottom: lessonSpacing.lg,
+    paddingTop: lessonSpacing.sm,
   },
   emptyWrap: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: Spacing.screenPadding,
+    minHeight: 200,
   },
   emptyText: {
-    ...lessonTypography.body,
     color: lessonColors.textSecondary,
+    fontSize: 16,
+    textAlign: "center",
   },
 });

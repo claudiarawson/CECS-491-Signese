@@ -5,7 +5,6 @@
  * import { typography, spacing, colors, componentStyles } from '@/src/theme'
  */
 
-export * from "./typography";
 export * from "./spacing";
 export * from "./responsive";
 export * from "./sizes";
@@ -13,3 +12,10 @@ export * from "./navigation";
 export * from "./colors";
 export * from "./components";
 export * from "./radius";
+export {
+  applyTypography,
+  fontWeight,
+  lessonTypography,
+  typography,
+  Typography,
+} from "./typography";

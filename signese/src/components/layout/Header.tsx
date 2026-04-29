@@ -1,15 +1,16 @@
-import { Sizes, Typography, semanticColors } from "@/src/theme";
+import { Sizes, Typography, fontWeight, semanticColors } from "@/src/theme";
 import { navigationTheme } from "@/src/theme/navigation";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import React from "react";
-import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
+import { Pressable, StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
 
 type ScreenHeaderProps = {
 	title?: string;
 	right?: React.ReactNode;
 	left?: React.ReactNode;
 	style?: StyleProp<ViewStyle>;
+	titleStyle?: StyleProp<TextStyle>;
 	showBottomAccent?: boolean;
 	showBackButton?: boolean;
 	onBackPress?: () => void;
@@ -20,10 +21,10 @@ export function ScreenHeader({
 	right,
 	left,
 	style,
+	titleStyle,
 	showBottomAccent = true,
 	showBackButton = false,
-	onBackPress,
-}: ScreenHeaderProps) {
+	onBackPress}: ScreenHeaderProps) {
 	const handleBack = onBackPress ?? (() => router.back());
 
 	return (
@@ -41,7 +42,7 @@ export function ScreenHeader({
 					)}
 					{left}
 				</View>
-				{title && <Text style={styles.title}>{title}</Text>}
+				{title && <Text style={[styles.title, titleStyle]}>{title}</Text>}
 				<View style={styles.rightWrap}>{right}</View>
 			</View>
 		</View>
@@ -51,24 +52,20 @@ export function ScreenHeader({
 const styles = StyleSheet.create({
 	container: {
 		width: "100%",
-		backgroundColor: navigationTheme.surface,
-	},
+		backgroundColor: navigationTheme.surface},
 	innerContent: {
 		height: 48,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		paddingHorizontal: 20,
-	},
+		paddingHorizontal: 20},
 	accent: {
 		borderBottomWidth: 1,
-		borderBottomColor: navigationTheme.border,
-	},
+		borderBottomColor: navigationTheme.border},
 	leftWrap: {
 		flexDirection: "row",
 		alignItems: "center",
-		minWidth: 72,
-	},
+		minWidth: 72},
 	backButton: {
 		width: 32,
 		height: 32,
@@ -76,22 +73,18 @@ const styles = StyleSheet.create({
 		backgroundColor: "#F2F7F8",
 		alignItems: "center",
 		justifyContent: "center",
-		marginRight: 6,
-	},
+		marginRight: 6},
 	title: {
 		...Typography.screenTitle,
 		fontSize: 19,
 		lineHeight: 24,
-		fontWeight: "700",
 		flex: 1,
 		textAlign: "center",
-	},
+		fontWeight: fontWeight.emphasis},
 	rightWrap: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "flex-end",
 		minWidth: 96,
-		columnGap: 10,
-	},
-});
+		columnGap: 10}});
 

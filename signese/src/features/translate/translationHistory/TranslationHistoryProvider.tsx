@@ -1,4 +1,9 @@
-import React, { createContext, useContext, useRef } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useRef,
+} from "react";
 import { useTranslationHistory } from "./useTranslationHistory";
 
 function createSessionId(): string {
@@ -11,6 +16,9 @@ function createSessionId(): string {
 
 export type TabTranslationHistoryValue = ReturnType<typeof useTranslationHistory> & {
   sessionId: string;
+  /** Stash caption text to apply when returning to Translate (e.g. after Reuse on history screen). */
+  requestReuseCaption: (text: string) => void;
+  consumePendingReuseCaption: () => string | null;
 };
 
 const TranslationHistoryContext = createContext<TabTranslationHistoryValue | null>(null);
@@ -19,10 +27,25 @@ const TranslationHistoryContext = createContext<TabTranslationHistoryValue | nul
 export function TranslationHistoryProvider({ children }: { children: React.ReactNode }) {
   const history = useTranslationHistory();
   const sessionIdRef = useRef(createSessionId());
+  const pendingReuseCaptionRef = useRef<string | null>(null);
+
+  const requestReuseCaption = useCallback((text: string) => {
+    pendingReuseCaptionRef.current = text;
+  }, []);
+
+  const consumePendingReuseCaption = useCallback((): string | null => {
+    const next = pendingReuseCaptionRef.current;
+    pendingReuseCaptionRef.current = null;
+    return next;
+  }, []);
+
   const value: TabTranslationHistoryValue = {
     ...history,
     sessionId: sessionIdRef.current,
+    requestReuseCaption,
+    consumePendingReuseCaption,
   };
+
   return (
     <TranslationHistoryContext.Provider value={value}>{children}</TranslationHistoryContext.Provider>
   );

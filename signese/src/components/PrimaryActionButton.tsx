@@ -1,4 +1,6 @@
-import { lessonColors, lessonTypography } from "@/src/theme";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { fontWeight } from "@/src/theme";
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Pressable, StyleSheet, Text, ViewStyle } from "react-native";
 
@@ -13,44 +15,44 @@ export function PrimaryActionButton({
   label,
   onPress,
   disabled = false,
-  style,
-}: PrimaryActionButtonProps) {
+  style}: PrimaryActionButtonProps) {
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
       style={({ pressed }) => [
-        styles.button,
+        styles.press,
         style,
-        pressed && !disabled && styles.pressed,
-        disabled && styles.disabled,
+        (pressed || disabled) && styles.dimmed,
       ]}
     >
-      <Text style={styles.label}>{label}</Text>
+      <LinearGradient
+        colors={[...asl.primaryButton] as unknown as [string, string, ...string[]]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.fill}
+      >
+        <Text style={styles.label}>{label}</Text>
+      </LinearGradient>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    height: 46,
-    borderRadius: 18,
-    backgroundColor: lessonColors.primaryButton,
+  press: {
+    borderRadius: 999,
+    overflow: "hidden",
+    minHeight: 52,
+    width: "100%",
+    maxWidth: 288},
+  fill: {
+    minHeight: 52,
     alignItems: "center",
     justifyContent: "center",
-    width: "100%",
-    maxWidth: 260,
-  },
-  pressed: {
-    opacity: 0.9,
-  },
-  disabled: {
-    opacity: 0.55,
-  },
+    paddingHorizontal: 20},
+  dimmed: {
+    opacity: 0.55},
   label: {
-    ...lessonTypography.button,
-    fontSize: 14,
-    color: lessonColors.textPrimary,
-    fontWeight: "700",
-  },
-});
+    fontWeight: fontWeight.emphasis,
+    fontSize: 16,
+    color: asl.surfaceLight}});

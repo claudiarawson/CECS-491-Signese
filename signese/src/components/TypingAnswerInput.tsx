@@ -1,34 +1,27 @@
 import { lessonColors, lessonSpacing, lessonTypography, Radius } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 import React from "react";
-import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
+import { StyleSheet, TextInput, TextInputProps } from "react-native";
 
 type TypingAnswerInputProps = TextInputProps;
 
 export function TypingAnswerInput(props: TypingAnswerInputProps) {
   return (
-    <View style={styles.wrap}>
-      <TextInput
-        placeholderTextColor={lessonColors.textSecondary}
-        {...props}
-        style={[styles.input, props.style]}
-      />
-    </View>
+    <TextInput
+      placeholderTextColor="rgba(255,255,255,0.45)"
+      {...props}
+      style={[styles.input, props.style]}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: {
-    width: "100%",
-  },
   input: {
-    height: 48,
+    height: 56,
     borderRadius: Radius.lg,
-    backgroundColor: lessonColors.surface,
+    backgroundColor: "rgba(0,0,0,0.35)",
     borderWidth: 1,
-    borderColor: "#DCE3E9",
+    borderColor: "rgba(255,255,255,0.16)",
     paddingHorizontal: lessonSpacing.md,
     ...lessonTypography.body,
-    fontSize: 13,
-    color: lessonColors.textPrimary,
-  },
-});
+    color: lessonColors.textPrimary}});

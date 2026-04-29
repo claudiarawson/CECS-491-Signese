@@ -1,24 +1,24 @@
 import { Tabs } from "expo-router";
 import React from "react";
+import { Platform, StyleSheet } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Sizes, navigationStyles, navigationTheme } from "@/src/theme";
-import { TranslationHistoryProvider } from "@/src/features/translate/translationHistory";
+import { Sizes } from "@/src/theme";
+import { asl } from "@/src/theme/aslConnectTheme";
 
 const TAB_ICON_SIZE = Sizes.iconMd;
 
 export default function TabLayout() {
   return (
-    <TranslationHistoryProvider>
     <Tabs
       screenOptions={{
         headerShown: false,
         animation: "fade",
-        tabBarStyle: navigationStyles.tabBar,
-        tabBarLabelStyle: navigationStyles.tabLabel,
+        tabBarStyle: styles.tabBar,
+        tabBarLabelStyle: styles.tabLabel,
         tabBarAllowFontScaling: false,
-        tabBarActiveTintColor: navigationTheme.activeTint,
-        tabBarInactiveTintColor: navigationTheme.inactiveTint,
-        tabBarItemStyle: navigationStyles.tabItem,
+        tabBarActiveTintColor: asl.tabBar.active,
+        tabBarInactiveTintColor: asl.tabBar.inactive,
+        tabBarItemStyle: styles.tabItem,
       }}
     >
       <Tabs.Screen
@@ -52,6 +52,9 @@ export default function TabLayout() {
         name="dictionary"
         options={{
           title: "Dictionary",
+          // Prevent React Navigation from keeping the last visited nested route
+          // (e.g., add sign) when switching tabs.
+          unmountOnBlur: true,
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="manage-search" size={TAB_ICON_SIZE} color={color} />
           ),
@@ -60,6 +63,40 @@ export default function TabLayout() {
       <Tabs.Screen name="settings" options={{ href: null }} />
       <Tabs.Screen name="account" options={{ href: null }} />
     </Tabs>
-    </TranslationHistoryProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    position: "absolute",
+    left: 16,
+    right: 16,
+    bottom: Platform.OS === "ios" ? 28 : 16,
+    height: 62,
+    borderRadius: 22,
+    borderTopWidth: 0,
+    backgroundColor: asl.tabBar.bg,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: asl.tabBar.border,
+    paddingBottom: 6,
+    paddingTop: 4,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOpacity: 0.35,
+        shadowRadius: 16,
+        shadowOffset: { width: 0, height: 8 },
+      },
+      android: { elevation: 14 },
+      default: {},
+    }),
+  },
+  tabLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    marginBottom: 2,
+  },
+  tabItem: {
+    paddingTop: 4,
+  },
+});

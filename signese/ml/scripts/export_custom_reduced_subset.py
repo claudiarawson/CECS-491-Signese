@@ -35,8 +35,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 CUSTOM_ROOT = REPO_ROOT / "data" / "raw" / "custom"
 PROCESSED_DIR = REPO_ROOT / "data" / "processed"
 
-DEFAULT_TARGET_LABELS = ["GOOD", "MEET", "NICE"]
-REDUCED_LABELS = ["MEET", "HOW", "GOOD", "NAME", "YOU", "NICE", "HELLO", "MORNING"]
+DEFAULT_TARGET_LABELS = ["HELLO", "HOW", "YOU", "GOOD", "MORNING", "NICE", "MEET", "SEE", "WHAT", "NAME", "MY"]
+REDUCED_LABELS = ["HELLO", "HOW", "YOU", "GOOD", "MORNING", "NICE", "MEET", "SEE", "WHAT", "NAME", "MY"]
 REDUCED_LABEL_SET = set(REDUCED_LABELS)
 VIDEO_EXTS = {".mp4", ".avi", ".mov", ".webm", ".mkv"}
 

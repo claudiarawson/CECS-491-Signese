@@ -1,68 +1,46 @@
-import {
-  DailyTipsCarousel,
-  HeaderActionButton,
-  HeaderAvatarButton,
-  ScreenContainer,
-  ScreenHeader,
-  SectionCard,
-} from "@/src/components/layout";
-import {
-  getDeviceDensity,
-  moderateScale,
-  semanticColors,
-  Sizes,
-  Spacing,
-  Typography,
-} from "@/src/theme";
+import { DailyTipsCarousel } from "@/src/components/layout";
+import { AppShell, AslTabHeader, ProgressCard, StatCard } from "@/src/components/asl";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { fontWeight, getDeviceDensity, moderateScale, Spacing } from "@/src/theme";
 import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   useWindowDimensions,
-  View,
-} from "react-native";
+  View} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { getProfileIconById } from "@/src/features/account/types";
-import { useAccessibility } from "@/src/contexts/AccessibilityContext";
-import { StarsProgressPanel } from "@/src/features/gamification/components/StarsProgressPanel";
 import {
   getCompletedLessons,
-  getNextStarUnlockTarget,
+  getLessonProgressPercent,
   getTotalStars,
-  getUnlockedLessons,
-  resetLessonProgress,
-} from "@/src/features/learn/utils/lessonProgress";
+  resetLessonProgress} from "@/src/features/learn/utils/lessonProgress";
+import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 
 export default function HomeScreen() {
   const { textScale } = useAccessibility();
   const { profile, loading, authUser } = useAuthUser();
-  const headerProfileIcon = getProfileIconById(profile?.avatar);
   const streakCount = profile?.streak?.current ?? 0;
 
   const [completedLessonsCount, setCompletedLessonsCount] = useState(0);
   const [guestStarTotal, setGuestStarTotal] = useState(0);
   const [statsLoading, setStatsLoading] = useState(true);
   const [statsError, setStatsError] = useState<string | null>(null);
-  const [nextUnlockTarget, setNextUnlockTarget] = React.useState<
-    ReturnType<typeof getNextStarUnlockTarget>
-  >(null);
+  const [alphabetPct, setAlphabetPct] = useState(0);
 
   const refreshHomeStats = React.useCallback(async () => {
     setStatsLoading(true);
     setStatsError(null);
+
     try {
-      const [completed, unlocked] = await Promise.all([
-        getCompletedLessons(),
-        getUnlockedLessons(),
-      ]);
+      const completed = await getCompletedLessons();
       setCompletedLessonsCount(completed.length);
-      setNextUnlockTarget(getNextStarUnlockTarget(unlocked));
+      setAlphabetPct(await getLessonProgressPercent("alphabet"));
+
       if (!authUser) {
         const total = await getTotalStars();
         setGuestStarTotal(total);
@@ -100,8 +78,7 @@ export default function HomeScreen() {
                 Alert.alert("Error", "Could not reset progress.");
               }
             })();
-          },
-        },
+          }},
       ]
     );
   };
@@ -110,115 +87,67 @@ export default function HomeScreen() {
   const density = getDeviceDensity(width, height);
   const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
 
+  const starCount = authUser ? (profile?.stars?.lifetimeEarned ?? 0) : guestStarTotal;
+
   if (loading) {
     return (
-      <ScreenContainer backgroundColor="#F1F6F5">
-        <View style={styles.loadingWrap}>
-          <ActivityIndicator size="large" />
-          <Text style={styles.loadingText}>Loading your profile...</Text>
-        </View>
-      </ScreenContainer>
+      <View style={styles.loadingOuter}>
+        <ActivityIndicator size="large" color={asl.accentCyan} />
+        <Text style={styles.loadingText}>Loading your profile...</Text>
+      </View>
     );
   }
 
   return (
-    <ScreenContainer backgroundColor="#F1F6F5">
-      <ScreenHeader
-        title="Home"
-        right={
-          <>
-            <HeaderActionButton
-              iconName="settings"
-              onPress={() => router.push("/(tabs)/settings" as any)}
-            />
-            <HeaderAvatarButton
-              avatar={profile?.avatar}
-              onPress={() => router.push("/(tabs)/account")}
-            />
-          </>
-        }
+    <AppShell variant="default" header={<AslTabHeader title="Home" onSettings={() => router.push("/(tabs)/settings" as any)} />}>
+      <View style={styles.greetingWrap}>
+        <Text style={styles.greetingLine}>Welcome back</Text>
+        <Text style={styles.greetingName}>{profile?.username ?? "learner"}</Text>
+      </View>
+
+      {statsError ? (
+        <View style={styles.statsErrorBanner} accessibilityRole="alert">
+          <Text style={styles.statsErrorBannerText}>{statsError}</Text>
+        </View>
+      ) : null}
+
+      {statsLoading ? (
+        <View style={styles.statsRow}>
+          <View style={styles.statSkeleton}>
+            <ActivityIndicator color={asl.accentCyan} />
+          </View>
+          <View style={styles.statSkeleton}>
+            <ActivityIndicator color={asl.accentCyan} />
+          </View>
+          <View style={styles.statSkeleton}>
+            <ActivityIndicator color={asl.accentCyan} />
+          </View>
+        </View>
+      ) : (
+        <View style={styles.statsRow}>
+          <StatCard icon="⭐️" value={starCount} label="Stars" accent="pink" />
+          <StatCard icon="🔥" value={streakCount} label="Streak" accent="warm" />
+          <StatCard icon="📖" value={completedLessonsCount} label="Lessons" accent="cyan" />
+        </View>
+      )}
+
+      <Pressable style={styles.resetButton} onPress={handleResetProgress}>
+        <Text style={styles.resetButtonText}>Reset progress (local only)</Text>
+      </Pressable>
+
+      <ProgressCard
+        title="Your lesson path"
+        subtitle="Alphabet, vocabulary, and more"
+        percent={alphabetPct}
+        emoji="🔤"
+        ctaLabel="Continue to Learn"
+        onContinue={() => router.push("/(tabs)/learn" as any)}
       />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <View style={styles.greetingWrap}>
-          <Text style={styles.greetingLine}>Welcome Back</Text>
-          <Text style={styles.greetingName}>
-            {profile?.username ?? "User"}! 👋
-          </Text>
-        </View>
-
-        <StarsProgressPanel
-          variant="hero"
-          totalEarned={
-            authUser ? (profile?.stars?.lifetimeEarned ?? 0) : guestStarTotal
-          }
-          balance={authUser ? (profile?.stars?.balance ?? 0) : guestStarTotal}
-          isLoading={statsLoading}
-          errorMessage={statsError}
-          nextUnlock={
-            nextUnlockTarget
-              ? {
-                  title: nextUnlockTarget.title,
-                  starsRequired: nextUnlockTarget.starsRequired,
-                  currentBalance: authUser
-                    ? (profile?.stars?.balance ?? 0)
-                    : guestStarTotal,
-                }
-              : null
-          }
-        />
-
-        <View style={styles.statsRow}>
-          <View style={[styles.statCard, styles.statCardStreak]}>
-            <Text style={styles.statIcon}>🔥</Text>
-            <Text style={styles.statValue}>{streakCount}</Text>
-            <Text style={styles.statLabel}>Streak</Text>
-          </View>
-
-          <View style={[styles.statCard, styles.statCardLessons]}>
-            <Text style={styles.statIcon}>📖</Text>
-            <Text style={styles.statValue}>{completedLessonsCount}</Text>
-            <Text style={styles.statLabel}>Lessons</Text>
-          </View>
-        </View>
-
-        <Pressable style={styles.resetButton} onPress={handleResetProgress}>
-          <Text style={styles.resetButtonText}>Reset Progress</Text>
-        </Pressable>
-
-        <SectionCard style={styles.learningCard}>
-          <View style={styles.learningTopRow}>
-            <View style={styles.learningIconWrap}>
-              <Text style={styles.learningIcon}>🔤</Text>
-            </View>
-            <View style={styles.learningTextWrap}>
-              <Text style={styles.learningTitle}>Continue Learning</Text>
-              <Text style={styles.learningSubtitle}>
-                Alphabet • Continue your lesson path
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.progressTrack}>
-            <View style={styles.progressFill} />
-          </View>
-
-          <Pressable
-            style={styles.continueBtn}
-            onPress={() => router.push("/(tabs)/learn")}
-          >
-            <Text style={styles.continueBtnText}>▶ Continue to Learn</Text>
-          </Pressable>
-        </SectionCard>
-
-        <View style={styles.tipsSection}>
-          <DailyTipsCarousel />
-        </View>
-      </ScrollView>
-    </ScreenContainer>
+      <View style={styles.tipsSection}>
+        <DailyTipsCarousel />
+      </View>
+    </AppShell>
   );
 }
 
@@ -227,159 +156,62 @@ const createStyles = (density: number, textScale: number) => {
   const ts = (value: number) => ms(value) * textScale;
 
   return StyleSheet.create({
-    content: {
+    loadingOuter: {
       flex: 1,
-    },
-    scrollContent: {
-      paddingHorizontal: Spacing.screenPadding,
-      paddingTop: Spacing.md,
-      paddingBottom: Spacing.lg,
-    },
-    greetingWrap: {
-      marginBottom: ms(8),
-    },
-    greetingLine: {
-      ...Typography.sectionTitle,
-      color: semanticColors.text.primary,
-      fontSize: ts(16),
-      lineHeight: ts(20),
-    },
-    greetingName: {
-      ...Typography.screenTitle,
-      color: semanticColors.text.primary,
-      fontSize: ts(26),
-      lineHeight: ts(30),
-      textDecorationLine: "underline",
-      fontWeight: "700",
-    },
-    statsRow: {
-      flexDirection: "row",
-      gap: Spacing.xs,
-      marginBottom: Spacing.cardGap,
-    },
-    statCard: {
-      flex: 1,
-      minHeight: Sizes.statCardHeight * density,
-      borderRadius: ms(16),
-      paddingVertical: ms(6),
+      backgroundColor: asl.gradient[0],
       alignItems: "center",
       justifyContent: "center",
-    },
-    statCardStreak: {
-      backgroundColor: "#F4D5D5",
-    },
-    statCardLessons: {
-      backgroundColor: "#D2F1D8",
-    },
-    statIcon: {
-      fontSize: ts(18),
-      marginBottom: ms(2),
-    },
-    statValue: {
-      ...Typography.statNumber,
-      fontSize: ts(28),
-      color: semanticColors.text.primary,
-      lineHeight: ts(30),
-    },
-    statLabel: {
-      ...Typography.caption,
-      fontSize: ts(12),
-      color: semanticColors.text.secondary,
-      lineHeight: ts(14),
-    },
-    resetButton: {
-      alignSelf: "flex-start",
-      marginBottom: Spacing.cardGap,
-      backgroundColor: "#EF4444",
-      paddingHorizontal: ms(14),
-      paddingVertical: ms(10),
-      borderRadius: ms(12),
-    },
-    resetButtonText: {
-      color: "#FFFFFF",
-      fontSize: ts(14),
-      lineHeight: ts(18),
-      fontWeight: "700",
-    },
-    learningCard: {
-      backgroundColor: "#EDEDED",
-      padding: ms(9),
-      marginBottom: Spacing.cardGap,
-    },
-    learningTopRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: ms(6),
-      gap: ms(8),
-    },
-    learningIconWrap: {
-      width: ms(46),
-      height: ms(46),
-      borderRadius: ms(14),
-      backgroundColor: "#1FB590",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    learningIcon: {
-      fontSize: ts(22),
-    },
-    learningTextWrap: {
-      flex: 1,
-    },
-    learningTitle: {
-      ...Typography.sectionTitle,
-      color: semanticColors.text.primary,
-      fontWeight: "700",
-      fontSize: ts(18),
-      lineHeight: ts(22),
-    },
-    learningSubtitle: {
-      ...Typography.body,
-      color: semanticColors.text.secondary,
-      fontSize: ts(13),
-      lineHeight: ts(16),
-    },
-    progressTrack: {
-      width: "100%",
-      height: ms(6),
-      borderRadius: ms(3),
-      backgroundColor: "#D4D7D6",
-      marginBottom: ms(10),
-    },
-    progressFill: {
-      width: "8%",
-      height: "100%",
-      borderRadius: ms(3),
-      backgroundColor: "#21BA95",
-    },
-    continueBtn: {
-      height: Sizes.buttonHeight * density,
-      borderRadius: Sizes.buttonRadius * density,
-      backgroundColor: "#23B58F",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    continueBtnText: {
-      ...Typography.button,
-      color: "#FFFFFF",
-      fontSize: ts(14),
-      lineHeight: ts(18),
-    },
-    tipsSection: {
-      marginTop: 0,
-    },
-    loadingWrap: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      paddingHorizontal: Spacing.screenPadding,
-    },
+      paddingHorizontal: Spacing.screenPadding},
     loadingText: {
       marginTop: ms(10),
-      ...Typography.body,
-      color: semanticColors.text.secondary,
-      fontSize: ts(14),
-      lineHeight: ts(18),
-    },
-  });
+      color: asl.text.secondary,
+      fontSize: ts(14)},
+    greetingWrap: { marginBottom: ms(14) },
+    greetingLine: { color: asl.text.muted, fontSize: ts(15), fontWeight: fontWeight.medium },
+    greetingName: {
+      color: asl.text.primary,
+      fontSize: ts(26),
+      fontWeight: fontWeight.emphasis},
+    statsErrorBanner: {
+      marginBottom: ms(10),
+      paddingVertical: ms(10),
+      paddingHorizontal: ms(14),
+      borderRadius: ms(14),
+      borderWidth: 1,
+      borderColor: "rgba(248, 113, 113, 0.35)",
+      backgroundColor: "rgba(248, 113, 113, 0.12)"},
+    statsErrorBannerText: {
+      color: "#FCA5A5",
+      fontSize: ts(13),
+      fontWeight: fontWeight.medium,
+      textAlign: "center"},
+    statsRow: {
+      flexDirection: "row",
+      gap: ms(10),
+      marginBottom: ms(14),
+      alignItems: "stretch"},
+    statSkeleton: {
+      flex: 1,
+      minHeight: 96,
+      borderRadius: asl.radius.md,
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+      backgroundColor: asl.glass.bg,
+      alignItems: "center",
+      justifyContent: "center",
+      ...asl.shadow.card},
+    resetButton: {
+      alignSelf: "flex-start",
+      marginBottom: ms(14),
+      backgroundColor: "rgba(248, 113, 113, 0.18)",
+      paddingHorizontal: ms(12),
+      paddingVertical: ms(8),
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: "rgba(248,113,113,0.35)"},
+    resetButtonText: {
+      color: "#FCA5A5",
+      fontSize: ts(13),
+      fontWeight: fontWeight.medium},
+    tipsSection: { marginTop: ms(12) }});
 };

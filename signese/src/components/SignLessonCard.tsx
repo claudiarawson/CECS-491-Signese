@@ -1,4 +1,6 @@
 import { lessonColors, lessonSpacing, lessonTypography, Radius } from "@/src/theme";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { fontWeight } from "@/src/theme";
 import React from "react";
 import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 
@@ -18,8 +20,16 @@ export function SignLessonCard({ gif, label, instruction }: SignLessonCardProps)
           <Text style={styles.fallbackText}>Sign preview coming soon</Text>
         )}
       </View>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
-      {instruction ? <Text style={styles.instruction}>{instruction}</Text> : null}
+      {label ? (
+        <Text style={styles.label} numberOfLines={2}>
+          {label}
+        </Text>
+      ) : null}
+      {instruction ? (
+        <Text style={styles.instruction} numberOfLines={4}>
+          {instruction}
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -28,45 +38,37 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: lessonColors.surface,
     borderRadius: Radius.lg,
-    paddingVertical: lessonSpacing.sm,
-    paddingHorizontal: lessonSpacing.md,
+    padding: lessonSpacing.lg,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 210,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    elevation: 2,
-  },
+    minHeight: 300,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.14)",
+    ...asl.shadow.card},
   mediaWrap: {
     width: "100%",
-    height: 116,
+    height: 180,
     borderRadius: Radius.md,
-    backgroundColor: "#F7FAFC",
+    backgroundColor: "rgba(0,0,0,0.45)",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: lessonSpacing.sm,
-  },
+    marginBottom: lessonSpacing.md,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.08)",
+    overflow: "hidden"},
   media: {
-    width: "74%",
-    height: "74%",
-  },
+    width: "88%",
+    height: "88%"},
   fallbackText: {
     ...lessonTypography.caption,
-    color: lessonColors.textSecondary,
-  },
+    color: lessonColors.textSecondary},
   label: {
     ...lessonTypography.subtitle,
-    fontSize: 13,
     color: lessonColors.textPrimary,
     textAlign: "center",
-  },
+    fontWeight: fontWeight.emphasis},
   instruction: {
     ...lessonTypography.body,
-    fontSize: 11,
     color: lessonColors.textSecondary,
     textAlign: "center",
-    marginTop: lessonSpacing.sm,
-  },
-});
+    marginTop: lessonSpacing.sm}});

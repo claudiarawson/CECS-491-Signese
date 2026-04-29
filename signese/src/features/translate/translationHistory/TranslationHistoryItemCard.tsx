@@ -4,76 +4,131 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import type { TranslationHistoryItem } from "./types";
 import { Radius, semanticColors, Spacing, Typography } from "@/src/theme";
 import { Surfaces } from "@/src/theme/surfaces";
+import { asl } from "@/src/theme/aslConnectTheme";
 
 type Props = {
   item: TranslationHistoryItem;
   isNewest: boolean;
   textScale: number;
-  onReuse?: (item: TranslationHistoryItem) => void;
+  onDictionary?: (item: TranslationHistoryItem) => void;
+  onDelete?: (item: TranslationHistoryItem) => void;
   onReport?: (item: TranslationHistoryItem) => void;
+  appearance?: "light" | "dark";
 };
 
 function formatTimestamp(iso: string): string {
   try {
-    return new Date(iso).toLocaleTimeString(undefined, {
-      hour: "numeric",
-      minute: "2-digit",
-      second: "2-digit",
-    });
+    const ms = Date.parse(iso);
+    if (Number.isFinite(ms)) {
+      return new Date(ms).toLocaleTimeString(undefined, {
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+    }
+    return "";
   } catch {
     return "";
   }
 }
 
-export function TranslationHistoryItemCard({ item, isNewest, textScale, onReuse, onReport }: Props) {
+export function TranslationHistoryItemCard({
+  item,
+  isNewest,
+  textScale,
+  onDictionary,
+  onDelete,
+  onReport,
+  appearance = "light",
+}: Props) {
+  const d = appearance === "dark";
+  const flagColor = d ? asl.accentCyan : "#214F46";
+  const displayTime = formatTimestamp(item.createdAt);
+
   return (
-    <View style={[styles.card, isNewest && styles.cardNewest]}>
+    <View
+      style={[styles.card, isNewest && styles.cardNewest, d && darkStyles.card, isNewest && d && darkStyles.cardNewest]}
+    >
       <View style={styles.rowTop}>
-        <Text style={[styles.langPair, { fontSize: 10 * textScale }]} numberOfLines={1}>
+        <Text
+          style={[styles.langPair, d && darkStyles.langPair, { fontSize: 10 * textScale }]}
+          numberOfLines={1}
+        >
           {item.sourceLanguage} → {item.targetLanguage}
         </Text>
-        <Text style={[styles.time, { fontSize: 10 * textScale }]}>{formatTimestamp(item.createdAt)}</Text>
+        <Text style={[styles.time, d && darkStyles.time, { fontSize: 10 * textScale }]}>{displayTime}</Text>
       </View>
       <View style={styles.badgeRow}>
-        <Text style={[styles.seq, { fontSize: 10 * textScale }]}>#{item.sequence}</Text>
+        <Text style={[styles.seq, d && darkStyles.seq, { fontSize: 10 * textScale }]}>#{item.sequence}</Text>
+        {item.confidence !== undefined ? (
+          <View style={styles.confidencePill}>
+            <Text style={styles.confidenceText}>{Math.round(item.confidence * 100)}%</Text>
+          </View>
+        ) : null}
         {isNewest ? (
-          <View style={styles.newPill}>
-            <Text style={styles.newPillText}>Latest</Text>
+          <View style={[styles.newPill, d && darkStyles.newPill]}>
+            <Text style={[styles.newPillText, d && darkStyles.newPillText]}>Latest</Text>
           </View>
         ) : null}
       </View>
-      <Text style={[styles.kicker, { fontSize: 10 * textScale }]}>Detected</Text>
-      <Text style={[styles.original, { fontSize: 13 * textScale }]} numberOfLines={4}>
-        {item.originalText}
-      </Text>
-      <Text style={[styles.kicker, styles.kickerSpaced, { fontSize: 10 * textScale }]}>
-        Caption
-      </Text>
-      <Text style={[styles.translated, { fontSize: 13 * textScale }]} numberOfLines={6}>
+      <Text style={[styles.kicker, d && darkStyles.kicker, { fontSize: 10 * textScale }]}>Recognized</Text>
+      <Text
+        style={[styles.translated, d && darkStyles.translated, { fontSize: 13 * textScale }]}
+        numberOfLines={6}
+      >
         {item.translatedText}
       </Text>
 
-      {onReuse || onReport ? (
+      {onDictionary || onDelete || onReport ? (
         <View style={styles.actionRow}>
-          {onReuse ? (
+          {onDictionary ? (
             <Pressable
-              onPress={() => onReuse(item)}
-              style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.actionPressed]}
+              onPress={() => onDictionary(item)}
+              style={({ pressed }) => [
+                styles.actionBtn,
+                d ? darkStyles.actionPrimary : styles.actionPrimary,
+                pressed && styles.actionPressed,
+              ]}
               accessibilityRole="button"
-              accessibilityLabel="Use this caption in the translator"
+              accessibilityLabel="View this sign in the dictionary"
             >
-              <Text style={[styles.actionBtnText, { fontSize: 12 * textScale }]}>Use caption</Text>
+              <MaterialIcons name="menu-book" size={16} color="#FFFFFF" />
+              <Text style={[styles.actionBtnText, { fontSize: 12 * textScale }]} numberOfLines={1}>
+                Dictionary
+              </Text>
+            </Pressable>
+          ) : null}
+          {onDelete ? (
+            <Pressable
+              onPress={() => onDelete(item)}
+              style={({ pressed }) => [styles.actionBtn, styles.actionDelete, pressed && styles.actionPressed]}
+              accessibilityRole="button"
+              accessibilityLabel="Remove this sign from history"
+            >
+              <MaterialIcons name="delete-outline" size={16} color="#FFFFFF" />
+              <Text style={[styles.actionBtnText, { fontSize: 12 * textScale }]} numberOfLines={1}>
+                Delete
+              </Text>
             </Pressable>
           ) : null}
           {onReport ? (
             <Pressable
               onPress={() => onReport(item)}
-              style={({ pressed }) => [styles.actionBtn, styles.actionSecondary, pressed && styles.actionPressed]}
+              style={({ pressed }) => [
+                styles.actionBtn,
+                d ? darkStyles.actionSecondary : styles.actionSecondary,
+                pressed && styles.actionPressed,
+              ]}
               accessibilityRole="button"
-              accessibilityLabel="Report incorrect translation for this result"
+              accessibilityLabel="Report incorrect translation for this sign"
             >
-              <MaterialIcons name="flag" size={16} color="#214F46" />
-              <Text style={[styles.actionBtnTextSecondary, { fontSize: 12 * textScale }]}>Report</Text>
+              <MaterialIcons name="flag" size={16} color={flagColor} />
+              <Text
+                style={[styles.actionBtnTextSecondary, d && darkStyles.actionBtnTextSecondary, { fontSize: 12 * textScale }]}
+                numberOfLines={1}
+              >
+                Report
+              </Text>
             </Pressable>
           ) : null}
         </View>
@@ -81,6 +136,35 @@ export function TranslationHistoryItemCard({ item, isNewest, textScale, onReuse,
     </View>
   );
 }
+
+const darkStyles = StyleSheet.create({
+  card: {
+    borderColor: asl.glass.border,
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+  cardNewest: {
+    borderColor: "rgba(244, 114, 182, 0.45)",
+    backgroundColor: "rgba(244, 114, 182, 0.12)",
+  },
+  langPair: { color: asl.text.secondary },
+  time: { color: asl.text.muted },
+  seq: { color: asl.accentCyan },
+  newPill: { backgroundColor: asl.accentCyan },
+  newPillText: { color: "#0b0107" },
+  kicker: { color: asl.text.muted },
+  original: { color: asl.text.primary },
+  translated: { color: asl.text.primary },
+  actionPrimary: {
+    backgroundColor: "rgba(244, 114, 182, 0.85)",
+    borderColor: "rgba(244, 114, 182, 0.5)",
+  },
+  actionSecondary: {
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderColor: asl.glass.border,
+  },
+  actionBtnText: { color: "#0b0107" },
+  actionBtnTextSecondary: { color: asl.text.primary },
+});
 
 const styles = StyleSheet.create({
   card: {
@@ -97,18 +181,20 @@ const styles = StyleSheet.create({
   },
   actionRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
+    flexWrap: "nowrap",
     gap: Spacing.xs,
     marginTop: Spacing.sm,
+    alignItems: "center",
   },
   actionBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
     paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     borderRadius: Radius.sm,
     borderWidth: 1,
+    flexShrink: 1,
   },
   actionPrimary: {
     backgroundColor: "#214F46",
@@ -117,6 +203,10 @@ const styles = StyleSheet.create({
   actionSecondary: {
     backgroundColor: Surfaces.card,
     borderColor: Surfaces.borderStrong,
+  },
+  actionDelete: {
+    backgroundColor: "#C62828",
+    borderColor: "#9A1B1B",
   },
   actionPressed: {
     opacity: 0.88,
@@ -168,6 +258,18 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     fontSize: 10,
     color: "#FFFFFF",
+    fontWeight: "700",
+  },
+  confidencePill: {
+    backgroundColor: "#E8F2F0",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  confidenceText: {
+    ...Typography.caption,
+    fontSize: 10,
+    color: "#1D4B43",
     fontWeight: "700",
   },
   kicker: {

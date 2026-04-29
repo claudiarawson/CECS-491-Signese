@@ -41,14 +41,17 @@ from ml.scripts.export_feature_available_splits import export_feature_available_
 PROCESSED_DIR = REPO_ROOT / "data" / "processed"
 
 REDUCED_LABELS = [
-    "MEET",
-    "HOW",
-    "GOOD",
-    "NAME",
-    "YOU",
-    "NICE",
     "HELLO",
+    "HOW",
+    "YOU",
+    "GOOD",
     "MORNING",
+    "NICE",
+    "MEET",
+    "SEE",
+    "WHAT",
+    "NAME",
+    "MY",
 ]
 
 INPUT_SPLITS = {

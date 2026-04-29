@@ -1,60 +1,41 @@
 import React, { useMemo, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  useWindowDimensions,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, Pressable, useWindowDimensions, ScrollView, Image } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
+import { AppShell, LearnFlowHeader } from "@/src/components/asl";
+import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { lessonColors } from "@/src/theme/colors";
 import {
-  ScreenContainer,
-  HeaderActionButton,
-  HeaderAvatarButton,
-} from "@/src/components/layout";
-import {
+  fontWeight,
   getDeviceDensity,
   moderateScale,
-} from "@/src/theme";
-import { useAccessibility } from "@/src/contexts/AccessibilityContext";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { getProfileIconById } from "@/src/features/account/types";
+  Spacing} from "@/src/theme";
 import { ALPHABET_LEARN_ITEMS } from "@/src/features/learn/data/alphabet";
 import { setLessonStepProgress } from "@/src/features/learn/utils/lessonProgress";
 
 function shuffleArray<T>(items: T[]): T[] {
   const copy = [...items];
-
   for (let i = copy.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     [copy[i], copy[j]] = [copy[j], copy[i]];
   }
-
   return copy;
 }
 
 function buildChoices(correctAnswer: string) {
   const allLetters = ALPHABET_LEARN_ITEMS.map((item) => item.letter.toUpperCase());
-  const wrongChoices = shuffleArray(
-    allLetters.filter((letter) => letter !== correctAnswer)
-  ).slice(0, 3);
-
+  const wrongChoices = shuffleArray(allLetters.filter((letter) => letter !== correctAnswer)).slice(0, 3);
   return shuffleArray([correctAnswer, ...wrongChoices]);
 }
 
 export default function AlphabetQuizScreen() {
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const { textScale } = useAccessibility();
-  const { profile } = useAuthUser();
-  const headerProfileIcon = getProfileIconById(profile?.avatar);
-  const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
+  const ms = useMemo(() => (v: number) => moderateScale(v) * density, [density]);
+  const styles = useMemo(() => createStyles(ms), [ms]);
 
-  const questions = useMemo(() => {
-    return shuffleArray(ALPHABET_LEARN_ITEMS).slice(0, 10);
-  }, []);
+  const questions = useMemo(() => shuffleArray(ALPHABET_LEARN_ITEMS).slice(0, 10), []);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -66,15 +47,11 @@ export default function AlphabetQuizScreen() {
   const total = questions.length;
   const progress = ((currentIndex + 1) / total) * 100;
 
-  // placeholder correct answer for now
-  const correctAnswer = "A";
+  const correctAnswer = currentItem?.letter.toUpperCase() ?? "A";
 
-  const choices = useMemo(() => {
-    return buildChoices(correctAnswer);
-  }, [currentIndex]);
+  const choices = useMemo(() => buildChoices(correctAnswer), [correctAnswer]);
 
   React.useEffect(() => {
-    // Entering screen 3 implies two screens are complete.
     void setLessonStepProgress("alphabet", 2);
   }, []);
 
@@ -88,7 +65,6 @@ export default function AlphabetQuizScreen() {
       return;
     }
 
-    // Only mark full lesson-path completion when user finishes the final quiz item.
     void setLessonStepProgress("alphabet", 3);
     router.push("/learn/alphabet/complete");
   };
@@ -112,243 +88,165 @@ export default function AlphabetQuizScreen() {
     }
   };
 
+  const headerRight = (
+    <>
+      <Pressable onPress={() => router.push("/(tabs)/settings" as any)} hitSlop={8} style={styles.headerIcon}>
+        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+      </Pressable>
+      <Pressable onPress={() => router.push("/(tabs)/account")} hitSlop={8} style={styles.headerIcon}>
+        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+      </Pressable>
+    </>
+  );
+
   return (
-    <ScreenContainer backgroundColor="#EEF3F1">
-      <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <MaterialIcons name="chevron-left" size={28} color="#FFFFFF" />
-        </Pressable>
-
-        <Text style={styles.headerTitle}>Alphabet Quiz</Text>
-
-        <View style={styles.headerRight}>
-          <HeaderActionButton
-            iconName="settings"
-            onPress={() => router.push("/(tabs)/settings" as any)}
-          />
-          <HeaderAvatarButton
-            avatar={headerProfileIcon.emoji}
-            onPress={() => router.push("/(tabs)/account")}
-          />
-        </View>
-      </View>
-
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.progressTopRow}>
-          <Text style={styles.progressLabel}>Multiple Choice</Text>
-          <Text style={styles.progressCount}>
-            {currentIndex + 1}/{total}
-          </Text>
-        </View>
-
-        <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: `${progress}%` }]} />
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.promptText}>Which letter is this?</Text>
-          <Text style={styles.bigLetter}>A</Text>
-        </View>
-
-        <View style={styles.choicesContainer}>
-          {choices.map((choice) => {
-            const isSelected = selectedAnswer === choice;
-
-            return (
-              <Pressable
-                key={choice}
-                style={[
-                  styles.choiceButton,
-                  isSelected && styles.choiceButtonSelected,
-                ]}
-                onPress={() => setSelectedAnswer(choice)}
-              >
-                <Text
-                  style={[
-                    styles.choiceText,
-                    isSelected && styles.choiceTextSelected,
-                  ]}
-                >
-                  {choice}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-
-        {!!feedback && (
-          <Text
-            style={[
-              styles.feedbackText,
-              isCorrect === true ? styles.correctText : styles.incorrectText,
-            ]}
-          >
-            {feedback}
-          </Text>
-        )}
-
-        {!answered ? (
-          <Pressable style={styles.actionButton} onPress={handleCheckAnswer}>
-            <Text style={styles.actionButtonText}>Check Answer</Text>
-          </Pressable>
-        ) : (
-          <Pressable style={styles.actionButton} onPress={goToNext}>
-            <Text style={styles.actionButtonText}>
-              {currentIndex < total - 1 ? "Next" : "Finish"}
+    <AppShell
+      scroll={false}
+      header={<LearnFlowHeader title="Alphabet quiz" onBackPress={() => router.back()} rightExtra={headerRight} />}
+    >
+      <View style={styles.inner}>
+        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+          <View style={styles.progressTopRow}>
+            <Text style={styles.progressLabel}>Quiz</Text>
+            <Text style={styles.progressCount}>
+              {currentIndex + 1}/{total}
             </Text>
-          </Pressable>
-        )}
-      </ScrollView>
-    </ScreenContainer>
+          </View>
+
+          <View style={styles.progressTrack}>
+            <View style={[styles.progressFill, { width: `${progress}%` }]} />
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.promptText}>Which letter is this?</Text>
+            {currentItem ? (
+              <Image source={currentItem.image} style={styles.promptImage} resizeMode="contain" />
+            ) : null}
+            <Text style={styles.hintMuted}>Tap the matching letter below.</Text>
+          </View>
+
+          <View style={styles.choicesContainer}>
+            {choices.map((choice) => {
+              const isSelected = selectedAnswer === choice;
+              return (
+                <Pressable
+                  key={choice}
+                  style={[styles.choiceButton, isSelected && styles.choiceButtonSelected]}
+                  onPress={() => setSelectedAnswer(choice)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Letter ${choice}`}
+                >
+                  <Text style={[styles.choiceText, isSelected && styles.choiceTextSelected]}>{choice}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          {!!feedback ? (
+            <Text style={[styles.feedbackText, isCorrect === true ? styles.correctText : styles.incorrectText]}>{feedback}</Text>
+          ) : null}
+
+          {!answered ? (
+            <PrimaryActionButton label="Check answer" onPress={handleCheckAnswer} />
+          ) : (
+            <PrimaryActionButton label={currentIndex < total - 1 ? "Next" : "Finish"} onPress={goToNext} />
+          )}
+        </ScrollView>
+      </View>
+    </AppShell>
   );
 }
 
-const createStyles = (density: number, textScale: number) => {
-  const ms = (value: number) => moderateScale(value) * density;
-  const ts = (value: number) => ms(value) * textScale;
-
-  return StyleSheet.create({
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: "#FFFFFF",
-      paddingHorizontal: ms(16),
-      paddingBottom: ms(10),
-      paddingTop: ms(10),
-      gap: ms(12),
-    },
-    backButton: {
-      width: ms(40),
-      height: ms(40),
-      borderRadius: ms(20),
-      backgroundColor: "#56BDB4",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    headerTitle: {
+const createStyles = (ms: (n: number) => number) =>
+  StyleSheet.create({
+    inner: {
       flex: 1,
-      fontSize: ts(18),
-      fontWeight: "800",
-      color: "#334155",
-    },
-    headerRight: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: ms(6),
-    },
+      minHeight: 0,
+      paddingHorizontal: Spacing.screenPadding},
+    headerIcon: { padding: ms(4) },
     scrollContent: {
+      flexGrow: 1,
       paddingBottom: ms(28),
-    },
+      alignItems: "center"},
     progressTopRow: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      paddingHorizontal: ms(28),
-      marginTop: ms(8),
-    },
+      width: "100%",
+      marginTop: ms(8)},
     progressLabel: {
-      fontSize: ts(17),
-      lineHeight: ts(22),
-      color: "#64748B",
-    },
+      fontSize: ms(12),
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary},
     progressCount: {
-      fontSize: ts(17),
-      lineHeight: ts(22),
-      color: "#64748B",
-    },
+      fontSize: ms(12),
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary},
     progressTrack: {
-      height: ms(20),
-      borderRadius: ms(12),
-      backgroundColor: "#F4B7A0",
-      marginHorizontal: ms(28),
+      width: "100%",
+      height: ms(10),
+      borderRadius: ms(99),
+      backgroundColor: lessonColors.progressBackground,
       marginTop: ms(12),
-      overflow: "hidden",
-    },
+      overflow: "hidden"},
     progressFill: {
       height: "100%",
-      backgroundColor: "#56BDB4",
-      borderRadius: ms(12),
-    },
+      backgroundColor: lessonColors.progressFill,
+      borderRadius: ms(99)},
     card: {
-      marginTop: ms(28),
-      marginHorizontal: ms(28),
-      backgroundColor: "#FAFAFA",
-      borderRadius: ms(34),
-      paddingHorizontal: ms(20),
-      paddingVertical: ms(30),
+      marginTop: ms(20),
+      width: "100%",
+      backgroundColor: asl.glass.bg,
+      borderRadius: ms(26),
+      borderWidth: StyleSheet.hairlineWidth + 1,
+      borderColor: asl.glass.border,
+      paddingHorizontal: ms(18),
+      paddingVertical: ms(22),
       alignItems: "center",
-    },
+      gap: ms(10),
+      ...asl.shadow.card},
     promptText: {
-      fontSize: ts(20),
-      lineHeight: ts(26),
-      color: "#64748B",
+      fontSize: ms(18),
+      lineHeight: ms(24),
+      color: asl.text.primary,
       textAlign: "center",
-      marginBottom: ms(20),
-    },
-    bigLetter: {
-      fontSize: ts(72),
-      lineHeight: ts(82),
-      fontWeight: "800",
-      color: "#111111",
-    },
+      fontWeight: fontWeight.medium},
+    promptImage: {
+      width: "100%",
+      maxWidth: ms(260),
+      height: ms(200),
+      backgroundColor: "rgba(0,0,0,0.35)",
+      borderRadius: ms(14)},
+    hintMuted: {
+      fontSize: ms(13),
+      color: asl.text.muted},
     choicesContainer: {
-      marginTop: ms(24),
-      marginHorizontal: ms(28),
-      gap: ms(14),
-    },
+      marginTop: ms(22),
+      width: "100%",
+      gap: ms(12)},
     choiceButton: {
-      minHeight: ms(64),
-      borderRadius: ms(24),
-      backgroundColor: "#FFFFFF",
-      borderWidth: ms(3),
-      borderColor: "#DCE7E7",
+      minHeight: ms(54),
+      borderRadius: ms(16),
+      backgroundColor: "rgba(255,255,255,0.06)",
+      borderWidth: 1,
+      borderColor: asl.glass.border,
       alignItems: "center",
       justifyContent: "center",
-      paddingHorizontal: ms(16),
-    },
+      paddingHorizontal: ms(14)},
     choiceButtonSelected: {
-      borderColor: "#56BDB4",
-      backgroundColor: "#E8F8F6",
-    },
+      borderColor: lessonColors.progressFill,
+      backgroundColor: "rgba(34,211,238,0.14)"},
     choiceText: {
-      fontSize: ts(22),
-      lineHeight: ts(28),
-      fontWeight: "700",
-      color: "#111111",
-    },
+      fontSize: ms(22),
+      fontWeight: fontWeight.emphasis,
+      color: asl.text.primary},
     choiceTextSelected: {
-      color: "#0F766E",
-    },
+      color: lessonColors.progressFill},
     feedbackText: {
-      marginTop: ms(16),
+      marginTop: ms(14),
       textAlign: "center",
-      fontSize: ts(18),
-      lineHeight: ts(24),
-      fontWeight: "700",
-      marginHorizontal: ms(40),
-    },
-    correctText: {
-      color: "#15803D",
-    },
-    incorrectText: {
-      color: "#B91C1C",
-    },
-    actionButton: {
-      marginTop: ms(24),
-      marginHorizontal: ms(56),
-      height: ms(52),
-      borderRadius: ms(22),
-      backgroundColor: "#56BDB4",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    actionButtonText: {
-      color: "#FFFFFF",
-      fontSize: ts(16),
-      fontWeight: "700",
-    },
-  });
-};
+      fontSize: ms(16),
+      marginHorizontal: ms(20),
+      fontWeight: fontWeight.medium},
+    correctText: { color: lessonColors.success },
+    incorrectText: { color: lessonColors.error }});

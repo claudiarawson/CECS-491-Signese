@@ -1,30 +1,30 @@
-import React, { useState, useMemo } from "react";
-import { View, Text } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
-import { ScreenContainer, ScreenHeader } from "@/src/components/layout";
-import { lessonColors } from "@/src/theme";
 import {
   LessonHeader,
   LessonProgressBar,
-  SignLessonCard,
   PrimaryActionButton,
+  SignLessonCard,
   TypingAnswerInput,
 } from "@/src/components/lesson-index";
-import {
-  getSignByOrder,
-  getNextSign,
-  calculateProgress,
-} from "../../utils/lessonHelpers";
-import { validateTypedAnswer } from "../../utils/answerValidation";
 import { LessonType } from "@/src/data/lessons";
+import { AppShell, LearnFlowHeader } from "@/src/components/asl";
+import { lessonSpacing, Spacing } from "@/src/theme";
+import { lessonColors } from "@/src/theme/colors";
+import {
+  calculateProgress,
+  getNextSign,
+  getSignByOrder,
+  isTypedAnswerCorrect,
+} from "../../utils/lessonHelpers";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useMemo, useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export function TypeAnswerScreen() {
   const params = useLocalSearchParams<{ lessonId?: string; order?: string; score?: string }>();
-  const lessonId = (params.lessonId ?? "alphabet") as LessonType;
+  const lessonId = (params.lessonId ?? "greetings") as LessonType;
   const order = Number(params.order ?? "1");
   const score = Number(params.score ?? "0");
 
-  const handleBackToLearn = () => router.replace("/learn");
   const sign = getSignByOrder(lessonId, order);
   const nextSign = getNextSign(lessonId, order);
   const progress = calculateProgress(lessonId, order, "type");
@@ -37,8 +37,8 @@ export function TypeAnswerScreen() {
     lessonId === "alphabet"
       ? "Type a letter (A-Z)"
       : lessonId === "numbers"
-      ? "Type a number (0-9)"
-      : "Type your answer";
+        ? "Type a number (0-9)"
+        : "Type your answer";
 
   const feedback = useMemo(() => {
     if (!submitted || !sign) {
@@ -52,68 +52,129 @@ export function TypeAnswerScreen() {
 
   if (!sign) {
     return (
-      <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-        <ScreenHeader title={lessonId === "numbers" ? "Type Number" : "Type Answer"} showBackButton onBackPress={handleBackToLearn} />
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-          <Text style={{ color: "#888", fontSize: 16 }}>Could not find this sign.</Text>
+      <AppShell scroll={false} header={<LearnFlowHeader title="Type answer" />}>
+        <View style={styles.emptyWrap}>
+          <Text style={styles.emptyText}>Could not find this sign.</Text>
         </View>
-      </ScreenContainer>
+      </AppShell>
     );
   }
 
   const handleSubmitOrContinue = () => {
     if (!submitted) {
-      const correct = validateTypedAnswer(value, sign.acceptedAnswers);
+      const correct = isTypedAnswerCorrect(value, sign.acceptedAnswers);
       setIsCorrect(correct);
       setSubmitted(true);
       return;
     }
+
     const updatedScore = score + (isCorrect ? 1 : 0);
     if (nextSign) {
-      router.replace({
-        pathname: "/learn/type-answer",
+      router.push({
+        pathname: "/learn/[lessonId]",
         params: {
           lessonId,
           order: String(order + 1),
           score: String(updatedScore),
         },
       } as any);
-    } else {
-      router.replace({
-        pathname: "/learn/lesson-complete",
-        params: { lessonId, score: String(updatedScore) },
-      } as any);
+      return;
     }
+
+    router.push({
+      pathname: "/learn/match-signs",
+      params: {
+        lessonId,
+        score: String(updatedScore),
+      },
+    } as any);
   };
 
   return (
-    <ScreenContainer backgroundColor={lessonColors.background} contentPadded>
-      <ScreenHeader title={lessonId === "numbers" ? "Type Number" : "Type Answer"} showBackButton onBackPress={handleBackToLearn} />
-      <View style={{ flex: 1 }}>
-        <LessonHeader title={sign.label} subtitle={lessonId === "numbers" ? "Type the number you see" : "Type the meaning"} />
-        <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
-        <SignLessonCard gif={sign.gif} instruction={lessonId === "numbers" ? "Type what this number is." : "Type what this sign means."} />
-        <View style={{ marginVertical: 16 }}>
-          <TypingAnswerInput
-            value={value}
-            onChangeText={setValue}
-            placeholder={inputPlaceholder}
-            editable={!submitted}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-        </View>
-        {submitted ? (
-          <Text style={{ textAlign: "center", color: isCorrect ? "green" : "red", fontSize: 16, marginBottom: 8 }}>{feedback}</Text>
-        ) : null}
-        <View style={{ marginTop: 16 }}>
+    <AppShell scroll={false} header={<LearnFlowHeader title="Type answer" />}>
+      <View style={styles.shell}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <LessonHeader title="Type the meaning" />
+          <LessonProgressBar currentStep={progress.currentStep} totalSteps={progress.totalSteps} />
+
+          <SignLessonCard gif={sign.gif} instruction="Type what this sign means." />
+
+          <View style={styles.inputWrap}>
+            <TypingAnswerInput
+              value={value}
+              onChangeText={setValue}
+              placeholder={inputPlaceholder}
+              editable={!submitted}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          </View>
+
+          {submitted ? (
+            <Text style={[styles.feedbackLine, isCorrect ? styles.correct : styles.incorrect]}>{feedback}</Text>
+          ) : null}
+        </ScrollView>
+
+        <View style={styles.footer}>
           <PrimaryActionButton
-            label={submitted ? (nextSign ? "Continue" : "Finish") : "Submit"}
+            label={submitted ? "Continue" : "Submit"}
             onPress={handleSubmitOrContinue}
-            disabled={!value && !submitted}
+            disabled={!submitted && value.trim().length === 0}
           />
         </View>
       </View>
-    </ScreenContainer>
+    </AppShell>
   );
 }
+
+const styles = StyleSheet.create({
+  shell: {
+    flex: 1,
+    minHeight: 0,
+    paddingHorizontal: Spacing.screenPadding,
+  },
+  scroll: { flex: 1 },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: lessonSpacing.sm,
+  },
+  inputWrap: {
+    marginTop: lessonSpacing.md,
+  },
+  feedbackLine: {
+    marginTop: lessonSpacing.md,
+    textAlign: "center",
+    fontSize: 16,
+    lineHeight: 22,
+    color: lessonColors.textSecondary,
+  },
+  correct: {
+    color: lessonColors.success,
+  },
+  incorrect: {
+    color: lessonColors.error,
+  },
+  footer: {
+    flexShrink: 0,
+    alignItems: "center",
+    paddingBottom: lessonSpacing.lg,
+    paddingTop: lessonSpacing.sm,
+  },
+  emptyWrap: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: Spacing.screenPadding,
+    minHeight: 200,
+  },
+  emptyText: {
+    color: lessonColors.textSecondary,
+    fontSize: 16,
+    textAlign: "center",
+  },
+});

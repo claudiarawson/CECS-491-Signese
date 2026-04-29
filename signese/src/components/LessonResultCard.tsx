@@ -1,4 +1,6 @@
 import { lessonColors, lessonSpacing, lessonTypography, Radius } from "@/src/theme";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { fontWeight } from "@/src/theme";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -33,33 +35,25 @@ const styles = StyleSheet.create({
     backgroundColor: lessonColors.surface,
     padding: lessonSpacing.lg,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 8,
-    elevation: 2,
-  },
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.14)",
+    ...asl.shadow.card},
   title: {
     ...lessonTypography.subtitle,
     color: lessonColors.textPrimary,
     textAlign: "center",
-  },
+    fontWeight: fontWeight.emphasis},
   starRow: {
     flexDirection: "row",
     marginTop: lessonSpacing.md,
     marginBottom: lessonSpacing.sm,
-    columnGap: 8,
-  },
+    columnGap: 8},
   star: {
     fontSize: 28,
-    color: lessonColors.star,
-  },
+    color: lessonColors.star},
   starMuted: {
-    color: "#DBE2E8",
-  },
+    color: "rgba(255,255,255,0.28)"},
   subtitle: {
     ...lessonTypography.body,
     color: lessonColors.textSecondary,
-    textAlign: "center",
-  },
-});
+    textAlign: "center"}});

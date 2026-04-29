@@ -7,3 +7,4 @@ export {
 export { TranslationHistoryProvider, useTabTranslationHistory } from "./TranslationHistoryProvider";
 export { TranslationHistoryPanel } from "./TranslationHistoryPanel";
 export { TranslationHistoryItemCard } from "./TranslationHistoryItemCard";
+// Intentionally no "keep history on device" persistence exports.

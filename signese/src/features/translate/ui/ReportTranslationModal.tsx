@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { AppButton } from "@/src/components/ui";
@@ -137,13 +136,9 @@ export function ReportTranslationModal({ visible, onClose, context }: Props) {
 
             {context ? (
               <View style={styles.metaBlock}>
-                <Text style={styles.metaLabel}>Detected (source)</Text>
+                <Text style={styles.metaLabel}>Word</Text>
                 <Text style={styles.metaValue} numberOfLines={3}>
                   {context.sourceText || "—"}
-                </Text>
-                <Text style={[styles.metaLabel, styles.metaSpaced]}>Caption (output)</Text>
-                <Text style={styles.metaValue} numberOfLines={4}>
-                  {context.translatedText || "—"}
                 </Text>
               </View>
             ) : null}
@@ -183,21 +178,18 @@ export function ReportTranslationModal({ visible, onClose, context }: Props) {
             ) : null}
           </ScrollView>
 
-          <View style={styles.actions}>
-            <AppButton variant="secondary" onPress={handleClose} disabled={submitting}>
-              {success ? "Done" : "Cancel"}
-            </AppButton>
-            {!success ? (
+          {!success ? (
+            <View style={styles.actions}>
               <AppButton
                 onPress={handleSubmit}
                 loading={submitting}
-                disabled={submitting || !context}
+                disabled={submitting || !context || !description.trim()}
                 style={styles.submitBtn}
               >
                 Submit report
               </AppButton>
-            ) : null}
-          </View>
+            </View>
+          ) : null}
         </View>
       </KeyboardAvoidingView>
     </Modal>

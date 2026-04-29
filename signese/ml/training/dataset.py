@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import random
 import warnings
 from collections.abc import Sequence
 from pathlib import Path
@@ -88,11 +89,25 @@ class LandmarkSequenceDataset(Dataset[dict[str, Any]]):
         label_mapping_path: Path = DEFAULT_LABEL_MAPPING_PATH,
         expected_feature_shape: tuple[int, int] = EXPECTED_FEATURE_SHAPE,
         warn_missing: bool = True,
+        augment: bool = False,
+        noise_std: float = 0.0,
+        time_shift_max: int = 0,
+        time_mask_prob: float = 0.0,
+        time_mask_max_frames: int = 0,
+        feature_dropout_prob: float = 0.0,
+        normalize_per_sequence: bool = False,
     ) -> None:
         self.split_manifest_path = split_manifest_path
         self.label_mapping_path = label_mapping_path
         self.expected_feature_shape = expected_feature_shape
         self.warn_missing = warn_missing
+        self.augment = bool(augment)
+        self.noise_std = float(noise_std)
+        self.time_shift_max = max(0, int(time_shift_max))
+        self.time_mask_prob = float(time_mask_prob)
+        self.time_mask_max_frames = max(0, int(time_mask_max_frames))
+        self.feature_dropout_prob = float(feature_dropout_prob)
+        self.normalize_per_sequence = bool(normalize_per_sequence)
 
         mapping_payload = load_label_mapping(label_mapping_path)
         self.label_to_index: dict[str, int] = {
@@ -193,6 +208,59 @@ class LandmarkSequenceDataset(Dataset[dict[str, Any]]):
     def __len__(self) -> int:
         return len(self.records)
 
+    def _apply_time_shift(self, array: np.ndarray) -> np.ndarray:
+        if self.time_shift_max <= 0:
+            return array
+        shift = random.randint(-self.time_shift_max, self.time_shift_max)
+        if shift == 0:
+            return array
+        out = np.zeros_like(array)
+        if shift > 0:
+            out[shift:] = array[:-shift]
+        else:
+            out[:shift] = array[-shift:]
+        return out
+
+    def _apply_time_mask(self, array: np.ndarray) -> np.ndarray:
+        if self.time_mask_prob <= 0 or self.time_mask_max_frames <= 0:
+            return array
+        if random.random() >= self.time_mask_prob:
+            return array
+        t = array.shape[0]
+        max_len = min(self.time_mask_max_frames, t)
+        length = random.randint(1, max_len)
+        start = random.randint(0, max(0, t - length))
+        array = array.copy()
+        array[start : start + length] = 0.0
+        return array
+
+    def _apply_feature_dropout(self, array: np.ndarray) -> np.ndarray:
+        p = self.feature_dropout_prob
+        if p <= 0:
+            return array
+        array = array.copy()
+        mask = (np.random.rand(*array.shape) >= p).astype(np.float32)
+        return array * mask
+
+    def _apply_noise(self, array: np.ndarray) -> np.ndarray:
+        if self.noise_std <= 0:
+            return array
+        return array + np.random.normal(0.0, self.noise_std, size=array.shape).astype(np.float32)
+
+    def _normalize_per_sequence(self, array: np.ndarray) -> np.ndarray:
+        if not self.normalize_per_sequence:
+            return array
+        valid_mask = np.any(np.abs(array) > 1e-8, axis=1)
+        if not np.any(valid_mask):
+            return array
+        valid = array[valid_mask]
+        mean = valid.mean(axis=0, keepdims=True)
+        std = valid.std(axis=0, keepdims=True)
+        std = np.where(std < 1e-5, 1.0, std)
+        normalized = array.copy()
+        normalized[valid_mask] = (valid - mean) / std
+        return normalized
+
     def __getitem__(self, index: int) -> dict[str, Any]:
         record = self.records[index]
         array = np.load(record["feature_path"]).astype(np.float32)
@@ -200,6 +268,13 @@ class LandmarkSequenceDataset(Dataset[dict[str, Any]]):
             raise ValueError(
                 f"Unexpected feature shape in {record['feature_path']}: {tuple(array.shape)}; expected {self.expected_feature_shape}"
             )
+
+        if self.augment:
+            array = self._apply_time_shift(array)
+            array = self._apply_time_mask(array)
+            array = self._apply_feature_dropout(array)
+            array = self._apply_noise(array)
+        array = self._normalize_per_sequence(array)
         return {
             "features": torch.from_numpy(array),
             "target": int(record["target"]),

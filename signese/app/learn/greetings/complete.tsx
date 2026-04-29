@@ -1,34 +1,24 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  useWindowDimensions,
-} from "react-native";
+import { View, Text, StyleSheet, Pressable, useWindowDimensions, ScrollView } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useLocalSearchParams } from "expo-router";
-import {
-  ScreenContainer,
-  HeaderActionButton,
-  HeaderAvatarButton,
-} from "@/src/components/layout";
-import { getDeviceDensity, moderateScale } from "@/src/theme";
-import { useAccessibility } from "@/src/contexts/AccessibilityContext";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { getProfileIconById } from "@/src/features/account/types";
+import { AppShell, LearnFlowHeader } from "@/src/components/asl";
+import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
+import { asl } from "@/src/theme/aslConnectTheme";
 import {
   completeLessonOnce,
   isLessonUnlocked,
-  type LessonId,
-} from "@/src/features/learn/utils/lessonProgress";
+  type LessonId} from "@/src/features/learn/utils/lessonProgress";
+import {
+  fontWeight,
+  getDeviceDensity,
+  moderateScale,
+  Spacing} from "@/src/theme";
 
 const CURRENT_LESSON_ID: LessonId = "greetings";
 const NEXT_LESSON_ID: LessonId = "family";
 const NEXT_LESSON_ROUTE = "/learn/family";
 
-// Stars logic: ≥7 correct → 3 stars, ≥5 → 2 stars, else → 1 star
-// Stars logic (max 16: 8 match + 8 type): ≥12 → 3 stars, ≥8 → 2 stars, else → 1 star
 function calcStars(totalCorrect: number): number {
   if (totalCorrect >= 12) return 3;
   if (totalCorrect >= 8) return 2;
@@ -38,10 +28,8 @@ function calcStars(totalCorrect: number): number {
 export default function GreetingsCompleteScreen() {
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const { textScale } = useAccessibility();
-  const { profile } = useAuthUser();
-  const headerProfileIcon = getProfileIconById(profile?.avatar);
-  const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
+  const ms = useMemo(() => (v: number) => moderateScale(v) * density, [density]);
+  const styles = useMemo(() => createStyles(ms), [ms]);
 
   const params = useLocalSearchParams<{ totalCorrect?: string }>();
   const totalCorrect = parseInt(params.totalCorrect ?? "0", 10);
@@ -67,59 +55,45 @@ export default function GreetingsCompleteScreen() {
     }
 
     void save();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [starsEarned]);
 
+  const headerRight = (
+    <>
+      <Pressable onPress={() => router.push("/(tabs)/settings" as any)} hitSlop={8} style={styles.headerIcon}>
+        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+      </Pressable>
+      <Pressable onPress={() => router.push("/(tabs)/account")} hitSlop={8} style={styles.headerIcon}>
+        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+      </Pressable>
+    </>
+  );
+
   return (
-    <ScreenContainer backgroundColor="#EEF3F1">
-      {/* Header */}
-      <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <MaterialIcons name="chevron-left" size={28} color="#FFFFFF" />
-        </Pressable>
-
-        <Text style={styles.headerTitle}>Greetings</Text>
-
-        <View style={styles.headerRight}>
-          <HeaderActionButton
-            iconName="settings"
-            onPress={() => router.push("/(tabs)/settings" as any)}
-          />
-          <HeaderAvatarButton
-            avatar={headerProfileIcon.emoji}
-            onPress={() => router.push("/(tabs)/account" as any)}
-          />
-        </View>
-      </View>
-
-      {/* Content */}
-      <View style={styles.content}>
+    <AppShell
+      scroll={false}
+      header={
+        <LearnFlowHeader title="Greetings" onBackPress={() => router.back()} rightExtra={headerRight} />
+      }
+    >
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
-          <Text style={styles.title}>Lesson Complete!</Text>
+          <Text style={styles.title}>Lesson complete!</Text>
 
-          {/* Stars row */}
           <View style={styles.starsRow}>
             {[1, 2, 3].map((i) => (
-              <Text
-                key={i}
-                style={[styles.star, { opacity: i <= starsEarned ? 1 : 0.25 }]}
-              >
+              <Text key={i} style={[styles.star, { opacity: i <= starsEarned ? 1 : 0.25 }]}>
                 ⭐
               </Text>
             ))}
           </View>
 
-          {/* Score card */}
           <View style={styles.scoreCard}>
-            {loading ? (
-              <Text style={styles.scoreNumber}>…</Text>
-            ) : (
-              <Text style={styles.scoreNumber}>{lifetimeEarned}</Text>
-            )}
+            {loading ? <Text style={styles.scoreNumber}>…</Text> : <Text style={styles.scoreNumber}>{lifetimeEarned}</Text>}
             <Text style={styles.scoreLabel}>Total stars earned</Text>
-            {!loading ? (
-              <Text style={styles.balanceHint}>{balanceStars} available now</Text>
-            ) : null}
+            {!loading ? <Text style={styles.balanceHint}>{balanceStars} available now</Text> : null}
           </View>
 
           <Text style={styles.earnedText}>
@@ -127,149 +101,108 @@ export default function GreetingsCompleteScreen() {
           </Text>
         </View>
 
-        {/* Buttons */}
-        <View style={styles.buttonGroup}>
-          <Pressable
-            style={styles.primaryButton}
-            onPress={() => router.replace("/(tabs)/learn" as any)}
-          >
-            <Text style={styles.primaryButtonText}>Back to Lessons</Text>
-          </Pressable>
+        <PrimaryActionButton label="Back to lessons" onPress={() => router.replace("/(tabs)/learn" as any)} />
 
-          {nextUnlocked ? (
+        {nextUnlocked ? (
+          <View style={styles.secondaryWrap}>
             <Pressable
-              style={styles.secondaryButton}
+              style={({ pressed }) => [styles.secondaryButton, pressed && { opacity: 0.82 }]}
               onPress={() => router.push(NEXT_LESSON_ROUTE as any)}
+              accessibilityRole="button"
+              accessibilityLabel="Go to next lesson"
             >
-              <Text style={styles.secondaryButtonText}>Next Lesson →</Text>
+              <Text style={styles.secondaryButtonText}>Next lesson →</Text>
             </Pressable>
-          ) : null}
-        </View>
-      </View>
-    </ScreenContainer>
+          </View>
+        ) : null}
+      </ScrollView>
+    </AppShell>
   );
 }
 
-const createStyles = (density: number, textScale: number) => {
-  const ms = (v: number) => moderateScale(v) * density;
-  const ts = (v: number) => ms(v) * textScale;
-
-  return StyleSheet.create({
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: "#FFFFFF",
-      paddingHorizontal: ms(16),
-      paddingVertical: ms(10),
-      gap: ms(12),
-    },
-    backButton: {
-      width: ms(40),
-      height: ms(40),
-      borderRadius: ms(20),
-      backgroundColor: "#56BDB4",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    headerTitle: {
+const createStyles = (ms: (v: number) => number) =>
+  StyleSheet.create({
+    headerIcon: {
+      padding: ms(4)},
+    scroll: {
       flex: 1,
-      fontSize: ts(18),
-      fontWeight: "800",
-      color: "#334155",
-    },
-    headerRight: {
-      flexDirection: "row",
+      minHeight: 0},
+    scrollContent: {
+      paddingHorizontal: Spacing.screenPadding,
+      paddingBottom: ms(44),
+      paddingTop: ms(12),
       alignItems: "center",
-      gap: ms(6),
-    },
-    content: {
-      flex: 1,
-      backgroundColor: "#EEF3F1",
-      paddingHorizontal: ms(16),
-      paddingTop: ms(32),
-      paddingBottom: ms(24),
-      gap: ms(24),
-    },
+      gap: ms(20)},
     card: {
-      backgroundColor: "#FFFFFF",
-      borderRadius: ms(24),
+      width: "100%",
+      backgroundColor: asl.glass.bg,
+      borderRadius: ms(26),
+      borderWidth: StyleSheet.hairlineWidth + 1,
+      borderColor: asl.glass.border,
       padding: ms(24),
       alignItems: "center",
-      gap: ms(16),
-    },
+      gap: ms(14),
+      ...asl.shadow.card},
     title: {
-      fontSize: ts(22),
-      fontWeight: "800",
-      color: "#334155",
-      textAlign: "center",
-    },
+      fontSize: ms(22),
+      fontWeight: fontWeight.emphasis,
+      color: asl.text.primary,
+      textAlign: "center"},
     starsRow: {
       flexDirection: "row",
-      gap: ms(8),
-    },
+      gap: ms(8)},
     star: {
-      fontSize: ts(32),
-    },
+      fontSize: ms(34),
+      lineHeight: ms(42)},
     scoreCard: {
-      backgroundColor: "#EEF7FA",
-      borderRadius: ms(18),
-      paddingVertical: ms(16),
-      paddingHorizontal: ms(40),
-      borderWidth: 1.5,
-      borderColor: "#D0E8F0",
-      alignItems: "center",
-    },
-    scoreNumber: {
-      fontSize: ts(38),
-      fontWeight: "800",
-      color: "#56BDB4",
-    },
-    scoreLabel: {
-      fontSize: ts(12),
-      fontWeight: "600",
-      color: "#94A3B8",
       marginTop: ms(4),
-    },
+      width: "100%",
+      borderRadius: ms(18),
+      paddingVertical: ms(14),
+      paddingHorizontal: ms(28),
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+      backgroundColor: "rgba(0,0,0,0.2)",
+      alignItems: "center"},
+    scoreNumber: {
+      fontSize: ms(42),
+      lineHeight: ms(48),
+      fontWeight: fontWeight.emphasis,
+      color: asl.accentCyan},
+    scoreLabel: {
+      fontSize: ms(12),
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary,
+      marginTop: ms(6),
+      textAlign: "center"},
     balanceHint: {
-      fontSize: ts(13),
-      fontWeight: "600",
-      color: "#64748B",
-      marginTop: ms(8),
-    },
+      fontSize: ms(13),
+      fontWeight: fontWeight.medium,
+      color: asl.text.muted,
+      marginTop: ms(10),
+      textAlign: "center"},
     earnedText: {
-      fontSize: ts(14),
-      fontWeight: "600",
-      color: "#334155",
-      textAlign: "center",
-    },
-    buttonGroup: {
-      gap: ms(12),
-    },
-    primaryButton: {
-      height: ms(56),
-      borderRadius: ms(24),
-      backgroundColor: "#56BDB4",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    primaryButtonText: {
-      color: "#FFFFFF",
-      fontSize: ts(17),
-      fontWeight: "700",
-    },
+      fontSize: ms(14),
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary,
+      textAlign: "center"},
+    secondaryWrap: {
+      width: "100%",
+      maxWidth: 320,
+      marginTop: ms(8),
+      alignSelf: "center"},
     secondaryButton: {
-      height: ms(56),
-      borderRadius: ms(24),
-      backgroundColor: "#FFFFFF",
       alignItems: "center",
       justifyContent: "center",
-      borderWidth: 2,
-      borderColor: "#56BDB4",
-    },
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+      backgroundColor: "rgba(255,255,255,0.06)",
+      minHeight: 52,
+      paddingHorizontal: ms(20),
+      width: "100%",
+      maxWidth: 288},
     secondaryButtonText: {
-      color: "#56BDB4",
-      fontSize: ts(17),
-      fontWeight: "700",
-    },
-  });
-};
+      fontSize: ms(15),
+      fontWeight: fontWeight.emphasis,
+      color: asl.text.primary}});

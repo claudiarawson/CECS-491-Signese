@@ -1,59 +1,58 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { scale, verticalScale, fontScale } from "@/src/theme/responsive";
-import { brandColors, semanticColors } from "@/src/theme/colors";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { fontWeight } from "@/src/theme";
 
 type LessonNodeProps = {
-	title: string;
-	icon?: any; // image source
-	active?: boolean;
-	completed?: boolean;
-	onPress?: () => void;
+  title: string;
+  icon?: any;
+  active?: boolean;
+  completed?: boolean;
+  onPress?: () => void;
 };
 
-export function LessonNode({ title, icon, active, completed, onPress }: LessonNodeProps) {
-	return (
-		<View style={[styles.circle, active && styles.activeCircle, completed && styles.completedCircle]}>
-			{icon && <Image source={icon} style={styles.icon} resizeMode="contain" />}
-			<Text style={styles.title}>{title}</Text>
-		</View>
-	);
+export function LessonNode({ title, icon, active, completed }: LessonNodeProps) {
+  return (
+    <View
+      style={[
+        styles.circle,
+        active && styles.circleActive,
+        completed && styles.circleCompleted,
+      ]}
+    >
+      {icon ? <Image source={icon} style={styles.icon} resizeMode="contain" /> : null}
+      <Text style={styles.title}>{title}</Text>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-	circle: {
-		width: scale(72),
-		height: scale(72),
-		borderRadius: scale(36),
-		backgroundColor: brandColors.white,
-		borderWidth: scale(4),
-		borderColor: brandColors.primary,
-		alignItems: "center",
-		justifyContent: "center",
-		shadowColor: brandColors.dark,
-		shadowOpacity: 0.08,
-		shadowOffset: { width: 0, height: 2 },
-		shadowRadius: 8,
-		elevation: 2,
-		marginBottom: verticalScale(12),
-	},
-	activeCircle: {
-		borderColor: brandColors.secondary,
-		backgroundColor: brandColors.bgTealLight,
-	},
-	completedCircle: {
-		borderColor: brandColors.tertiary,
-		backgroundColor: brandColors.bgPurpleLight,
-	},
-	icon: {
-		width: scale(32),
-		height: scale(32),
-		marginBottom: verticalScale(4),
-	},
-	title: {
-		fontSize: fontScale(15),
-		color: semanticColors.text.primary,
-		fontWeight: "600",
-		textAlign: "center",
-	},
-});
+  circle: {
+    width: scale(72),
+    height: scale(72),
+    borderRadius: scale(36),
+    backgroundColor: asl.glass.bg,
+    borderWidth: StyleSheet.hairlineWidth + 1,
+    borderColor: asl.glass.border,
+    alignItems: "center",
+    justifyContent: "center",
+    ...asl.shadow.card,
+    marginBottom: verticalScale(12)},
+  circleActive: {
+    borderColor: asl.accentCyan,
+    backgroundColor: "rgba(34,211,238,0.12)",
+    shadowOpacity: 0.45},
+  circleCompleted: {
+    borderColor: "#4ADE80",
+    backgroundColor: "rgba(74,222,128,0.12)"},
+  icon: {
+    width: scale(32),
+    height: scale(32),
+    marginBottom: verticalScale(4)},
+  title: {
+    fontSize: fontScale(13),
+    color: asl.text.primary,
+    fontWeight: fontWeight.medium,
+    textAlign: "center",
+    paddingHorizontal: scale(6)}});

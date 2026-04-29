@@ -1,0 +1,1 @@
+export { MainTabRail } from "./MainTabRail";
