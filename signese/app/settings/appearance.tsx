@@ -1,188 +1,198 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Switch, ScrollView } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { ScreenContainer, ScreenHeader, SectionCard } from "@/src/components/layout";
 import {
-  type SettingsPreferences,
-  DEFAULT_SETTINGS_PREFERENCES,
-  loadSettingsPreferences,
-  saveSettingsPreferences,
-} from "@/src/features/settings/preferences.service";
-
-type State = {
-  loading: boolean;
-  prefs: SettingsPreferences;
-};
+  HeaderActionButton,
+  HeaderAvatarButton,
+  ScreenContainer,
+  ScreenHeader,
+} from "@/src/components/layout";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import { useTheme } from "@/src/contexts/ThemeContext";
+import {
+  Spacing,
+  Typography,
+  getDeviceDensity,
+  moderateScale,
+} from "@/src/theme";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
+import React from "react";
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 
 export default function AppearanceScreen() {
-  const [state, setState] = useState<State>({
-    loading: true,
-    prefs: DEFAULT_SETTINGS_PREFERENCES,
-  });
+  const { profile } = useAuthUser();
+  const { theme, setTheme, colors } = useTheme();
 
-  useEffect(() => {
-    let mounted = true;
-    void (async () => {
-      const loaded = await loadSettingsPreferences();
-      if (!mounted) return;
-      setState({ loading: false, prefs: loaded });
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const { width, height } = useWindowDimensions();
+  const density = getDeviceDensity(width, height);
+  const styles = createStyles(density, colors);
 
-  const updatePrefs = async (next: SettingsPreferences) => {
-    setState((current) => ({ ...current, prefs: next }));
-    await saveSettingsPreferences(next);
-  };
-
-  const appearance = state.prefs.appearance;
+  const iconSize = moderateScale(22) * density;
+  const checkSize = moderateScale(20) * density;
 
   return (
-    <ScreenContainer backgroundColor="#F1F6F5">
-      <ScreenHeader title="Appearance" showBackButton />
-      <ScrollView contentContainerStyle={styles.container}>
-        <SectionCard style={styles.heroCard}>
-          <Text style={styles.heroTitle}>Theme Preferences</Text>
-          <Text style={styles.heroSubtitle}>
-            Pick the display style you want. Dark Mode and Classic Look are exclusive.
-          </Text>
-        </SectionCard>
+    <ScreenContainer backgroundColor={colors.background} contentStyle={styles.safeContent}>
+      <ScreenHeader
+        title="Appearance"
+        showBackButton
+        right={
+          <>
+            <HeaderActionButton
+              iconName="settings"
+              onPress={() => router.push("/(tabs)/settings" as any)}
+            />
+            <HeaderAvatarButton
+              avatar={profile?.avatar}
+              onPress={() => router.push("/(tabs)/account" as any)}
+            />
+          </>
+        }
+      />
 
-        <SectionCard style={styles.sectionCard}>
-        <SettingsToggleRow
-          iconName="dark-mode"
-          iconColor="#B192CE"
-          iconBg="#E9E1F1"
-          label="Dark Mode"
-          value={appearance.darkMode}
-          disabled={state.loading}
-          onChange={(value) =>
-            void updatePrefs({
-              ...state.prefs,
-              appearance: {
-                darkMode: value,
-                classicLook: value ? false : appearance.classicLook,
-              },
-            })
-          }
-        />
+      <View style={styles.content}>
+        <Text style={styles.title}>Choose Theme</Text>
+        <Text style={styles.subtitle}>
+          Pick the look you want for the app. Your choice will be saved automatically.
+        </Text>
 
-        <SettingsToggleRow
-          iconName="style"
-          iconColor="#B192CE"
-          iconBg="#E9E1F1"
-          label="Classic Look"
-          value={appearance.classicLook}
-          disabled={state.loading}
-          onChange={(value) =>
-            void updatePrefs({
-              ...state.prefs,
-              appearance: {
-                darkMode: value ? false : appearance.darkMode,
-                classicLook: value,
-              },
-            })
-          }
-        />
-        </SectionCard>
-      </ScrollView>
+        <Pressable
+          style={[
+            styles.optionCard,
+            theme === "light" && styles.optionCardSelected,
+          ]}
+          onPress={() => setTheme("light")}
+        >
+          <View style={styles.optionLeft}>
+            <View style={[styles.iconChip, { backgroundColor: "#FDE68A" }]}>
+              <MaterialIcons name="light-mode" size={iconSize} color="#B45309" />
+            </View>
+
+            <View>
+              <Text style={styles.optionTitle}>Light Mode</Text>
+              <Text style={styles.optionSubtitle}>
+                Bright background with dark text
+              </Text>
+            </View>
+          </View>
+
+          {theme === "light" ? (
+            <MaterialIcons name="check-circle" size={checkSize} color={colors.primary} />
+          ) : (
+            <View style={styles.uncheckedCircle} />
+          )}
+        </Pressable>
+
+        <Pressable
+          style={[
+            styles.optionCard,
+            theme === "dark" && styles.optionCardSelected,
+          ]}
+          onPress={() => setTheme("dark")}
+        >
+          <View style={styles.optionLeft}>
+            <View style={[styles.iconChip, { backgroundColor: "#DDD6FE" }]}>
+              <MaterialIcons name="dark-mode" size={iconSize} color="#6D28D9" />
+            </View>
+
+            <View>
+              <Text style={styles.optionTitle}>Dark Mode</Text>
+              <Text style={styles.optionSubtitle}>
+                Dark background with light text
+              </Text>
+            </View>
+          </View>
+
+          {theme === "dark" ? (
+            <MaterialIcons name="check-circle" size={checkSize} color={colors.primary} />
+          ) : (
+            <View style={styles.uncheckedCircle} />
+          )}
+        </Pressable>
+      </View>
     </ScreenContainer>
   );
 }
 
-function SettingsToggleRow({
-  iconName,
-  iconColor,
-  iconBg,
-  label,
-  value,
-  disabled,
-  onChange,
-}: {
-  iconName: React.ComponentProps<typeof MaterialIcons>["name"];
-  iconColor: string;
-  iconBg: string;
-  label: string;
-  value: boolean;
-  disabled?: boolean;
-  onChange: (next: boolean) => void;
-}) {
-  return (
-    <View style={styles.row}>
-      <View style={styles.rowLeft}>
-        <View style={[styles.iconBox, { backgroundColor: iconBg }]}>
-          <MaterialIcons name={iconName} size={20} color={iconColor} />
-        </View>
-        <Text style={styles.rowLabel}>{label}</Text>
-      </View>
-      <View style={styles.switchSlot}>
-        <Switch value={value} onValueChange={onChange} disabled={disabled} />
-      </View>
-    </View>
-  );
-}
+const createStyles = (density: number, colors: any) => {
+  const ms = (value: number) => moderateScale(value) * density;
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    gap: 14,
-    paddingBottom: 24,
-  },
-  heroCard: {
-    paddingVertical: 16,
-    gap: 4,
-  },
-  heroTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#111827",
-  },
-  heroSubtitle: {
-    fontSize: 14,
-    color: "#4B5563",
-  },
-  sectionCard: {
-    paddingVertical: 12,
-    gap: 10,
-  },
-  row: {
-    minHeight: 68,
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#D8E1E8",
-    paddingHorizontal: 12,
-    borderRadius: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  rowLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-    paddingRight: 8,
-    gap: 8,
-  },
-  iconBox: {
-    width: 30,
-    height: 30,
-    borderRadius: 4,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  rowLabel: {
-    color: "#111827",
-    fontSize: 15,
-    fontWeight: "500",
-    flexShrink: 1,
-  },
-  switchSlot: {
-    minWidth: 56,
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 8,
-  },
-});
+  return StyleSheet.create({
+    safeContent: {
+      flex: 1,
+    },
 
+    content: {
+      flex: 1,
+      paddingTop: Spacing.sm,
+    },
+
+    title: {
+      ...Typography.sectionTitle,
+      fontSize: ms(22),
+      fontWeight: "800",
+      color: colors.text,
+      marginBottom: ms(6),
+    },
+
+    subtitle: {
+      ...Typography.body,
+      fontSize: ms(14),
+      color: colors.subtext,
+      marginBottom: ms(18),
+      lineHeight: ms(20),
+    },
+
+    optionCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: Spacing.sm,
+      paddingVertical: ms(14),
+      borderRadius: ms(18),
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: Spacing.sm,
+    },
+
+    optionCardSelected: {
+      borderColor: colors.primary,
+      borderWidth: 2,
+    },
+
+    optionLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: Spacing.sm,
+      flex: 1,
+    },
+
+    iconChip: {
+      width: ms(42),
+      height: ms(42),
+      borderRadius: ms(21),
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
+    optionTitle: {
+      ...Typography.sectionTitle,
+      fontSize: ms(16),
+      fontWeight: "700",
+      color: colors.text,
+    },
+
+    optionSubtitle: {
+      ...Typography.body,
+      fontSize: ms(13),
+      color: colors.subtext,
+      marginTop: ms(2),
+    },
+
+    uncheckedCircle: {
+      width: ms(20),
+      height: ms(20),
+      borderRadius: ms(10),
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+  });
+};

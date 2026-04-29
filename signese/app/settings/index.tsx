@@ -1,29 +1,29 @@
-import React, { useMemo, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  TextInput,
-  useWindowDimensions,
-} from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { router } from "expo-router";
+  HeaderActionButton,
+  HeaderAvatarButton,
+  ScreenContainer,
+  ScreenHeader,
+} from "@/src/components/layout";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import {
   Spacing,
   Typography,
-  semanticColors,
   getDeviceDensity,
   moderateScale,
 } from "@/src/theme";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
+import React, { useMemo, useState } from "react";
 import {
-  ScreenContainer,
-  ScreenHeader,
-  HeaderActionButton,
-  HeaderAvatarButton,
-} from "@/src/components/layout";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  useWindowDimensions,
+} from "react-native";
 
 type SettingsItem = {
   key: string;
@@ -37,10 +37,13 @@ type SettingsItem = {
 
 export default function SettingsScreen() {
   const { profile } = useAuthUser();
+  const { colors } = useTheme();
   const [query, setQuery] = useState("");
+
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const styles = createStyles(density);
+  const styles = createStyles(density, colors);
+
   const searchIconSize = moderateScale(18) * density;
   const cardIconSize = moderateScale(18) * density;
   const chevronSize = moderateScale(22) * density;
@@ -59,7 +62,7 @@ export default function SettingsScreen() {
       {
         key: "accessibility",
         label: "Accessibility",
-        keywords: ["font", "voice", "vision", "support", "screen reader"],
+        keywords: ["font", "voice", "vision", "support"],
         icon: "accessibility",
         iconBg: "#F8E4DD",
         iconColor: "#F4A78E",
@@ -68,7 +71,7 @@ export default function SettingsScreen() {
       {
         key: "notifications",
         label: "Notifications",
-        keywords: ["alerts", "reminders", "messages", "push"],
+        keywords: ["alerts", "reminders", "messages"],
         icon: "notifications-none",
         iconBg: "#DDEFE9",
         iconColor: "#53B1A3",
@@ -77,7 +80,7 @@ export default function SettingsScreen() {
       {
         key: "appearance",
         label: "Appearance",
-        keywords: ["theme", "dark mode", "light mode", "display"],
+        keywords: ["theme", "dark mode", "light mode"],
         icon: "nightlight",
         iconBg: "#E9E1F1",
         iconColor: "#B192CE",
@@ -86,7 +89,7 @@ export default function SettingsScreen() {
       {
         key: "privacy",
         label: "Privacy & Security",
-        keywords: ["privacy", "security", "permissions", "safe", "account"],
+        keywords: ["privacy", "security"],
         icon: "verified-user",
         iconBg: "#F9F0D9",
         iconColor: "#E1B245",
@@ -95,7 +98,7 @@ export default function SettingsScreen() {
       {
         key: "feedback",
         label: "Feedback",
-        keywords: ["report", "help", "support", "bug", "contact"],
+        keywords: ["support", "bug", "contact"],
         icon: "feedback",
         iconBg: "#FCE6DF",
         iconColor: "#F7A78D",
@@ -106,21 +109,16 @@ export default function SettingsScreen() {
   );
 
   const filteredItems = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+    const q = query.trim().toLowerCase();
+    if (!q) return items;
 
-    if (!normalizedQuery) return items;
-
-    return items.filter((item) => {
-      const searchableText = [item.label, ...(item.keywords ?? [])]
-        .join(" ")
-        .toLowerCase();
-
-      return searchableText.includes(normalizedQuery);
-    });
+    return items.filter((item) =>
+      [item.label, ...(item.keywords ?? [])].join(" ").toLowerCase().includes(q)
+    );
   }, [items, query]);
 
   return (
-    <ScreenContainer backgroundColor="#F1F6F5" contentStyle={styles.safeContent}>
+    <ScreenContainer backgroundColor={colors.background} contentStyle={styles.safeContent}>
       <ScreenHeader
         title="Settings"
         showBackButton
@@ -140,17 +138,13 @@ export default function SettingsScreen() {
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.searchWrap}>
-          <MaterialIcons name="search" size={searchIconSize} color="#65A7BF" />
+          <MaterialIcons name="search" size={searchIconSize} color={colors.subtext} />
           <TextInput
             value={query}
             onChangeText={setQuery}
             placeholder="Search Settings"
-            placeholderTextColor="#8CA4A7"
+            placeholderTextColor={colors.subtext}
             style={styles.searchInput}
-            autoCapitalize="none"
-            autoCorrect={false}
-            clearButtonMode="while-editing"
-            returnKeyType="search"
           />
         </View>
 
@@ -162,25 +156,23 @@ export default function SettingsScreen() {
               </View>
               <Text style={styles.itemLabel}>{item.label}</Text>
             </View>
-            <MaterialIcons name="chevron-right" size={chevronSize} color="#111827" />
+            <MaterialIcons name="chevron-right" size={chevronSize} color={colors.text} />
           </Pressable>
         ))}
 
-        {filteredItems.length === 0 ? (
+        {filteredItems.length === 0 && (
           <Text style={styles.emptyText}>No matching settings found.</Text>
-        ) : null}
+        )}
       </ScrollView>
     </ScreenContainer>
   );
 }
 
-const createStyles = (density: number) => {
-  const ms = (value: number) => moderateScale(value) * density;
+const createStyles = (density: number, colors: any) => {
+  const ms = (v: number) => moderateScale(v) * density;
 
   return StyleSheet.create({
-    safeContent: {
-      flex: 1,
-    },
+    safeContent: { flex: 1 },
 
     scrollView: {
       flex: 1,
@@ -191,19 +183,20 @@ const createStyles = (density: number) => {
       marginBottom: Spacing.cardGap,
       height: ms(42),
       borderRadius: ms(21),
-      backgroundColor: "#D5E8EA",
+      backgroundColor: colors.card,
       paddingHorizontal: Spacing.sm,
       flexDirection: "row",
       alignItems: "center",
-      gap: Spacing.xs,
+      borderWidth: 1,
+      borderColor: colors.border,
     },
 
     searchInput: {
       ...Typography.body,
       flex: 1,
       fontSize: ms(14),
-      color: semanticColors.text.primary,
-      fontWeight: "600",
+      color: colors.text,
+      marginLeft: 8,
     },
 
     itemCard: {
@@ -212,11 +205,11 @@ const createStyles = (density: number) => {
       justifyContent: "space-between",
       paddingHorizontal: Spacing.sm,
       paddingVertical: ms(11),
-      backgroundColor: "#FFFFFF",
+      backgroundColor: colors.card,
       borderRadius: ms(18),
       marginBottom: Spacing.xs,
       borderWidth: 1,
-      borderColor: "#E5ECEA",
+      borderColor: colors.border,
     },
 
     itemLeft: {
@@ -238,12 +231,12 @@ const createStyles = (density: number) => {
       ...Typography.sectionTitle,
       fontSize: ms(16),
       fontWeight: "700",
-      color: semanticColors.text.primary,
+      color: colors.text,
     },
 
     emptyText: {
       ...Typography.body,
-      color: semanticColors.text.secondary,
+      color: colors.subtext,
       textAlign: "center",
       marginTop: ms(10),
     },
