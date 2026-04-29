@@ -11,7 +11,11 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "inference:start": "powershell -ExecutionPolicy Bypass -File .\\ml\\scripts\\start_inference_api.ps1",
-    "inference:stop": "powershell -ExecutionPolicy Bypass -File .\\ml\\scripts\\stop_inference_api.ps1"
+    "inference:stop": "powershell -ExecutionPolicy Bypass -File .\\ml\\scripts\\stop_inference_api.ps1",
+    "demo:start": "powershell -ExecutionPolicy Bypass -File .\\scripts\\demo-start.ps1",
+    "demo:all": "powershell -ExecutionPolicy Bypass -File .\\scripts\\demo-all.ps1",
+    "demo:check": "powershell -ExecutionPolicy Bypass -File .\\scripts\\demo-check.ps1",
+    "demo:stop": "powershell -ExecutionPolicy Bypass -File .\\ml\\scripts\\stop_inference_api.ps1"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
