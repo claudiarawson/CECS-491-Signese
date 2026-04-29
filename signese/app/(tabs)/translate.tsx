@@ -34,6 +34,7 @@ import { asl } from "@/src/theme/aslConnectTheme";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { CameraView } from "expo-camera";
+import * as Speech from "expo-speech";
 import { router } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -120,6 +121,7 @@ export default function TranslateScreen() {
   } = useTranslateCamera();
   const sequenceRef = useRef(0);
   const cameraRef = useRef<CameraView | null>(null);
+  const lastSpokenTokenIdRef = useRef<string | null>(null);
   const continueSequenceRef = useRef(false);
   const chunkStopTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recordingPromiseRef = useRef<
@@ -211,6 +213,39 @@ export default function TranslateScreen() {
 
     return () => clearInterval(interval);
   }, [isRecordCooldown]);
+
+  useEffect(() => {
+    if (!isVolumeOn) {
+      Speech.stop();
+      return;
+    }
+
+    if (tokens.length === 0) {
+      lastSpokenTokenIdRef.current = null;
+      return;
+    }
+
+    const latestToken = tokens[tokens.length - 1];
+    if (!latestToken?.label) {
+      return;
+    }
+    if (lastSpokenTokenIdRef.current === latestToken.id) {
+      return;
+    }
+
+    lastSpokenTokenIdRef.current = latestToken.id;
+    Speech.speak(latestToken.label, {
+      language: "en-US",
+      pitch: 1,
+      rate: 0.95,
+    });
+  }, [isVolumeOn, tokens]);
+
+  useEffect(() => {
+    return () => {
+      Speech.stop();
+    };
+  }, []);
 
   useEffect(() => {
     if (!isRecordingClip || Platform.OS === "web") {
@@ -452,10 +487,18 @@ export default function TranslateScreen() {
   };
 
   const handleToggleVolume = () => {
-    setIsVolumeOn((previous) => !previous);
+    setIsVolumeOn((previous) => {
+      const next = !previous;
+      if (!next) {
+        Speech.stop();
+      }
+      return next;
+    });
   };
 
   const handleClearCaptions = () => {
+    Speech.stop();
+    lastSpokenTokenIdRef.current = null;
     clear();
     lastHistoryEntryIdRef.current = null;
     setLastDecision(null);
