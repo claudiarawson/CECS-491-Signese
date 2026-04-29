@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Switch, ScrollView } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
-import { ScreenContainer, ScreenHeader, SectionCard } from "@/src/components/layout";
+import { ScreenContainer, SectionCard } from "@/src/components/layout";
+import { GradientBackground } from "@/src/components/asl";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { Spacing, fontWeight } from "@/src/theme";
 import {
   type SettingsPreferences,
   DEFAULT_SETTINGS_PREFERENCES,
@@ -14,6 +17,21 @@ type State = {
   loading: boolean;
   prefs: SettingsPreferences;
 };
+
+function SettingsSubHeader({ title }: { title: string }) {
+  return (
+    <View style={styles.headerRow}>
+      <Pressable
+        onPress={() => router.back()}
+        style={({ pressed }) => [styles.headerBtn, pressed && { opacity: 0.85 }]}
+      >
+        <MaterialIcons name="arrow-back" size={22} color={asl.text.primary} />
+      </Pressable>
+      <Text style={styles.headerTitle}>{title}</Text>
+      <View style={styles.headerSpacer} />
+    </View>
+  );
+}
 
 export default function PrivacySecurityScreen() {
   const [state, setState] = useState<State>({
@@ -41,8 +59,14 @@ export default function PrivacySecurityScreen() {
   const privacy = state.prefs.privacy;
 
   return (
-    <ScreenContainer backgroundColor="#F1F6F5">
-      <ScreenHeader title="Privacy & Security" showBackButton />
+    <GradientBackground variant="default" style={{ flex: 1 }}>
+      <ScreenContainer
+        backgroundColor="transparent"
+        safeStyle={{ backgroundColor: "transparent" }}
+        contentStyle={styles.screenContent}
+        contentPadded={false}
+      >
+      <SettingsSubHeader title="Privacy & Security" />
       <ScrollView contentContainerStyle={styles.container}>
         <SectionCard style={styles.heroCard}>
           <Text style={styles.heroTitle}>Privacy Controls</Text>
@@ -87,37 +111,81 @@ export default function PrivacySecurityScreen() {
         </SectionCard>
       </ScrollView>
     </ScreenContainer>
+    </GradientBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  screenContent: {
+    flex: 1,
+    backgroundColor: "transparent",
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.screenPadding,
+    minHeight: 52,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: asl.glass.border,
+    backgroundColor: "rgba(8,2,10,0.2)",
+  },
+  headerBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: asl.glass.bg,
+    borderWidth: 1,
+    borderColor: asl.glass.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: "center",
+    color: asl.text.primary,
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: fontWeight.emphasis,
+  },
+  headerSpacer: {
+    width: 40,
+    height: 40,
+  },
   container: {
-    padding: 20,
+    paddingHorizontal: Spacing.screenPadding,
+    paddingTop: 16,
     gap: 14,
-    paddingBottom: 24,
+    paddingBottom: 40,
   },
   heroCard: {
     paddingVertical: 16,
     gap: 4,
+    backgroundColor: asl.glass.bg,
+    borderWidth: 1,
+    borderColor: asl.glass.border,
   },
   heroTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#111827",
+    color: asl.text.primary,
   },
   heroSubtitle: {
     fontSize: 14,
-    color: "#4B5563",
+    color: asl.text.secondary,
   },
   sectionCard: {
     paddingVertical: 12,
     gap: 10,
+    backgroundColor: asl.glass.bg,
+    borderWidth: 1,
+    borderColor: asl.glass.border,
   },
   row: {
     minHeight: 68,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: asl.glass.bg,
     borderWidth: 1,
-    borderColor: "#D8E1E8",
+    borderColor: asl.glass.border,
     paddingHorizontal: 12,
     borderRadius: 14,
     flexDirection: "row",
@@ -139,7 +207,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   rowLabel: {
-    color: "#111827",
+    color: asl.text.primary,
     fontSize: 15,
     fontWeight: "500",
     flexShrink: 1,

@@ -1,14 +1,14 @@
 import {
-  HeaderActionButton,
-  HeaderAvatarButton,
   ScreenContainer,
-  ScreenHeader,
 } from "@/src/components/layout";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { useTheme } from "@/src/contexts/ThemeContext";
+import { GradientBackground, GlassCard } from "@/src/components/asl";
+import { asl } from "@/src/theme/aslConnectTheme";
 import {
   Spacing,
   Typography,
+  fontWeight,
   getDeviceDensity,
   moderateScale,
 } from "@/src/theme";
@@ -29,29 +29,36 @@ export default function AppearanceScreen() {
   const checkSize = moderateScale(20) * density;
 
   return (
-    <ScreenContainer backgroundColor={colors.background} contentStyle={styles.safeContent}>
-      <ScreenHeader
-        title="Appearance"
-        showBackButton
-        right={
-          <>
-            <HeaderActionButton
-              iconName="settings"
-              onPress={() => router.push("/(tabs)/settings" as any)}
-            />
-            <HeaderAvatarButton
-              avatar={profile?.avatar}
-              onPress={() => router.push("/(tabs)/account" as any)}
-            />
-          </>
-        }
-      />
+    <GradientBackground variant="default" style={{ flex: 1 }}>
+      <ScreenContainer
+        backgroundColor="transparent"
+        safeStyle={{ backgroundColor: "transparent" }}
+        contentStyle={styles.safeContent}
+        contentPadded={false}
+      >
+      <View style={styles.headerRow}>
+        <Pressable
+          onPress={() => router.back()}
+          style={({ pressed }) => [styles.headerBtn, pressed && { opacity: 0.85 }]}
+        >
+          <MaterialIcons name="arrow-back" size={22} color={asl.text.primary} />
+        </Pressable>
+        <Text style={styles.headerTitle}>Appearance</Text>
+        <Pressable
+          onPress={() => router.push("/(tabs)/account" as any)}
+          style={({ pressed }) => [styles.headerBtn, pressed && { opacity: 0.85 }]}
+        >
+          <Text style={styles.avatarText}>{profile?.avatar ?? "🙂"}</Text>
+        </Pressable>
+      </View>
 
       <View style={styles.content}>
+        <GlassCard style={styles.heroCard}>
         <Text style={styles.title}>Choose Theme</Text>
         <Text style={styles.subtitle}>
           Pick the look you want for the app. Your choice will be saved automatically.
         </Text>
+        </GlassCard>
 
         <Pressable
           style={[
@@ -108,6 +115,7 @@ export default function AppearanceScreen() {
         </Pressable>
       </View>
     </ScreenContainer>
+    </GradientBackground>
   );
 }
 
@@ -117,26 +125,66 @@ const createStyles = (density: number, colors: any) => {
   return StyleSheet.create({
     safeContent: {
       flex: 1,
+      backgroundColor: "transparent",
+    },
+    headerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: Spacing.screenPadding,
+      minHeight: 52,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: asl.glass.border,
+      backgroundColor: "rgba(8,2,10,0.2)",
+    },
+    headerBtn: {
+      width: ms(40),
+      height: ms(40),
+      borderRadius: ms(20),
+      backgroundColor: asl.glass.bg,
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headerTitle: {
+      flex: 1,
+      textAlign: "center",
+      color: asl.text.primary,
+      fontSize: ms(20),
+      lineHeight: ms(26),
+      fontWeight: fontWeight.emphasis,
+    },
+    avatarText: {
+      color: asl.text.primary,
+      fontSize: ms(18),
     },
 
     content: {
       flex: 1,
-      paddingTop: Spacing.sm,
+      paddingTop: Spacing.screenPadding,
+      paddingHorizontal: Spacing.screenPadding,
+    },
+    heroCard: {
+      padding: Spacing.sm,
+      marginBottom: Spacing.sm,
+      backgroundColor: asl.glass.bg,
+      borderWidth: 1,
+      borderColor: asl.glass.border,
     },
 
     title: {
       ...Typography.sectionTitle,
       fontSize: ms(22),
       fontWeight: "800",
-      color: colors.text,
+      color: asl.text.primary,
       marginBottom: ms(6),
     },
 
     subtitle: {
       ...Typography.body,
       fontSize: ms(14),
-      color: colors.subtext,
-      marginBottom: ms(18),
+      color: asl.text.secondary,
       lineHeight: ms(20),
     },
 
@@ -147,14 +195,14 @@ const createStyles = (density: number, colors: any) => {
       paddingHorizontal: Spacing.sm,
       paddingVertical: ms(14),
       borderRadius: ms(18),
-      backgroundColor: colors.card,
+      backgroundColor: asl.glass.bg,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: asl.glass.border,
       marginBottom: Spacing.sm,
     },
 
     optionCardSelected: {
-      borderColor: colors.primary,
+      borderColor: asl.accentCyan,
       borderWidth: 2,
     },
 
@@ -177,13 +225,13 @@ const createStyles = (density: number, colors: any) => {
       ...Typography.sectionTitle,
       fontSize: ms(16),
       fontWeight: "700",
-      color: colors.text,
+      color: asl.text.primary,
     },
 
     optionSubtitle: {
       ...Typography.body,
       fontSize: ms(13),
-      color: colors.subtext,
+      color: asl.text.secondary,
       marginTop: ms(2),
     },
 
