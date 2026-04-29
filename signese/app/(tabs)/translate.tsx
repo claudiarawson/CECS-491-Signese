@@ -1,3 +1,4 @@
+import { GradientBackground } from "@/src/components/asl";
 import {
   ScreenContainer,
   ScreenHeader,
@@ -84,11 +85,11 @@ function CommonResponsesPlaceholder({
 export default function TranslateScreen() {
   const { profile } = useAuthUser();
   const { textScale } = useAccessibility();
-  const { colors, theme } = useTheme();
+  const { colors } = useTheme();
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const tabBarHeight = useBottomTabBarHeight();
-  const styles = createStyles(density, textScale, tabBarHeight, colors, theme);
+  const styles = createStyles(density, textScale, tabBarHeight, colors);
 
   const [isVolumeOn, setIsVolumeOn] = useState(true);
   const [lastDecision, setLastDecision] = useState<PostprocessDecision | null>(null);
@@ -558,8 +559,8 @@ export default function TranslateScreen() {
     : "Top scores: n/a";
 
   return (
-  <View style={{ flex: 1, backgroundColor: colors.background }}>
-    <ScreenContainer
+    <GradientBackground variant="default" style={{ flex: 1 }}>
+      <ScreenContainer
       backgroundColor={colors.background}
       safeStyle={{ backgroundColor: colors.background }}
       contentStyle={{ flex: 1, backgroundColor: colors.background }}
@@ -796,8 +797,8 @@ export default function TranslateScreen() {
         {/* TODO(model): Switch adapter from mock to local or backend inference after training first constrained model. */}
         {/* TODO(sequence-mode): Enable longer clip recording and sequence tokenization mode on backend/local model support. */}
         {/* TODO(dataset): Replace Common Responses panel with label-aware dictionary suggestions from dataset manifest. */}
-            </ScreenContainer>
-    </View>
+      </ScreenContainer>
+    </GradientBackground>
   );
 }
 
@@ -805,8 +806,7 @@ const createStyles = (
   density: number,
   textScale: number,
   tabBarHeight: number,
-  colors: any,
-  theme: "light" | "dark"
+  colors: any
 ) => {
   const ms = (value: number) => moderateScale(value) * density;
   const ts = (value: number) => ms(value) * textScale;
@@ -847,7 +847,7 @@ const createStyles = (
       minHeight: 0,
       borderRadius: ms(20),
       overflow: "hidden",
-      backgroundColor: theme === "dark" ? "rgba(15,23,32,0.75)" : "rgba(0,0,0,0.35)",
+      backgroundColor: "rgba(8, 4, 18, 0.72)",
       borderWidth: 1,
       borderColor: colors.border,
       ...asl.shadow.card,
@@ -898,7 +898,7 @@ const createStyles = (
       paddingHorizontal: 8,
       paddingVertical: 6,
       borderRadius: 16,
-      backgroundColor: theme === "dark" ? "rgba(15,23,32,0.72)" : "rgba(20, 34, 31, 0.35)",
+      backgroundColor: "rgba(12, 6, 24, 0.78)",
       borderWidth: 1,
       borderColor: "rgba(255,255,255,0.22)",
     },
@@ -906,7 +906,7 @@ const createStyles = (
       width: ms(34),
       height: ms(34),
       borderRadius: ms(17),
-      backgroundColor: theme === "dark" ? "rgba(37,50,65,0.85)" : "rgba(44, 93, 86, 0.55)",
+      backgroundColor: "rgba(255,255,255,0.14)",
       borderWidth: 1,
       borderColor: "rgba(255,255,255,0.35)",
       alignItems: "center",
@@ -957,7 +957,7 @@ const createStyles = (
       bottom: ms(58),
       maxHeight: ms(120),
       borderRadius: 14,
-      backgroundColor: theme === "dark" ? "rgba(15,23,32,0.96)" : "rgba(12, 28, 24, 0.92)",
+      backgroundColor: "rgba(8, 4, 18, 0.94)",
       borderWidth: 1,
       borderColor: "rgba(255,255,255,0.12)",
       paddingHorizontal: 10,
@@ -994,7 +994,7 @@ const createStyles = (
       width: 28,
       height: 28,
       borderRadius: 14,
-      backgroundColor: theme === "dark" ? "rgba(37,50,65,0.95)" : "rgba(44, 93, 86, 0.75)",
+      backgroundColor: "rgba(255,255,255,0.16)",
       borderWidth: 1,
       borderColor: "rgba(255,255,255,0.35)",
       alignItems: "center",
@@ -1012,7 +1012,7 @@ const createStyles = (
       paddingHorizontal: 10,
       height: 36,
       borderRadius: 18,
-      backgroundColor: theme === "dark" ? "rgba(37,50,65,0.95)" : "rgba(44, 93, 86, 0.86)",
+      backgroundColor: "rgba(255,255,255,0.12)",
       borderWidth: 1,
       borderColor: "rgba(255,255,255,0.45)",
       justifyContent: "center",
@@ -1327,7 +1327,7 @@ const createStyles = (
       width: ms(34),
       height: ms(34),
       borderRadius: ms(17),
-      backgroundColor: theme === "dark" ? "rgba(37,50,65,0.85)" : "rgba(44, 93, 86, 0.55)",
+      backgroundColor: "rgba(255,255,255,0.14)",
       borderWidth: 1,
       borderColor: "rgba(255,255,255,0.35)",
     },

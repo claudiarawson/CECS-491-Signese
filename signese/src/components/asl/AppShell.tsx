@@ -1,26 +1,35 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { GradientBackground } from "./GradientBackground";
 
 type Props = {
   children: React.ReactNode;
   header?: React.ReactNode;
   scroll?: boolean;
+  /** Passed through to {@link GradientBackground} */
+  variant?: "default" | "welcome";
 };
 
-export function AppShell({ children, header }: Props) {
-  const { colors } = useTheme();
+/** Bottom omitted so floating tab bar + dictionary footer offsets stay accurate. */
+const SAFE_EDGES = ["top", "left", "right"] as const;
 
+export function AppShell({ children, header, variant = "default" }: Props) {
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {header}
-      <View style={styles.content}>{children}</View>
-    </View>
+    <GradientBackground variant={variant} style={styles.container}>
+      <SafeAreaView style={styles.safe} edges={SAFE_EDGES}>
+        {header}
+        <View style={styles.content}>{children}</View>
+      </SafeAreaView>
+    </GradientBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  safe: {
     flex: 1,
   },
   content: {

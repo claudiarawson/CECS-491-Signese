@@ -60,7 +60,8 @@ export function AslTabHeader({
 const styles = StyleSheet.create({
   row: {
     paddingHorizontal: 4,
-    paddingTop: 4,
+    /** Safe area (Dynamic Island / notch) is applied by AppShell `SafeAreaView`; keep a tight strip below it */
+    paddingTop: 6,
     paddingBottom: 12,
     flexDirection: "row",
     alignItems: "center",

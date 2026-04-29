@@ -52,9 +52,6 @@ export default function TabLayout() {
         name="dictionary"
         options={{
           title: "Dictionary",
-          // Prevent React Navigation from keeping the last visited nested route
-          // (e.g., add sign) when switching tabs.
-          unmountOnBlur: true,
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="manage-search" size={TAB_ICON_SIZE} color={color} />
           ),

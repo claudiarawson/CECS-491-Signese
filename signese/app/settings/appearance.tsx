@@ -75,7 +75,7 @@ export default function AppearanceScreen() {
             <View>
               <Text style={styles.optionTitle}>Light Mode</Text>
               <Text style={styles.optionSubtitle}>
-                Bright background with dark text
+                Brighter glass panels on the maroon–purple gradient
               </Text>
             </View>
           </View>
@@ -102,7 +102,7 @@ export default function AppearanceScreen() {
             <View>
               <Text style={styles.optionTitle}>Dark Mode</Text>
               <Text style={styles.optionSubtitle}>
-                Dark background with light text
+                Softer glass panels on the maroon–purple gradient
               </Text>
             </View>
           </View>

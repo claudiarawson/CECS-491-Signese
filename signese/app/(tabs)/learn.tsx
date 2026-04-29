@@ -1,7 +1,7 @@
 import { AppShell, AslTabHeader, LessonCard } from "@/src/components/asl";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { useTheme } from "@/src/contexts/ThemeContext";
+import { asl } from "@/src/theme/aslConnectTheme";
 import {
   getCompletedLessons,
   getLessonProgressPercent,
@@ -35,10 +35,9 @@ const IMPLEMENTED_LESSONS = new Set(["alphabet", "greetings", "numbers"]);
 export default function LearnScreen() {
   const { profile } = useAuthUser();
   const { textScale } = useAccessibility();
-  const { colors } = useTheme();
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const styles = useMemo(() => createStyles(density, textScale, colors), [density, textScale, colors]);
+  const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
 
   const [unlockedLessons, setUnlockedLessons] = useState<LessonId[]>([]);
   const [completedLessons, setCompletedLessons] = useState<LessonId[]>([]);
@@ -201,7 +200,7 @@ export default function LearnScreen() {
   );
 }
 
-const createStyles = (density: number, textScale: number, colors: any) => {
+const createStyles = (density: number, textScale: number) => {
   const ts = (v: number) => moderateScale(v) * density * textScale;
 
   return StyleSheet.create({
@@ -209,13 +208,13 @@ const createStyles = (density: number, textScale: number, colors: any) => {
       flex: 1,
     },
     sectionLabel: {
-      color: colors.text,
+      color: asl.text.primary,
       fontSize: ts(20),
       fontWeight: "800",
       marginTop: 4,
     },
     subtle: {
-      color: colors.subtext,
+      color: asl.text.secondary,
       marginBottom: 8,
       fontSize: ts(14),
     },

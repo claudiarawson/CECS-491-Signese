@@ -1,4 +1,10 @@
-import { AppShell, AslTabHeader, ProgressCard, StatCard } from "@/src/components/asl";
+import {
+  AppShell,
+  AslTabHeader,
+  GradientBackground,
+  ProgressCard,
+  StatCard,
+} from "@/src/components/asl";
 import { DailyTipsCarousel } from "@/src/components/layout";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
@@ -23,6 +29,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const { textScale } = useAccessibility();
@@ -99,10 +106,14 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingOuter}>
-        <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.loadingText}>Loading your profile...</Text>
-      </View>
+      <GradientBackground variant="default" style={{ flex: 1 }}>
+        <SafeAreaView style={styles.loadingSafe} edges={["top", "left", "right"]}>
+          <View style={styles.loadingOuter}>
+            <ActivityIndicator size="large" color={asl.accentCyan} />
+            <Text style={styles.loadingText}>Loading your profile...</Text>
+          </View>
+        </SafeAreaView>
+      </GradientBackground>
     );
   }
 
@@ -130,13 +141,13 @@ export default function HomeScreen() {
         {statsLoading ? (
           <View style={styles.statsRow}>
             <View style={styles.statSkeleton}>
-              <ActivityIndicator color={colors.primary} />
+              <ActivityIndicator color={asl.accentCyan} />
             </View>
             <View style={styles.statSkeleton}>
-              <ActivityIndicator color={colors.primary} />
+              <ActivityIndicator color={asl.accentCyan} />
             </View>
             <View style={styles.statSkeleton}>
-              <ActivityIndicator color={colors.primary} />
+              <ActivityIndicator color={asl.accentCyan} />
             </View>
           </View>
         ) : (
@@ -177,9 +188,11 @@ const createStyles = (density: number, textScale: number, colors: any) => {
       flex: 1,
     },
 
+    loadingSafe: {
+      flex: 1,
+    },
     loadingOuter: {
       flex: 1,
-      backgroundColor: colors.background,
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: Spacing.screenPadding,

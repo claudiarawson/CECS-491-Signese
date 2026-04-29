@@ -45,7 +45,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 4,
-    paddingTop: 4,
+    /** Top inset comes from AppShell `SafeAreaView` */
+    paddingTop: 6,
     paddingBottom: 14,
     gap: 10,
     minHeight: 48},

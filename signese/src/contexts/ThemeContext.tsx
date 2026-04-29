@@ -20,22 +20,24 @@ type ThemeContextType = {
   loading: boolean;
 };
 
+/** Matches `aslConnectTheme`: glass surfaces on gradient screens (ASL Connect–style UI). */
 const LIGHT_COLORS: ThemeColors = {
-  background: "#F6FBFA",
-  card: "#FFFFFF",
-  text: "#163C39",
-  subtext: "#5B7A75",
-  border: "#D9E7E4",
-  primary: "#52B7A5",
+  background: "transparent",
+  card: "rgba(255,255,255,0.10)",
+  text: "#FFFFFF",
+  subtext: "rgba(255,255,255,0.72)",
+  border: "rgba(255,255,255,0.16)",
+  primary: "#F472B6",
 };
 
+/** Slightly deeper glass on dark preference (still maroon/purple gradient–friendly). */
 const DARK_COLORS: ThemeColors = {
-  background: "#0F1720",
-  card: "#1B2630",
-  text: "#F3F7F6",
-  subtext: "#A7B7B3",
-  border: "#2B3A45",
-  primary: "#52B7A5",
+  background: "transparent",
+  card: "rgba(255,255,255,0.08)",
+  text: "#FFFFFF",
+  subtext: "rgba(255,255,255,0.68)",
+  border: "rgba(255,255,255,0.14)",
+  primary: "#EC4899",
 };
 
 const THEME_STORAGE_KEY = "app_theme";
@@ -43,7 +45,7 @@ const THEME_STORAGE_KEY = "app_theme";
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeMode>("light");
+  const [theme, setThemeState] = useState<ThemeMode>("dark");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
