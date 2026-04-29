@@ -6,9 +6,8 @@ import {
   Pressable,
   useWindowDimensions,
   Animated,
-  PanResponder,
-} from "react-native";
-import { Spacing, moderateScale, fontFamily } from "@/src/theme";
+  PanResponder} from "react-native";
+import { Spacing, moderateScale, fontWeight } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
 
 export type DailyTip = {
@@ -23,32 +22,27 @@ const DEFAULT_TIPS: DailyTip[] = [
     id: "1",
     emoji: "😊",
     title: "Tip: Facial Expressions",
-    description: "In ASL, facial expressions are just as important as hand movements!",
-  },
+    description: "In ASL, facial expressions are just as important as hand movements!"},
   {
     id: "2",
     emoji: "✋",
     title: "Tip: Hand Shape",
-    description: "Make sure your fingers are clearly separated when signing letters like A, S, and T.",
-  },
+    description: "Make sure your fingers are clearly separated when signing letters like A, S, and T."},
   {
     id: "3",
     emoji: "👀",
     title: "Tip: Eye Contact",
-    description: "Maintain eye contact while signing to show attention and improve comprehension.",
-  },
+    description: "Maintain eye contact while signing to show attention and improve comprehension."},
   {
     id: "4",
     emoji: "🔄",
     title: "Tip: Practice Daily",
-    description: "Even 10 minutes of daily practice can significantly improve your ASL skills.",
-  },
+    description: "Even 10 minutes of daily practice can significantly improve your ASL skills."},
   {
     id: "5",
     emoji: "🤝",
     title: "Tip: Body Language",
-    description: "Use your body and shoulders to emphasize signs for a more natural flow.",
-  },
+    description: "Use your body and shoulders to emphasize signs for a more natural flow."},
 ];
 
 type DailyTipsCarouselProps = {
@@ -73,8 +67,7 @@ export function DailyTipsCarousel({ tips = DEFAULT_TIPS }: DailyTipsCarouselProp
       Animated.timing(contentOpacity, {
         toValue: 0,
         duration: 110,
-        useNativeDriver: true,
-      }).start(({ finished }) => {
+        useNativeDriver: true}).start(({ finished }) => {
         if (!finished) {
           setIsTransitioning(false);
           return;
@@ -85,8 +78,7 @@ export function DailyTipsCarousel({ tips = DEFAULT_TIPS }: DailyTipsCarouselProp
         Animated.timing(contentOpacity, {
           toValue: 1,
           duration: 110,
-          useNativeDriver: true,
-        }).start(() => {
+          useNativeDriver: true}).start(() => {
           setIsTransitioning(false);
         });
       });
@@ -120,8 +112,7 @@ export function DailyTipsCarousel({ tips = DEFAULT_TIPS }: DailyTipsCarouselProp
           if (gestureState.dx >= SWIPE_THRESHOLD) {
             handlePrev();
           }
-        },
-      }),
+        }}),
     [handleNext, handlePrev, isTransitioning]
   );
 
@@ -177,18 +168,16 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: Spacing.xs,
-  },
+    marginVertical: Spacing.xs},
   sectionLabel: {
     alignSelf: "flex-start",
     width: "100%",
     paddingHorizontal: 0,
     marginBottom: moderateScale(8),
     fontSize: moderateScale(15),
-    fontFamily: fontFamily.heading,
+    fontWeight: fontWeight.emphasis,
     color: asl.text.primary,
-    letterSpacing: 0.2,
-  },
+    letterSpacing: 0.2},
   tipCard: {
     backgroundColor: asl.glass.bg,
     borderWidth: StyleSheet.hairlineWidth + 1,
@@ -197,27 +186,23 @@ const styles = StyleSheet.create({
     paddingVertical: moderateScale(14),
     borderRadius: asl.radius.lg,
     overflow: "hidden",
-    ...asl.shadow.card,
-  },
+    ...asl.shadow.card},
   tipHeaderRow: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
     marginBottom: moderateScale(6),
-    gap: moderateScale(8),
-  },
+    gap: moderateScale(8)},
   tipTitle: {
     flex: 1,
     fontSize: moderateScale(15),
     lineHeight: moderateScale(20),
     color: asl.text.primary,
-    fontFamily: fontFamily.heading,
-  },
+    fontWeight: fontWeight.emphasis},
   tipNavWrap: {
     flexDirection: "row",
     gap: moderateScale(6),
-    flexShrink: 0,
-  },
+    flexShrink: 0},
   tipNavBtn: {
     width: moderateScale(28),
     height: moderateScale(28),
@@ -226,42 +211,32 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: asl.glass.border,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   tipNavBtnPressed: {
     opacity: 0.75,
-    backgroundColor: "rgba(255,255,255,0.12)",
-  },
+    backgroundColor: "rgba(255,255,255,0.12)"},
   tipNavText: {
     fontSize: moderateScale(18),
     color: asl.text.primary,
     marginTop: moderateScale(-1),
-    fontFamily: fontFamily.medium,
-  },
+    fontWeight: fontWeight.medium},
   tipNavDisabled: {
-    opacity: 0.28,
-  },
+    opacity: 0.28},
   tipBody: {
     fontSize: moderateScale(13),
     color: asl.text.secondary,
     lineHeight: moderateScale(19),
-    marginBottom: moderateScale(10),
-    fontFamily: fontFamily.body,
-  },
+    marginBottom: moderateScale(10)},
   dotRow: {
     flexDirection: "row",
     alignSelf: "center",
-    gap: moderateScale(6),
-  },
+    gap: moderateScale(6)},
   dot: {
     width: moderateScale(6),
     height: moderateScale(6),
     borderRadius: moderateScale(3),
-    backgroundColor: "rgba(255,255,255,0.2)",
-  },
+    backgroundColor: "rgba(255,255,255,0.2)"},
   dotActive: {
     width: moderateScale(14),
     backgroundColor: asl.accentCyan,
-    borderRadius: moderateScale(4),
-  },
-});
+    borderRadius: moderateScale(4)}});

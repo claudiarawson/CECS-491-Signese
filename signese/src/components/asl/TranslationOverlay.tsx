@@ -2,7 +2,7 @@ import React from "react";
 import { BlurView } from "expo-blur";
 import { Platform, StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 
 type Props = {
   topLeft: React.ReactNode;
@@ -43,9 +43,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: asl.glass.border,
-  },
+    borderColor: asl.glass.border},
   fallback: { backgroundColor: "rgba(0,0,0,0.45)" },
   inner: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10, gap: 8 },
-  pill: { color: asl.text.primary, fontSize: 12, flex: 1, minWidth: 0, fontFamily: fontFamily.medium },
-});
+  pill: { color: asl.text.primary, fontSize: 12, flex: 1, minWidth: 0, fontWeight: fontWeight.medium }});

@@ -2,111 +2,107 @@ import { TextStyle } from "react-native";
 import { fontScale } from "./responsive";
 
 /**
- * App-wide typeface: Inter (loaded in root layout via @expo-google-fonts/inter).
- * Use heading / medium / label / body for weight; all are the same Inter family.
+ * System UI font + fontWeight (same pattern as Dictionary / tab screens).
+ * Do not set fontFamily on Text so platform defaults apply (SF Pro, Roboto, etc.).
  */
-const INTER_FONTS = {
-  heading: "Inter_700Bold",
-  medium: "Inter_600SemiBold",
-  label: "Inter_500Medium",
-  body: "Inter_400Regular",
+export const fontWeight = {
+  /** Section titles, tab headers, primary actions */
+  emphasis: "800" as const,
+  /** Strong labels, chips */
+  strong: "700" as const,
+  /** Secondary labels, buttons */
+  medium: "600" as const,
+  /** Small emphasis */
+  label: "600" as const,
 } as const;
-
-export const fontFamily = INTER_FONTS;
 
 /**
  * Typography Presets
- * Reusable text styles for consistent typography across the app
  */
 export const typography = {
   screenTitle: {
-    fontFamily: INTER_FONTS.heading,
+    fontWeight: fontWeight.emphasis,
     fontSize: fontScale(24),
     lineHeight: fontScale(30),
   },
 
   sectionTitle: {
-    fontFamily: INTER_FONTS.medium,
+    fontWeight: fontWeight.strong,
     fontSize: fontScale(17),
     lineHeight: fontScale(22),
   },
 
   body: {
-    fontFamily: INTER_FONTS.body,
     fontSize: fontScale(14),
     lineHeight: fontScale(20),
   },
 
   statNumber: {
-    fontFamily: INTER_FONTS.heading,
+    fontWeight: fontWeight.emphasis,
     fontSize: fontScale(20),
     lineHeight: fontScale(24),
   },
 
   button: {
-    fontFamily: INTER_FONTS.medium,
+    fontWeight: fontWeight.medium,
     fontSize: fontScale(16),
     lineHeight: fontScale(20),
   },
 
   pageTitle: {
-    fontFamily: INTER_FONTS.heading,
+    fontWeight: fontWeight.emphasis,
     fontSize: fontScale(32),
     lineHeight: fontScale(36),
     letterSpacing: -0.2,
   },
 
   pageSubtitle: {
-    fontFamily: INTER_FONTS.body,
     fontSize: fontScale(18),
     lineHeight: fontScale(22),
   },
 
   landingTitle: {
-    fontFamily: INTER_FONTS.heading,
+    fontWeight: fontWeight.emphasis,
     fontSize: fontScale(40),
     lineHeight: fontScale(44),
     letterSpacing: 1,
   },
 
   landingSubtitle: {
-    fontFamily: INTER_FONTS.body,
     fontSize: fontScale(16),
     lineHeight: fontScale(22),
   },
 
   label: {
-    fontFamily: INTER_FONTS.label,
+    fontWeight: fontWeight.label,
     fontSize: fontScale(11),
     lineHeight: fontScale(14),
   },
 
   input: {
-    fontFamily: INTER_FONTS.body,
     fontSize: fontScale(13),
     lineHeight: fontScale(18),
   },
 
   buttonPrimary: {
-    fontFamily: INTER_FONTS.heading,
+    fontWeight: fontWeight.emphasis,
     fontSize: fontScale(16),
     lineHeight: fontScale(20),
   },
 
   buttonSecondary: {
-    fontFamily: INTER_FONTS.medium,
+    fontWeight: fontWeight.medium,
     fontSize: fontScale(18),
     lineHeight: fontScale(22),
   },
 
   link: {
-    fontFamily: INTER_FONTS.medium,
+    fontWeight: fontWeight.medium,
     fontSize: fontScale(12),
     lineHeight: fontScale(16),
   },
 
   caption: {
-    fontFamily: INTER_FONTS.body,
     fontSize: fontScale(12),
     lineHeight: fontScale(16),
   },

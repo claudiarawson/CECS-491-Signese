@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, Pressable, ScrollView, StyleSheet } from "react-native";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 
 type Chip = { id: string; label: string };
 
@@ -42,12 +42,9 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 1,
     borderColor: asl.glass.border,
-    backgroundColor: "rgba(0,0,0,0.2)",
-  },
+    backgroundColor: "rgba(0,0,0,0.2)"},
   chipOn: {
     backgroundColor: "rgba(244, 114, 182, 0.25)",
-    borderColor: "rgba(244, 114, 182, 0.5)",
-  },
-  label: { color: asl.text.secondary, fontSize: 13, fontFamily: fontFamily.medium },
-  labelOn: { color: asl.text.primary },
-});
+    borderColor: "rgba(244, 114, 182, 0.5)"},
+  label: { color: asl.text.secondary, fontSize: 13, fontWeight: fontWeight.medium },
+  labelOn: { color: asl.text.primary }});

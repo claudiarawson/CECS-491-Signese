@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { moderateScale } from "react-native-size-matters";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
 
 export default function Index() {
@@ -38,17 +38,14 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   bg: {
-    flex: 1,
-  },
+    flex: 1},
   safe: {
-    flex: 1,
-  },
+    flex: 1},
   content: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: moderateScale(28),
-  },
+    paddingHorizontal: moderateScale(28)},
   logo: {
     width: moderateScale(90),
     height: moderateScale(90),
@@ -56,43 +53,36 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginBottom: moderateScale(20),
     borderWidth: 2,
-    borderColor: "rgba(244, 114, 182, 0.35)",
-  },
+    borderColor: "rgba(244, 114, 182, 0.35)"},
   title: {
     fontSize: moderateScale(40),
     letterSpacing: 1,
     textAlign: "center",
     color: "#FFFFFF",
-    fontFamily: fontFamily.heading,
-  },
+    fontWeight: fontWeight.emphasis},
   subtitle: {
     marginTop: moderateScale(10),
     fontSize: moderateScale(16),
     lineHeight: moderateScale(22),
     textAlign: "center",
     color: "rgba(255,255,255,0.72)",
-    maxWidth: moderateScale(280),
-    fontFamily: fontFamily.body,
-  },
+    maxWidth: moderateScale(280)},
   actions: {
     width: "100%",
     maxWidth: moderateScale(320),
     marginTop: moderateScale(40),
-    gap: moderateScale(16),
-  },
+    gap: moderateScale(16)},
   signupButton: {
     height: moderateScale(50),
     borderRadius: moderateScale(25),
     backgroundColor: "#EC4899",
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   signupText: {
     fontSize: moderateScale(18),
     textAlign: "center",
     color: "#FFFFFF",
-    fontFamily: fontFamily.heading,
-  },
+    fontWeight: fontWeight.emphasis},
   loginButton: {
     height: moderateScale(50),
     borderRadius: moderateScale(25),
@@ -100,12 +90,9 @@ const styles = StyleSheet.create({
     borderColor: "rgba(244, 114, 182, 0.85)",
     backgroundColor: "rgba(255,255,255,0.08)",
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   loginText: {
     fontSize: moderateScale(18),
     textAlign: "center",
     color: "#F9A8D4",
-    fontFamily: fontFamily.medium,
-  },
-});
+    fontWeight: fontWeight.medium}});

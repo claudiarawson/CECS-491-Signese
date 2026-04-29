@@ -1,17 +1,15 @@
 import { AppShell, GlassCard, ToggleSwitch } from "@/src/components/asl";
 import { MainTabRail } from "@/src/components/navigation";
-import { Spacing, fontFamily, getDeviceDensity, moderateScale, Typography } from "@/src/theme";
+import { Spacing, fontWeight, getDeviceDensity, moderateScale, Typography } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import {
   TranslationHistoryPanel,
   useTabTranslationHistory,
-  type TranslationHistoryItem,
-} from "@/src/features/translate/translationHistory";
+  type TranslationHistoryItem} from "@/src/features/translate/translationHistory";
 import {
   ReportTranslationModal,
-  type ReportTranslationContext,
-} from "@/src/features/translate/ui/ReportTranslationModal";
+  type ReportTranslationContext} from "@/src/features/translate/ui/ReportTranslationModal";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
@@ -33,8 +31,7 @@ export default function TranslateHistoryScreen() {
     keepHistoryOnDevice,
     setKeepHistoryOnDevice,
     historyPrefsLoaded,
-    requestReuseCaption,
-  } = useTabTranslationHistory();
+    requestReuseCaption} = useTabTranslationHistory();
 
   const [reportOpen, setReportOpen] = useState(false);
   const [reportContext, setReportContext] = useState<ReportTranslationContext | null>(null);
@@ -53,8 +50,7 @@ export default function TranslateHistoryScreen() {
         translatedText: item.translatedText,
         sourceLanguage: item.sourceLanguage,
         targetLanguage: item.targetLanguage,
-        sessionId,
-      });
+        sessionId});
       setReportOpen(true);
     },
     [sessionId]
@@ -78,8 +74,7 @@ export default function TranslateHistoryScreen() {
   const handleDictionaryLookup = useCallback((item: TranslationHistoryItem) => {
     router.push({
       pathname: "/(tabs)/dictionary",
-      params: { q: item.originalText },
-    } as any);
+      params: { q: item.originalText }} as any);
   }, []);
 
   const header = (
@@ -165,11 +160,9 @@ const createStyles = (density: number, textScale: number) => {
       alignItems: "center",
       paddingHorizontal: Spacing.screenPadding,
       paddingBottom: Spacing.sm,
-      gap: ms(8),
-    },
+      gap: ms(8)},
     backBtn: {
-      padding: ms(4),
-    },
+      padding: ms(4)},
     headerTitle: {
       ...Typography.sectionTitle,
       flex: 1,
@@ -177,39 +170,29 @@ const createStyles = (density: number, textScale: number) => {
       fontSize: ts(20),
       lineHeight: ts(24),
       fontWeight: "800",
-      textAlign: "center",
-    },
+      textAlign: "center"},
     headerSpacer: {
-      width: ms(32),
-    },
+      width: ms(32)},
     shellColumn: {
       flex: 1,
       minHeight: 0,
       paddingHorizontal: Spacing.screenPadding,
-      justifyContent: "flex-start",
-    },
+      justifyContent: "flex-start"},
     panelSlot: {
       flex: 1,
-      minHeight: 0,
-    },
+      minHeight: 0},
     historyPrefsCard: {
       marginTop: Spacing.sm,
-      width: "100%",
-    },
+      width: "100%"},
     historyPrefsInner: {
       paddingVertical: Spacing.sm,
-      paddingHorizontal: Spacing.md,
-    },
+      paddingHorizontal: Spacing.md},
     prefsLoadingHint: {
       ...Typography.caption,
       color: asl.text.muted,
       marginTop: ms(8),
-      fontSize: ts(11),
-      fontFamily: fontFamily.body,
-    },
+      fontSize: ts(11)},
     tabRailOuter: {
       marginTop: Spacing.md,
-      paddingHorizontal: ms(2),
-    },
-  });
+      paddingHorizontal: ms(2)}});
 };

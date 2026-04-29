@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useLocalSearchParams } from "expo-router";
 import { moderateScale } from "react-native-size-matters";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 import { signupColors as c } from "@/src/theme/pages/signup.colors";
 import { signInWithEmail } from "@/src/services/firebase/auth.services";
 
@@ -82,33 +82,29 @@ const styles = StyleSheet.create({
   scrollContent: { flexGrow: 1 },
   topRow: {
     paddingHorizontal: moderateScale(16),
-    paddingTop: Platform.select({ ios: moderateScale(6), android: moderateScale(10), default: moderateScale(10) }),
-  },
+    paddingTop: Platform.select({ ios: moderateScale(6), android: moderateScale(10), default: moderateScale(10) })},
   backBtn: {
     width: moderateScale(36),
     height: moderateScale(36),
     borderRadius: moderateScale(18),
     backgroundColor: c.backButton,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   centerWrap: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: moderateScale(16),
-  },
+    paddingHorizontal: moderateScale(16)},
   logo: { width: moderateScale(44), height: moderateScale(44), borderRadius: moderateScale(22), marginBottom: moderateScale(5) },
-  title: { fontSize: moderateScale(28), color: c.titleText, fontFamily: fontFamily.heading },
-  subtitle: { fontSize: moderateScale(16), color: c.subtitleText, marginBottom: moderateScale(11), fontFamily: fontFamily.body },
+  title: { fontSize: moderateScale(28), color: c.titleText, fontWeight: fontWeight.emphasis },
+  subtitle: { fontSize: moderateScale(16), color: c.subtitleText, marginBottom: moderateScale(11)},
   card: { width: "100%", maxWidth: moderateScale(340), backgroundColor: c.cardBackground, borderRadius: moderateScale(24), padding: moderateScale(14) },
-  label: { fontSize: moderateScale(10), color: c.labelText, marginBottom: moderateScale(3), fontFamily: fontFamily.label },
-  input: { height: moderateScale(34), borderRadius: moderateScale(17), marginBottom: moderateScale(5), backgroundColor: c.inputBackground, borderWidth: 1, borderColor: c.inputBorder, paddingHorizontal: moderateScale(12), fontSize: moderateScale(13), color: c.inputText, fontFamily: fontFamily.body },
+  label: { fontSize: moderateScale(10), color: c.labelText, marginBottom: moderateScale(3), fontWeight: fontWeight.label },
+  input: { height: moderateScale(34), borderRadius: moderateScale(17), marginBottom: moderateScale(5), backgroundColor: c.inputBackground, borderWidth: 1, borderColor: c.inputBorder, paddingHorizontal: moderateScale(12), fontSize: moderateScale(13), color: c.inputText},
   passwordWrap: { height: moderateScale(34), borderRadius: moderateScale(17), marginBottom: moderateScale(5), backgroundColor: c.inputBackground, borderWidth: 1, borderColor: c.inputBorder, paddingLeft: moderateScale(12), paddingRight: moderateScale(8), flexDirection: "row", alignItems: "center" },
-  passwordInput: { flex: 1, fontSize: moderateScale(13), color: c.inputText, fontFamily: fontFamily.body },
+  passwordInput: { flex: 1, fontSize: moderateScale(13), color: c.inputText},
   eyeBtn: { padding: moderateScale(2) },
   primaryBtn: { marginTop: moderateScale(8), height: moderateScale(40), borderRadius: moderateScale(20), backgroundColor: c.primaryButton, alignItems: "center", justifyContent: "center" },
-  primaryBtnText: { fontSize: moderateScale(15), color: c.buttonText, fontFamily: fontFamily.heading },
+  primaryBtnText: { fontSize: moderateScale(15), color: c.buttonText, fontWeight: fontWeight.emphasis },
   bottomRow: { marginTop: moderateScale(8), alignItems: "center", justifyContent: "center" },
-  link: { fontSize: moderateScale(13), color: c.linkText, fontFamily: fontFamily.medium },
-});
+  link: { fontSize: moderateScale(13), color: c.linkText, fontWeight: fontWeight.medium }});

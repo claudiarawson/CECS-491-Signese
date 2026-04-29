@@ -7,11 +7,10 @@ import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { lessonColors } from "@/src/theme/colors";
 import {
-  fontFamily,
+  fontWeight,
   getDeviceDensity,
   moderateScale,
-  Spacing,
-} from "@/src/theme";
+  Spacing} from "@/src/theme";
 import { ALPHABET_LEARN_ITEMS } from "@/src/features/learn/data/alphabet";
 import { setLessonStepProgress } from "@/src/features/learn/utils/lessonProgress";
 
@@ -163,44 +162,37 @@ const createStyles = (ms: (n: number) => number) =>
     inner: {
       flex: 1,
       minHeight: 0,
-      paddingHorizontal: Spacing.screenPadding,
-    },
+      paddingHorizontal: Spacing.screenPadding},
     headerIcon: { padding: ms(4) },
     scrollContent: {
       flexGrow: 1,
       paddingBottom: ms(28),
-      alignItems: "center",
-    },
+      alignItems: "center"},
     progressTopRow: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
       width: "100%",
-      marginTop: ms(8),
-    },
+      marginTop: ms(8)},
     progressLabel: {
       fontSize: ms(12),
-      fontFamily: fontFamily.medium,
-      color: asl.text.secondary,
-    },
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary},
     progressCount: {
       fontSize: ms(12),
-      fontFamily: fontFamily.medium,
-      color: asl.text.secondary,
-    },
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary},
     progressTrack: {
       width: "100%",
       height: ms(10),
       borderRadius: ms(99),
       backgroundColor: lessonColors.progressBackground,
       marginTop: ms(12),
-      overflow: "hidden",
-    },
+      overflow: "hidden"},
     progressFill: {
       height: "100%",
       backgroundColor: lessonColors.progressFill,
-      borderRadius: ms(99),
-    },
+      borderRadius: ms(99)},
     card: {
       marginTop: ms(20),
       width: "100%",
@@ -212,32 +204,26 @@ const createStyles = (ms: (n: number) => number) =>
       paddingVertical: ms(22),
       alignItems: "center",
       gap: ms(10),
-      ...asl.shadow.card,
-    },
+      ...asl.shadow.card},
     promptText: {
       fontSize: ms(18),
       lineHeight: ms(24),
       color: asl.text.primary,
       textAlign: "center",
-      fontFamily: fontFamily.medium,
-    },
+      fontWeight: fontWeight.medium},
     promptImage: {
       width: "100%",
       maxWidth: ms(260),
       height: ms(200),
       backgroundColor: "rgba(0,0,0,0.35)",
-      borderRadius: ms(14),
-    },
+      borderRadius: ms(14)},
     hintMuted: {
       fontSize: ms(13),
-      color: asl.text.muted,
-      fontFamily: fontFamily.body,
-    },
+      color: asl.text.muted},
     choicesContainer: {
       marginTop: ms(22),
       width: "100%",
-      gap: ms(12),
-    },
+      gap: ms(12)},
     choiceButton: {
       minHeight: ms(54),
       borderRadius: ms(16),
@@ -246,27 +232,21 @@ const createStyles = (ms: (n: number) => number) =>
       borderColor: asl.glass.border,
       alignItems: "center",
       justifyContent: "center",
-      paddingHorizontal: ms(14),
-    },
+      paddingHorizontal: ms(14)},
     choiceButtonSelected: {
       borderColor: lessonColors.progressFill,
-      backgroundColor: "rgba(34,211,238,0.14)",
-    },
+      backgroundColor: "rgba(34,211,238,0.14)"},
     choiceText: {
       fontSize: ms(22),
-      fontFamily: fontFamily.heading,
-      color: asl.text.primary,
-    },
+      fontWeight: fontWeight.emphasis,
+      color: asl.text.primary},
     choiceTextSelected: {
-      color: lessonColors.progressFill,
-    },
+      color: lessonColors.progressFill},
     feedbackText: {
       marginTop: ms(14),
       textAlign: "center",
       fontSize: ms(16),
       marginHorizontal: ms(20),
-      fontFamily: fontFamily.medium,
-    },
+      fontWeight: fontWeight.medium},
     correctText: { color: lessonColors.success },
-    incorrectText: { color: lessonColors.error },
-  });
+    incorrectText: { color: lessonColors.error }});

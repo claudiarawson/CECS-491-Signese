@@ -8,17 +8,15 @@ import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { lessonColors } from "@/src/theme/colors";
 import {
-  fontFamily,
+  fontWeight,
   getDeviceDensity,
   moderateScale,
-  Spacing,
-} from "@/src/theme";
+  Spacing} from "@/src/theme";
 import {
   GREETINGS_LEARN_ITEMS,
   GREETINGS_BATCH_1,
   GREETINGS_BATCH_2,
-  type GreetingLearnItem,
-} from "@/src/features/learn/data/greetings";
+  type GreetingLearnItem} from "@/src/features/learn/data/greetings";
 
 // ─── Lesson flow ─────────────────────────────────────────────────────────────
 // Steps 1–4  : Learn signs 1-4  (Batch 1)
@@ -71,8 +69,7 @@ function buildMatchTiles(batch: GreetingLearnItem[]): {
     id: s.id,
     label: s.label,
     image: s.image,
-    state: "default",
-  }));
+    state: "default"}));
   const wordTiles: MatchTile[] = shuffleArray(
     batch.map((s) => ({ id: s.id, label: s.label, image: s.image, state: "default" as TileState }))
   );
@@ -144,8 +141,7 @@ export default function GreetingsLearnScreen() {
     if (nextStep === 10) {
       router.push({
         pathname: "/learn/greetings/type" as any,
-        params: { matchScore: String(totalCorrect) },
-      });
+        params: { matchScore: String(totalCorrect) }});
       return;
     }
 
@@ -161,8 +157,7 @@ export default function GreetingsLearnScreen() {
     setGifTiles((prev) =>
       prev.map((t) => ({
         ...t,
-        state: t.state === "correct" ? "correct" : t.id === id ? "selected" : "default",
-      }))
+        state: t.state === "correct" ? "correct" : t.id === id ? "selected" : "default"}))
     );
 
     if (selectedWord) {
@@ -178,8 +173,7 @@ export default function GreetingsLearnScreen() {
     setWordTiles((prev) =>
       prev.map((t) => ({
         ...t,
-        state: t.state === "correct" ? "correct" : t.id === id ? "selected" : "default",
-      }))
+        state: t.state === "correct" ? "correct" : t.id === id ? "selected" : "default"}))
     );
 
     if (selectedGif) {
@@ -314,8 +308,7 @@ export default function GreetingsLearnScreen() {
 // ─── Learn card sub-component ────────────────────────────────────────────────
 function LearnCard({
   item,
-  styles,
-}: {
+  styles}: {
   item: { image: any; label: string };
   styles: ReturnType<typeof createStyles>;
 }) {
@@ -342,8 +335,7 @@ function MatchCard({
   wordTileStyle,
   wordTileTextColor,
   totalCorrect,
-  styles,
-}: {
+  styles}: {
   gifTiles: MatchTile[];
   wordTiles: MatchTile[];
   onGifTap: (id: string) => void;
@@ -432,41 +424,33 @@ const createStyles = (ms: (v: number) => number) =>
     shell: {
       flex: 1,
       minHeight: 0,
-      paddingHorizontal: Spacing.screenPadding,
-    },
+      paddingHorizontal: Spacing.screenPadding},
     headerIcon: {
-      padding: ms(4),
-    },
+      padding: ms(4)},
     progressStrip: {
       paddingTop: ms(8),
-      paddingBottom: ms(12),
-    },
+      paddingBottom: ms(12)},
     progressLabels: {
       flexDirection: "row",
       justifyContent: "space-between",
-      marginBottom: ms(8),
-    },
+      marginBottom: ms(8)},
     progressLabel: {
       fontSize: ms(12),
-      fontFamily: fontFamily.medium,
-      color: asl.text.secondary,
-    },
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary},
     progressTrack: {
       height: ms(10),
       borderRadius: ms(99),
       backgroundColor: lessonColors.progressBackground,
       overflow: "hidden",
-      marginBottom: ms(12),
-    },
+      marginBottom: ms(12)},
     progressFill: {
       height: "100%",
       borderRadius: ms(99),
-      backgroundColor: lessonColors.progressFill,
-    },
+      backgroundColor: lessonColors.progressFill},
     cardWrapper: {
       flex: 1,
-      minHeight: 0,
-    },
+      minHeight: 0},
     card: {
       flex: 1,
       backgroundColor: asl.glass.bg,
@@ -476,8 +460,7 @@ const createStyles = (ms: (v: number) => number) =>
       paddingHorizontal: ms(14),
       paddingTop: ms(16),
       paddingBottom: ms(12),
-      ...asl.shadow.card,
-    },
+      ...asl.shadow.card},
     gifArea: {
       width: "100%",
       maxWidth: ms(240),
@@ -486,103 +469,83 @@ const createStyles = (ms: (v: number) => number) =>
       borderRadius: ms(18),
       overflow: "hidden",
       backgroundColor: "rgba(0,0,0,0.35)",
-      marginBottom: ms(10),
-    },
+      marginBottom: ms(10)},
     gifImage: {
       width: "100%",
-      height: "100%",
-    },
+      height: "100%"},
     caption: {
       textAlign: "center",
       fontSize: ms(13),
-      fontFamily: fontFamily.medium,
-      color: asl.text.muted,
-    },
+      fontWeight: fontWeight.medium,
+      color: asl.text.muted},
     signWord: {
       textAlign: "center",
       fontSize: ms(22),
-      fontFamily: fontFamily.heading,
+      fontWeight: fontWeight.emphasis,
       color: asl.text.primary,
-      marginBottom: ms(6),
-    },
+      marginBottom: ms(6)},
     matchTitle: {
       fontSize: ms(16),
-      fontFamily: fontFamily.heading,
+      fontWeight: fontWeight.emphasis,
       color: asl.text.primary,
-      textAlign: "center",
-    },
+      textAlign: "center"},
     matchScore: {
       fontSize: ms(12),
-      fontFamily: fontFamily.medium,
+      fontWeight: fontWeight.medium,
       color: asl.text.secondary,
       textAlign: "center",
-      marginBottom: ms(10),
-    },
+      marginBottom: ms(10)},
     matchGrid: {
       flex: 1,
       gap: ms(8),
-      minHeight: 0,
-    },
+      minHeight: 0},
     matchRow: {
       flex: 1,
       flexDirection: "row",
-      gap: ms(8),
-    },
+      gap: ms(8)},
     gifTile: {
       aspectRatio: 1,
       borderRadius: ms(14),
-      overflow: "hidden",
-    },
+      overflow: "hidden"},
     matchGifImage: {
       width: "100%",
-      height: "100%",
-    },
+      height: "100%"},
     wordTile: {
       flex: 1,
       borderRadius: ms(14),
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: ms(8),
-      paddingVertical: ms(6),
-    },
+      paddingVertical: ms(6)},
     wordTileText: {
       fontSize: ms(12),
-      fontFamily: fontFamily.medium,
+      fontWeight: fontWeight.medium,
       textAlign: "center",
-      color: asl.text.primary,
-    },
+      color: asl.text.primary},
     tileDisabled: {
-      opacity: 0.92,
-    },
+      opacity: 0.92},
     feedbackRow: {
       height: ms(34),
       alignItems: "center",
       justifyContent: "center",
-      marginTop: ms(8),
-    },
+      marginTop: ms(8)},
     feedbackPill: {
       paddingHorizontal: ms(14),
       paddingVertical: ms(6),
-      borderRadius: ms(99),
-    },
+      borderRadius: ms(99)},
     feedbackCorrect: {
       backgroundColor: "rgba(74,222,128,0.15)",
       borderWidth: 1,
-      borderColor: "rgba(74,222,128,0.35)",
-    },
+      borderColor: "rgba(74,222,128,0.35)"},
     feedbackWrong: {
       backgroundColor: "rgba(248,113,113,0.14)",
       borderWidth: 1,
-      borderColor: "rgba(248,113,113,0.35)",
-    },
+      borderColor: "rgba(248,113,113,0.35)"},
     feedbackText: {
       fontSize: ms(12),
-      fontFamily: fontFamily.medium,
-    },
+      fontWeight: fontWeight.medium},
     buttonRow: {
       paddingTop: ms(16),
       paddingBottom: ms(24),
       alignItems: "center",
-      flexShrink: 0,
-    },
-  });
+      flexShrink: 0}});

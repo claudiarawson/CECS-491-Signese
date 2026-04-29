@@ -5,11 +5,10 @@ import {
   Text,
   type StyleProp,
   type TextStyle,
-  type ViewStyle,
-} from "react-native";
+  type ViewStyle} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 
 type Props = {
   label: string;
@@ -42,19 +41,15 @@ const styles = StyleSheet.create({
   press: {
     borderRadius: 999,
     overflow: "hidden",
-    minHeight: 48,
-  },
+    minHeight: 48},
   fill: {
     paddingVertical: 14,
     paddingHorizontal: 20,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   text: {
     color: asl.text.primary,
     fontSize: 16,
     letterSpacing: 0.3,
-    fontFamily: fontFamily.heading,
-  },
-  dimmed: { opacity: 0.6 },
-});
+    fontWeight: fontWeight.emphasis},
+  dimmed: { opacity: 0.6 }});

@@ -1,5 +1,5 @@
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Pressable, StyleSheet, Text, ViewStyle } from "react-native";
@@ -15,8 +15,7 @@ export function PrimaryActionButton({
   label,
   onPress,
   disabled = false,
-  style,
-}: PrimaryActionButtonProps) {
+  style}: PrimaryActionButtonProps) {
   return (
     <Pressable
       onPress={onPress}
@@ -45,20 +44,15 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     minHeight: 52,
     width: "100%",
-    maxWidth: 288,
-  },
+    maxWidth: 288},
   fill: {
     minHeight: 52,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 20,
-  },
+    paddingHorizontal: 20},
   dimmed: {
-    opacity: 0.55,
-  },
+    opacity: 0.55},
   label: {
-    fontFamily: fontFamily.heading,
+    fontWeight: fontWeight.emphasis,
     fontSize: 16,
-    color: asl.surfaceLight,
-  },
-});
+    color: asl.surfaceLight}});

@@ -1,7 +1,7 @@
 import { DailyTipsCarousel } from "@/src/components/layout";
 import { AppShell, AslTabHeader, ProgressCard, StatCard } from "@/src/components/asl";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily, getDeviceDensity, moderateScale, Spacing } from "@/src/theme";
+import { fontWeight, getDeviceDensity, moderateScale, Spacing } from "@/src/theme";
 import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
@@ -11,16 +11,14 @@ import {
   StyleSheet,
   Text,
   useWindowDimensions,
-  View,
-} from "react-native";
+  View} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import {
   getCompletedLessons,
   getLessonProgressPercent,
   getTotalStars,
-  resetLessonProgress,
-} from "@/src/features/learn/utils/lessonProgress";
+  resetLessonProgress} from "@/src/features/learn/utils/lessonProgress";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 
 export default function HomeScreen() {
@@ -80,8 +78,7 @@ export default function HomeScreen() {
                 Alert.alert("Error", "Could not reset progress.");
               }
             })();
-          },
-        },
+          }},
       ]
     );
   };
@@ -164,21 +161,17 @@ const createStyles = (density: number, textScale: number) => {
       backgroundColor: asl.gradient[0],
       alignItems: "center",
       justifyContent: "center",
-      paddingHorizontal: Spacing.screenPadding,
-    },
+      paddingHorizontal: Spacing.screenPadding},
     loadingText: {
       marginTop: ms(10),
       color: asl.text.secondary,
-      fontSize: ts(14),
-      fontFamily: fontFamily.body,
-    },
+      fontSize: ts(14)},
     greetingWrap: { marginBottom: ms(14) },
-    greetingLine: { color: asl.text.muted, fontSize: ts(15), fontFamily: fontFamily.medium },
+    greetingLine: { color: asl.text.muted, fontSize: ts(15), fontWeight: fontWeight.medium },
     greetingName: {
       color: asl.text.primary,
       fontSize: ts(26),
-      fontFamily: fontFamily.heading,
-    },
+      fontWeight: fontWeight.emphasis},
     statsErrorBanner: {
       marginBottom: ms(10),
       paddingVertical: ms(10),
@@ -186,20 +179,17 @@ const createStyles = (density: number, textScale: number) => {
       borderRadius: ms(14),
       borderWidth: 1,
       borderColor: "rgba(248, 113, 113, 0.35)",
-      backgroundColor: "rgba(248, 113, 113, 0.12)",
-    },
+      backgroundColor: "rgba(248, 113, 113, 0.12)"},
     statsErrorBannerText: {
       color: "#FCA5A5",
       fontSize: ts(13),
-      fontFamily: fontFamily.medium,
-      textAlign: "center",
-    },
+      fontWeight: fontWeight.medium,
+      textAlign: "center"},
     statsRow: {
       flexDirection: "row",
       gap: ms(10),
       marginBottom: ms(14),
-      alignItems: "stretch",
-    },
+      alignItems: "stretch"},
     statSkeleton: {
       flex: 1,
       minHeight: 96,
@@ -209,8 +199,7 @@ const createStyles = (density: number, textScale: number) => {
       backgroundColor: asl.glass.bg,
       alignItems: "center",
       justifyContent: "center",
-      ...asl.shadow.card,
-    },
+      ...asl.shadow.card},
     resetButton: {
       alignSelf: "flex-start",
       marginBottom: ms(14),
@@ -219,13 +208,10 @@ const createStyles = (density: number, textScale: number) => {
       paddingVertical: ms(8),
       borderRadius: 999,
       borderWidth: 1,
-      borderColor: "rgba(248,113,113,0.35)",
-    },
+      borderColor: "rgba(248,113,113,0.35)"},
     resetButtonText: {
       color: "#FCA5A5",
       fontSize: ts(13),
-      fontFamily: fontFamily.medium,
-    },
-    tipsSection: { marginTop: ms(12) },
-  });
+      fontWeight: fontWeight.medium},
+    tipsSection: { marginTop: ms(12) }});
 };

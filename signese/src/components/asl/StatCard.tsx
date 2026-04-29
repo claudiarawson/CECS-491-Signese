@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View, StyleSheet, type TextStyle, type ViewStyle } from "react-native";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 
 type Props = {
   icon: string;
@@ -19,8 +19,7 @@ const accentMap = {
   /** Streak / heat */
   warm: "rgba(251, 191, 36, 0.16)",
   /** Neutral frost—matches primary glass surfaces */
-  glass: "rgba(255,255,255,0.08)",
-} as const;
+  glass: "rgba(255,255,255,0.08)"} as const;
 
 export function StatCard({ icon, value, label, accent = "pink", style, valueStyle }: Props) {
   return (
@@ -42,9 +41,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 96,
-  },
-  icon: { fontSize: 20, marginBottom: 4, fontFamily: fontFamily.body },
-  value: { color: asl.text.primary, fontSize: 26, fontFamily: fontFamily.heading },
-  label: { color: asl.text.secondary, fontSize: 12, fontFamily: fontFamily.medium },
-});
+    minHeight: 96},
+  icon: { fontSize: 20, marginBottom: 4},
+  value: { color: asl.text.primary, fontSize: 26, fontWeight: fontWeight.emphasis },
+  label: { color: asl.text.secondary, fontSize: 12, fontWeight: fontWeight.medium }});

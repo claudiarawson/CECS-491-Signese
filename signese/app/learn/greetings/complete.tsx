@@ -8,14 +8,12 @@ import { asl } from "@/src/theme/aslConnectTheme";
 import {
   completeLessonOnce,
   isLessonUnlocked,
-  type LessonId,
-} from "@/src/features/learn/utils/lessonProgress";
+  type LessonId} from "@/src/features/learn/utils/lessonProgress";
 import {
-  fontFamily,
+  fontWeight,
   getDeviceDensity,
   moderateScale,
-  Spacing,
-} from "@/src/theme";
+  Spacing} from "@/src/theme";
 
 const CURRENT_LESSON_ID: LessonId = "greetings";
 const NEXT_LESSON_ID: LessonId = "family";
@@ -125,19 +123,16 @@ export default function GreetingsCompleteScreen() {
 const createStyles = (ms: (v: number) => number) =>
   StyleSheet.create({
     headerIcon: {
-      padding: ms(4),
-    },
+      padding: ms(4)},
     scroll: {
       flex: 1,
-      minHeight: 0,
-    },
+      minHeight: 0},
     scrollContent: {
       paddingHorizontal: Spacing.screenPadding,
       paddingBottom: ms(44),
       paddingTop: ms(12),
       alignItems: "center",
-      gap: ms(20),
-    },
+      gap: ms(20)},
     card: {
       width: "100%",
       backgroundColor: asl.glass.bg,
@@ -147,22 +142,18 @@ const createStyles = (ms: (v: number) => number) =>
       padding: ms(24),
       alignItems: "center",
       gap: ms(14),
-      ...asl.shadow.card,
-    },
+      ...asl.shadow.card},
     title: {
       fontSize: ms(22),
-      fontFamily: fontFamily.heading,
+      fontWeight: fontWeight.emphasis,
       color: asl.text.primary,
-      textAlign: "center",
-    },
+      textAlign: "center"},
     starsRow: {
       flexDirection: "row",
-      gap: ms(8),
-    },
+      gap: ms(8)},
     star: {
       fontSize: ms(34),
-      lineHeight: ms(42),
-    },
+      lineHeight: ms(42)},
     scoreCard: {
       marginTop: ms(4),
       width: "100%",
@@ -172,40 +163,34 @@ const createStyles = (ms: (v: number) => number) =>
       borderWidth: 1,
       borderColor: asl.glass.border,
       backgroundColor: "rgba(0,0,0,0.2)",
-      alignItems: "center",
-    },
+      alignItems: "center"},
     scoreNumber: {
       fontSize: ms(42),
       lineHeight: ms(48),
-      fontFamily: fontFamily.heading,
-      color: asl.accentCyan,
-    },
+      fontWeight: fontWeight.emphasis,
+      color: asl.accentCyan},
     scoreLabel: {
       fontSize: ms(12),
-      fontFamily: fontFamily.medium,
+      fontWeight: fontWeight.medium,
       color: asl.text.secondary,
       marginTop: ms(6),
-      textAlign: "center",
-    },
+      textAlign: "center"},
     balanceHint: {
       fontSize: ms(13),
-      fontFamily: fontFamily.medium,
+      fontWeight: fontWeight.medium,
       color: asl.text.muted,
       marginTop: ms(10),
-      textAlign: "center",
-    },
+      textAlign: "center"},
     earnedText: {
       fontSize: ms(14),
-      fontFamily: fontFamily.medium,
+      fontWeight: fontWeight.medium,
       color: asl.text.secondary,
-      textAlign: "center",
-    },
+      textAlign: "center"},
     secondaryWrap: {
       width: "100%",
       maxWidth: 320,
       marginTop: ms(8),
-      alignSelf: "center",
-    },
+      alignSelf: "center"},
     secondaryButton: {
       alignItems: "center",
       justifyContent: "center",
@@ -216,11 +201,8 @@ const createStyles = (ms: (v: number) => number) =>
       minHeight: 52,
       paddingHorizontal: ms(20),
       width: "100%",
-      maxWidth: 288,
-    },
+      maxWidth: 288},
     secondaryButtonText: {
       fontSize: ms(15),
-      fontFamily: fontFamily.heading,
-      color: asl.text.primary,
-    },
-  });
+      fontWeight: fontWeight.emphasis,
+      color: asl.text.primary}});

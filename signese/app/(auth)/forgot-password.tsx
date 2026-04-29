@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import { moderateScale } from "react-native-size-matters";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 import { signupColors as c } from "@/src/theme/pages/signup.colors";
 import { resetPassword } from "@/src/services/firebase/auth.services";
 
@@ -58,48 +58,40 @@ const styles = StyleSheet.create({
   safe: { flex: 1 },
   topRow: {
     paddingHorizontal: moderateScale(16),
-    paddingTop: Platform.select({ ios: moderateScale(6), android: moderateScale(10), default: moderateScale(10) }),
-  },
+    paddingTop: Platform.select({ ios: moderateScale(6), android: moderateScale(10), default: moderateScale(10) })},
   backBtn: {
     width: moderateScale(36),
     height: moderateScale(36),
     borderRadius: moderateScale(18),
     backgroundColor: c.backButton,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   centerWrap: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: moderateScale(16),
-  },
+    paddingHorizontal: moderateScale(16)},
   title: {
     fontSize: moderateScale(28),
     color: c.titleText,
-    fontFamily: fontFamily.heading,
-    marginBottom: moderateScale(5),
-  },
+    fontWeight: fontWeight.emphasis,
+    marginBottom: moderateScale(5)},
   subtitle: {
     fontSize: moderateScale(14),
     color: c.subtitleText,
     marginBottom: moderateScale(10),
-    textAlign: "center",
-    fontFamily: fontFamily.body,
-  },
+    textAlign: "center"},
   card: {
     width: "100%",
     maxWidth: moderateScale(340),
     backgroundColor: c.cardBackground,
     borderRadius: moderateScale(24),
-    padding: moderateScale(14),
-  },
+    padding: moderateScale(14)},
   label: {
     fontSize: moderateScale(10),
     color: c.labelText,
     marginBottom: moderateScale(3),
-    fontFamily: fontFamily.label,
-  },
+    fontWeight: fontWeight.label},
   input: {
     height: moderateScale(34),
     borderRadius: moderateScale(17),
@@ -109,20 +101,15 @@ const styles = StyleSheet.create({
     borderColor: c.inputBorder,
     paddingHorizontal: moderateScale(12),
     fontSize: moderateScale(13),
-    color: c.inputText,
-    fontFamily: fontFamily.body,
-  },
+    color: c.inputText},
   primaryBtn: {
     marginTop: moderateScale(8),
     height: moderateScale(40),
     borderRadius: moderateScale(20),
     backgroundColor: c.primaryButton,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   primaryBtnText: {
     fontSize: moderateScale(15),
     color: c.buttonText,
-    fontFamily: fontFamily.heading,
-  },
-});
+    fontWeight: fontWeight.emphasis}});

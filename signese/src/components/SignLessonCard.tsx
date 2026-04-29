@@ -1,6 +1,6 @@
 import { lessonColors, lessonSpacing, lessonTypography, Radius } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 import React from "react";
 import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 
@@ -44,8 +44,7 @@ const styles = StyleSheet.create({
     minHeight: 300,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.14)",
-    ...asl.shadow.card,
-  },
+    ...asl.shadow.card},
   mediaWrap: {
     width: "100%",
     height: 180,
@@ -56,28 +55,20 @@ const styles = StyleSheet.create({
     marginBottom: lessonSpacing.md,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.08)",
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   media: {
     width: "88%",
-    height: "88%",
-  },
+    height: "88%"},
   fallbackText: {
     ...lessonTypography.caption,
-    color: lessonColors.textSecondary,
-    fontFamily: fontFamily.body,
-  },
+    color: lessonColors.textSecondary},
   label: {
     ...lessonTypography.subtitle,
     color: lessonColors.textPrimary,
     textAlign: "center",
-    fontFamily: fontFamily.heading,
-  },
+    fontWeight: fontWeight.emphasis},
   instruction: {
     ...lessonTypography.body,
     color: lessonColors.textSecondary,
     textAlign: "center",
-    marginTop: lessonSpacing.sm,
-    fontFamily: fontFamily.body,
-  },
-});
+    marginTop: lessonSpacing.sm}});

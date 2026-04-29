@@ -7,11 +7,10 @@ import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { lessonColors } from "@/src/theme/colors";
 import {
-  fontFamily,
+  fontWeight,
   getDeviceDensity,
   moderateScale,
-  Spacing,
-} from "@/src/theme";
+  Spacing} from "@/src/theme";
 import { ALPHABET_LEARN_ITEMS } from "@/src/features/learn/data/alphabet";
 import { setLessonStepProgress } from "@/src/features/learn/utils/lessonProgress";
 
@@ -106,45 +105,37 @@ export default function AlphabetLearnScreen() {
 const createStyles = (ms: (n: number) => number) =>
   StyleSheet.create({
     headerIcon: {
-      padding: ms(4),
-    },
+      padding: ms(4)},
     inner: {
       flex: 1,
       minHeight: 0,
-      paddingHorizontal: Spacing.screenPadding,
-    },
+      paddingHorizontal: Spacing.screenPadding},
     scrollInner: {
       flexGrow: 1,
-      paddingBottom: ms(16),
-    },
+      paddingBottom: ms(16)},
     progressTopRow: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginTop: ms(4),
-    },
+      marginTop: ms(4)},
     progressLabel: {
       fontSize: ms(12),
-      fontFamily: fontFamily.medium,
-      color: asl.text.secondary,
-    },
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary},
     progressCount: {
       fontSize: ms(12),
-      fontFamily: fontFamily.medium,
-      color: asl.text.secondary,
-    },
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary},
     progressTrack: {
       height: ms(8),
       borderRadius: ms(99),
       backgroundColor: lessonColors.progressBackground,
       marginTop: ms(10),
-      overflow: "hidden",
-    },
+      overflow: "hidden"},
     progressFill: {
       height: "100%",
       backgroundColor: lessonColors.progressFill,
-      borderRadius: ms(99),
-    },
+      borderRadius: ms(99)},
     card: {
       marginTop: ms(16),
       backgroundColor: asl.glass.bg,
@@ -155,12 +146,10 @@ const createStyles = (ms: (n: number) => number) =>
       paddingVertical: ms(16),
       alignItems: "center",
       justifyContent: "center",
-      ...asl.shadow.card,
-    },
+      ...asl.shadow.card},
     lessonImage: {
       width: "100%",
-      height: "100%",
-    },
+      height: "100%"},
     imageFrame: {
       width: "100%",
       maxWidth: ms(260),
@@ -171,25 +160,20 @@ const createStyles = (ms: (n: number) => number) =>
       overflow: "hidden",
       alignItems: "center",
       justifyContent: "center",
-      padding: ms(8),
-    },
+      padding: ms(8)},
     subtitle: {
       fontSize: ms(13),
-      fontFamily: fontFamily.medium,
+      fontWeight: fontWeight.medium,
       color: asl.text.muted,
-      textAlign: "center",
-    },
+      textAlign: "center"},
     letterText: {
       marginTop: ms(6),
       fontSize: ms(26),
-      fontFamily: fontFamily.heading,
+      fontWeight: fontWeight.emphasis,
       color: asl.text.primary,
-      textAlign: "center",
-    },
+      textAlign: "center"},
     footer: {
       flexShrink: 0,
       paddingBottom: ms(12),
       paddingTop: ms(8),
-      alignItems: "center",
-    },
-  });
+      alignItems: "center"}});

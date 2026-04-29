@@ -1,5 +1,5 @@
 import { lessonColors, lessonTypography } from "@/src/theme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
@@ -16,8 +16,7 @@ export function QuizAnswerButton({
   label,
   state = "default",
   onPress,
-  disabled = false,
-}: QuizAnswerButtonProps) {
+  disabled = false}: QuizAnswerButtonProps) {
   return (
     <Pressable
       onPress={onPress}
@@ -45,30 +44,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.14)",
-  },
+    borderColor: "rgba(255,255,255,0.14)"},
   selected: {
     borderColor: "rgba(34, 211, 238, 0.65)",
-    backgroundColor: "rgba(34, 211, 238, 0.15)",
-  },
+    backgroundColor: "rgba(34, 211, 238, 0.15)"},
   correct: {
     backgroundColor: "rgba(74, 222, 128, 0.2)",
-    borderColor: lessonColors.success,
-  },
+    borderColor: lessonColors.success},
   incorrect: {
     backgroundColor: "rgba(248, 113, 113, 0.18)",
-    borderColor: lessonColors.error,
-  },
+    borderColor: lessonColors.error},
   pressed: {
-    opacity: 0.88,
-  },
+    opacity: 0.88},
   disabled: {
-    opacity: 0.82,
-  },
+    opacity: 0.82},
   label: {
     ...lessonTypography.button,
     color: lessonColors.textPrimary,
     textAlign: "center",
-    fontFamily: fontFamily.medium,
-  },
-});
+    fontWeight: fontWeight.medium}});

@@ -1,5 +1,5 @@
 import { lessonColors, lessonSpacing, lessonTypography, Radius } from "@/src/theme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 import React from "react";
 import { StyleSheet, TextInput, TextInputProps } from "react-native";
 
@@ -24,7 +24,4 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.16)",
     paddingHorizontal: lessonSpacing.md,
     ...lessonTypography.body,
-    color: lessonColors.textPrimary,
-    fontFamily: fontFamily.body,
-  },
-});
+    color: lessonColors.textPrimary}});

@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import { moderateScale } from "react-native-size-matters";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 import { signupColors as c } from "@/src/theme/pages/signup.colors";
 import { signUpWithEmail } from "@/src/services/firebase/auth.services";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
@@ -33,7 +33,7 @@ export default function SignupScreen() {
     }
 
     // Basic format validation
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2}$/;
     if (!emailRegex.test(trimmedEmail)) {
       setError("Please enter a valid email address.");
       return;
@@ -47,8 +47,7 @@ export default function SignupScreen() {
       "gnail.com": "gmail.com",
       "hotnail.com": "hotmail.com",
       "outlok.com": "outlook.com",
-      "yaho.com": "yahoo.com",
-    };
+      "yaho.com": "yahoo.com"};
 
     const [localPart, domainPart] = trimmedEmail.split("@");
 
@@ -179,69 +178,58 @@ const styles = StyleSheet.create({
   keyboardWrap: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: moderateScale(14),
-  },
+    paddingBottom: moderateScale(14)},
   topRow: {
     paddingHorizontal: moderateScale(16),
-    paddingTop: Platform.select({ ios: moderateScale(6), android: moderateScale(10), default: moderateScale(10) }),
-  },
+    paddingTop: Platform.select({ ios: moderateScale(6), android: moderateScale(10), default: moderateScale(10) })},
   backBtn: {
     width: moderateScale(36),
     height: moderateScale(36),
     borderRadius: moderateScale(18),
     backgroundColor: c.backButton,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   centerWrap: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     paddingTop: moderateScale(4),
-    paddingHorizontal: moderateScale(16),
-  },
+    paddingHorizontal: moderateScale(16)},
   phoneWidth: {
     width: "100%",
     maxWidth: moderateScale(340),
-    alignItems: "center",
-  },
+    alignItems: "center"},
   logo: {
     width: moderateScale(44),
     height: moderateScale(44),
     borderRadius: moderateScale(22),
     overflow: "hidden",
-    marginBottom: moderateScale(5),
-  },
+    marginBottom: moderateScale(5)},
   title: {
     fontSize: moderateScale(28),
     lineHeight: moderateScale(32),
-    fontFamily: fontFamily.heading,
+    fontWeight: fontWeight.emphasis,
     letterSpacing: -0.2,
     textAlign: "center",
-    color: c.titleText,
-  },
+    color: c.titleText},
   subtitle: {
     fontSize: moderateScale(16),
     lineHeight: moderateScale(20),
     marginTop: moderateScale(3),
     textAlign: "center",
-    color: c.subtitleText,
-    fontFamily: fontFamily.body,
-  },
+    color: c.subtitleText},
   card: {
     width: "100%",
     marginTop: moderateScale(8),
     backgroundColor: c.cardBackground,
     borderRadius: moderateScale(24),
     paddingVertical: moderateScale(10),
-    paddingHorizontal: moderateScale(14),
-  },
+    paddingHorizontal: moderateScale(14)},
   label: {
     fontSize: moderateScale(10),
     color: c.labelText,
     marginBottom: moderateScale(3),
-    fontFamily: fontFamily.label,
-  },
+    fontWeight: fontWeight.label},
   input: {
     height: moderateScale(34),
     borderRadius: moderateScale(17),
@@ -251,9 +239,7 @@ const styles = StyleSheet.create({
     borderColor: c.inputBorder,
     paddingHorizontal: moderateScale(12),
     fontSize: moderateScale(13),
-    color: c.inputText,
-    fontFamily: fontFamily.body,
-  },
+    color: c.inputText},
   passwordWrap: {
     height: moderateScale(34),
     borderRadius: moderateScale(17),
@@ -264,48 +250,36 @@ const styles = StyleSheet.create({
     paddingLeft: moderateScale(12),
     paddingRight: moderateScale(8),
     flexDirection: "row",
-    alignItems: "center",
-  },
+    alignItems: "center"},
   passwordInput: {
     flex: 1,
     fontSize: moderateScale(13),
-    color: c.inputText,
-    fontFamily: fontFamily.body,
-  },
+    color: c.inputText},
   eyeBtn: {
-    padding: moderateScale(2),
-  },
+    padding: moderateScale(2)},
   primaryBtn: {
     marginTop: moderateScale(8),
     height: moderateScale(40),
     borderRadius: moderateScale(20),
     backgroundColor: c.primaryButton,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   primaryBtnDisabled: {
-    opacity: 0.7,
-  },
+    opacity: 0.7},
   primaryBtnText: {
     fontSize: moderateScale(15),
     lineHeight: moderateScale(18),
-    fontFamily: fontFamily.heading,
-    color: c.buttonText,
-  },
+    fontWeight: fontWeight.emphasis,
+    color: c.buttonText},
   bottomRow: {
     marginTop: moderateScale(6),
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   bottomText: {
     fontSize: moderateScale(11),
-    color: c.labelText,
-    fontFamily: fontFamily.body,
-  },
+    color: c.labelText},
   link: {
     fontSize: moderateScale(13),
     color: c.linkText,
-    fontFamily: fontFamily.medium,
-  },
-});
+    fontWeight: fontWeight.medium}});

@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { scale, verticalScale, fontScale } from "@/src/theme/responsive";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 
 type LessonNodeProps = {
   title: string;
@@ -38,28 +38,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     ...asl.shadow.card,
-    marginBottom: verticalScale(12),
-  },
+    marginBottom: verticalScale(12)},
   circleActive: {
     borderColor: asl.accentCyan,
     backgroundColor: "rgba(34,211,238,0.12)",
-    shadowOpacity: 0.45,
-  },
+    shadowOpacity: 0.45},
   circleCompleted: {
     borderColor: "#4ADE80",
-    backgroundColor: "rgba(74,222,128,0.12)",
-  },
+    backgroundColor: "rgba(74,222,128,0.12)"},
   icon: {
     width: scale(32),
     height: scale(32),
-    marginBottom: verticalScale(4),
-  },
+    marginBottom: verticalScale(4)},
   title: {
     fontSize: fontScale(13),
     color: asl.text.primary,
-    fontFamily: fontFamily.medium,
-    fontWeight: "600",
+    fontWeight: fontWeight.medium,
     textAlign: "center",
-    paddingHorizontal: scale(6),
-  },
-});
+    paddingHorizontal: scale(6)}});

@@ -8,8 +8,7 @@ import {
   useWindowDimensions,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
-} from "react-native";
+  ScrollView} from "react-native";
 import { Image } from "expo-image";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useLocalSearchParams } from "expo-router";
@@ -18,11 +17,10 @@ import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { lessonColors } from "@/src/theme/colors";
 import {
-  fontFamily,
+  fontWeight,
   getDeviceDensity,
   moderateScale,
-  Spacing,
-} from "@/src/theme";
+  Spacing} from "@/src/theme";
 import { GREETINGS_LEARN_ITEMS } from "@/src/features/learn/data/greetings";
 
 function normalize(input: string): string {
@@ -94,8 +92,7 @@ export default function GreetingsTypeScreen() {
 
     router.push({
       pathname: "/learn/greetings/complete" as any,
-      params: { totalCorrect: String(matchScore + typeCorrect + (isCorrect ? 1 : 0)) },
-    });
+      params: { totalCorrect: String(matchScore + typeCorrect + (isCorrect ? 1 : 0)) }});
   };
 
   const isLast = currentIndex === total - 1;
@@ -190,45 +187,36 @@ const createStyles = (ms: (v: number) => number) =>
   StyleSheet.create({
     kb: {
       flex: 1,
-      minHeight: 0,
-    },
+      minHeight: 0},
     shell: {
       flex: 1,
       minHeight: 0,
-      paddingHorizontal: Spacing.screenPadding,
-    },
+      paddingHorizontal: Spacing.screenPadding},
     headerIcon: {
-      padding: ms(4),
-    },
+      padding: ms(4)},
     progressStrip: {
       paddingBottom: ms(12),
-      paddingTop: ms(8),
-    },
+      paddingTop: ms(8)},
     progressLabels: {
       flexDirection: "row",
       justifyContent: "space-between",
-      marginBottom: ms(10),
-    },
+      marginBottom: ms(10)},
     progressLabel: {
       fontSize: ms(12),
-      fontFamily: fontFamily.medium,
-      color: asl.text.secondary,
-    },
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary},
     progressTrack: {
       height: ms(10),
       borderRadius: ms(99),
       backgroundColor: lessonColors.progressBackground,
-      overflow: "hidden",
-    },
+      overflow: "hidden"},
     progressFill: {
       height: "100%",
       borderRadius: ms(99),
-      backgroundColor: lessonColors.progressFill,
-    },
+      backgroundColor: lessonColors.progressFill},
     scrollInner: {
       paddingBottom: ms(32),
-      gap: ms(12),
-    },
+      gap: ms(12)},
     card: {
       marginTop: ms(8),
       backgroundColor: asl.glass.bg,
@@ -237,8 +225,7 @@ const createStyles = (ms: (v: number) => number) =>
       borderColor: asl.glass.border,
       padding: ms(16),
       alignItems: "center",
-      ...asl.shadow.card,
-    },
+      ...asl.shadow.card},
     gifArea: {
       width: "100%",
       maxWidth: ms(260),
@@ -247,18 +234,15 @@ const createStyles = (ms: (v: number) => number) =>
       borderRadius: ms(18),
       overflow: "hidden",
       backgroundColor: "rgba(0,0,0,0.35)",
-      marginBottom: ms(12),
-    },
+      marginBottom: ms(12)},
     gifImage: {
       width: "100%",
-      height: "100%",
-    },
+      height: "100%"},
     subtitle: {
       fontSize: ms(15),
-      fontFamily: fontFamily.medium,
+      fontWeight: fontWeight.medium,
       color: asl.text.muted,
-      textAlign: "center",
-    },
+      textAlign: "center"},
     answerInput: {
       minHeight: ms(52),
       borderRadius: ms(14),
@@ -267,29 +251,22 @@ const createStyles = (ms: (v: number) => number) =>
       backgroundColor: "rgba(0,0,0,0.25)",
       paddingHorizontal: ms(20),
       fontSize: ms(16),
-      fontFamily: fontFamily.medium,
-      color: asl.text.primary,
-    },
+      fontWeight: fontWeight.medium,
+      color: asl.text.primary},
     answerInputCorrect: {
       borderColor: lessonColors.success,
-      backgroundColor: "rgba(74,222,128,0.12)",
-    },
+      backgroundColor: "rgba(74,222,128,0.12)"},
     answerInputWrong: {
       borderColor: lessonColors.error,
-      backgroundColor: "rgba(252,165,165,0.1)",
-    },
+      backgroundColor: "rgba(252,165,165,0.1)"},
     feedbackText: {
       marginTop: ms(4),
       textAlign: "center",
       fontSize: ms(14),
-      fontFamily: fontFamily.medium,
+      fontWeight: fontWeight.medium,
       marginHorizontal: ms(16),
-      lineHeight: ms(20),
-    },
+      lineHeight: ms(20)},
     correctText: {
-      color: lessonColors.success,
-    },
+      color: lessonColors.success},
     incorrectText: {
-      color: lessonColors.error,
-    },
-  });
+      color: lessonColors.error}});

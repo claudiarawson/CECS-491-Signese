@@ -7,8 +7,7 @@ import {
   Pressable,
   useWindowDimensions,
   ScrollView,
-  TextInput,
-} from "react-native";
+  TextInput} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import { AppShell, LearnFlowHeader } from "@/src/components/asl";
@@ -16,11 +15,10 @@ import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { lessonColors } from "@/src/theme/colors";
 import {
-  fontFamily,
+  fontWeight,
   getDeviceDensity,
   moderateScale,
-  Spacing,
-} from "@/src/theme";
+  Spacing} from "@/src/theme";
 import { ALPHABET_LEARN_ITEMS } from "@/src/features/learn/data/alphabet";
 import { setLessonStepProgress } from "@/src/features/learn/utils/lessonProgress";
 
@@ -170,45 +168,38 @@ const createStyles = (ms: (n: number) => number) =>
     inner: {
       flex: 1,
       minHeight: 0,
-      paddingHorizontal: Spacing.screenPadding,
-    },
+      paddingHorizontal: Spacing.screenPadding},
     headerIcon: { padding: ms(4) },
     scrollContent: {
       flexGrow: 1,
       paddingBottom: ms(28),
       gap: ms(4),
-      alignItems: "center",
-    },
+      alignItems: "center"},
     progressTopRow: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
       width: "100%",
-      marginTop: ms(8),
-    },
+      marginTop: ms(8)},
     progressLabel: {
       fontSize: ms(12),
-      fontFamily: fontFamily.medium,
-      color: asl.text.secondary,
-    },
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary},
     progressCount: {
       fontSize: ms(12),
-      fontFamily: fontFamily.medium,
-      color: asl.text.secondary,
-    },
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary},
     progressTrack: {
       width: "100%",
       height: ms(10),
       borderRadius: ms(99),
       backgroundColor: lessonColors.progressBackground,
       marginTop: ms(12),
-      overflow: "hidden",
-    },
+      overflow: "hidden"},
     progressFill: {
       height: "100%",
       backgroundColor: lessonColors.progressFill,
-      borderRadius: ms(99),
-    },
+      borderRadius: ms(99)},
     card: {
       marginTop: ms(20),
       width: "100%",
@@ -219,23 +210,20 @@ const createStyles = (ms: (n: number) => number) =>
       paddingHorizontal: ms(18),
       paddingVertical: ms(20),
       alignItems: "center",
-      ...asl.shadow.card,
-    },
+      ...asl.shadow.card},
     lessonImage: {
       width: "100%",
       maxWidth: ms(300),
       height: ms(220),
       marginBottom: ms(14),
       backgroundColor: "rgba(0,0,0,0.35)",
-      borderRadius: ms(14),
-    },
+      borderRadius: ms(14)},
     subtitle: {
       fontSize: ms(17),
       lineHeight: ms(23),
       color: asl.text.muted,
       textAlign: "center",
-      fontFamily: fontFamily.medium,
-    },
+      fontWeight: fontWeight.medium},
     answerInput: {
       alignSelf: "stretch",
       marginTop: ms(22),
@@ -247,22 +235,17 @@ const createStyles = (ms: (n: number) => number) =>
       paddingHorizontal: ms(18),
       fontSize: ms(20),
       color: asl.text.primary,
-      fontFamily: fontFamily.medium,
+      fontWeight: fontWeight.medium,
       textAlign: "center",
       width: ms(140),
-      maxWidth: "100%",
-    },
+      maxWidth: "100%"},
     feedbackText: {
       marginTop: ms(14),
       textAlign: "center",
       fontSize: ms(16),
       marginHorizontal: ms(24),
-      fontFamily: fontFamily.medium,
-    },
+      fontWeight: fontWeight.medium},
     correctText: {
-      color: lessonColors.success,
-    },
+      color: lessonColors.success},
     incorrectText: {
-      color: lessonColors.error,
-    },
-  });
+      color: lessonColors.error}});

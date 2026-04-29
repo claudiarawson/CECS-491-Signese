@@ -1,7 +1,7 @@
 import { AppShell, FilterChips, SearchBar, ToggleSwitch } from "@/src/components/asl";
 import { DictionaryFooter, dictionaryChromePadBottom } from "@/src/components/DictionaryFooter";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily, getDeviceDensity, moderateScale, Spacing } from "@/src/theme";
+import { fontWeight, getDeviceDensity, moderateScale, Spacing } from "@/src/theme";
 import { router, useFocusEffect } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React, { useCallback, useMemo, useState } from "react";
@@ -12,8 +12,7 @@ import {
   StyleSheet,
   Text,
   View,
-  useWindowDimensions,
-} from "react-native";
+  useWindowDimensions} from "react-native";
 import SignOverlay from "../../src/components/SignOverlay";
 import { useDictionarySigns } from "../../src/features/dictionary/hooks/useDictionarySigns";
 import { DictionarySignCard } from "../../src/features/dictionary/ui/DictionarySignCard";
@@ -22,18 +21,15 @@ import {
   getSavedIds,
   getSavedSnapshotMap,
   mergeSignWithSnapshot,
-  toggleSavedId,
-} from "../../src/features/dictionary/storage/saved.local";
+  toggleSavedId} from "../../src/features/dictionary/storage/saved.local";
 import type { Sign, SignCategoryId } from "../../src/features/dictionary/types";
 import {
   SIGN_CATEGORY_LABEL,
-  SIGN_CATEGORY_ORDER,
-} from "../../src/features/dictionary/signCategories";
+  SIGN_CATEGORY_ORDER} from "../../src/features/dictionary/signCategories";
 
 const CATEGORY_CHIPS = SIGN_CATEGORY_ORDER.map((id) => ({
   id,
-  label: SIGN_CATEGORY_LABEL[id],
-}));
+  label: SIGN_CATEGORY_LABEL[id]}));
 
 export default function SavedSignsScreen() {
   const { signs, loading, loadingMore, error, reload, loadMore } = useDictionarySigns();
@@ -246,47 +242,38 @@ const createStyles = (density: number) => {
       alignItems: "center",
       paddingHorizontal: Spacing.screenPadding,
       paddingBottom: Spacing.sm,
-      gap: ms(8),
-    },
+      gap: ms(8)},
     headerIconBtn: {
-      padding: ms(4),
-    },
+      padding: ms(4)},
     headerTitle: {
       flex: 1,
       color: asl.text.primary,
       fontSize: ms(22),
-      fontFamily: fontFamily.heading,
-      textAlign: "center",
-    },
+      fontWeight: fontWeight.emphasis,
+      textAlign: "center"},
     headerRight: {
       flexDirection: "row",
       alignItems: "center",
       gap: ms(4),
       minWidth: ms(76),
-      justifyContent: "flex-end",
-    },
+      justifyContent: "flex-end"},
     root: {
       flex: 1,
       minHeight: 0,
-      paddingHorizontal: Spacing.xl - 4,
-    },
+      paddingHorizontal: Spacing.xl - 4},
     filtersBlock: {
-      flexShrink: 0,
-    },
+      flexShrink: 0},
     toggleWrap: {
-      marginTop: ms(10),
-    },
+      marginTop: ms(10)},
     signsList: {
       flex: 1,
-      minHeight: 0,
-    },
+      minHeight: 0},
     categoryFilterLabel: {
       marginTop: ms(10),
       marginBottom: ms(6),
       fontSize: ms(12),
       fontWeight: "700",
-      color: asl.accentCyan,
-    },
+      color: asl.accentCyan},
     banner: {
       marginTop: ms(12),
       padding: ms(12),
@@ -294,8 +281,7 @@ const createStyles = (density: number) => {
       borderRadius: ms(12),
       gap: ms(8),
       borderWidth: 1,
-      borderColor: "rgba(248, 113, 113, 0.35)",
-    },
+      borderColor: "rgba(248, 113, 113, 0.35)"},
     bannerText: { color: "#FECACA", fontSize: ms(14), lineHeight: ms(18) },
     retryBtn: { alignSelf: "flex-start" },
     retryText: { color: asl.accentCyan, fontWeight: "700", fontSize: ms(14) },
@@ -303,15 +289,13 @@ const createStyles = (density: number) => {
     loadingBox: {
       paddingVertical: ms(40),
       alignItems: "center",
-      gap: ms(12),
-    },
+      gap: ms(12)},
     loadingText: { color: asl.text.secondary, fontSize: ms(15) },
 
     footerLoading: {
       paddingVertical: ms(16),
       alignItems: "center",
-      gap: ms(8),
-    },
+      gap: ms(8)},
     footerLoadingText: { color: asl.text.muted, fontSize: ms(13) },
 
     sectionTitle: {
@@ -320,14 +304,11 @@ const createStyles = (density: number) => {
       fontSize: ms(20),
       fontWeight: "800",
       textAlign: "center",
-      color: asl.text.primary,
-    },
+      color: asl.text.primary},
 
     emptyText: {
       textAlign: "center",
       marginTop: ms(20),
       color: asl.text.muted,
-      fontSize: ms(16),
-    },
-  });
+      fontSize: ms(16)}});
 };

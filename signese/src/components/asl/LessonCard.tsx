@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View, Pressable, StyleSheet } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 
 type Props = {
   title: string;
@@ -57,8 +57,7 @@ const styles = StyleSheet.create({
     borderColor: asl.glass.border,
     backgroundColor: "rgba(255,255,255,0.06)",
     padding: 14,
-    marginBottom: 10,
-  },
+    marginBottom: 10},
   left: { flexDirection: "row", alignItems: "center", gap: 12, flex: 1, minWidth: 0 },
   emojiWrap: {
     width: 44,
@@ -66,11 +65,9 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     backgroundColor: "rgba(0,0,0,0.3)",
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   emoji: { fontSize: 20 },
-  title: { color: asl.text.primary, fontSize: 16, fontFamily: fontFamily.heading },
-  sub: { color: asl.text.muted, fontSize: 12, marginTop: 2, fontFamily: fontFamily.body },
+  title: { color: asl.text.primary, fontSize: 16, fontWeight: fontWeight.emphasis },
+  sub: { color: asl.text.muted, fontSize: 12, marginTop: 2},
   right: { flexDirection: "row", alignItems: "center", gap: 8 },
-  detail: { color: asl.text.secondary, fontSize: 12, fontFamily: fontFamily.medium },
-});
+  detail: { color: asl.text.secondary, fontSize: 12, fontWeight: fontWeight.medium }});

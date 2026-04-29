@@ -6,15 +6,14 @@ import {
   Pressable,
   StyleSheet,
   ScrollView,
-  ActivityIndicator,
-} from "react-native";
+  ActivityIndicator} from "react-native";
 import { Video, ResizeMode } from "expo-av";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import type { Sign } from "../features/dictionary/types";
 import { toggleSavedId, isSaved } from "../features/dictionary/storage/saved.local";
 import { resolveVideoUrlFromUiSign } from "../services/dictionary/dictionarySigns.service";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 
 interface SignOverlayProps {
   visible: boolean;
@@ -218,15 +217,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(5, 2, 8, 0.72)",
     justifyContent: "center",
-    alignItems: "center",
-  },
+    alignItems: "center"},
   backdropTap: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
-  },
+    bottom: 0},
   content: {
     backgroundColor: "rgba(14, 8, 22, 0.94)",
     borderRadius: asl.radius.xl,
@@ -237,14 +234,12 @@ const styles = StyleSheet.create({
     maxHeight: "82%",
     borderWidth: 1,
     borderColor: asl.glass.border,
-    ...asl.shadow.card,
-  },
+    ...asl.shadow.card},
   topBar: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 8,
-  },
+    marginBottom: 8},
   iconCircle: {
     width: 44,
     height: 44,
@@ -253,8 +248,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
     borderColor: asl.glass.border,
-    backgroundColor: "rgba(0,0,0,0.35)",
-  },
+    backgroundColor: "rgba(0,0,0,0.35)"},
   savePill: {
     flexDirection: "row",
     alignItems: "center",
@@ -264,35 +258,28 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 1,
     borderColor: asl.glass.border,
-    backgroundColor: "rgba(0,0,0,0.3)",
-  },
+    backgroundColor: "rgba(0,0,0,0.3)"},
   savePillOn: {
     borderColor: "rgba(251, 191, 36, 0.55)",
-    backgroundColor: "rgba(251, 191, 36, 0.12)",
-  },
+    backgroundColor: "rgba(251, 191, 36, 0.12)"},
   savePillIcon: {
     fontSize: 22,
-    color: "#FBBF24",
-  },
+    color: "#FBBF24"},
   savePillText: {
     fontSize: 15,
-    fontFamily: fontFamily.heading,
-    color: asl.text.primary,
-  },
+    fontWeight: fontWeight.emphasis,
+    color: asl.text.primary},
   pressedDim: {
-    opacity: 0.85,
-  },
+    opacity: 0.85},
   scrollContent: {
-    paddingBottom: 12,
-  },
+    paddingBottom: 12},
   word: {
     fontSize: 28,
-    fontFamily: fontFamily.heading,
+    fontWeight: fontWeight.emphasis,
     textAlign: "center",
     color: asl.text.primary,
     marginBottom: 10,
-    letterSpacing: 0.2,
-  },
+    letterSpacing: 0.2},
   statusBadgeWrap: {
     alignSelf: "center",
     marginBottom: 10,
@@ -301,30 +288,25 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "rgba(251, 191, 36, 0.12)",
     borderWidth: 1,
-    borderColor: "rgba(251, 191, 36, 0.35)",
-  },
+    borderColor: "rgba(251, 191, 36, 0.35)"},
   statusBadgeText: {
     fontSize: 12,
-    fontFamily: fontFamily.medium,
+    fontWeight: fontWeight.medium,
     color: "#FCD34D",
-    textTransform: "capitalize",
-  },
+    textTransform: "capitalize"},
   communityRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
-    marginBottom: 14,
-  },
+    marginBottom: 14},
   communityText: {
     fontSize: 13,
-    fontFamily: fontFamily.medium,
-    color: asl.accentCyan,
-  },
+    fontWeight: fontWeight.medium,
+    color: asl.accentCyan},
   mediaSection: {
     alignItems: "center",
-    marginBottom: 18,
-  },
+    marginBottom: 18},
   videoWrap: {
     width: "100%",
     minHeight: 200,
@@ -332,31 +314,25 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: "rgba(0,0,0,0.85)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.12)",
-  },
+    borderColor: "rgba(255,255,255,0.12)"},
   videoBuffering: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.75)",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 2,
-    borderRadius: asl.radius.md,
-  },
+    borderRadius: asl.radius.md},
   videoBufferingText: {
     color: asl.text.secondary,
     marginTop: 10,
-    fontSize: 13,
-    fontFamily: fontFamily.body,
-  },
+    fontSize: 13},
   video: {
     width: "100%",
     height: 200,
     borderRadius: asl.radius.md,
-    backgroundColor: "#000",
-  },
+    backgroundColor: "#000"},
   videoHidden: {
-    opacity: 0,
-  },
+    opacity: 0},
   mediaLoading: {
     width: "100%",
     minHeight: 168,
@@ -367,8 +343,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
-    gap: 12,
-  },
+    gap: 12},
   mediaUnavailable: {
     width: "100%",
     minHeight: 160,
@@ -379,33 +354,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
-    gap: 10,
-  },
+    gap: 10},
   mediaUnavailableTitle: {
     fontSize: 16,
-    fontFamily: fontFamily.heading,
-    color: asl.text.secondary,
-  },
+    fontWeight: fontWeight.emphasis,
+    color: asl.text.secondary},
   mediaHint: {
     fontSize: 12,
     color: asl.text.muted,
     textAlign: "center",
     marginTop: 4,
-    lineHeight: 18,
-    fontFamily: fontFamily.body,
-  },
+    lineHeight: 18},
   section: {
-    marginBottom: 16,
-  },
+    marginBottom: 16},
   sectionLabel: {
     fontSize: 13,
-    fontFamily: fontFamily.medium,
+    fontWeight: fontWeight.medium,
     color: asl.text.secondary,
     textAlign: "center",
     marginBottom: 8,
     letterSpacing: 0.5,
-    textTransform: "uppercase",
-  },
+    textTransform: "uppercase"},
   glassBlock: {
     backgroundColor: "rgba(255,255,255,0.06)",
     borderRadius: asl.radius.md,
@@ -413,22 +382,16 @@ const styles = StyleSheet.create({
     minHeight: 56,
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: asl.glass.border,
-  },
+    borderColor: asl.glass.border},
   placeholderBlock: {
     borderStyle: "dashed",
     borderColor: "rgba(34, 211, 238, 0.35)",
-    backgroundColor: "rgba(34, 211, 238, 0.06)",
-  },
+    backgroundColor: "rgba(34, 211, 238, 0.06)"},
   bodyText: {
     fontSize: 15,
-    fontFamily: fontFamily.body,
     color: asl.text.primary,
     lineHeight: 22,
-    textAlign: "center",
-  },
+    textAlign: "center"},
   bodyTextMuted: {
     color: asl.text.muted,
-    fontStyle: "italic",
-  },
-});
+    fontStyle: "italic"}});

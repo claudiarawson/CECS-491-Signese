@@ -8,14 +8,12 @@ import { asl } from "@/src/theme/aslConnectTheme";
 import {
   completeLessonOnce,
   isLessonUnlocked,
-  type LessonId,
-} from "@/src/features/learn/utils/lessonProgress";
+  type LessonId} from "@/src/features/learn/utils/lessonProgress";
 import {
-  fontFamily,
+  fontWeight,
   getDeviceDensity,
   moderateScale,
-  Spacing,
-} from "@/src/theme";
+  Spacing} from "@/src/theme";
 
 const CURRENT_LESSON_ID: LessonId = "alphabet";
 const CURRENT_LESSON_TITLE = "Alphabet";
@@ -117,30 +115,25 @@ export default function AlphabetCompleteScreen() {
 const createStyles = (ms: (n: number) => number) =>
   StyleSheet.create({
     headerIcon: {
-      padding: ms(4),
-    },
+      padding: ms(4)},
     scroll: {
       flex: 1,
-      minHeight: 0,
-    },
+      minHeight: 0},
     scrollContent: {
       alignItems: "center",
       paddingHorizontal: Spacing.screenPadding,
       paddingTop: ms(32),
       paddingBottom: ms(56),
-      gap: ms(8),
-    },
+      gap: ms(8)},
     completeText: {
       fontSize: ms(28),
-      fontFamily: fontFamily.heading,
+      fontWeight: fontWeight.emphasis,
       color: asl.text.primary,
-      textAlign: "center",
-    },
+      textAlign: "center"},
     starsRow: {
       marginTop: ms(18),
       fontSize: ms(36),
-      lineHeight: ms(42),
-    },
+      lineHeight: ms(42)},
     starsCard: {
       marginTop: ms(24),
       width: "100%",
@@ -150,27 +143,22 @@ const createStyles = (ms: (n: number) => number) =>
       borderColor: asl.glass.border,
       paddingVertical: ms(26),
       alignItems: "center",
-      ...asl.shadow.card,
-    },
+      ...asl.shadow.card},
     bigStarsNumber: {
       fontSize: ms(44),
       lineHeight: ms(52),
-      fontFamily: fontFamily.heading,
-      color: "#FBBF24",
-    },
+      fontWeight: fontWeight.emphasis,
+      color: "#FBBF24"},
     starsLabel: {
       marginTop: ms(8),
       fontSize: ms(20),
-      fontFamily: fontFamily.medium,
-      color: asl.text.secondary,
-    },
+      fontWeight: fontWeight.medium,
+      color: asl.text.secondary},
     totalStarsText: {
       marginTop: ms(12),
       fontSize: ms(15),
       lineHeight: ms(21),
-      color: asl.text.muted,
-      fontFamily: fontFamily.body,
-    },
+      color: asl.text.muted},
     unlockCard: {
       marginTop: ms(20),
       width: "100%",
@@ -180,28 +168,23 @@ const createStyles = (ms: (n: number) => number) =>
       borderColor: asl.glass.border,
       paddingVertical: ms(22),
       paddingHorizontal: ms(16),
-      alignItems: "center",
-    },
+      alignItems: "center"},
     unlockTitle: {
       fontSize: ms(18),
       lineHeight: ms(24),
-      fontFamily: fontFamily.medium,
+      fontWeight: fontWeight.medium,
       color: asl.text.primary,
-      textAlign: "center",
-    },
+      textAlign: "center"},
     unlockSubtitle: {
       marginTop: ms(8),
       fontSize: ms(15),
       lineHeight: ms(21),
       color: asl.text.muted,
-      textAlign: "center",
-    },
+      textAlign: "center"},
     unlockSuccess: {
       marginTop: ms(8),
       fontSize: ms(16),
       lineHeight: ms(22),
       color: "#4ADE80",
-      fontFamily: fontFamily.medium,
-      textAlign: "center",
-    },
-  });
+      fontWeight: fontWeight.medium,
+      textAlign: "center"}});

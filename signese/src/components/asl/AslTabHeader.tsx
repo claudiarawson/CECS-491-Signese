@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet, type TextStyle, type ViewStyle } fro
 import { router } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 
 type Props = {
   title: string;
@@ -20,8 +20,7 @@ export function AslTabHeader({
   onProfile = () => router.push("/(tabs)/account" as any),
   rightExtra,
   titleStyle,
-  containerStyle,
-}: Props) {
+  containerStyle}: Props) {
   return (
     <View style={[styles.row, containerStyle]}>
       <View style={styles.left}>
@@ -59,15 +58,12 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-  },
+    justifyContent: "space-between"},
   left: { flex: 1, minWidth: 0 },
   title: {
     color: asl.text.primary,
     fontSize: 24,
     letterSpacing: 0.2,
-    fontFamily: fontFamily.heading,
-  },
+    fontWeight: fontWeight.emphasis},
   right: { flexDirection: "row", alignItems: "center", gap: 4 },
-  iconBtn: { padding: 4 },
-});
+  iconBtn: { padding: 4 }});

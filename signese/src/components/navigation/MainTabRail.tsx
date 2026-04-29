@@ -2,7 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, usePathname, type Href } from "expo-router";
 import React, { useMemo } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
-import { Sizes, fontFamily } from "@/src/theme";
+import { Sizes, fontWeight } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
 
 const TAB_ICON_SIZE = Sizes.iconMd;
@@ -80,24 +80,17 @@ const styles = StyleSheet.create({
         shadowColor: "#000",
         shadowOpacity: 0.35,
         shadowRadius: 16,
-        shadowOffset: { width: 0, height: 8 },
-      },
+        shadowOffset: { width: 0, height: 8 }},
       android: { elevation: 14 },
-      default: {},
-    }),
-  },
+      default: {}})},
   tabLabel: {
     fontSize: 11,
-    fontWeight: "700",
     marginBottom: 2,
-    fontFamily: fontFamily.medium,
-  },
+    fontWeight: fontWeight.medium},
   tabItem: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     paddingTop: 4,
     gap: 2,
-    minWidth: 0,
-  },
-});
+    minWidth: 0}});

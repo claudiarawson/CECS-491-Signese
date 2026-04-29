@@ -1,6 +1,6 @@
 import { lessonColors, lessonSpacing, lessonTypography, Radius } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -37,31 +37,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.14)",
-    ...asl.shadow.card,
-  },
+    ...asl.shadow.card},
   title: {
     ...lessonTypography.subtitle,
     color: lessonColors.textPrimary,
     textAlign: "center",
-    fontFamily: fontFamily.heading,
-  },
+    fontWeight: fontWeight.emphasis},
   starRow: {
     flexDirection: "row",
     marginTop: lessonSpacing.md,
     marginBottom: lessonSpacing.sm,
-    columnGap: 8,
-  },
+    columnGap: 8},
   star: {
     fontSize: 28,
-    color: lessonColors.star,
-  },
+    color: lessonColors.star},
   starMuted: {
-    color: "rgba(255,255,255,0.28)",
-  },
+    color: "rgba(255,255,255,0.28)"},
   subtitle: {
     ...lessonTypography.body,
     color: lessonColors.textSecondary,
-    textAlign: "center",
-    fontFamily: fontFamily.body,
-  },
-});
+    textAlign: "center"}});

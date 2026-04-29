@@ -1,5 +1,5 @@
 import { AppShell, GlassCard, InputField } from "@/src/components/asl";
-import { Spacing, fontFamily, getDeviceDensity, moderateScale } from "@/src/theme";
+import { Spacing, fontWeight, getDeviceDensity, moderateScale } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
@@ -14,14 +14,12 @@ import {
   StyleSheet,
   Text,
   View,
-  useWindowDimensions,
-} from "react-native";
+  useWindowDimensions} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import {
   CommunitySignSubmitError,
-  submitCommunitySign,
-} from "@/src/services/dictionary/communitySignSubmit";
+  submitCommunitySign} from "@/src/services/dictionary/communitySignSubmit";
 
 export default function AddSignScreen() {
   const { authUser } = useAuthUser();
@@ -61,8 +59,7 @@ export default function AddSignScreen() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Videos,
       videoMaxDuration: 120,
-      quality: 1,
-    });
+      quality: 1});
 
     if (result.canceled || !result.assets[0]) return;
 
@@ -89,12 +86,10 @@ export default function AddSignScreen() {
           word,
           definition,
           howToSign,
-          note,
-        },
+          note},
         videoUri,
         {
-          onUploadProgress: (r) => setUploadProgress(r),
-        }
+          onUploadProgress: (r) => setUploadProgress(r)}
       );
 
       resetForm();
@@ -104,8 +99,7 @@ export default function AddSignScreen() {
         [
           {
             text: "OK",
-            onPress: () => router.replace("/(tabs)/dictionary"),
-          },
+            onPress: () => router.replace("/(tabs)/dictionary")},
         ]
       );
       if (__DEV__) {
@@ -278,98 +272,73 @@ const createStyles = (density: number) => {
   return StyleSheet.create({
     fill: {
       flex: 1,
-      minHeight: 0,
-    },
+      minHeight: 0},
     headerRow: {
       flexDirection: "row",
       alignItems: "center",
       paddingHorizontal: Spacing.screenPadding,
       paddingBottom: Spacing.sm,
-      gap: ms(8),
-    },
+      gap: ms(8)},
     headerIconBtn: {
-      padding: ms(4),
-    },
+      padding: ms(4)},
     headerTitle: {
       flex: 1,
       color: asl.text.primary,
       fontSize: ms(22),
-      fontFamily: fontFamily.heading,
-      textAlign: "center",
-    },
+      fontWeight: fontWeight.emphasis,
+      textAlign: "center"},
     headerSpacer: {
-      width: ms(32),
-    },
+      width: ms(32)},
     scroll: {
-      flex: 1,
-    },
+      flex: 1},
     scrollContent: {
       paddingHorizontal: Spacing.xl - 4,
-      paddingTop: ms(8),
-    },
+      paddingTop: ms(8)},
     warnGlass: {
-      marginBottom: ms(16),
-    },
+      marginBottom: ms(16)},
     warnText: {
       color: asl.text.secondary,
       fontSize: ms(14),
-      lineHeight: ms(20),
-      fontFamily: fontFamily.body,
-    },
+      lineHeight: ms(20)},
     warnLink: {
       color: asl.linkPink,
-      fontWeight: "700",
-      fontFamily: fontFamily.medium,
-    },
+      fontWeight: fontWeight.medium},
     wordVideoRow: {
       flexDirection: "row",
       gap: ms(12),
       alignItems: "flex-start",
-      marginBottom: ms(8),
-    },
+      marginBottom: ms(8)},
     wordField: {
       flex: 1,
-      minWidth: 0,
-    },
+      minWidth: 0},
     videoCardOuter: {
-      width: ms(108),
-    },
+      width: ms(108)},
     videoCardInner: {
-      padding: ms(10),
-    },
+      padding: ms(10)},
     videoPick: {
       alignItems: "center",
       justifyContent: "center",
       minHeight: ms(108),
-      gap: ms(6),
-    },
+      gap: ms(6)},
     mediaButtonDisabled: {
-      opacity: 0.55,
-    },
+      opacity: 0.55},
     videoPickLabel: {
       fontSize: ms(11),
       color: asl.text.primary,
-      fontWeight: "600",
       textAlign: "center",
-      fontFamily: fontFamily.medium,
-    },
+      fontWeight: fontWeight.medium},
     videoHint: {
       fontSize: ms(12),
       color: asl.text.muted,
-      marginBottom: ms(12),
-      fontFamily: fontFamily.body,
-    },
+      marginBottom: ms(12)},
     textarea: {
-      textAlignVertical: "top",
-    },
+      textAlignVertical: "top"},
     progressText: {
       textAlign: "center",
       color: asl.accentCyan,
-      fontWeight: "600",
       marginTop: ms(8),
       fontSize: ms(14),
-      fontFamily: fontFamily.medium,
-    },
+      fontWeight: fontWeight.medium},
     footer: {
       flexShrink: 0,
       flexDirection: "row",
@@ -378,8 +347,7 @@ const createStyles = (density: number) => {
       paddingTop: ms(14),
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: asl.glass.border,
-      backgroundColor: "rgba(0,0,0,0.45)",
-    },
+      backgroundColor: "rgba(0,0,0,0.45)"},
     backButton: {
       flex: 1,
       borderRadius: 999,
@@ -389,34 +357,27 @@ const createStyles = (density: number) => {
       paddingVertical: ms(14),
       alignItems: "center",
       justifyContent: "center",
-      minHeight: ms(48),
-    },
+      minHeight: ms(48)},
     backButtonText: {
       fontSize: ms(16),
-      fontFamily: fontFamily.heading,
-      color: asl.text.primary,
-    },
+      fontWeight: fontWeight.emphasis,
+      color: asl.text.primary},
     submitWrap: {
       flex: 1,
       borderRadius: 999,
       overflow: "hidden",
       minHeight: ms(48),
-      ...asl.shadow.card,
-    },
+      ...asl.shadow.card},
     submitGradient: {
       flex: 1,
       minHeight: ms(48),
       alignItems: "center",
       justifyContent: "center",
-      paddingHorizontal: ms(16),
-    },
+      paddingHorizontal: ms(16)},
     submitButtonText: {
       fontSize: ms(16),
-      fontFamily: fontFamily.heading,
-      color: asl.surfaceLight,
-    },
+      fontWeight: fontWeight.emphasis,
+      color: asl.surfaceLight},
     btnDisabled: {
-      opacity: 0.55,
-    },
-  });
+      opacity: 0.55}});
 };

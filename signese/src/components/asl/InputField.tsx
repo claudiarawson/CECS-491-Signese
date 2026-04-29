@@ -4,10 +4,9 @@ import {
   Text,
   TextInput,
   type TextInputProps,
-  View,
-} from "react-native";
+  View} from "react-native";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 
 type Props = TextInputProps & {
   label?: string;
@@ -34,8 +33,7 @@ const styles = StyleSheet.create({
     color: asl.text.secondary,
     fontSize: 12,
     marginBottom: 6,
-    fontFamily: fontFamily.medium,
-  },
+    fontWeight: fontWeight.medium},
   input: {
     borderRadius: 12,
     borderWidth: 1,
@@ -44,9 +42,6 @@ const styles = StyleSheet.create({
     color: asl.text.primary,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    fontSize: 16,
-    fontFamily: fontFamily.body,
-  },
+    fontSize: 16},
   inputError: { borderColor: "#F87171" },
-  error: { color: "#FCA5A5", marginTop: 6, fontSize: 12, fontFamily: fontFamily.body },
-});
+  error: { color: "#FCA5A5", marginTop: 6, fontSize: 12}});

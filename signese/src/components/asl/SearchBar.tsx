@@ -2,7 +2,7 @@ import React from "react";
 import { TextInput, View, Pressable, StyleSheet } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 
 type Props = {
   value: string;
@@ -39,13 +39,9 @@ const styles = StyleSheet.create({
     borderColor: asl.glass.border,
     backgroundColor: "rgba(0,0,0,0.2)",
     paddingHorizontal: 12,
-    minHeight: 48,
-  },
+    minHeight: 48},
   input: {
     flex: 1,
     marginLeft: 8,
     color: asl.text.primary,
-    fontSize: 16,
-    fontFamily: fontFamily.body,
-  },
-});
+    fontSize: 16}});

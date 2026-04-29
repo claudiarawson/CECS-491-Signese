@@ -14,7 +14,7 @@ export * from "./components";
 export * from "./radius";
 export {
   applyTypography,
-  fontFamily,
+  fontWeight,
   lessonTypography,
   typography,
   Typography,

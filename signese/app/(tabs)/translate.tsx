@@ -7,8 +7,7 @@ import {
   StyleSheet,
   Text,
   View,
-  useWindowDimensions,
-} from "react-native";
+  useWindowDimensions} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useFocusEffect } from "expo-router";
 import { CameraView } from "expo-camera";
@@ -17,35 +16,30 @@ import { Spacing, Typography, getDeviceDensity, moderateScale } from "@/src/them
 import { asl } from "@/src/theme/aslConnectTheme";
 import { AppShell, AslTabHeader, GlassCard, TranslationOverlay } from "@/src/components/asl";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 import { useTranslateCamera } from "@/src/features/translate/camera/useCamera";
 import {
   GREETING_INTRO_V0_LABELS,
-  RUNTIME_V0_LABELS,
-} from "@/src/features/translate/model/supportedSigns";
+  RUNTIME_V0_LABELS} from "@/src/features/translate/model/supportedSigns";
 import { PostprocessDecision } from "@/src/features/translate/model/types";
 import { useCaptionBuffer } from "@/src/features/translate/state";
 import { formatTopScores } from "@/src/features/translate/utils";
 import {
   createShortClipInferenceService,
-  ShortClipInferenceService,
-} from "@/src/features/translate/inference/shortClipInference";
+  ShortClipInferenceService} from "@/src/features/translate/inference/shortClipInference";
 import { TranslateInferenceResponse } from "@/src/features/translate/inference/types";
 import {
   useTabTranslationHistory,
   TRANSLATE_SOURCE_LANG,
-  TRANSLATE_TARGET_LANG,
-} from "@/src/features/translate/translationHistory";
+  TRANSLATE_TARGET_LANG} from "@/src/features/translate/translationHistory";
 import {
   ReportTranslationModal,
-  type ReportTranslationContext,
-} from "@/src/features/translate/ui/ReportTranslationModal";
+  type ReportTranslationContext} from "@/src/features/translate/ui/ReportTranslationModal";
 
 function CommonResponsesPlaceholder({
   styles,
   historyCount,
-  onOpenRecent,
-}: {
+  onOpenRecent}: {
   styles: ReturnType<typeof createStyles>;
   historyCount: number;
   onOpenRecent: () => void;
@@ -113,8 +107,7 @@ export default function TranslateScreen() {
     translationHistory,
     addHistoryItem,
     sessionId,
-    consumePendingReuseCaption,
-  } = useTabTranslationHistory();
+    consumePendingReuseCaption} = useTabTranslationHistory();
   const lastHistoryEntryIdRef = useRef<string | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [reportContext, setReportContext] = useState<ReportTranslationContext | null>(null);
@@ -125,8 +118,7 @@ export default function TranslateScreen() {
     activateCamera,
     deactivateCamera,
     toggleCamera,
-    reverseCamera,
-  } = useTranslateCamera();
+    reverseCamera} = useTranslateCamera();
   const sequenceRef = useRef(0);
   const cameraRef = useRef<CameraView | null>(null);
   const continueSequenceRef = useRef(false);
@@ -255,8 +247,7 @@ export default function TranslateScreen() {
             source: "single",
             confidence: token.confidence,
             timestampMs: token.end_ms,
-            rawTopK: response.raw_top_k ?? [],
-          });
+            rawTopK: response.raw_top_k ?? []});
         }
       }
 
@@ -268,8 +259,7 @@ export default function TranslateScreen() {
             sourceLanguage: TRANSLATE_SOURCE_LANG,
             targetLanguage: TRANSLATE_TARGET_LANG,
             timestamp: new Date(token.end_ms || clipDurationMs).toISOString(),
-            confidence: token.confidence,
-          });
+            confidence: token.confidence});
           lastHistoryEntryIdRef.current = entryId;
         }
       }
@@ -286,12 +276,10 @@ export default function TranslateScreen() {
                 source: "single",
                 confidence: primaryToken.confidence,
                 timestampMs: primaryToken.end_ms,
-                rawTopK: topScores,
-              }
+                rawTopK: topScores}
             : undefined,
           smoothedScores: topScores,
-          reason: primaryToken && best.score >= 0.45 ? "accepted" : "below-threshold",
-        });
+          reason: primaryToken && best.score >= 0.45 ? "accepted" : "below-threshold"});
       }
     };
 
@@ -304,8 +292,7 @@ export default function TranslateScreen() {
         .recordAsync({
           maxDuration: 6,
           quality: "480p",
-          mute: true,
-        })
+          mute: true})
         .then((result: { uri: string } | undefined) => ({ result }))
         .catch((error: unknown) => ({ error }));
 
@@ -366,8 +353,7 @@ export default function TranslateScreen() {
               sequence: sequenceRef.current,
               clipUri: chunk.uri,
               startMs: 0,
-              endMs: CHUNK_DURATION_MS,
-            });
+              endMs: CHUNK_DURATION_MS});
             applyInferenceResponse(response, CHUNK_DURATION_MS);
           } finally {
             setIsInferring(false);
@@ -525,8 +511,7 @@ export default function TranslateScreen() {
       translatedText: cap,
       sourceLanguage: TRANSLATE_SOURCE_LANG,
       targetLanguage: TRANSLATE_TARGET_LANG,
-      sessionId,
-    });
+      sessionId});
     setReportOpen(true);
   }, [captionText, lastDecision?.token?.label, lastInference?.tokens, sessionId]);
 
@@ -662,8 +647,7 @@ export default function TranslateScreen() {
                           width:
                             sequencePrompt === "move-next" ? `${prepProgress * 100}%` : `${chunkProgress * 100}%`,
                           backgroundColor:
-                            sequencePrompt === "move-next" ? prepTransitionColor : asl.accentCyan,
-                        },
+                            sequencePrompt === "move-next" ? prepTransitionColor : asl.accentCyan},
                       ]}
                     />
                   </View>
@@ -844,8 +828,7 @@ const createStyles = (density: number, textScale: number) => {
     content: {
       flex: 1,
       minHeight: 0,
-      paddingHorizontal: Spacing.screenPadding,
-    },
+      paddingHorizontal: Spacing.screenPadding},
     loadingOverlay: {
       marginTop: Spacing.sm,
       marginBottom: Spacing.sm,
@@ -859,59 +842,47 @@ const createStyles = (density: number, textScale: number) => {
       borderRadius: asl.radius.md,
       paddingHorizontal: 12,
       paddingVertical: 8,
-      ...asl.shadow.card,
-    },
+      ...asl.shadow.card},
     loadingText: {
       ...Typography.caption,
       color: asl.text.secondary,
-      fontWeight: "600",
-      fontFamily: fontFamily.body,
-    },
+      fontWeight: fontWeight.medium},
     mainScroll: {
       flex: 1,
-      minHeight: 0,
-    },
+      minHeight: 0},
     mainScrollContent: {
       paddingBottom: ms(112),
-      paddingTop: ms(4),
-    },
+      paddingTop: ms(4)},
     sectionLabel: {
-      fontFamily: fontFamily.medium,
+      fontWeight: fontWeight.medium,
       color: asl.text.muted,
       fontSize: ts(11),
       letterSpacing: 1.2,
       textTransform: "uppercase",
       marginTop: ms(16),
-      marginBottom: ms(8),
-    },
+      marginBottom: ms(8)},
     sectionLabelFlush: {
-      marginTop: ms(4),
-    },
+      marginTop: ms(4)},
     topSection: {
       flexDirection: "row",
       gap: ms(10),
-      alignItems: "stretch",
-    },
+      alignItems: "stretch"},
     previewColumn: {
       flex: 1,
       minWidth: 0,
-      gap: ms(10),
-    },
+      gap: ms(10)},
     previewChromeRow: {
       flexDirection: "row",
       alignItems: "center",
-      gap: ms(8),
-    },
+      gap: ms(8)},
     langBarShrink: {
       flex: 1,
-      minWidth: 0,
-    },
+      minWidth: 0},
     previewCamIconRow: {
       flexDirection: "row",
       alignItems: "center",
       gap: ms(6),
-      flexShrink: 0,
-    },
+      flexShrink: 0},
     chromeIconBtn: {
       width: ms(36),
       height: ms(36),
@@ -920,8 +891,7 @@ const createStyles = (density: number, textScale: number) => {
       borderWidth: 1,
       borderColor: asl.glass.border,
       alignItems: "center",
-      justifyContent: "center",
-    },
+      justifyContent: "center"},
     videoSurface: {
       width: "100%",
       aspectRatio: 4 / 5,
@@ -930,59 +900,50 @@ const createStyles = (density: number, textScale: number) => {
       backgroundColor: "rgba(0,0,0,0.35)",
       borderWidth: 1,
       borderColor: asl.glass.border,
-      ...asl.shadow.card,
-    },
+      ...asl.shadow.card},
     cameraPreview: {
       flex: 1,
       width: "100%",
-      height: "100%",
-    },
+      height: "100%"},
     videoPlaceholderWrap: {
       flex: 1,
       width: "100%",
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: Spacing.md,
-      minHeight: ms(140),
-    },
+      minHeight: ms(140)},
     videoPlaceholderTitle: {
       ...Typography.sectionTitle,
       color: asl.text.primary,
       marginTop: Spacing.xs,
       textAlign: "center",
       fontSize: ts(18),
-      lineHeight: ts(22),
-    },
+      lineHeight: ts(22)},
     videoPlaceholderSubtitle: {
       ...Typography.caption,
       color: asl.text.muted,
       marginTop: ms(6),
       textAlign: "center",
       fontSize: ts(12),
-      lineHeight: ts(16),
-    },
+      lineHeight: ts(16)},
     recordingProgressSection: {
       width: "100%",
-      marginTop: ms(2),
-    },
+      marginTop: ms(2)},
     recordingProgressTrack: {
       height: ms(6),
       borderRadius: ms(99),
       backgroundColor: "rgba(255,255,255,0.14)",
       overflow: "hidden",
       borderWidth: StyleSheet.hairlineWidth,
-      borderColor: "rgba(255,255,255,0.22)",
-    },
+      borderColor: "rgba(255,255,255,0.22)"},
     recordingProgressFill: {
       height: "100%",
-      borderRadius: ms(99),
-    },
+      borderRadius: ms(99)},
     liveActionsRow: {
       width: "100%",
       alignItems: "center",
       justifyContent: "center",
-      paddingBottom: ms(4),
-    },
+      paddingBottom: ms(4)},
     recordClipButton: {
       flexDirection: "row",
       alignItems: "center",
@@ -992,8 +953,7 @@ const createStyles = (density: number, textScale: number) => {
       paddingHorizontal: 14,
       paddingVertical: 9,
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.35)",
-    },
+      borderColor: "rgba(255,255,255,0.35)"},
     previewCameraButton: {
       flexDirection: "row",
       alignItems: "center",
@@ -1003,13 +963,11 @@ const createStyles = (density: number, textScale: number) => {
       paddingHorizontal: 14,
       paddingVertical: 9,
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.35)",
-    },
+      borderColor: "rgba(255,255,255,0.35)"},
     bottomVideoControlsRow: {
       flexDirection: "row",
       alignItems: "center",
-      gap: Spacing.xs,
-    },
+      gap: Spacing.xs},
     commonResponsesControlArrow: {
       flexDirection: "row",
       alignItems: "center",
@@ -1020,18 +978,15 @@ const createStyles = (density: number, textScale: number) => {
       backgroundColor: "rgba(44, 93, 86, 0.86)",
       borderWidth: 1,
       borderColor: "rgba(255,255,255,0.45)",
-      justifyContent: "center",
-    },
+      justifyContent: "center"},
     commonResponsesControlArrowLabel: {
       ...Typography.caption,
       color: "#FFFFFF",
-      fontWeight: "700",
+      fontWeight: fontWeight.strong,
       fontSize: ts(11),
-      lineHeight: ts(14),
-    },
+      lineHeight: ts(14)},
   recordClipButtonDisabled: {
-    opacity: 0.6,
-  },
+    opacity: 0.6},
   cancelCornerButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -1042,37 +997,31 @@ const createStyles = (density: number, textScale: number) => {
     backgroundColor: "#D64045",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.65)",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   cancelCornerButtonPressed: {
     backgroundColor: "#7D8790",
-    borderColor: "rgba(255,255,255,0.35)",
-  },
+    borderColor: "rgba(255,255,255,0.35)"},
   cancelCornerButtonText: {
     ...Typography.caption,
     color: "#FFFFFF",
-    fontWeight: "700",
+    fontWeight: fontWeight.strong,
     fontSize: ts(11),
-    lineHeight: ts(14),
-  },
+    lineHeight: ts(14)},
   recordClipButtonText: {
     ...Typography.caption,
     color: "#FFFFFF",
-    fontWeight: "700",
-  },
+    fontWeight: fontWeight.strong},
   responsesPanel: {
     flex: 1,
     width: "100%",
     minHeight: ms(140),
-    alignSelf: "stretch",
-  },
+    alignSelf: "stretch"},
   responsesPanelInner: {
     flex: 1,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.xs,
     gap: ms(6),
-    justifyContent: "flex-start",
-  },
+    justifyContent: "flex-start"},
   sideColumn: {
     width: "26%",
     maxWidth: ms(148),
@@ -1081,42 +1030,33 @@ const createStyles = (density: number, textScale: number) => {
     flexGrow: 0,
     alignSelf: "stretch",
     minHeight: 0,
-    justifyContent: "flex-start",
-  },
+    justifyContent: "flex-start"},
   sideColumnLabel: {
-    fontFamily: fontFamily.medium,
+    fontWeight: fontWeight.medium,
     color: asl.text.muted,
     fontSize: ts(11),
     letterSpacing: 1,
     textTransform: "uppercase",
-    marginBottom: ms(8),
-  },
+    marginBottom: ms(8)},
   outputCard: {
-    marginBottom: ms(8),
-  },
+    marginBottom: ms(8)},
   outputScroll: {
-    maxHeight: ms(120),
-  },
+    maxHeight: ms(120)},
   outputScrollContent: {
-    paddingBottom: ms(4),
-  },
+    paddingBottom: ms(4)},
   captionsOutputTextPrimary: {
     ...Typography.body,
     color: asl.text.primary,
     fontSize: ts(17),
     lineHeight: ts(24),
-    fontWeight: "700",
-    fontFamily: fontFamily.heading,
-    minHeight: ms(48),
-  },
+    fontWeight: fontWeight.emphasis,
+    minHeight: ms(48)},
   captionsOutputPlaceholderPrimary: {
     ...Typography.caption,
     color: asl.text.secondary,
     fontSize: ts(14),
     lineHeight: ts(20),
-    fontFamily: fontFamily.body,
-    minHeight: ms(48),
-  },
+    minHeight: ms(48)},
   outputActionsRow: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -1126,8 +1066,7 @@ const createStyles = (density: number, textScale: number) => {
     marginBottom: ms(10),
     paddingTop: ms(12),
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: asl.glass.border,
-  },
+    borderTopColor: asl.glass.border},
   outputChipBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -1137,48 +1076,38 @@ const createStyles = (density: number, textScale: number) => {
     borderRadius: 999,
     backgroundColor: "rgba(255,255,255,0.08)",
     borderWidth: 1,
-    borderColor: asl.glass.border,
-  },
+    borderColor: asl.glass.border},
   outputChipBtnDisabled: {
-    opacity: 0.55,
-  },
+    opacity: 0.55},
   outputChipBtnText: {
-    fontFamily: fontFamily.medium,
+    fontWeight: fontWeight.medium,
     color: asl.accentCyan,
-    fontSize: ts(14),
-  },
+    fontSize: ts(14)},
   outputChipBtnTextDisabled: {
-    color: asl.text.muted,
-  },
+    color: asl.text.muted},
   statusLinePrimary: {
     ...Typography.caption,
     color: asl.text.secondary,
     fontSize: ts(13),
     lineHeight: ts(19),
-    fontFamily: fontFamily.medium,
-  },
+    fontWeight: fontWeight.medium},
   statusLineSecondary: {
     ...Typography.caption,
     color: asl.text.muted,
     fontSize: ts(11),
     lineHeight: ts(15),
-    marginTop: ms(6),
-    fontFamily: fontFamily.body,
-  },
+    marginTop: ms(6)},
   devMetaBlock: {
     marginTop: ms(12),
     padding: ms(10),
     borderRadius: ms(10),
     backgroundColor: "rgba(255,165,0,0.08)",
     borderWidth: 1,
-    borderColor: "rgba(251,191,36,0.25)",
-  },
+    borderColor: "rgba(251,191,36,0.25)"},
   devMetaText: {
     fontSize: ts(10),
     lineHeight: ts(14),
-    color: asl.text.muted,
-    fontFamily: fontFamily.body,
-  },
+    color: asl.text.muted},
   recentTranslationsBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -1189,17 +1118,15 @@ const createStyles = (density: number, textScale: number) => {
     borderColor: asl.glass.border,
     paddingVertical: ms(8),
     paddingHorizontal: ms(6),
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   recentTranslationsBtnText: {
     ...Typography.caption,
     flex: 1,
     flexShrink: 1,
     color: asl.text.primary,
-    fontWeight: "700",
+    fontWeight: fontWeight.strong,
     fontSize: ts(11),
-    lineHeight: ts(14),
-  },
+    lineHeight: ts(14)},
   recentCountPill: {
     minWidth: ms(20),
     paddingHorizontal: ms(5),
@@ -1207,23 +1134,20 @@ const createStyles = (density: number, textScale: number) => {
     borderRadius: ms(10),
     backgroundColor: "rgba(56, 189, 248, 0.22)",
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   recentCountPillText: {
     ...Typography.caption,
     fontSize: ts(10),
-    fontWeight: "800",
-    color: asl.accentCyan,
-  },
+    fontWeight: fontWeight.emphasis,
+    color: asl.accentCyan},
   responsesTitle: {
     ...Typography.caption,
-    fontWeight: "700",
+    fontWeight: fontWeight.strong,
     color: asl.text.primary,
     textAlign: "center",
     marginBottom: Spacing.sm,
     fontSize: ts(12),
-    lineHeight: ts(16),
-  },
+    lineHeight: ts(16)},
   responseItem: {
     flexDirection: "row",
     alignItems: "center",
@@ -1235,23 +1159,19 @@ const createStyles = (density: number, textScale: number) => {
     marginBottom: Spacing.xs,
     paddingVertical: ms(6),
     paddingHorizontal: ms(8),
-    gap: ms(6),
-  },
+    gap: ms(6)},
   responseText: {
     ...Typography.caption,
     flex: 1,
     color: asl.text.primary,
-    fontWeight: "600",
+    fontWeight: fontWeight.medium,
     fontSize: ts(11),
-    lineHeight: ts(15),
-  },
+    lineHeight: ts(15)},
   responsesHint: {
     ...Typography.caption,
     color: asl.text.muted,
     textAlign: "center",
     marginTop: Spacing.xs,
     fontSize: ts(10),
-    lineHeight: ts(13),
-  },
-  });
+    lineHeight: ts(13)}});
 };

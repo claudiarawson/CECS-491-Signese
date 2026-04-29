@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View, Pressable, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { fontFamily } from "@/src/theme";
+import { fontWeight } from "@/src/theme";
 
 type Props = {
   title: string;
@@ -19,8 +19,7 @@ export function ProgressCard({
   onContinue,
   ctaLabel = "Continue",
   subtitle,
-  emoji,
-}: Props) {
+  emoji}: Props) {
   const p = Math.max(0, Math.min(100, percent));
   return (
     <View style={styles.card}>
@@ -56,8 +55,7 @@ const styles = StyleSheet.create({
     borderColor: asl.glass.border,
     backgroundColor: "rgba(255,255,255,0.08)",
     padding: 16,
-    marginTop: 8,
-  },
+    marginTop: 8},
   top: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 12 },
   emojiWrap: {
     width: 48,
@@ -65,15 +63,14 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: "rgba(0,0,0,0.3)",
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   emoji: { fontSize: 24 },
   textBlock: { flex: 1 },
-  title: { color: asl.text.primary, fontSize: 18, fontFamily: fontFamily.heading },
-  sub: { color: asl.text.muted, fontSize: 13, marginTop: 2, fontFamily: fontFamily.body },
+  title: { color: asl.text.primary, fontSize: 18, fontWeight: fontWeight.emphasis },
+  sub: { color: asl.text.muted, fontSize: 13, marginTop: 2},
   track: { height: 8, borderRadius: 4, backgroundColor: "rgba(0,0,0,0.3)", overflow: "hidden" },
   fill: { height: "100%" },
-  pctText: { color: asl.text.secondary, fontSize: 12, marginTop: 6, fontFamily: fontFamily.medium },
+  pctText: { color: asl.text.secondary, fontSize: 12, marginTop: 6, fontWeight: fontWeight.medium },
   cta: {
     marginTop: 12,
     borderRadius: 12,
@@ -81,7 +78,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(244, 114, 182, 0.4)",
     paddingVertical: 12,
-    alignItems: "center",
-  },
-  ctaText: { color: asl.text.primary, fontSize: 15, fontFamily: fontFamily.heading },
-});
+    alignItems: "center"},
+  ctaText: { color: asl.text.primary, fontSize: 15, fontWeight: fontWeight.emphasis }});
