@@ -355,7 +355,8 @@ const createStyles = (density: number, textScale: number) => {
     },
     scrollContent: {
       flexGrow: 1,
-      paddingBottom: ms(40),
+      // Keep content clear of bottom tab bar so the logout button is fully reachable.
+      paddingBottom: ms(132),
     },
     stack: {
       paddingHorizontal: Spacing.screenPadding,

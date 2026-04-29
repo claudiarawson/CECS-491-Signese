@@ -5,10 +5,11 @@ import {
   ScreenHeader,
 } from "@/src/components/layout";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { useTheme } from "@/src/contexts/ThemeContext";
+import { asl } from "@/src/theme/aslConnectTheme";
 import {
   Spacing,
   Typography,
+  fontWeight,
   getDeviceDensity,
   moderateScale,
 } from "@/src/theme";
@@ -37,12 +38,11 @@ type SettingsItem = {
 
 export default function SettingsScreen() {
   const { profile } = useAuthUser();
-  const { colors } = useTheme();
   const [query, setQuery] = useState("");
 
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const styles = createStyles(density, colors);
+  const styles = createStyles(density);
 
   const searchIconSize = moderateScale(18) * density;
   const cardIconSize = moderateScale(18) * density;
@@ -118,7 +118,7 @@ export default function SettingsScreen() {
   }, [items, query]);
 
   return (
-    <ScreenContainer backgroundColor={colors.background} contentStyle={styles.safeContent}>
+    <ScreenContainer backgroundColor={asl.gradient[0]} contentStyle={styles.safeContent}>
       <ScreenHeader
         title="Settings"
         showBackButton
@@ -137,13 +137,20 @@ export default function SettingsScreen() {
       />
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <View style={styles.heroCard}>
+          <Text style={styles.heroTitle}>Customize your experience</Text>
+          <Text style={styles.heroSubtitle}>
+            Notifications, appearance, privacy, and account preferences.
+          </Text>
+        </View>
+
         <View style={styles.searchWrap}>
-          <MaterialIcons name="search" size={searchIconSize} color={colors.subtext} />
+          <MaterialIcons name="search" size={searchIconSize} color={asl.text.muted} />
           <TextInput
             value={query}
             onChangeText={setQuery}
             placeholder="Search Settings"
-            placeholderTextColor={colors.subtext}
+            placeholderTextColor={asl.text.muted}
             style={styles.searchInput}
           />
         </View>
@@ -156,7 +163,7 @@ export default function SettingsScreen() {
               </View>
               <Text style={styles.itemLabel}>{item.label}</Text>
             </View>
-            <MaterialIcons name="chevron-right" size={chevronSize} color={colors.text} />
+            <MaterialIcons name="chevron-right" size={chevronSize} color={asl.text.secondary} />
           </Pressable>
         ))}
 
@@ -168,7 +175,7 @@ export default function SettingsScreen() {
   );
 }
 
-const createStyles = (density: number, colors: any) => {
+const createStyles = (density: number) => {
   const ms = (v: number) => moderateScale(v) * density;
 
   return StyleSheet.create({
@@ -178,24 +185,46 @@ const createStyles = (density: number, colors: any) => {
       flex: 1,
       paddingTop: Spacing.xs,
     },
+    heroCard: {
+      borderRadius: asl.radius.lg,
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+      backgroundColor: asl.glass.bg,
+      paddingHorizontal: Spacing.sm,
+      paddingVertical: ms(14),
+      marginBottom: Spacing.cardGap,
+      ...asl.shadow.card,
+    },
+    heroTitle: {
+      color: asl.text.primary,
+      fontSize: ms(18),
+      fontWeight: fontWeight.emphasis,
+    },
+    heroSubtitle: {
+      marginTop: ms(4),
+      color: asl.text.secondary,
+      fontSize: ms(13),
+      lineHeight: ms(18),
+      fontWeight: fontWeight.medium,
+    },
 
     searchWrap: {
       marginBottom: Spacing.cardGap,
       height: ms(42),
       borderRadius: ms(21),
-      backgroundColor: colors.card,
+      backgroundColor: asl.glass.bg,
       paddingHorizontal: Spacing.sm,
       flexDirection: "row",
       alignItems: "center",
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: asl.glass.border,
     },
 
     searchInput: {
       ...Typography.body,
       flex: 1,
       fontSize: ms(14),
-      color: colors.text,
+      color: asl.text.primary,
       marginLeft: 8,
     },
 
@@ -205,11 +234,11 @@ const createStyles = (density: number, colors: any) => {
       justifyContent: "space-between",
       paddingHorizontal: Spacing.sm,
       paddingVertical: ms(11),
-      backgroundColor: colors.card,
+      backgroundColor: asl.glass.bg,
       borderRadius: ms(18),
       marginBottom: Spacing.xs,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: asl.glass.border,
     },
 
     itemLeft: {
@@ -231,12 +260,12 @@ const createStyles = (density: number, colors: any) => {
       ...Typography.sectionTitle,
       fontSize: ms(16),
       fontWeight: "700",
-      color: colors.text,
+      color: asl.text.primary,
     },
 
     emptyText: {
       ...Typography.body,
-      color: colors.subtext,
+      color: asl.text.secondary,
       textAlign: "center",
       marginTop: ms(10),
     },
