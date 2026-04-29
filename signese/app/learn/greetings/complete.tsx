@@ -63,10 +63,10 @@ export default function GreetingsCompleteScreen() {
   const headerRight = (
     <>
       <Pressable onPress={() => router.push("/(tabs)/settings" as any)} hitSlop={8} style={styles.headerIcon}>
-        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+        <MaterialIcons name="settings" size={24} color="#000000" />
       </Pressable>
       <Pressable onPress={() => router.push("/(tabs)/account")} hitSlop={8} style={styles.headerIcon}>
-        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+        <MaterialIcons name="account-circle" size={26} color="#000000" />
       </Pressable>
     </>
   );
@@ -146,7 +146,7 @@ const createStyles = (ms: (v: number) => number) =>
     title: {
       fontSize: ms(22),
       fontWeight: fontWeight.emphasis,
-      color: asl.text.primary,
+      color: "#000000",
       textAlign: "center"},
     starsRow: {
       flexDirection: "row",
@@ -172,19 +172,19 @@ const createStyles = (ms: (v: number) => number) =>
     scoreLabel: {
       fontSize: ms(12),
       fontWeight: fontWeight.medium,
-      color: asl.text.secondary,
+      color: "#000000",
       marginTop: ms(6),
       textAlign: "center"},
     balanceHint: {
       fontSize: ms(13),
       fontWeight: fontWeight.medium,
-      color: asl.text.muted,
+      color: "#000000",
       marginTop: ms(10),
       textAlign: "center"},
     earnedText: {
       fontSize: ms(14),
       fontWeight: fontWeight.medium,
-      color: asl.text.secondary,
+      color: "#000000",
       textAlign: "center"},
     secondaryWrap: {
       width: "100%",
@@ -205,4 +205,4 @@ const createStyles = (ms: (v: number) => number) =>
     secondaryButtonText: {
       fontSize: ms(15),
       fontWeight: fontWeight.emphasis,
-      color: asl.text.primary}});
+      color: "#000000"}});

@@ -1,16 +1,18 @@
 import { LESSON_DEFINITIONS } from "@/src/data/lessons";
 import { LessonType } from "@/src/data/lessons/types";
-import { NUMBER_GROUPS, ALPHABET_GROUPS } from "@/src/data/lessonGroups";
 import { AppShell, LearnFlowHeader } from "@/src/components/asl";
-import { asl } from "@/src/theme/aslConnectTheme";
+import { useTheme, type ThemeColors } from "@/src/contexts/ThemeContext";
 import { router } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { LessonNode } from "@/src/features/learn/ui/LessonNode";
 import { Spacing } from "@/src/theme";
 
 export function LessonMenuScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   const handleOpenLesson = (lessonType: LessonType) => {
     if (lessonType === "numbers") {
       router.push({
@@ -38,7 +40,7 @@ export function LessonMenuScreen() {
         accessibilityLabel="Open settings"
         style={styles.headerIcon}
       >
-        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+        <MaterialIcons name="settings" size={24} color={colors.subtext} />
       </Pressable>
       <Pressable
         onPress={() => router.push("/(tabs)/account")}
@@ -46,7 +48,7 @@ export function LessonMenuScreen() {
         accessibilityLabel="Open profile"
         style={styles.headerIcon}
       >
-        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+        <MaterialIcons name="account-circle" size={26} color={colors.subtext} />
       </Pressable>
     </>
   );
@@ -70,20 +72,21 @@ export function LessonMenuScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  lead: {
-    color: asl.text.muted,
-    fontSize: 14,
-    textAlign: "center",
-    marginBottom: Spacing.md,
-    paddingHorizontal: Spacing.sm,
-  },
-  pathColumn: {
-    width: "100%",
-    maxWidth: 200,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: Spacing.lg,
-  },
-  headerIcon: { padding: 4 },
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    lead: {
+      color: colors.subtext,
+      fontSize: 14,
+      textAlign: "center",
+      marginBottom: Spacing.md,
+      paddingHorizontal: Spacing.sm,
+    },
+    pathColumn: {
+      width: "100%",
+      maxWidth: 200,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: Spacing.lg,
+    },
+    headerIcon: { padding: 4 },
+  });

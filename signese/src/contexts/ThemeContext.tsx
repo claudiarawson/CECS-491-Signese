@@ -1,5 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { lessonColors as baseLessonColors } from "@/src/theme/colors";
+
+/** Tokens used by lesson stack UI; light mode overrides text/surfaces from {@link ThemeColors}. */
+export type LessonPalette = typeof baseLessonColors;
 
 export type ThemeMode = "light" | "dark";
 
@@ -36,8 +40,8 @@ type ThemeContextType = {
 const LIGHT_COLORS: ThemeColors = {
   background: "transparent",
   card: "rgba(255,255,255,0.78)",
-  text: "#0F172A",
-  subtext: "rgba(15,23,42,0.68)",
+  text: "#000000",
+  subtext: "rgba(0,0,0,0.62)",
   border: "rgba(15,23,42,0.14)",
   primary: "#DB2777",
   accentOrange: "#EA580C",
@@ -126,4 +130,22 @@ export function useTheme() {
     throw new Error("useTheme must be used inside ThemeProvider");
   }
   return context;
+}
+
+/** Lesson stack UI: light mode uses {@link ThemeColors} body text (black); dark keeps glass-style whites. */
+export function useLessonPalette(): LessonPalette {
+  const { theme, colors } = useTheme();
+  return useMemo(() => {
+    if (theme === "light") {
+      return {
+        ...baseLessonColors,
+        textPrimary: colors.text,
+        textSecondary: colors.subtext,
+        progressBackground: "rgba(0,0,0,0.1)",
+        answerButton: colors.controlWell,
+        surface: colors.card,
+      } as unknown as LessonPalette;
+    }
+    return baseLessonColors;
+  }, [theme, colors]);
 }

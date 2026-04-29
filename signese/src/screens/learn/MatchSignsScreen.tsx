@@ -7,7 +7,7 @@ import {
 import { LessonType } from "@/src/data/lessons";
 import { AppShell, LearnFlowHeader } from "@/src/components/asl";
 import { lessonSpacing, Spacing } from "@/src/theme";
-import { lessonColors } from "@/src/theme/colors";
+import { useLessonPalette, type LessonPalette } from "@/src/contexts/ThemeContext";
 import { calculateProgress, getLessonSigns } from "../../utils/lessonHelpers";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
@@ -25,6 +25,8 @@ function shuffle<T>(items: T[]): T[] {
 }
 
 export function MatchSignsScreen() {
+  const lc = useLessonPalette();
+  const styles = useMemo(() => createStyles(lc), [lc]);
   const params = useLocalSearchParams<{ lessonId?: string; score?: string }>();
   const lessonId = (params.lessonId ?? "greetings") as LessonType;
   const score = Number(params.score ?? "0");
@@ -139,43 +141,44 @@ export function MatchSignsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  shell: {
-    flex: 1,
-    minHeight: 0,
-    paddingHorizontal: Spacing.screenPadding,
-  },
-  scroll: { flex: 1 },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: lessonSpacing.sm,
-  },
-  columns: {
-    flexDirection: "row",
-    columnGap: lessonSpacing.sm,
-    marginTop: lessonSpacing.md,
-  },
-  column: {
-    flex: 1,
-    rowGap: lessonSpacing.sm,
-  },
-  feedback: {
-    textAlign: "center",
-    marginTop: lessonSpacing.md,
-    fontSize: 16,
-    lineHeight: 22,
-    color: lessonColors.textSecondary,
-  },
-  correct: {
-    color: lessonColors.success,
-  },
-  incorrect: {
-    color: lessonColors.error,
-  },
-  footer: {
-    flexShrink: 0,
-    alignItems: "center",
-    paddingBottom: lessonSpacing.lg,
-    paddingTop: lessonSpacing.sm,
-  },
-});
+const createStyles = (lc: LessonPalette) =>
+  StyleSheet.create({
+    shell: {
+      flex: 1,
+      minHeight: 0,
+      paddingHorizontal: Spacing.screenPadding,
+    },
+    scroll: { flex: 1 },
+    scrollContent: {
+      flexGrow: 1,
+      paddingBottom: lessonSpacing.sm,
+    },
+    columns: {
+      flexDirection: "row",
+      columnGap: lessonSpacing.sm,
+      marginTop: lessonSpacing.md,
+    },
+    column: {
+      flex: 1,
+      rowGap: lessonSpacing.sm,
+    },
+    feedback: {
+      textAlign: "center",
+      marginTop: lessonSpacing.md,
+      fontSize: 16,
+      lineHeight: 22,
+      color: lc.textSecondary,
+    },
+    correct: {
+      color: lc.success,
+    },
+    incorrect: {
+      color: lc.error,
+    },
+    footer: {
+      flexShrink: 0,
+      alignItems: "center",
+      paddingBottom: lessonSpacing.lg,
+      paddingTop: lessonSpacing.sm,
+    },
+  });

@@ -1,5 +1,6 @@
-import { lessonColors, lessonSpacing, Radius } from "@/src/theme";
-import React from "react";
+import { lessonSpacing, Radius } from "@/src/theme";
+import { useLessonPalette, type LessonPalette } from "@/src/contexts/ThemeContext";
+import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 type LessonProgressBarProps = {
@@ -8,6 +9,8 @@ type LessonProgressBarProps = {
 };
 
 export function LessonProgressBar({ currentStep, totalSteps }: LessonProgressBarProps) {
+  const lc = useLessonPalette();
+  const styles = useMemo(() => createStyles(lc), [lc]);
   const safeTotal = Math.max(1, totalSteps);
   const progress = Math.max(0, Math.min(1, currentStep / safeTotal));
 
@@ -21,26 +24,27 @@ export function LessonProgressBar({ currentStep, totalSteps }: LessonProgressBar
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: lessonSpacing.md,
-  },
-  track: {
-    height: 8,
-    borderRadius: Radius.lg,
-    backgroundColor: lessonColors.progressBackground,
-    overflow: "hidden",
-  },
-  fill: {
-    height: "100%",
-    borderRadius: Radius.lg,
-    backgroundColor: lessonColors.progressFill,
-  },
-  label: {
-    marginTop: lessonSpacing.xs,
-    textAlign: "right",
-    color: lessonColors.textSecondary,
-    fontSize: 11,
-    fontWeight: "600",
-  },
-});
+const createStyles = (lc: LessonPalette) =>
+  StyleSheet.create({
+    container: {
+      marginBottom: lessonSpacing.md,
+    },
+    track: {
+      height: 8,
+      borderRadius: Radius.lg,
+      backgroundColor: lc.progressBackground,
+      overflow: "hidden",
+    },
+    fill: {
+      height: "100%",
+      borderRadius: Radius.lg,
+      backgroundColor: lc.progressFill,
+    },
+    label: {
+      marginTop: lessonSpacing.xs,
+      textAlign: "right",
+      color: lc.textSecondary,
+      fontSize: 11,
+      fontWeight: "600",
+    },
+  });

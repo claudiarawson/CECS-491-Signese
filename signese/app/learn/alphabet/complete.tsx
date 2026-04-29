@@ -59,10 +59,10 @@ export default function AlphabetCompleteScreen() {
   const headerRight = (
     <>
       <Pressable onPress={() => router.push("/(tabs)/settings" as any)} hitSlop={8} style={styles.headerIcon}>
-        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+        <MaterialIcons name="settings" size={24} color="#000000" />
       </Pressable>
       <Pressable onPress={() => router.push("/(tabs)/account")} hitSlop={8} style={styles.headerIcon}>
-        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+        <MaterialIcons name="account-circle" size={26} color="#000000" />
       </Pressable>
     </>
   );
@@ -128,7 +128,7 @@ const createStyles = (ms: (n: number) => number) =>
     completeText: {
       fontSize: ms(28),
       fontWeight: fontWeight.emphasis,
-      color: asl.text.primary,
+      color: "#000000",
       textAlign: "center"},
     starsRow: {
       marginTop: ms(18),
@@ -153,12 +153,12 @@ const createStyles = (ms: (n: number) => number) =>
       marginTop: ms(8),
       fontSize: ms(20),
       fontWeight: fontWeight.medium,
-      color: asl.text.secondary},
+      color: "#000000"},
     totalStarsText: {
       marginTop: ms(12),
       fontSize: ms(15),
       lineHeight: ms(21),
-      color: asl.text.muted},
+      color: "#000000"},
     unlockCard: {
       marginTop: ms(20),
       width: "100%",
@@ -173,13 +173,13 @@ const createStyles = (ms: (n: number) => number) =>
       fontSize: ms(18),
       lineHeight: ms(24),
       fontWeight: fontWeight.medium,
-      color: asl.text.primary,
+      color: "#000000",
       textAlign: "center"},
     unlockSubtitle: {
       marginTop: ms(8),
       fontSize: ms(15),
       lineHeight: ms(21),
-      color: asl.text.muted,
+      color: "#000000",
       textAlign: "center"},
     unlockSuccess: {
       marginTop: ms(8),

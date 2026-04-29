@@ -1,6 +1,7 @@
-import { lessonColors, lessonTypography } from "@/src/theme";
+import { lessonTypography } from "@/src/theme";
 import { fontWeight } from "@/src/theme";
-import React from "react";
+import { useLessonPalette, useTheme, type LessonPalette } from "@/src/contexts/ThemeContext";
+import React, { useMemo } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
 type QuizState = "default" | "selected" | "correct" | "incorrect";
@@ -16,7 +17,12 @@ export function QuizAnswerButton({
   label,
   state = "default",
   onPress,
-  disabled = false}: QuizAnswerButtonProps) {
+  disabled = false,
+}: QuizAnswerButtonProps) {
+  const lc = useLessonPalette();
+  const { theme, colors } = useTheme();
+  const styles = useMemo(() => createStyles(lc, theme, colors), [lc, theme, colors]);
+
   return (
     <Pressable
       onPress={onPress}
@@ -35,31 +41,44 @@ export function QuizAnswerButton({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    width: 138,
-    minHeight: 60,
-    borderRadius: 20,
-    backgroundColor: lessonColors.answerButton,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.14)"},
-  selected: {
-    borderColor: "rgba(34, 211, 238, 0.65)",
-    backgroundColor: "rgba(34, 211, 238, 0.15)"},
-  correct: {
-    backgroundColor: "rgba(74, 222, 128, 0.2)",
-    borderColor: lessonColors.success},
-  incorrect: {
-    backgroundColor: "rgba(248, 113, 113, 0.18)",
-    borderColor: lessonColors.error},
-  pressed: {
-    opacity: 0.88},
-  disabled: {
-    opacity: 0.82},
-  label: {
-    ...lessonTypography.button,
-    color: lessonColors.textPrimary,
-    textAlign: "center",
-    fontWeight: fontWeight.medium}});
+const createStyles = (
+  lc: LessonPalette,
+  theme: "light" | "dark",
+  colors: { border: string }
+) =>
+  StyleSheet.create({
+    base: {
+      width: 138,
+      minHeight: 60,
+      borderRadius: 20,
+      backgroundColor: lc.answerButton,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 1,
+      borderColor: theme === "light" ? colors.border : "rgba(255,255,255,0.14)",
+    },
+    selected: {
+      borderColor: "rgba(34, 211, 238, 0.65)",
+      backgroundColor: "rgba(34, 211, 238, 0.15)",
+    },
+    correct: {
+      backgroundColor: "rgba(74, 222, 128, 0.2)",
+      borderColor: lc.success,
+    },
+    incorrect: {
+      backgroundColor: "rgba(248, 113, 113, 0.18)",
+      borderColor: lc.error,
+    },
+    pressed: {
+      opacity: 0.88,
+    },
+    disabled: {
+      opacity: 0.82,
+    },
+    label: {
+      ...lessonTypography.button,
+      color: lc.textPrimary,
+      textAlign: "center",
+      fontWeight: fontWeight.medium,
+    },
+  });

@@ -108,7 +108,7 @@ export default function ChangePasswordScreen() {
                       if (err) setErr("");
                     }}
                     placeholder="••••••••"
-                    placeholderTextColor={asl.text.muted}
+                    placeholderTextColor="rgba(0,0,0,0.45)"
                     style={styles.textInput}
                     secureTextEntry
                     autoCapitalize="none"
@@ -125,7 +125,7 @@ export default function ChangePasswordScreen() {
                       if (err) setErr("");
                     }}
                     placeholder="••••••••"
-                    placeholderTextColor={asl.text.muted}
+                    placeholderTextColor="rgba(0,0,0,0.45)"
                     style={styles.textInput}
                     secureTextEntry
                     autoCapitalize="none"
@@ -142,7 +142,7 @@ export default function ChangePasswordScreen() {
                       if (err) setErr("");
                     }}
                     placeholder="••••••••"
-                    placeholderTextColor={asl.text.muted}
+                    placeholderTextColor="rgba(0,0,0,0.45)"
                     style={styles.textInput}
                     secureTextEntry
                     autoCapitalize="none"

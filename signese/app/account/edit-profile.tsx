@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -11,7 +11,6 @@ import {
 import { router, useFocusEffect } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ScreenContainer } from "@/src/components/layout";
-import { asl } from "@/src/theme/aslConnectTheme";
 import { GlassCard, GradientBackground } from "@/src/components/asl";
 import { Typography, fontWeight, Spacing } from "@/src/theme";
 
@@ -25,10 +24,9 @@ import {
   selectCurrentUserProfileIcon,
   unlockCurrentUserProfileIcon,
 } from "@/src/features/account/profile.services";
-import {
-  ensureStarsDocument,
-} from "@/src/features/gamification/stars.services";
+import { ensureStarsDocument } from "@/src/features/gamification/stars.services";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import { type ThemeColors, useTheme } from "@/src/contexts/ThemeContext";
 
 type ScreenState = {
   loading: boolean;
@@ -37,61 +35,29 @@ type ScreenState = {
   unlockedIconIds: string[];
 };
 
-function EditProfileHeader() {
+function EditProfileHeader({ styles }: { styles: ReturnType<typeof createStyles> }) {
+  const { colors } = useTheme();
   return (
-    <View style={headerStyles.row}>
+    <View style={styles.headerRow}>
       <Pressable
         onPress={() => router.back()}
-        style={({ pressed }) => [headerStyles.iconBtn, pressed && { opacity: 0.85 }]}
+        style={({ pressed }) => [styles.headerIconBtn, pressed && { opacity: 0.85 }]}
         accessibilityRole="button"
         accessibilityLabel="Go back"
       >
-        <MaterialIcons name="arrow-back" size={22} color={asl.text.primary} />
+        <MaterialIcons name="arrow-back" size={22} color={colors.text} />
       </Pressable>
-      <Text style={headerStyles.title} numberOfLines={1}>
+      <Text style={styles.headerTitle} numberOfLines={1}>
         Edit Profile
       </Text>
-      <View style={headerStyles.iconBtnPlaceholder} />
+      <View style={styles.headerIconPlaceholder} />
     </View>
   );
 }
 
-const headerStyles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: Spacing.screenPadding,
-    minHeight: 52,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: asl.glass.border,
-    backgroundColor: "rgba(8,2,10,0.2)",
-  },
-  title: {
-    flex: 1,
-    textAlign: "center",
-    color: asl.text.primary,
-    fontSize: 20,
-    lineHeight: 26,
-    fontWeight: fontWeight.emphasis,
-  },
-  iconBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: asl.glass.bg,
-    borderWidth: 1,
-    borderColor: asl.glass.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconBtnPlaceholder: {
-    width: 40,
-    height: 40,
-  },
-});
-
 export default function EditProfileScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { profile, refreshProfile } = useAuthUser();
   const liveStars = profile?.stars?.balance ?? 0;
 
@@ -188,11 +154,11 @@ export default function EditProfileScreen() {
           contentStyle={styles.screenContent}
           contentPadded={false}
         >
-          <EditProfileHeader />
-        <View style={styles.centered}>
-          <ActivityIndicator size="large" color={asl.accentCyan} />
-          <Text style={styles.loadingText}>Loading profile icons...</Text>
-        </View>
+          <EditProfileHeader styles={styles} />
+          <View style={styles.centered}>
+            <ActivityIndicator size="large" color={colors.accentBlue} />
+            <Text style={styles.loadingText}>Loading profile icons...</Text>
+          </View>
         </ScreenContainer>
       </GradientBackground>
     );
@@ -206,7 +172,7 @@ export default function EditProfileScreen() {
         contentStyle={styles.screenContent}
         contentPadded={false}
       >
-        <EditProfileHeader />
+        <EditProfileHeader styles={styles} />
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.stack}>
             <GlassCard style={styles.cardOuter} contentStyle={styles.cardInnerFlush}>
@@ -256,11 +222,11 @@ export default function EditProfileScreen() {
                       </View>
 
                       {isBusy ? (
-                        <ActivityIndicator color={asl.accentCyan} />
+                        <ActivityIndicator color={colors.accentBlue} />
                       ) : isSelected ? (
-                        <MaterialIcons name="check-circle" size={22} color={asl.accentCyan} />
+                        <MaterialIcons name="check-circle" size={22} color={colors.accentBlue} />
                       ) : (
-                        <MaterialIcons name="chevron-right" size={22} color={asl.text.muted} />
+                        <MaterialIcons name="chevron-right" size={22} color={colors.subtext} />
                       )}
                     </Pressable>
                     {index < PROFILE_ICONS.length - 1 ? <View style={styles.rowDivider} /> : null}
@@ -268,7 +234,6 @@ export default function EditProfileScreen() {
                 );
               })}
             </GlassCard>
-
           </View>
         </ScrollView>
       </ScreenContainer>
@@ -276,138 +241,166 @@ export default function EditProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  screenContent: {
-    flex: 1,
-    backgroundColor: "transparent",
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: 40,
-  },
-  stack: {
-    paddingHorizontal: Spacing.screenPadding,
-    paddingTop: 16,
-    gap: 14,
-  },
-  cardOuter: {
-    marginBottom: 0,
-  },
-  cardInnerFlush: {
-    padding: 16,
-  },
-  cardInnerTight: {
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-  },
-  centered: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 24,
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: asl.text.secondary,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: asl.text.primary,
-  },
-  profileRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-  },
-  heroAvatarWrap: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: "rgba(244, 114, 182, 0.18)",
-    borderWidth: 2,
-    borderColor: "rgba(244, 114, 182, 0.4)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  profileTexts: {
-    flex: 1,
-    minWidth: 0,
-  },
-  heroEmoji: {
-    fontSize: 36,
-  },
-  heroLabel: {
-    ...Typography.sectionTitle,
-    fontSize: 20,
-    lineHeight: 26,
-    fontWeight: fontWeight.emphasis,
-    color: asl.text.primary,
-  },
-  starsText: {
-    ...Typography.caption,
-    marginTop: 6,
-    fontSize: 14,
-    lineHeight: 20,
-    color: asl.text.secondary,
-  },
-  sectionKicker: {
-    ...Typography.caption,
-    color: asl.text.muted,
-    fontWeight: fontWeight.strong,
-    fontSize: 12,
-    letterSpacing: 1,
-    textTransform: "uppercase",
-    marginBottom: 10,
-  },
-  iconRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    minHeight: 56,
-    paddingVertical: 10,
-    gap: 12,
-  },
-  iconRowSelected: {
-    backgroundColor: "rgba(34, 211, 238, 0.06)",
-    borderRadius: 12,
-    paddingHorizontal: 8,
-  },
-  iconRowLocked: {
-    opacity: 0.86,
-  },
-  iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: "rgba(34, 211, 238, 0.12)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconEmoji: {
-    fontSize: 24,
-  },
-  iconTextCol: {
-    flex: 1,
-    minWidth: 0,
-  },
-  iconLabel: {
-    ...Typography.body,
-    fontSize: 16,
-    lineHeight: 22,
-    fontWeight: fontWeight.medium,
-    color: asl.text.primary,
-  },
-  statusText: {
-    ...Typography.caption,
-    marginTop: 2,
-    fontSize: 13,
-    lineHeight: 18,
-    color: asl.text.muted,
-  },
-  rowDivider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: asl.glass.border,
-    marginLeft: 52,
-  },
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    screenContent: {
+      flex: 1,
+      backgroundColor: "transparent",
+    },
+    headerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: Spacing.screenPadding,
+      minHeight: 52,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: colors.border,
+      backgroundColor: colors.headerScrim,
+    },
+    headerTitle: {
+      flex: 1,
+      textAlign: "center",
+      color: colors.text,
+      fontSize: 20,
+      lineHeight: 26,
+      fontWeight: fontWeight.emphasis,
+    },
+    headerIconBtn: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headerIconPlaceholder: {
+      width: 40,
+      height: 40,
+    },
+    scrollContent: {
+      flexGrow: 1,
+      paddingBottom: 40,
+    },
+    stack: {
+      paddingHorizontal: Spacing.screenPadding,
+      paddingTop: 16,
+      gap: 14,
+    },
+    cardOuter: {
+      marginBottom: 0,
+    },
+    cardInnerFlush: {
+      padding: 16,
+    },
+    cardInnerTight: {
+      paddingVertical: 6,
+      paddingHorizontal: 16,
+    },
+    centered: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 24,
+    },
+    loadingText: {
+      marginTop: 12,
+      fontSize: 16,
+      color: colors.subtext,
+    },
+    profileRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 14,
+    },
+    heroAvatarWrap: {
+      width: 72,
+      height: 72,
+      borderRadius: 36,
+      backgroundColor: `${colors.primary}2E`,
+      borderWidth: 2,
+      borderColor: `${colors.primary}66`,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    profileTexts: {
+      flex: 1,
+      minWidth: 0,
+    },
+    heroEmoji: {
+      fontSize: 36,
+    },
+    heroLabel: {
+      ...Typography.sectionTitle,
+      fontSize: 20,
+      lineHeight: 26,
+      fontWeight: fontWeight.emphasis,
+      color: colors.text,
+    },
+    starsText: {
+      ...Typography.caption,
+      marginTop: 6,
+      fontSize: 14,
+      lineHeight: 20,
+      color: colors.subtext,
+    },
+    sectionKicker: {
+      ...Typography.caption,
+      color: colors.subtext,
+      fontWeight: fontWeight.strong,
+      fontSize: 12,
+      letterSpacing: 1,
+      textTransform: "uppercase",
+      marginBottom: 10,
+    },
+    iconRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      minHeight: 56,
+      paddingVertical: 10,
+      gap: 12,
+    },
+    iconRowSelected: {
+      backgroundColor: `${colors.accentBlue}0F`,
+      borderRadius: 12,
+      paddingHorizontal: 8,
+    },
+    iconRowLocked: {
+      opacity: 0.86,
+    },
+    iconWrap: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      backgroundColor: `${colors.accentBlue}1F`,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    iconEmoji: {
+      fontSize: 24,
+    },
+    iconTextCol: {
+      flex: 1,
+      minWidth: 0,
+    },
+    iconLabel: {
+      ...Typography.body,
+      fontSize: 16,
+      lineHeight: 22,
+      fontWeight: fontWeight.medium,
+      color: colors.text,
+    },
+    statusText: {
+      ...Typography.caption,
+      marginTop: 2,
+      fontSize: 13,
+      lineHeight: 18,
+      color: colors.subtext,
+    },
+    rowDivider: {
+      height: StyleSheet.hairlineWidth,
+      backgroundColor: colors.border,
+      marginLeft: 52,
+    },
+  });

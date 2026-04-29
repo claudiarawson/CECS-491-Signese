@@ -8,7 +8,7 @@ import {
 import { LessonType } from "@/src/data/lessons";
 import { AppShell, LearnFlowHeader } from "@/src/components/asl";
 import { lessonSpacing, Spacing } from "@/src/theme";
-import { lessonColors } from "@/src/theme/colors";
+import { useLessonPalette, type LessonPalette } from "@/src/contexts/ThemeContext";
 import {
   calculateProgress,
   getNextSign,
@@ -20,6 +20,8 @@ import React, { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export function TypeAnswerScreen() {
+  const lc = useLessonPalette();
+  const styles = useMemo(() => createStyles(lc), [lc]);
   const params = useLocalSearchParams<{ lessonId?: string; order?: string; score?: string }>();
   const lessonId = (params.lessonId ?? "greetings") as LessonType;
   const order = Number(params.order ?? "1");
@@ -132,49 +134,50 @@ export function TypeAnswerScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  shell: {
-    flex: 1,
-    minHeight: 0,
-    paddingHorizontal: Spacing.screenPadding,
-  },
-  scroll: { flex: 1 },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: lessonSpacing.sm,
-  },
-  inputWrap: {
-    marginTop: lessonSpacing.md,
-  },
-  feedbackLine: {
-    marginTop: lessonSpacing.md,
-    textAlign: "center",
-    fontSize: 16,
-    lineHeight: 22,
-    color: lessonColors.textSecondary,
-  },
-  correct: {
-    color: lessonColors.success,
-  },
-  incorrect: {
-    color: lessonColors.error,
-  },
-  footer: {
-    flexShrink: 0,
-    alignItems: "center",
-    paddingBottom: lessonSpacing.lg,
-    paddingTop: lessonSpacing.sm,
-  },
-  emptyWrap: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: Spacing.screenPadding,
-    minHeight: 200,
-  },
-  emptyText: {
-    color: lessonColors.textSecondary,
-    fontSize: 16,
-    textAlign: "center",
-  },
-});
+const createStyles = (lc: LessonPalette) =>
+  StyleSheet.create({
+    shell: {
+      flex: 1,
+      minHeight: 0,
+      paddingHorizontal: Spacing.screenPadding,
+    },
+    scroll: { flex: 1 },
+    scrollContent: {
+      flexGrow: 1,
+      paddingBottom: lessonSpacing.sm,
+    },
+    inputWrap: {
+      marginTop: lessonSpacing.md,
+    },
+    feedbackLine: {
+      marginTop: lessonSpacing.md,
+      textAlign: "center",
+      fontSize: 16,
+      lineHeight: 22,
+      color: lc.textSecondary,
+    },
+    correct: {
+      color: lc.success,
+    },
+    incorrect: {
+      color: lc.error,
+    },
+    footer: {
+      flexShrink: 0,
+      alignItems: "center",
+      paddingBottom: lessonSpacing.lg,
+      paddingTop: lessonSpacing.sm,
+    },
+    emptyWrap: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingHorizontal: Spacing.screenPadding,
+      minHeight: 200,
+    },
+    emptyText: {
+      color: lc.textSecondary,
+      fontSize: 16,
+      textAlign: "center",
+    },
+  });

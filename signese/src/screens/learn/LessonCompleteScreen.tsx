@@ -6,13 +6,15 @@ import {
 import { LESSONS_BY_TYPE, LessonType } from "@/src/data/lessons";
 import { AppShell, LearnFlowHeader } from "@/src/components/asl";
 import { lessonSpacing, Spacing } from "@/src/theme";
-import { lessonColors } from "@/src/theme/colors";
+import { useLessonPalette, type LessonPalette } from "@/src/contexts/ThemeContext";
 import { calculateLessonStars } from "../../utils/lessonHelpers";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export function LessonCompleteScreen() {
+  const lc = useLessonPalette();
+  const styles = useMemo(() => createStyles(lc), [lc]);
   const params = useLocalSearchParams<{
     lessonId?: string;
     score?: string;
@@ -76,32 +78,33 @@ export function LessonCompleteScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  shell: {
-    flex: 1,
-    minHeight: 0,
-    paddingHorizontal: Spacing.screenPadding,
-  },
-  scroll: { flex: 1 },
-  scrollContent: {
-    paddingTop: lessonSpacing.sm,
-    paddingBottom: lessonSpacing.sm,
-    flexGrow: 1,
-  },
-  bonusWrap: {
-    marginTop: lessonSpacing.lg,
-    rowGap: lessonSpacing.sm,
-  },
-  bonusText: {
-    fontSize: 16,
-    lineHeight: 22,
-    color: lessonColors.textSecondary,
-    textAlign: "center",
-  },
-  footer: {
-    flexShrink: 0,
-    alignItems: "center",
-    paddingBottom: lessonSpacing.lg,
-    paddingTop: lessonSpacing.sm,
-  },
-});
+const createStyles = (lc: LessonPalette) =>
+  StyleSheet.create({
+    shell: {
+      flex: 1,
+      minHeight: 0,
+      paddingHorizontal: Spacing.screenPadding,
+    },
+    scroll: { flex: 1 },
+    scrollContent: {
+      paddingTop: lessonSpacing.sm,
+      paddingBottom: lessonSpacing.sm,
+      flexGrow: 1,
+    },
+    bonusWrap: {
+      marginTop: lessonSpacing.lg,
+      rowGap: lessonSpacing.sm,
+    },
+    bonusText: {
+      fontSize: 16,
+      lineHeight: 22,
+      color: lc.textSecondary,
+      textAlign: "center",
+    },
+    footer: {
+      flexShrink: 0,
+      alignItems: "center",
+      paddingBottom: lessonSpacing.lg,
+      paddingTop: lessonSpacing.sm,
+    },
+  });

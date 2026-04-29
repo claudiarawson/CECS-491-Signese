@@ -6,7 +6,7 @@ import { router } from "expo-router";
 import { AppShell, LearnFlowHeader } from "@/src/components/asl";
 import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { lessonColors } from "@/src/theme/colors";
+import { useLessonPalette, type LessonPalette } from "@/src/contexts/ThemeContext";
 import {
   fontWeight,
   getDeviceDensity,
@@ -81,15 +81,16 @@ export default function GreetingsLearnScreen() {
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const ms = useMemo(() => (v: number) => moderateScale(v) * density, [density]);
-  const styles = useMemo(() => createStyles(ms), [ms]);
+  const lc = useLessonPalette();
+  const styles = useMemo(() => createStyles(ms, lc), [ms, lc]);
 
   const headerRight = (
     <>
       <Pressable onPress={() => router.push("/(tabs)/settings" as any)} hitSlop={8} style={styles.headerIcon}>
-        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+        <MaterialIcons name="settings" size={24} color="#000000" />
       </Pressable>
       <Pressable onPress={() => router.push("/(tabs)/account")} hitSlop={8} style={styles.headerIcon}>
-        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+        <MaterialIcons name="account-circle" size={26} color="#000000" />
       </Pressable>
     </>
   );
@@ -228,23 +229,23 @@ export default function GreetingsLearnScreen() {
 
   // ── Tile border/bg helpers ──────────────────────────────────────────────────
   const gifTileStyle = (state: TileState) => {
-    if (state === "selected") return { borderColor: lessonColors.progressFill, backgroundColor: "rgba(34,211,238,0.14)" };
-    if (state === "correct") return { borderColor: lessonColors.success, backgroundColor: "rgba(74,222,128,0.14)" };
-    if (state === "wrong") return { borderColor: lessonColors.error, backgroundColor: "rgba(252,165,165,0.14)" };
+    if (state === "selected") return { borderColor: lc.progressFill, backgroundColor: "rgba(34,211,238,0.14)" };
+    if (state === "correct") return { borderColor: lc.success, backgroundColor: "rgba(74,222,128,0.14)" };
+    if (state === "wrong") return { borderColor: lc.error, backgroundColor: "rgba(252,165,165,0.14)" };
     return { borderColor: asl.glass.border, backgroundColor: "rgba(255,255,255,0.06)" };
   };
 
   const wordTileStyle = (state: TileState) => {
     if (state === "selected") return { borderColor: asl.linkPink, backgroundColor: "rgba(236,72,153,0.14)" };
-    if (state === "correct") return { borderColor: lessonColors.success, backgroundColor: "rgba(74,222,128,0.14)" };
-    if (state === "wrong") return { borderColor: lessonColors.error, backgroundColor: "rgba(252,165,165,0.14)" };
+    if (state === "correct") return { borderColor: lc.success, backgroundColor: "rgba(74,222,128,0.14)" };
+    if (state === "wrong") return { borderColor: lc.error, backgroundColor: "rgba(252,165,165,0.14)" };
     return { borderColor: asl.glass.border, backgroundColor: "rgba(255,255,255,0.06)" };
   };
 
   const wordTileTextColor = (state: TileState) => {
-    if (state === "correct") return lessonColors.success;
-    if (state === "wrong") return lessonColors.error;
-    return asl.text.primary;
+    if (state === "correct") return lc.success;
+    if (state === "wrong") return lc.error;
+    return "#000000";
   };
 
   // ── Layout ──────────────────────────────────────────────────────────────────
@@ -287,6 +288,8 @@ export default function GreetingsLearnScreen() {
               onWordTap={handleWordTap}
               feedbackMsg={feedbackMsg}
               feedbackCorrect={feedbackCorrect}
+              feedbackSuccessColor={lc.success}
+              feedbackErrorColor={lc.error}
               gifTileStyle={gifTileStyle}
               wordTileStyle={wordTileStyle}
               wordTileTextColor={wordTileTextColor}
@@ -331,6 +334,8 @@ function MatchCard({
   onWordTap,
   feedbackMsg,
   feedbackCorrect,
+  feedbackSuccessColor,
+  feedbackErrorColor,
   gifTileStyle,
   wordTileStyle,
   wordTileTextColor,
@@ -342,6 +347,8 @@ function MatchCard({
   onWordTap: (id: string) => void;
   feedbackMsg: string | null;
   feedbackCorrect: boolean;
+  feedbackSuccessColor: string;
+  feedbackErrorColor: string;
   gifTileStyle: (s: TileState) => { borderColor: string; backgroundColor: string };
   wordTileStyle: (s: TileState) => { borderColor: string; backgroundColor: string };
   wordTileTextColor: (s: TileState) => string;
@@ -407,7 +414,7 @@ function MatchCard({
             <Text
               style={[
                 styles.feedbackText,
-                { color: feedbackCorrect ? lessonColors.success : lessonColors.error },
+                { color: feedbackCorrect ? feedbackSuccessColor : feedbackErrorColor },
               ]}
             >
               {feedbackMsg}
@@ -419,7 +426,7 @@ function MatchCard({
   );
 }
 
-const createStyles = (ms: (v: number) => number) =>
+const createStyles = (ms: (v: number) => number, lc: LessonPalette) =>
   StyleSheet.create({
     shell: {
       flex: 1,
@@ -437,17 +444,17 @@ const createStyles = (ms: (v: number) => number) =>
     progressLabel: {
       fontSize: ms(12),
       fontWeight: fontWeight.medium,
-      color: asl.text.secondary},
+      color: "#000000"},
     progressTrack: {
       height: ms(10),
       borderRadius: ms(99),
-      backgroundColor: lessonColors.progressBackground,
+      backgroundColor: lc.progressBackground,
       overflow: "hidden",
       marginBottom: ms(12)},
     progressFill: {
       height: "100%",
       borderRadius: ms(99),
-      backgroundColor: lessonColors.progressFill},
+      backgroundColor: lc.progressFill},
     cardWrapper: {
       flex: 1,
       minHeight: 0},
@@ -477,22 +484,22 @@ const createStyles = (ms: (v: number) => number) =>
       textAlign: "center",
       fontSize: ms(13),
       fontWeight: fontWeight.medium,
-      color: asl.text.muted},
+      color: "#000000"},
     signWord: {
       textAlign: "center",
       fontSize: ms(22),
       fontWeight: fontWeight.emphasis,
-      color: asl.text.primary,
+      color: "#000000",
       marginBottom: ms(6)},
     matchTitle: {
       fontSize: ms(16),
       fontWeight: fontWeight.emphasis,
-      color: asl.text.primary,
+      color: "#000000",
       textAlign: "center"},
     matchScore: {
       fontSize: ms(12),
       fontWeight: fontWeight.medium,
-      color: asl.text.secondary,
+      color: "#000000",
       textAlign: "center",
       marginBottom: ms(10)},
     matchGrid: {
@@ -521,7 +528,7 @@ const createStyles = (ms: (v: number) => number) =>
       fontSize: ms(12),
       fontWeight: fontWeight.medium,
       textAlign: "center",
-      color: asl.text.primary},
+      color: "#000000"},
     tileDisabled: {
       opacity: 0.92},
     feedbackRow: {

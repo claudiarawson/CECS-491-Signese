@@ -5,7 +5,7 @@ import { router } from "expo-router";
 import { AppShell, LearnFlowHeader } from "@/src/components/asl";
 import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { lessonColors } from "@/src/theme/colors";
+import { useLessonPalette, useTheme, type LessonPalette, type ThemeColors } from "@/src/contexts/ThemeContext";
 import {
   fontWeight,
   getDeviceDensity,
@@ -30,10 +30,12 @@ function buildChoices(correctAnswer: string) {
 }
 
 export default function AlphabetQuizScreen() {
+  const { colors } = useTheme();
+  const lc = useLessonPalette();
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const ms = useMemo(() => (v: number) => moderateScale(v) * density, [density]);
-  const styles = useMemo(() => createStyles(ms), [ms]);
+  const styles = useMemo(() => createStyles(ms, colors, lc), [ms, colors, lc]);
 
   const questions = useMemo(() => shuffleArray(ALPHABET_LEARN_ITEMS).slice(0, 10), []);
 
@@ -91,10 +93,10 @@ export default function AlphabetQuizScreen() {
   const headerRight = (
     <>
       <Pressable onPress={() => router.push("/(tabs)/settings" as any)} hitSlop={8} style={styles.headerIcon}>
-        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+        <MaterialIcons name="settings" size={24} color={colors.subtext} />
       </Pressable>
       <Pressable onPress={() => router.push("/(tabs)/account")} hitSlop={8} style={styles.headerIcon}>
-        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+        <MaterialIcons name="account-circle" size={26} color={colors.subtext} />
       </Pressable>
     </>
   );
@@ -157,7 +159,7 @@ export default function AlphabetQuizScreen() {
   );
 }
 
-const createStyles = (ms: (n: number) => number) =>
+const createStyles = (ms: (n: number) => number, colors: ThemeColors, lc: LessonPalette) =>
   StyleSheet.create({
     inner: {
       flex: 1,
@@ -177,29 +179,29 @@ const createStyles = (ms: (n: number) => number) =>
     progressLabel: {
       fontSize: ms(12),
       fontWeight: fontWeight.medium,
-      color: asl.text.secondary},
+      color: colors.subtext},
     progressCount: {
       fontSize: ms(12),
       fontWeight: fontWeight.medium,
-      color: asl.text.secondary},
+      color: colors.subtext},
     progressTrack: {
       width: "100%",
       height: ms(10),
       borderRadius: ms(99),
-      backgroundColor: lessonColors.progressBackground,
+      backgroundColor: lc.progressBackground,
       marginTop: ms(12),
       overflow: "hidden"},
     progressFill: {
       height: "100%",
-      backgroundColor: lessonColors.progressFill,
+      backgroundColor: lc.progressFill,
       borderRadius: ms(99)},
     card: {
       marginTop: ms(20),
       width: "100%",
-      backgroundColor: asl.glass.bg,
+      backgroundColor: colors.card,
       borderRadius: ms(26),
       borderWidth: StyleSheet.hairlineWidth + 1,
-      borderColor: asl.glass.border,
+      borderColor: colors.border,
       paddingHorizontal: ms(18),
       paddingVertical: ms(22),
       alignItems: "center",
@@ -208,7 +210,7 @@ const createStyles = (ms: (n: number) => number) =>
     promptText: {
       fontSize: ms(18),
       lineHeight: ms(24),
-      color: asl.text.primary,
+      color: colors.text,
       textAlign: "center",
       fontWeight: fontWeight.medium},
     promptImage: {
@@ -219,7 +221,7 @@ const createStyles = (ms: (n: number) => number) =>
       borderRadius: ms(14)},
     hintMuted: {
       fontSize: ms(13),
-      color: asl.text.muted},
+      color: colors.subtext},
     choicesContainer: {
       marginTop: ms(22),
       width: "100%",
@@ -227,26 +229,26 @@ const createStyles = (ms: (n: number) => number) =>
     choiceButton: {
       minHeight: ms(54),
       borderRadius: ms(16),
-      backgroundColor: "rgba(255,255,255,0.06)",
+      backgroundColor: colors.controlWell,
       borderWidth: 1,
-      borderColor: asl.glass.border,
+      borderColor: colors.border,
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: ms(14)},
     choiceButtonSelected: {
-      borderColor: lessonColors.progressFill,
+      borderColor: lc.progressFill,
       backgroundColor: "rgba(34,211,238,0.14)"},
     choiceText: {
       fontSize: ms(22),
       fontWeight: fontWeight.emphasis,
-      color: asl.text.primary},
+      color: colors.text},
     choiceTextSelected: {
-      color: lessonColors.progressFill},
+      color: lc.progressFill},
     feedbackText: {
       marginTop: ms(14),
       textAlign: "center",
       fontSize: ms(16),
       marginHorizontal: ms(20),
       fontWeight: fontWeight.medium},
-    correctText: { color: lessonColors.success },
-    incorrectText: { color: lessonColors.error }});
+    correctText: { color: lc.success },
+    incorrectText: { color: lc.error }});

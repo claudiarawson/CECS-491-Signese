@@ -7,13 +7,15 @@ import {
 import { LessonType } from "@/src/data/lessons";
 import { AppShell, LearnFlowHeader } from "@/src/components/asl";
 import { lessonSpacing, Spacing } from "@/src/theme";
-import { lessonColors } from "@/src/theme/colors";
+import { useLessonPalette, type LessonPalette } from "@/src/contexts/ThemeContext";
 import { calculateProgress, getSignByOrder } from "../../utils/lessonHelpers";
 import { router, useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export function LearnSignScreen() {
+  const lc = useLessonPalette();
+  const styles = useMemo(() => createStyles(lc), [lc]);
   const params = useLocalSearchParams<{ lessonId?: string; order?: string; score?: string }>();
   const lessonId = (params.lessonId ?? "greetings") as LessonType;
   const order = Number(params.order ?? "1");
@@ -65,35 +67,36 @@ export function LearnSignScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  shell: {
-    flex: 1,
-    minHeight: 0,
-    paddingHorizontal: Spacing.screenPadding,
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: lessonSpacing.sm,
-    flexGrow: 1,
-  },
-  footer: {
-    flexShrink: 0,
-    alignItems: "center",
-    paddingBottom: lessonSpacing.lg,
-    paddingTop: lessonSpacing.sm,
-  },
-  emptyWrap: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: Spacing.screenPadding,
-    minHeight: 200,
-  },
-  emptyText: {
-    color: lessonColors.textSecondary,
-    fontSize: 16,
-    textAlign: "center",
-  },
-});
+const createStyles = (lc: LessonPalette) =>
+  StyleSheet.create({
+    shell: {
+      flex: 1,
+      minHeight: 0,
+      paddingHorizontal: Spacing.screenPadding,
+    },
+    scroll: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingBottom: lessonSpacing.sm,
+      flexGrow: 1,
+    },
+    footer: {
+      flexShrink: 0,
+      alignItems: "center",
+      paddingBottom: lessonSpacing.lg,
+      paddingTop: lessonSpacing.sm,
+    },
+    emptyWrap: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingHorizontal: Spacing.screenPadding,
+      minHeight: 200,
+    },
+    emptyText: {
+      color: lc.textSecondary,
+      fontSize: 16,
+      textAlign: "center",
+    },
+  });

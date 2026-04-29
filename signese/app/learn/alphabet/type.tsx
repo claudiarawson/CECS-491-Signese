@@ -13,7 +13,7 @@ import { router } from "expo-router";
 import { AppShell, LearnFlowHeader } from "@/src/components/asl";
 import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { lessonColors } from "@/src/theme/colors";
+import { useLessonPalette, type LessonPalette } from "@/src/contexts/ThemeContext";
 import {
   fontWeight,
   getDeviceDensity,
@@ -35,7 +35,8 @@ export default function AlphabetTypeScreen() {
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const ms = useMemo(() => (v: number) => moderateScale(v) * density, [density]);
-  const styles = useMemo(() => createStyles(ms), [ms]);
+  const lc = useLessonPalette();
+  const styles = useMemo(() => createStyles(ms, lc), [ms, lc]);
 
   const questions = useMemo(() => shuffleArray(ALPHABET_LEARN_ITEMS).slice(0, 10), []);
 
@@ -93,10 +94,10 @@ export default function AlphabetTypeScreen() {
   const headerRight = (
     <>
       <Pressable onPress={() => router.push("/(tabs)/settings" as any)} hitSlop={8} style={styles.headerIcon}>
-        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+        <MaterialIcons name="settings" size={24} color="#000000" />
       </Pressable>
       <Pressable onPress={() => router.push("/(tabs)/account")} hitSlop={8} style={styles.headerIcon}>
-        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+        <MaterialIcons name="account-circle" size={26} color="#000000" />
       </Pressable>
     </>
   );
@@ -134,7 +135,7 @@ export default function AlphabetTypeScreen() {
               setIsCorrect(null);
             }}
             placeholder="Type a letter (A-Z)"
-            placeholderTextColor={asl.text.muted}
+            placeholderTextColor="rgba(0,0,0,0.45)"
             autoCapitalize="characters"
             autoCorrect={false}
             maxLength={1}
@@ -163,7 +164,7 @@ export default function AlphabetTypeScreen() {
   );
 }
 
-const createStyles = (ms: (n: number) => number) =>
+const createStyles = (ms: (n: number) => number, lc: LessonPalette) =>
   StyleSheet.create({
     inner: {
       flex: 1,
@@ -184,21 +185,21 @@ const createStyles = (ms: (n: number) => number) =>
     progressLabel: {
       fontSize: ms(12),
       fontWeight: fontWeight.medium,
-      color: asl.text.secondary},
+      color: "#000000"},
     progressCount: {
       fontSize: ms(12),
       fontWeight: fontWeight.medium,
-      color: asl.text.secondary},
+      color: "#000000"},
     progressTrack: {
       width: "100%",
       height: ms(10),
       borderRadius: ms(99),
-      backgroundColor: lessonColors.progressBackground,
+      backgroundColor: lc.progressBackground,
       marginTop: ms(12),
       overflow: "hidden"},
     progressFill: {
       height: "100%",
-      backgroundColor: lessonColors.progressFill,
+      backgroundColor: lc.progressFill,
       borderRadius: ms(99)},
     card: {
       marginTop: ms(20),
@@ -221,7 +222,7 @@ const createStyles = (ms: (n: number) => number) =>
     subtitle: {
       fontSize: ms(17),
       lineHeight: ms(23),
-      color: asl.text.muted,
+      color: "#000000",
       textAlign: "center",
       fontWeight: fontWeight.medium},
     answerInput: {
@@ -234,7 +235,7 @@ const createStyles = (ms: (n: number) => number) =>
       backgroundColor: "rgba(0,0,0,0.25)",
       paddingHorizontal: ms(18),
       fontSize: ms(20),
-      color: asl.text.primary,
+      color: "#000000",
       fontWeight: fontWeight.medium,
       textAlign: "center",
       width: ms(140),
@@ -246,6 +247,6 @@ const createStyles = (ms: (n: number) => number) =>
       marginHorizontal: ms(24),
       fontWeight: fontWeight.medium},
     correctText: {
-      color: lessonColors.success},
+      color: lc.success},
     incorrectText: {
-      color: lessonColors.error}});
+      color: lc.error}});

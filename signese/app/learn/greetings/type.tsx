@@ -15,7 +15,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { AppShell, LearnFlowHeader } from "@/src/components/asl";
 import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { lessonColors } from "@/src/theme/colors";
+import { useLessonPalette, type LessonPalette } from "@/src/contexts/ThemeContext";
 import {
   fontWeight,
   getDeviceDensity,
@@ -40,7 +40,8 @@ export default function GreetingsTypeScreen() {
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const ms = useMemo(() => (v: number) => moderateScale(v) * density, [density]);
-  const styles = useMemo(() => createStyles(ms), [ms]);
+  const lc = useLessonPalette();
+  const styles = useMemo(() => createStyles(ms, lc), [ms, lc]);
 
   const params = useLocalSearchParams<{ matchScore?: string }>();
   const matchScore = parseInt(params.matchScore ?? "0", 10);
@@ -100,10 +101,10 @@ export default function GreetingsTypeScreen() {
   const headerRight = (
     <>
       <Pressable onPress={() => router.push("/(tabs)/settings" as any)} hitSlop={8} style={styles.headerIcon}>
-        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+        <MaterialIcons name="settings" size={24} color="#000000" />
       </Pressable>
       <Pressable onPress={() => router.push("/(tabs)/account")} hitSlop={8} style={styles.headerIcon}>
-        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+        <MaterialIcons name="account-circle" size={26} color="#000000" />
       </Pressable>
     </>
   );
@@ -150,7 +151,7 @@ export default function GreetingsTypeScreen() {
                 }
               }}
               placeholder="Type your answer"
-              placeholderTextColor={asl.text.muted}
+              placeholderTextColor="rgba(0,0,0,0.45)"
               autoCapitalize="none"
               autoCorrect={false}
               editable={!answered}
@@ -183,7 +184,7 @@ export default function GreetingsTypeScreen() {
   );
 }
 
-const createStyles = (ms: (v: number) => number) =>
+const createStyles = (ms: (v: number) => number, lc: LessonPalette) =>
   StyleSheet.create({
     kb: {
       flex: 1,
@@ -204,16 +205,16 @@ const createStyles = (ms: (v: number) => number) =>
     progressLabel: {
       fontSize: ms(12),
       fontWeight: fontWeight.medium,
-      color: asl.text.secondary},
+      color: "#000000"},
     progressTrack: {
       height: ms(10),
       borderRadius: ms(99),
-      backgroundColor: lessonColors.progressBackground,
+      backgroundColor: lc.progressBackground,
       overflow: "hidden"},
     progressFill: {
       height: "100%",
       borderRadius: ms(99),
-      backgroundColor: lessonColors.progressFill},
+      backgroundColor: lc.progressFill},
     scrollInner: {
       paddingBottom: ms(32),
       gap: ms(12)},
@@ -241,7 +242,7 @@ const createStyles = (ms: (v: number) => number) =>
     subtitle: {
       fontSize: ms(15),
       fontWeight: fontWeight.medium,
-      color: asl.text.muted,
+      color: "#000000",
       textAlign: "center"},
     answerInput: {
       minHeight: ms(52),
@@ -252,12 +253,12 @@ const createStyles = (ms: (v: number) => number) =>
       paddingHorizontal: ms(20),
       fontSize: ms(16),
       fontWeight: fontWeight.medium,
-      color: asl.text.primary},
+      color: "#000000"},
     answerInputCorrect: {
-      borderColor: lessonColors.success,
+      borderColor: lc.success,
       backgroundColor: "rgba(74,222,128,0.12)"},
     answerInputWrong: {
-      borderColor: lessonColors.error,
+      borderColor: lc.error,
       backgroundColor: "rgba(252,165,165,0.1)"},
     feedbackText: {
       marginTop: ms(4),
@@ -267,6 +268,6 @@ const createStyles = (ms: (v: number) => number) =>
       marginHorizontal: ms(16),
       lineHeight: ms(20)},
     correctText: {
-      color: lessonColors.success},
+      color: lc.success},
     incorrectText: {
-      color: lessonColors.error}});
+      color: lc.error}});

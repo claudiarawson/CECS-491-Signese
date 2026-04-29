@@ -5,7 +5,7 @@ import { router } from "expo-router";
 import { AppShell, LearnFlowHeader } from "@/src/components/asl";
 import { PrimaryActionButton } from "@/src/components/PrimaryActionButton";
 import { asl } from "@/src/theme/aslConnectTheme";
-import { lessonColors } from "@/src/theme/colors";
+import { useLessonPalette, type LessonPalette } from "@/src/contexts/ThemeContext";
 import {
   fontWeight,
   getDeviceDensity,
@@ -19,7 +19,8 @@ export default function AlphabetLearnScreen() {
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const ms = useMemo(() => (v: number) => moderateScale(v) * density, [density]);
-  const styles = useMemo(() => createStyles(ms), [ms]);
+  const lc = useLessonPalette();
+  const styles = useMemo(() => createStyles(ms, lc), [ms, lc]);
 
   const currentItem = ALPHABET_LEARN_ITEMS[currentIndex];
   React.useEffect(() => {
@@ -47,7 +48,7 @@ export default function AlphabetLearnScreen() {
         accessibilityLabel="Open settings"
         style={styles.headerIcon}
       >
-        <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+        <MaterialIcons name="settings" size={24} color="#000000" />
       </Pressable>
       <Pressable
         onPress={() => router.push("/(tabs)/account")}
@@ -55,7 +56,7 @@ export default function AlphabetLearnScreen() {
         accessibilityLabel="Open profile"
         style={styles.headerIcon}
       >
-        <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+        <MaterialIcons name="account-circle" size={26} color="#000000" />
       </Pressable>
     </>
   );
@@ -102,7 +103,7 @@ export default function AlphabetLearnScreen() {
   );
 }
 
-const createStyles = (ms: (n: number) => number) =>
+const createStyles = (ms: (n: number) => number, lc: LessonPalette) =>
   StyleSheet.create({
     headerIcon: {
       padding: ms(4)},
@@ -121,20 +122,20 @@ const createStyles = (ms: (n: number) => number) =>
     progressLabel: {
       fontSize: ms(12),
       fontWeight: fontWeight.medium,
-      color: asl.text.secondary},
+      color: "#000000"},
     progressCount: {
       fontSize: ms(12),
       fontWeight: fontWeight.medium,
-      color: asl.text.secondary},
+      color: "#000000"},
     progressTrack: {
       height: ms(8),
       borderRadius: ms(99),
-      backgroundColor: lessonColors.progressBackground,
+      backgroundColor: lc.progressBackground,
       marginTop: ms(10),
       overflow: "hidden"},
     progressFill: {
       height: "100%",
-      backgroundColor: lessonColors.progressFill,
+      backgroundColor: lc.progressFill,
       borderRadius: ms(99)},
     card: {
       marginTop: ms(16),
@@ -164,13 +165,13 @@ const createStyles = (ms: (n: number) => number) =>
     subtitle: {
       fontSize: ms(13),
       fontWeight: fontWeight.medium,
-      color: asl.text.muted,
+      color: "#000000",
       textAlign: "center"},
     letterText: {
       marginTop: ms(6),
       fontSize: ms(26),
       fontWeight: fontWeight.emphasis,
-      color: asl.text.primary,
+      color: "#000000",
       textAlign: "center"},
     footer: {
       flexShrink: 0,

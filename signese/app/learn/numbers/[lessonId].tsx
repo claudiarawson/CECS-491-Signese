@@ -20,7 +20,7 @@ export default function NumbersLessonScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, alignItems: "center", justifyContent: "center", padding: 24 },
-  title: { color: asl.text.primary, fontSize: 20, fontWeight: "800" },
-  subtitle: { color: asl.text.muted, marginTop: 8, fontSize: 14, textAlign: "center" },
+  title: { color: "#000000", fontSize: 20, fontWeight: "800" },
+  subtitle: { color: "#000000", marginTop: 8, fontSize: 14, textAlign: "center" },
 });
 
