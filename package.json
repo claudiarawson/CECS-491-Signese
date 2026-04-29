@@ -10,8 +10,5 @@
     "ios": "npm run ios --prefix signese",
     "web": "npm run web --prefix signese",
     "lint": "npm run lint --prefix signese"
-  },
-  "dependencies": {
-    "expo": "^55.0.18"
   }
 }
