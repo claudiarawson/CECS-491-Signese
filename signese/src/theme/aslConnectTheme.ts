@@ -8,6 +8,10 @@ export const asl = {
   gradientAlt: ["#0B0107", "#4A1A6B", "#5C0A1E", "#150208"] as const,
   welcome: ["#0B0107", "#1A0A2E", "#3D0F4A", "#1A0508"] as const,
 
+  /** Light mode: warm yellow → orange → sky blue → pink blush */
+  gradientLight: ["#FFFBEB", "#FED7AA", "#BFDBFE", "#FBCFE8"] as const,
+  welcomeLight: ["#FEF9C3", "#FDBA74", "#93C5FD", "#F9A8D4"] as const,
+
   primaryButton: ["#F472B6", "#EC4899", "#DB2777", "#BE185D"] as const,
   accentBlue: "#38BDF8",
   accentCyan: "#22D3EE",

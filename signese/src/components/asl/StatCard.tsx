@@ -25,18 +25,24 @@ export function StatCard({
   const accentStyle =
     accent === "pink"
       ? {
-          backgroundColor: theme === "dark" ? "rgba(244, 114, 182, 0.12)" : colors.card,
-          borderColor: theme === "dark" ? "rgba(244, 114, 182, 0.22)" : colors.border,
+          backgroundColor:
+            theme === "light" ? "rgba(219, 39, 119, 0.14)" : "rgba(244, 114, 182, 0.12)",
+          borderColor:
+            theme === "light" ? "rgba(219, 39, 119, 0.28)" : "rgba(244, 114, 182, 0.22)",
         }
       : accent === "cyan"
         ? {
-            backgroundColor: theme === "dark" ? "rgba(56, 189, 248, 0.12)" : colors.card,
-            borderColor: theme === "dark" ? "rgba(56, 189, 248, 0.22)" : colors.border,
+            backgroundColor:
+              theme === "light" ? "rgba(37, 99, 235, 0.12)" : "rgba(56, 189, 248, 0.12)",
+            borderColor:
+              theme === "light" ? "rgba(37, 99, 235, 0.28)" : "rgba(56, 189, 248, 0.22)",
           }
         : accent === "warm"
           ? {
-              backgroundColor: theme === "dark" ? "rgba(251, 191, 36, 0.12)" : colors.card,
-              borderColor: theme === "dark" ? "rgba(251, 191, 36, 0.22)" : colors.border,
+              backgroundColor:
+                theme === "light" ? "rgba(234, 88, 12, 0.12)" : "rgba(251, 191, 36, 0.12)",
+              borderColor:
+                theme === "light" ? "rgba(234, 88, 12, 0.28)" : "rgba(251, 191, 36, 0.22)",
             }
           : {
               backgroundColor: colors.card,

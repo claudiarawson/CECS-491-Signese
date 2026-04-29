@@ -1,7 +1,8 @@
+import { useTheme } from "@/src/contexts/ThemeContext";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { StyleSheet, type ViewStyle } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { asl } from "@/src/theme/aslConnectTheme";
 
 type Props = {
   children: React.ReactNode;
@@ -16,10 +17,17 @@ export function GradientBackground({
   extraBottom = 0,
   variant = "default",
 }: Props) {
+  const { theme } = useTheme();
+
   const colors =
     variant === "welcome"
-      ? ([...asl.welcome] as const)
-      : ([...asl.gradient] as const);
+      ? theme === "light"
+        ? ([...asl.welcomeLight] as const)
+        : ([...asl.welcome] as const)
+      : theme === "light"
+        ? ([...asl.gradientLight] as const)
+        : ([...asl.gradient] as const);
+
   return (
     <LinearGradient
       colors={colors as unknown as readonly [string, string, ...string[]]}

@@ -1,6 +1,6 @@
 import { AppShell, FilterChips, SearchBar, ToggleSwitch } from "@/src/components/asl";
 import { DictionaryFooter, dictionaryChromePadBottom } from "@/src/components/DictionaryFooter";
-import { asl } from "@/src/theme/aslConnectTheme";
+import { useTheme, type ThemeColors } from "@/src/contexts/ThemeContext";
 import { fontWeight, getDeviceDensity, moderateScale, Spacing } from "@/src/theme";
 import { router, useFocusEffect } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -36,12 +36,13 @@ const CATEGORY_CHIPS = SIGN_CATEGORY_ORDER.map((id) => ({
 }));
 
 export default function SavedSignsScreen() {
+  const { colors, theme } = useTheme();
   const { signs, loading, loadingMore, error, reload, loadMore } = useDictionarySigns();
 
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const listContentBottomPad = useMemo(() => dictionaryChromePadBottom(density), [density]);
-  const styles = useMemo(() => createStyles(density), [density]);
+  const styles = useMemo(() => createStyles(density, colors, theme), [density, colors, theme]);
 
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
@@ -119,7 +120,7 @@ export default function SavedSignsScreen() {
         accessibilityLabel="Back to dictionary"
         style={({ pressed }) => [styles.headerIconBtn, pressed && { opacity: 0.7 }]}
       >
-        <MaterialIcons name="arrow-back" size={24} color={asl.text.primary} />
+        <MaterialIcons name="arrow-back" size={24} color={colors.text} />
       </Pressable>
       <Text style={styles.headerTitle} numberOfLines={1}>
         Saved signs
@@ -131,7 +132,7 @@ export default function SavedSignsScreen() {
           accessibilityLabel="Open settings"
           style={({ pressed }) => [styles.headerIconBtn, pressed && { opacity: 0.7 }]}
         >
-          <MaterialIcons name="settings" size={24} color={asl.text.secondary} />
+          <MaterialIcons name="settings" size={24} color={colors.subtext} />
         </Pressable>
         <Pressable
           onPress={() => router.push("/(tabs)/account")}
@@ -139,7 +140,7 @@ export default function SavedSignsScreen() {
           accessibilityLabel="Open profile"
           style={({ pressed }) => [styles.headerIconBtn, pressed && { opacity: 0.7 }]}
         >
-          <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+          <MaterialIcons name="account-circle" size={26} color={colors.subtext} />
         </Pressable>
       </View>
     </View>
@@ -178,7 +179,7 @@ export default function SavedSignsScreen() {
 
         {loading && signs.length === 0 ? (
           <View style={styles.loadingBox}>
-            <ActivityIndicator size="large" color={asl.accentCyan} />
+            <ActivityIndicator size="large" color={colors.accentBlue} />
             <Text style={styles.loadingText}>Loading…</Text>
           </View>
         ) : (
@@ -198,7 +199,7 @@ export default function SavedSignsScreen() {
             ListFooterComponent={
               loadingMore ? (
                 <View style={styles.footerLoading}>
-                  <ActivityIndicator size="small" color={asl.accentCyan} />
+                  <ActivityIndicator size="small" color={colors.accentBlue} />
                   <Text style={styles.footerLoadingText}>Loading more signs…</Text>
                 </View>
               ) : null
@@ -238,7 +239,7 @@ export default function SavedSignsScreen() {
   );
 }
 
-const createStyles = (density: number) => {
+const createStyles = (density: number, colors: ThemeColors, theme: "light" | "dark") => {
   const ms = (value: number) => moderateScale(value) * density;
   return StyleSheet.create({
     headerRow: {
@@ -253,7 +254,7 @@ const createStyles = (density: number) => {
     },
     headerTitle: {
       flex: 1,
-      color: asl.text.primary,
+      color: colors.text,
       fontSize: ms(22),
       fontWeight: fontWeight.emphasis,
       textAlign: "center",
@@ -285,7 +286,7 @@ const createStyles = (density: number) => {
       marginBottom: ms(6),
       fontSize: ms(12),
       fontWeight: "700",
-      color: asl.accentCyan,
+      color: theme === "light" ? colors.accentOrange : colors.primary,
     },
     banner: {
       marginTop: ms(12),
@@ -298,21 +299,21 @@ const createStyles = (density: number) => {
     },
     bannerText: { color: "#FECACA", fontSize: ms(14), lineHeight: ms(18) },
     retryBtn: { alignSelf: "flex-start" },
-    retryText: { color: asl.accentCyan, fontWeight: "700", fontSize: ms(14) },
+    retryText: { color: colors.accentBlue, fontWeight: "700", fontSize: ms(14) },
 
     loadingBox: {
       paddingVertical: ms(40),
       alignItems: "center",
       gap: ms(12),
     },
-    loadingText: { color: asl.text.secondary, fontSize: ms(15) },
+    loadingText: { color: colors.subtext, fontSize: ms(15) },
 
     footerLoading: {
       paddingVertical: ms(16),
       alignItems: "center",
       gap: ms(8),
     },
-    footerLoadingText: { color: asl.text.muted, fontSize: ms(13) },
+    footerLoadingText: { color: colors.subtext, fontSize: ms(13) },
 
     sectionTitle: {
       marginTop: ms(14),
@@ -320,13 +321,13 @@ const createStyles = (density: number) => {
       fontSize: ms(20),
       fontWeight: "800",
       textAlign: "center",
-      color: asl.text.primary,
+      color: colors.text,
     },
 
     emptyText: {
       textAlign: "center",
       marginTop: ms(20),
-      color: asl.text.muted,
+      color: colors.subtext,
       fontSize: ms(16),
     },
   });

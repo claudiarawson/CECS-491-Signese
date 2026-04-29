@@ -1,3 +1,4 @@
+import { GradientBackground } from "@/src/components/asl";
 import { ScreenContainer } from "@/src/components/layout";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import {
@@ -39,20 +40,16 @@ function normalizeSearchText(value: string): string {
     .trim();
 }
 
-function SettingsHeader({
-  colors,
-}: {
-  colors: {
-    background: string;
-    card: string;
-    text: string;
-    subtext: string;
-    border: string;
-    primary: string;
-  };
-}) {
+function SettingsHeader() {
+  const { colors } = useTheme();
+
   return (
-    <View style={[headerStyles.row, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
+    <View
+      style={[
+        headerStyles.row,
+        { borderBottomColor: colors.border, backgroundColor: colors.headerScrim },
+      ]}
+    >
       <Pressable
         onPress={() => router.back()}
         style={({ pressed }) => [
@@ -81,7 +78,7 @@ function SettingsHeader({
             pressed && { opacity: 0.85 },
           ]}
         >
-          <MaterialIcons name="settings" size={22} color={colors.text} />
+          <MaterialIcons name="settings" size={22} color={colors.subtext} />
         </Pressable>
 
         <Pressable
@@ -95,7 +92,7 @@ function SettingsHeader({
             pressed && { opacity: 0.85 },
           ]}
         >
-          <MaterialIcons name="account-circle" size={26} color={colors.text} />
+          <MaterialIcons name="account-circle" size={26} color={colors.subtext} />
         </Pressable>
       </View>
     </View>
@@ -218,15 +215,16 @@ export default function SettingsScreen() {
   }, [items, query]);
 
   return (
-    <ScreenContainer
-      backgroundColor={colors.background}
-      safeStyle={{ backgroundColor: colors.background }}
-      contentStyle={styles.safeContent}
-      contentPadded={false}
-    >
-      <SettingsHeader colors={colors} />
+    <GradientBackground variant="default" style={{ flex: 1 }}>
+      <ScreenContainer
+        backgroundColor="transparent"
+        safeStyle={{ backgroundColor: "transparent" }}
+        contentStyle={styles.safeContent}
+        contentPadded={false}
+      >
+        <SettingsHeader />
 
-      <ScrollView
+        <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -266,7 +264,7 @@ export default function SettingsScreen() {
                 </View>
                 <Text style={styles.itemLabel}>{item.label}</Text>
               </View>
-              <MaterialIcons name="chevron-right" size={chevronSize} color={colors.text} />
+              <MaterialIcons name="chevron-right" size={chevronSize} color={colors.subtext} />
             </Pressable>
           ))}
 
@@ -274,8 +272,9 @@ export default function SettingsScreen() {
             <Text style={styles.emptyText}>No matching settings found.</Text>
           )}
         </View>
-      </ScrollView>
-    </ScreenContainer>
+        </ScrollView>
+      </ScreenContainer>
+    </GradientBackground>
   );
 }
 

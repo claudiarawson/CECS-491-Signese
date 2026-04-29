@@ -5,7 +5,7 @@ import {
 } from "@/src/components/layout";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { useTheme } from "@/src/contexts/ThemeContext";
+import { useTheme, type ThemeColors } from "@/src/contexts/ThemeContext";
 import { useTranslateCamera } from "@/src/features/translate/camera/useCamera";
 import {
   createShortClipInferenceService,
@@ -85,11 +85,14 @@ function CommonResponsesPlaceholder({
 export default function TranslateScreen() {
   const { profile } = useAuthUser();
   const { textScale } = useAccessibility();
-  const { colors } = useTheme();
+  const { colors, theme } = useTheme();
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const tabBarHeight = useBottomTabBarHeight();
-  const styles = createStyles(density, textScale, tabBarHeight, colors);
+  const styles = useMemo(
+    () => createStyles(density, textScale, tabBarHeight, colors, theme),
+    [density, textScale, tabBarHeight, colors, theme]
+  );
 
   const [isVolumeOn, setIsVolumeOn] = useState(true);
   const [lastDecision, setLastDecision] = useState<PostprocessDecision | null>(null);
@@ -806,10 +809,24 @@ const createStyles = (
   density: number,
   textScale: number,
   tabBarHeight: number,
-  colors: any
+  colors: ThemeColors,
+  theme: "light" | "dark"
 ) => {
   const ms = (value: number) => moderateScale(value) * density;
   const ts = (value: number) => ms(value) * textScale;
+  const L = theme === "light";
+  const vidPanel = L ? colors.panel : "rgba(8, 4, 18, 0.72)";
+  const strip = L ? colors.panelMuted : "rgba(12, 6, 24, 0.78)";
+  const capBox = L ? "rgba(255,255,255,0.88)" : "rgba(8, 4, 18, 0.94)";
+  const capBoxBorder = L ? colors.border : "rgba(255,255,255,0.12)";
+  const ctrlWell = L ? colors.controlWell : "rgba(255,255,255,0.14)";
+  const ctrlBorder = L ? colors.controlBorder : "rgba(255,255,255,0.35)";
+  const softTrack = L ? "rgba(15,23,42,0.1)" : "rgba(255,255,255,0.22)";
+  const softTrackBd = L ? "rgba(15,23,42,0.14)" : "rgba(255,255,255,0.28)";
+  const arrowBg = L ? colors.card : "rgba(255,255,255,0.12)";
+  const arrowBorder = L ? colors.border : "rgba(255,255,255,0.45)";
+  const capText = L ? colors.text : "#FFFFFF";
+  const capPh = L ? colors.subtext : "rgba(255,255,255,0.9)";
 
   return StyleSheet.create({
     content: {
@@ -847,7 +864,7 @@ const createStyles = (
       minHeight: 0,
       borderRadius: ms(20),
       overflow: "hidden",
-      backgroundColor: "rgba(8, 4, 18, 0.72)",
+      backgroundColor: vidPanel,
       borderWidth: 1,
       borderColor: colors.border,
       ...asl.shadow.card,
@@ -898,17 +915,17 @@ const createStyles = (
       paddingHorizontal: 8,
       paddingVertical: 6,
       borderRadius: 16,
-      backgroundColor: "rgba(12, 6, 24, 0.78)",
+      backgroundColor: strip,
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.22)",
+      borderColor: L ? colors.border : "rgba(255,255,255,0.22)",
     },
     smallControlBtnOverlay: {
       width: ms(34),
       height: ms(34),
       borderRadius: ms(17),
-      backgroundColor: "rgba(255,255,255,0.14)",
+      backgroundColor: ctrlWell,
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.35)",
+      borderColor: ctrlBorder,
       alignItems: "center",
       justifyContent: "center",
     },
@@ -939,9 +956,9 @@ const createStyles = (
       width: 8,
       height: 80,
       borderRadius: 999,
-      backgroundColor: "rgba(255,255,255,0.22)",
+      backgroundColor: softTrack,
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.28)",
+      borderColor: softTrackBd,
       overflow: "hidden",
       justifyContent: "flex-end",
     },
@@ -957,9 +974,9 @@ const createStyles = (
       bottom: ms(58),
       maxHeight: ms(120),
       borderRadius: 14,
-      backgroundColor: "rgba(8, 4, 18, 0.94)",
+      backgroundColor: capBox,
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.12)",
+      borderColor: capBoxBorder,
       paddingHorizontal: 10,
       paddingVertical: 8,
     },
@@ -994,9 +1011,9 @@ const createStyles = (
       width: 28,
       height: 28,
       borderRadius: 14,
-      backgroundColor: "rgba(255,255,255,0.16)",
+      backgroundColor: ctrlWell,
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.35)",
+      borderColor: ctrlBorder,
       alignItems: "center",
       justifyContent: "center",
     },
@@ -1012,14 +1029,14 @@ const createStyles = (
       paddingHorizontal: 10,
       height: 36,
       borderRadius: 18,
-      backgroundColor: "rgba(255,255,255,0.12)",
+      backgroundColor: arrowBg,
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.45)",
+      borderColor: arrowBorder,
       justifyContent: "center",
     },
     commonResponsesControlArrowLabel: {
       ...Typography.caption,
-      color: "#FFFFFF",
+      color: capText,
       fontWeight: "700",
       fontSize: ts(11),
       lineHeight: ts(14),
@@ -1271,7 +1288,7 @@ const createStyles = (
     },
     captionsOutputText: {
       ...Typography.body,
-      color: "#FFFFFF",
+      color: capText,
       fontSize: ts(16),
       lineHeight: ts(20),
       fontWeight: "700",
@@ -1279,7 +1296,7 @@ const createStyles = (
     },
     captionsOutputPlaceholderText: {
       ...Typography.caption,
-      color: "rgba(255,255,255,0.9)",
+      color: capPh,
       fontSize: ts(12),
       lineHeight: ts(16),
       minHeight: 54,
@@ -1327,13 +1344,13 @@ const createStyles = (
       width: ms(34),
       height: ms(34),
       borderRadius: ms(17),
-      backgroundColor: "rgba(255,255,255,0.14)",
+      backgroundColor: ctrlWell,
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.35)",
+      borderColor: ctrlBorder,
     },
     clearCaptionsButtonText: {
       ...Typography.caption,
-      color: "#FFFFFF",
+      color: capText,
       fontWeight: "700",
     },
   });

@@ -19,13 +19,13 @@ import {
   fontWeight,
   Spacing,
 } from "@/src/theme";
-import { asl } from "@/src/theme/aslConnectTheme";
-import { GlassCard, GradientBackground } from "@/src/components/asl";
-import { ScreenContainer } from "@/src/components/layout";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { getAuthErrorMessage, signOutUser, userHasPasswordProvider } from "@/src/services/firebase/auth.services";
 import { getProfileIconById } from "@/src/features/account/types";
+import { GlassCard, GradientBackground } from "@/src/components/asl";
+import { ScreenContainer } from "@/src/components/layout";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
+import { type ThemeColors, useTheme } from "@/src/contexts/ThemeContext";
+import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { StarsProgressPanel } from "@/src/features/gamification/components/StarsProgressPanel";
 import {
   getNextStarUnlockTarget,
@@ -33,26 +33,41 @@ import {
 } from "@/src/features/learn/utils/lessonProgress";
 
 function AccountScreenHeader() {
+  const { colors } = useTheme();
+
   return (
-    <View style={headerStyles.row}>
+    <View
+      style={[
+        headerStyles.row,
+        { borderBottomColor: colors.border, backgroundColor: colors.headerScrim },
+      ]}
+    >
       <Pressable
         onPress={() => router.back()}
-        style={({ pressed }) => [headerStyles.iconBtn, pressed && { opacity: 0.85 }]}
+        style={({ pressed }) => [
+          headerStyles.iconBtn,
+          { backgroundColor: colors.card, borderColor: colors.border },
+          pressed && { opacity: 0.85 },
+        ]}
         accessibilityRole="button"
         accessibilityLabel="Go back"
       >
-        <MaterialIcons name="arrow-back" size={22} color={asl.text.primary} />
+        <MaterialIcons name="arrow-back" size={22} color={colors.text} />
       </Pressable>
-      <Text style={headerStyles.title} numberOfLines={1}>
+      <Text style={[headerStyles.title, { color: colors.text }]} numberOfLines={1}>
         Account
       </Text>
       <Pressable
         onPress={() => router.push("/(tabs)/settings" as any)}
-        style={({ pressed }) => [headerStyles.iconBtn, pressed && { opacity: 0.85 }]}
+        style={({ pressed }) => [
+          headerStyles.iconBtn,
+          { backgroundColor: colors.card, borderColor: colors.border },
+          pressed && { opacity: 0.85 },
+        ]}
         accessibilityRole="button"
         accessibilityLabel="Open settings"
       >
-        <MaterialIcons name="settings" size={22} color={asl.text.secondary} />
+        <MaterialIcons name="settings" size={22} color={colors.subtext} />
       </Pressable>
     </View>
   );
@@ -66,13 +81,10 @@ const headerStyles = StyleSheet.create({
     paddingHorizontal: Spacing.screenPadding,
     minHeight: 52,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: asl.glass.border,
-    backgroundColor: "rgba(8,2,10,0.2)",
   },
   title: {
     flex: 1,
     textAlign: "center",
-    color: asl.text.primary,
     fontSize: 20,
     lineHeight: 26,
     fontWeight: fontWeight.emphasis,
@@ -81,9 +93,7 @@ const headerStyles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: asl.glass.bg,
     borderWidth: 1,
-    borderColor: asl.glass.border,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -97,6 +107,9 @@ type LinkRowProps = {
 };
 
 function AccountLinkRow({ icon, label, subtitle, onPress }: LinkRowProps) {
+  const { colors, theme } = useTheme();
+  const chipBg = theme === "light" ? "rgba(37, 99, 235, 0.14)" : "rgba(56, 189, 248, 0.12)";
+
   return (
     <Pressable
       onPress={onPress}
@@ -104,18 +117,18 @@ function AccountLinkRow({ icon, label, subtitle, onPress }: LinkRowProps) {
       accessibilityRole="button"
       accessibilityLabel={label}
     >
-      <View style={linkRowStyles.iconWrap}>
-        <MaterialIcons name={icon} size={22} color={asl.accentCyan} />
+      <View style={[linkRowStyles.iconWrap, { backgroundColor: chipBg }]}>
+        <MaterialIcons name={icon} size={22} color={colors.accentBlue} />
       </View>
       <View style={linkRowStyles.textCol}>
-        <Text style={linkRowStyles.label}>{label}</Text>
+        <Text style={[linkRowStyles.label, { color: colors.text }]}>{label}</Text>
         {subtitle ? (
-          <Text style={linkRowStyles.subtitle} numberOfLines={2}>
+          <Text style={[linkRowStyles.subtitle, { color: colors.subtext }]} numberOfLines={2}>
             {subtitle}
           </Text>
         ) : null}
       </View>
-      <MaterialIcons name="chevron-right" size={22} color={asl.text.muted} />
+      <MaterialIcons name="chevron-right" size={22} color={colors.subtext} />
     </Pressable>
   );
 }
@@ -132,7 +145,6 @@ const linkRowStyles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "rgba(34, 211, 238, 0.12)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -142,14 +154,12 @@ const linkRowStyles = StyleSheet.create({
   },
   label: {
     ...Typography.body,
-    color: asl.text.primary,
     fontWeight: fontWeight.medium,
     fontSize: 16,
     lineHeight: 22,
   },
   subtitle: {
     ...Typography.caption,
-    color: asl.text.muted,
     fontSize: 13,
     lineHeight: 18,
     marginTop: 2,
@@ -159,9 +169,10 @@ const linkRowStyles = StyleSheet.create({
 export default function AccountScreen() {
   const { profile, authUser } = useAuthUser();
   const { textScale } = useAccessibility();
+  const { theme, colors } = useTheme();
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const styles = useMemo(() => createStyles(density, textScale), [density, textScale]);
+  const styles = useMemo(() => createStyles(density, textScale, colors), [density, textScale, colors]);
 
   const selectedProfileIcon = getProfileIconById(profile?.avatar);
 
@@ -262,7 +273,7 @@ export default function AccountScreen() {
                 <StarsProgressPanel
                   style={styles.starsPanel}
                   variant="hero"
-                  appearance="dark"
+                  appearance={theme === "dark" ? "dark" : "light"}
                   totalEarned={profile?.stars?.lifetimeEarned ?? 0}
                   balance={profile?.stars?.balance ?? 0}
                   nextUnlock={
@@ -341,7 +352,7 @@ export default function AccountScreen() {
   );
 }
 
-const createStyles = (density: number, textScale: number) => {
+const createStyles = (density: number, textScale: number, colors: ThemeColors) => {
   const ms = (value: number) => moderateScale(value) * density;
   const ts = (value: number) => ms(value) * textScale;
 
@@ -399,21 +410,21 @@ const createStyles = (density: number, textScale: number) => {
     },
     profileName: {
       ...Typography.sectionTitle,
-      color: asl.text.primary,
+      color: colors.text,
       fontSize: ts(20),
       lineHeight: ts(26),
       fontWeight: fontWeight.emphasis,
     },
     profileEmail: {
       ...Typography.caption,
-      color: asl.text.secondary,
+      color: colors.subtext,
       fontSize: ts(14),
       lineHeight: ts(20),
       marginTop: ms(4),
     },
     profileEmailMuted: {
       ...Typography.caption,
-      color: asl.text.muted,
+      color: colors.subtext,
       fontSize: ts(14),
       marginTop: ms(4),
     },
@@ -435,13 +446,13 @@ const createStyles = (density: number, textScale: number) => {
     },
     streakValue: {
       ...Typography.body,
-      color: "#FBBF24",
+      color: colors.accentYellow,
       fontWeight: fontWeight.emphasis,
       fontSize: ts(15),
     },
     streakLabel: {
       ...Typography.caption,
-      color: "rgba(253, 230, 138, 0.9)",
+      color: colors.subtext,
       fontSize: ts(12),
     },
     starsPanel: {
@@ -449,7 +460,7 @@ const createStyles = (density: number, textScale: number) => {
     },
     sectionKicker: {
       ...Typography.caption,
-      color: asl.text.muted,
+      color: colors.subtext,
       fontWeight: fontWeight.strong,
       fontSize: ts(12),
       letterSpacing: 1,
@@ -458,7 +469,7 @@ const createStyles = (density: number, textScale: number) => {
     },
     rowDivider: {
       height: StyleSheet.hairlineWidth,
-      backgroundColor: asl.glass.border,
+      backgroundColor: colors.border,
       marginLeft: 52,
     },
     signOutBtn: {

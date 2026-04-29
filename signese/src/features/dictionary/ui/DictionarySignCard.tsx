@@ -1,13 +1,9 @@
+import { useTheme, type ThemeColors } from "@/src/contexts/ThemeContext";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { moderateScale } from "@/src/theme";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React, { useMemo } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { Sign } from "../types";
 
 type Props = {
@@ -29,10 +25,12 @@ export function DictionarySignCard({
   onPress,
   onToggleSave,
 }: Props) {
+  const { colors, theme } = useTheme();
   const ms = useMemo(() => (n: number) => moderateScale(n) * density, [density]);
-  const styles = useMemo(() => createStyles(density), [density]);
+  const styles = useMemo(() => createStyles(density, colors, theme), [density, colors, theme]);
 
   const hasVideo = !!(merged.mediaUrl || merged.storagePath || merged.videoId);
+  const playColor = colors.accentBlue;
 
   return (
     <Pressable
@@ -47,12 +45,12 @@ export function DictionarySignCard({
       <View style={styles.mediaPlaceholder}>
         {hasVideo ? (
           <>
-            <MaterialIcons name="play-circle-filled" size={ms(42)} color={asl.accentCyan} />
+            <MaterialIcons name="play-circle-filled" size={ms(42)} color={playColor} />
             <Text style={styles.mediaLabel}>Tap to preview</Text>
           </>
         ) : (
           <>
-            <MaterialIcons name="movie" size={ms(38)} color={asl.text.muted} />
+            <MaterialIcons name="movie" size={ms(38)} color={colors.subtext} />
             <Text style={styles.mediaLabelMuted}>No clip</Text>
           </>
         )}
@@ -79,24 +77,32 @@ export function DictionarySignCard({
   );
 }
 
-
-const createStyles = (density: number) => {
+function createStyles(density: number, colors: ThemeColors, theme: "light" | "dark") {
   const ms = (value: number) => moderateScale(value) * density;
+  const L = theme === "light";
+  const mediaBg = L ? "rgba(15,23,42,0.08)" : "rgba(0,0,0,0.32)";
+  const mediaBd = L ? colors.border : "rgba(255,255,255,0.14)";
+  const saveBg = L ? "rgba(255,255,255,0.85)" : "rgba(0,0,0,0.4)";
+  const saveBd = L ? colors.border : asl.glass.border;
+  const commBg = L ? "rgba(37, 99, 235, 0.12)" : "rgba(56, 189, 248, 0.14)";
+  const commBd = L ? "rgba(37, 99, 235, 0.4)" : "rgba(56, 189, 248, 0.45)";
+  const badgeFill = L ? "rgba(255,255,255,0.92)" : "rgba(0, 0, 0, 0.42)";
+
   return StyleSheet.create({
     card: {
       flex: 1,
-      backgroundColor: "rgba(255,255,255,0.08)",
+      backgroundColor: colors.card,
       borderRadius: ms(22),
       padding: ms(12),
       marginBottom: ms(12),
       borderWidth: 1,
-      borderColor: asl.glass.border,
+      borderColor: colors.border,
       overflow: "hidden",
       ...asl.shadow.card,
     },
     cardCommunity: {
-      backgroundColor: "rgba(56, 189, 248, 0.14)",
-      borderColor: "rgba(56, 189, 248, 0.45)",
+      backgroundColor: commBg,
+      borderColor: commBd,
     },
     cardPressed: {
       opacity: 0.93,
@@ -105,23 +111,23 @@ const createStyles = (density: number) => {
     mediaPlaceholder: {
       height: ms(120),
       borderRadius: ms(18),
-      backgroundColor: "rgba(0,0,0,0.32)",
+      backgroundColor: mediaBg,
       alignItems: "center",
       justifyContent: "center",
       gap: ms(8),
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.14)",
+      borderColor: mediaBd,
       overflow: "hidden",
     },
     mediaLabel: {
-      color: asl.text.secondary,
+      color: colors.subtext,
       fontWeight: "600",
       fontSize: ms(11),
       letterSpacing: 0.4,
       textTransform: "uppercase",
     },
     mediaLabelMuted: {
-      color: asl.text.muted,
+      color: colors.subtext,
       fontWeight: "600",
       fontSize: ms(11),
     },
@@ -131,12 +137,12 @@ const createStyles = (density: number) => {
       paddingHorizontal: ms(10),
       paddingVertical: ms(5),
       borderRadius: ms(999),
-      backgroundColor: "rgba(0, 0, 0, 0.42)",
+      backgroundColor: badgeFill,
       borderWidth: StyleSheet.hairlineWidth,
-      borderColor: "rgba(56, 189, 248, 0.45)",
+      borderColor: commBd,
     },
     mediaCommunityBadgeText: {
-      color: asl.accentCyan,
+      color: colors.accentBlue,
       fontSize: ms(10),
       fontWeight: "800",
       letterSpacing: 0.35,
@@ -147,7 +153,7 @@ const createStyles = (density: number) => {
       fontSize: ms(22),
       fontWeight: "900",
       textAlign: "center",
-      color: asl.text.primary,
+      color: colors.text,
     },
     saveBtn: {
       position: "absolute",
@@ -161,13 +167,13 @@ const createStyles = (density: number) => {
       alignItems: "center",
       justifyContent: "center",
       borderWidth: 1,
-      borderColor: asl.glass.border,
-      backgroundColor: "rgba(0,0,0,0.4)",
+      borderColor: saveBd,
+      backgroundColor: saveBg,
       ...asl.shadow.card,
     },
     saveBtnGlassOn: {
-      borderColor: "rgba(251, 191, 36, 0.65)",
-      backgroundColor: "rgba(251, 191, 36, 0.16)",
+      borderColor: L ? "rgba(202, 138, 4, 0.65)" : "rgba(251, 191, 36, 0.65)",
+      backgroundColor: L ? "rgba(202, 138, 4, 0.18)" : "rgba(251, 191, 36, 0.16)",
     },
     saveBtnPressed: {
       opacity: 0.82,
@@ -175,7 +181,7 @@ const createStyles = (density: number) => {
     },
     saveIcon: {
       fontSize: ms(26),
-      color: "#FBBF24",
+      color: colors.accentYellow,
     },
   });
-};
+}

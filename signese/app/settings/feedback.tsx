@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -21,7 +21,7 @@ import { Spacing, fontWeight } from "@/src/theme";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import { submitFeedback } from "@/src/services/firebase/feedback.service";
 import { GradientBackground, GlassCard } from "@/src/components/asl";
-import { asl } from "@/src/theme/aslConnectTheme";
+import { type ThemeColors, type ThemeMode, useTheme } from "@/src/contexts/ThemeContext";
 
 const FEEDBACK_CATEGORIES = ["Bug", "Suggestion", "Improvement", "Other"] as const;
 type FeedbackCategory = (typeof FEEDBACK_CATEGORIES)[number];
@@ -37,7 +37,11 @@ export default function FeedbackScreen() {
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const { textScale } = useAccessibility();
-  const styles = createStyles(density, textScale);
+  const { colors, theme } = useTheme();
+  const styles = useMemo(
+    () => createStyles(density, textScale, colors, theme),
+    [density, textScale, colors, theme]
+  );
 
   const handlePickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -118,7 +122,7 @@ export default function FeedbackScreen() {
           onPress={() => router.back()}
           style={({ pressed }) => [styles.headerBtn, pressed && { opacity: 0.85 }]}
         >
-          <MaterialIcons name="arrow-back" size={22} color={asl.text.primary} />
+          <MaterialIcons name="arrow-back" size={22} color={colors.text} />
         </Pressable>
         <Text style={styles.headerTitle}>Feedback</Text>
         <View style={styles.headerSpacer} />
@@ -138,7 +142,7 @@ export default function FeedbackScreen() {
               <MaterialIcons
                 name="chat-bubble-outline"
                 size={28}
-                color="#F0A892"
+                color={colors.primary}
               />
             </View>
 
@@ -236,9 +240,16 @@ export default function FeedbackScreen() {
   );
 }
 
-const createStyles = (density: number, textScale: number) => {
+const createStyles = (
+  density: number,
+  textScale: number,
+  colors: ThemeColors,
+  theme: ThemeMode
+) => {
   const ms = (value: number) => moderateScale(value) * density;
   const ts = (value: number) => ms(value) * textScale;
+  const inputBg =
+    theme === "light" ? colors.controlWell : "rgba(255,255,255,0.06)";
 
   return StyleSheet.create({
     keyboardWrap: {
@@ -251,23 +262,23 @@ const createStyles = (density: number, textScale: number) => {
       paddingHorizontal: Spacing.screenPadding,
       minHeight: ms(52),
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: asl.glass.border,
-      backgroundColor: "rgba(8,2,10,0.2)",
+      borderBottomColor: colors.border,
+      backgroundColor: colors.headerScrim,
     },
     headerBtn: {
       width: ms(40),
       height: ms(40),
       borderRadius: ms(20),
-      backgroundColor: asl.glass.bg,
+      backgroundColor: colors.card,
       borderWidth: 1,
-      borderColor: asl.glass.border,
+      borderColor: colors.border,
       alignItems: "center",
       justifyContent: "center",
     },
     headerTitle: {
       flex: 1,
       textAlign: "center",
-      color: asl.text.primary,
+      color: colors.text,
       fontSize: ts(20),
       lineHeight: ts(26),
       fontWeight: fontWeight.emphasis,
@@ -296,7 +307,8 @@ const createStyles = (density: number, textScale: number) => {
     iconWrap: {
       width: ms(44),
       height: ms(44),
-      backgroundColor: "#F6DDD4",
+      borderRadius: ms(12),
+      backgroundColor: colors.controlWell,
       alignItems: "center",
       justifyContent: "center",
     },
@@ -306,7 +318,7 @@ const createStyles = (density: number, textScale: number) => {
       fontSize: ts(15),
       lineHeight: ts(20),
       fontWeight: "700",
-      color: asl.text.primary,
+      color: colors.text,
       textAlign: "center",
     },
 
@@ -320,7 +332,7 @@ const createStyles = (density: number, textScale: number) => {
       fontSize: ts(15),
       lineHeight: ts(19),
       fontWeight: "800",
-      color: asl.text.primary,
+      color: colors.text,
       marginBottom: ms(10),
     },
 
@@ -334,21 +346,21 @@ const createStyles = (density: number, textScale: number) => {
       paddingHorizontal: ms(14),
       paddingVertical: ms(10),
       borderRadius: ms(14),
-      backgroundColor: asl.glass.bg,
+      backgroundColor: colors.card,
       borderWidth: 1,
-      borderColor: asl.glass.border,
+      borderColor: colors.border,
     },
 
     categoryPillSelected: {
-      backgroundColor: "#F5B9A3",
-      borderColor: "#F5B9A3",
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
     },
 
     categoryText: {
       fontSize: ts(14),
       lineHeight: ts(18),
       fontWeight: "700",
-      color: asl.text.primary,
+      color: colors.text,
     },
 
     categoryTextSelected: {
@@ -358,14 +370,14 @@ const createStyles = (density: number, textScale: number) => {
     feedbackInput: {
       minHeight: ms(260),
       borderWidth: 1,
-      borderColor: asl.glass.border,
+      borderColor: colors.border,
       borderRadius: ms(14),
-      backgroundColor: "rgba(255,255,255,0.06)",
+      backgroundColor: inputBg,
       paddingHorizontal: ms(12),
       paddingVertical: ms(10),
       fontSize: ts(15),
       lineHeight: ts(20),
-      color: asl.text.primary,
+      color: colors.text,
     },
 
     mediaRow: {
@@ -380,7 +392,7 @@ const createStyles = (density: number, textScale: number) => {
       alignItems: "center",
       justifyContent: "center",
       gap: ms(6),
-      backgroundColor: "#59B5A7",
+      backgroundColor: colors.accentOrange,
       borderRadius: ms(8),
       paddingHorizontal: ms(14),
       paddingVertical: ms(10),
@@ -394,16 +406,16 @@ const createStyles = (density: number, textScale: number) => {
     },
 
     removeMediaButton: {
-      backgroundColor: "rgba(232, 213, 206, 0.2)",
+      backgroundColor: colors.panelMuted,
       borderRadius: ms(8),
       paddingHorizontal: ms(12),
       paddingVertical: ms(10),
       borderWidth: 1,
-      borderColor: asl.glass.border,
+      borderColor: colors.border,
     },
 
     removeMediaText: {
-      color: "#6A4E45",
+      color: colors.subtext,
       fontSize: ts(13),
       lineHeight: ts(17),
       fontWeight: "700",
@@ -412,7 +424,7 @@ const createStyles = (density: number, textScale: number) => {
     mediaHint: {
       fontSize: ts(13),
       lineHeight: ts(17),
-      color: asl.text.secondary,
+      color: colors.subtext,
     },
 
     buttonRow: {
@@ -422,7 +434,7 @@ const createStyles = (density: number, textScale: number) => {
     submitButton: {
       width: "100%",
       minHeight: ms(52),
-      backgroundColor: "#43B3A8",
+      backgroundColor: colors.accentBlue,
       borderRadius: ms(14),
       alignItems: "center",
       justifyContent: "center",

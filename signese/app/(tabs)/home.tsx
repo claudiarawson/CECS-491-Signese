@@ -109,7 +109,7 @@ export default function HomeScreen() {
       <GradientBackground variant="default" style={{ flex: 1 }}>
         <SafeAreaView style={styles.loadingSafe} edges={["top", "left", "right"]}>
           <View style={styles.loadingOuter}>
-            <ActivityIndicator size="large" color={asl.accentCyan} />
+            <ActivityIndicator size="large" color={colors.accentBlue} />
             <Text style={styles.loadingText}>Loading your profile...</Text>
           </View>
         </SafeAreaView>
@@ -141,13 +141,13 @@ export default function HomeScreen() {
         {statsLoading ? (
           <View style={styles.statsRow}>
             <View style={styles.statSkeleton}>
-              <ActivityIndicator color={asl.accentCyan} />
+              <ActivityIndicator color={colors.accentBlue} />
             </View>
             <View style={styles.statSkeleton}>
-              <ActivityIndicator color={asl.accentCyan} />
+              <ActivityIndicator color={colors.accentBlue} />
             </View>
             <View style={styles.statSkeleton}>
-              <ActivityIndicator color={asl.accentCyan} />
+              <ActivityIndicator color={colors.accentBlue} />
             </View>
           </View>
         ) : (

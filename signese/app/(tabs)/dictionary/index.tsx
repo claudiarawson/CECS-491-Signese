@@ -35,13 +35,13 @@ const CATEGORY_CHIPS = SIGN_CATEGORY_ORDER.map((id) => ({
 }));
 
 export default function DictionaryScreen() {
-  const { colors } = useTheme();
+  const { colors, theme } = useTheme();
   const { signs, loading, loadingMore, error, reload, loadMore } = useDictionarySigns();
   const { q } = useLocalSearchParams<{ q?: string }>();
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const listContentBottomPad = useMemo(() => dictionaryChromePadBottom(density), [density]);
-  const styles = useMemo(() => createStyles(density, colors), [density, colors]);
+  const styles = useMemo(() => createStyles(density, colors, theme), [density, colors, theme]);
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
 
@@ -196,7 +196,7 @@ export default function DictionaryScreen() {
   );
 }
 
-const createStyles = (density: number, colors: any) => {
+const createStyles = (density: number, colors: any, theme: "light" | "dark") => {
   const ms = (value: number) => moderateScale(value) * density;
 
   return StyleSheet.create({
@@ -220,7 +220,7 @@ const createStyles = (density: number, colors: any) => {
       marginBottom: ms(6),
       fontSize: ms(12),
       fontWeight: "700",
-      color: colors.primary,
+      color: theme === "light" ? colors.accentOrange : colors.primary,
     },
     banner: {
       marginTop: ms(12),

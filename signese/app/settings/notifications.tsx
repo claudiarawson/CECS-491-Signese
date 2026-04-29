@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet, Switch, ScrollView, Pressable } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
@@ -13,20 +13,29 @@ import {
   saveSettingsPreferences,
 } from "@/src/features/settings/preferences.service";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import { type ThemeColors, useTheme } from "@/src/contexts/ThemeContext";
 
 type State = {
   loading: boolean;
   prefs: SettingsPreferences;
 };
 
-function SettingsSubHeader({ title }: { title: string }) {
+function SettingsSubHeader({
+  title,
+  styles,
+  iconColor,
+}: {
+  title: string;
+  styles: ReturnType<typeof createStyles>;
+  iconColor: string;
+}) {
   return (
     <View style={styles.headerRow}>
       <Pressable
         onPress={() => router.back()}
         style={({ pressed }) => [styles.headerBtn, pressed && { opacity: 0.85 }]}
       >
-        <MaterialIcons name="arrow-back" size={22} color={asl.text.primary} />
+        <MaterialIcons name="arrow-back" size={22} color={iconColor} />
       </Pressable>
       <Text style={styles.headerTitle}>{title}</Text>
       <View style={styles.headerSpacer} />
@@ -35,6 +44,8 @@ function SettingsSubHeader({ title }: { title: string }) {
 }
 
 export default function NotificationsScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { refreshStreakReminders } = useAuthUser();
   const [state, setState] = useState<State>({
     loading: true,
@@ -69,7 +80,7 @@ export default function NotificationsScreen() {
         contentStyle={styles.screenContent}
         contentPadded={false}
       >
-        <SettingsSubHeader title="Notifications" />
+        <SettingsSubHeader title="Notifications" styles={styles} iconColor={colors.text} />
         <ScrollView contentContainerStyle={styles.container}>
           <GlassCard style={styles.heroCard}>
             <Text style={styles.heroTitle}>Notification Preferences</Text>
@@ -81,8 +92,8 @@ export default function NotificationsScreen() {
           <GlassCard style={styles.sectionCard}>
             <SettingsToggleRow
               iconName="notifications-none"
-              iconColor="#53B1A3"
-              iconBg="#DDEFE9"
+              iconColor={colors.accentBlue}
+              iconBg={colors.controlWell}
               label="Push Notifications"
               value={notifications.pushNotifications}
               disabled={state.loading}
@@ -92,12 +103,13 @@ export default function NotificationsScreen() {
                   notifications: { ...notifications, pushNotifications: value },
                 })
               }
+              styles={styles}
             />
 
             <SettingsToggleRow
               iconName="menu-book"
-              iconColor="#53B1A3"
-              iconBg="#DDEFE9"
+              iconColor={colors.primary}
+              iconBg={colors.controlWell}
               label="Daily Learn Reminders"
               value={notifications.dailyLearnReminders}
               disabled={state.loading}
@@ -107,12 +119,13 @@ export default function NotificationsScreen() {
                   notifications: { ...notifications, dailyLearnReminders: value },
                 })
               }
+              styles={styles}
             />
 
             <SettingsToggleRow
               iconName="local-fire-department"
-              iconColor="#E25822"
-              iconBg="#FCE7DC"
+              iconColor={colors.accentOrange}
+              iconBg={colors.controlWell}
               label="Streak login reminders"
               value={notifications.streakLoginReminders}
               disabled={state.loading}
@@ -122,12 +135,13 @@ export default function NotificationsScreen() {
                   notifications: { ...notifications, streakLoginReminders: value },
                 })
               }
+              styles={styles}
             />
 
             <SettingsToggleRow
               iconName="manage-search"
-              iconColor="#53B1A3"
-              iconBg="#DDEFE9"
+              iconColor={colors.accentYellow}
+              iconBg={colors.controlWell}
               label="Dictionary Post Notifications"
               value={notifications.dictionaryPostNotifications}
               disabled={state.loading}
@@ -137,6 +151,7 @@ export default function NotificationsScreen() {
                   notifications: { ...notifications, dictionaryPostNotifications: value },
                 })
               }
+              styles={styles}
             />
           </GlassCard>
         </ScrollView>
@@ -153,6 +168,7 @@ function SettingsToggleRow({
   value,
   disabled,
   onChange,
+  styles,
 }: {
   iconName: React.ComponentProps<typeof MaterialIcons>["name"];
   iconColor: string;
@@ -161,6 +177,7 @@ function SettingsToggleRow({
   value: boolean;
   disabled?: boolean;
   onChange: (next: boolean) => void;
+  styles: ReturnType<typeof createStyles>;
 }) {
   return (
     <View style={styles.row}>
@@ -177,106 +194,106 @@ function SettingsToggleRow({
   );
 }
 
-const styles = StyleSheet.create({
-  screenContent: {
-    flex: 1,
-    backgroundColor: "transparent",
-  },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: Spacing.screenPadding,
-    minHeight: 52,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: asl.glass.border,
-    backgroundColor: "rgba(8,2,10,0.2)",
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: "center",
-    color: asl.text.primary,
-    fontSize: 20,
-    lineHeight: 26,
-    fontWeight: fontWeight.emphasis,
-  },
-  headerSpacer: {
-    width: 40,
-    height: 40,
-  },
-  headerBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: asl.glass.bg,
-    borderWidth: 1,
-    borderColor: asl.glass.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  container: {
-    paddingHorizontal: Spacing.screenPadding,
-    paddingTop: 16,
-    gap: 12,
-    paddingBottom: 40,
-  },
-  heroCard: {
-    paddingVertical: 14,
-    gap: 4,
-    ...asl.shadow.card,
-  },
-  heroTitle: {
-    fontSize: 20,
-    fontWeight: fontWeight.emphasis,
-    color: asl.text.primary,
-  },
-  heroSubtitle: {
-    fontSize: 14,
-    color: asl.text.secondary,
-  },
-  sectionCard: {
-    paddingVertical: 12,
-    gap: 10,
-    backgroundColor: asl.glass.bg,
-    borderWidth: 1,
-    borderColor: asl.glass.border,
-  },
-  row: {
-    minHeight: 68,
-    backgroundColor: asl.glass.bg,
-    borderWidth: 1,
-    borderColor: asl.glass.border,
-    paddingHorizontal: 12,
-    borderRadius: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  rowLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-    paddingRight: 8,
-    gap: 8,
-  },
-  iconBox: {
-    width: 30,
-    height: 30,
-    borderRadius: 4,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  rowLabel: {
-    color: asl.text.primary,
-    fontSize: 15,
-    fontWeight: "500",
-    flexShrink: 1,
-  },
-  switchSlot: {
-    minWidth: 56,
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 8,
-  },
-});
-
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    screenContent: {
+      flex: 1,
+      backgroundColor: "transparent",
+    },
+    headerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: Spacing.screenPadding,
+      minHeight: 52,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: colors.border,
+      backgroundColor: colors.headerScrim,
+    },
+    headerTitle: {
+      flex: 1,
+      textAlign: "center",
+      color: colors.text,
+      fontSize: 20,
+      lineHeight: 26,
+      fontWeight: fontWeight.emphasis,
+    },
+    headerSpacer: {
+      width: 40,
+      height: 40,
+    },
+    headerBtn: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    container: {
+      paddingHorizontal: Spacing.screenPadding,
+      paddingTop: 16,
+      gap: 12,
+      paddingBottom: 40,
+    },
+    heroCard: {
+      paddingVertical: 14,
+      gap: 4,
+      ...asl.shadow.card,
+    },
+    heroTitle: {
+      fontSize: 20,
+      fontWeight: fontWeight.emphasis,
+      color: colors.text,
+    },
+    heroSubtitle: {
+      fontSize: 14,
+      color: colors.subtext,
+    },
+    sectionCard: {
+      paddingVertical: 12,
+      gap: 10,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    row: {
+      minHeight: 68,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 12,
+      borderRadius: 14,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    rowLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+      paddingRight: 8,
+      gap: 8,
+    },
+    iconBox: {
+      width: 30,
+      height: 30,
+      borderRadius: 4,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    rowLabel: {
+      color: colors.text,
+      fontSize: 15,
+      fontWeight: "500",
+      flexShrink: 1,
+    },
+    switchSlot: {
+      minWidth: 56,
+      alignItems: "center",
+      justifyContent: "center",
+      marginLeft: 8,
+    },
+  });

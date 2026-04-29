@@ -1,5 +1,5 @@
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { fontWeight } from "@/src/theme";
-import { asl } from "@/src/theme/aslConnectTheme";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -23,6 +23,10 @@ export function LessonCard({
   rightDetail,
   disabled,
 }: Props) {
+  const { colors, theme } = useTheme();
+  const emojiWell =
+    theme === "light" ? "rgba(15,23,42,0.06)" : "rgba(0,0,0,0.22)";
+
   return (
     <Pressable
       onPress={onPress}
@@ -30,8 +34,8 @@ export function LessonCard({
       style={({ pressed }) => [
         styles.card,
         {
-          backgroundColor: asl.glass.bg,
-          borderColor: asl.glass.border,
+          backgroundColor: colors.card,
+          borderColor: colors.border,
         },
         (pressed || disabled) && { opacity: disabled ? 0.55 : 0.9 },
       ]}
@@ -41,8 +45,8 @@ export function LessonCard({
           style={[
             styles.emojiWrap,
             {
-              backgroundColor: "rgba(0,0,0,0.22)",
-              borderColor: asl.glass.border,
+              backgroundColor: emojiWell,
+              borderColor: colors.border,
             },
           ]}
         >
@@ -50,26 +54,24 @@ export function LessonCard({
         </View>
 
         <View>
-          <Text style={[styles.title, { color: asl.text.primary }]}>{title}</Text>
+          <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
           {subtitle ? (
-            <Text style={[styles.sub, { color: asl.text.secondary }]}>{subtitle}</Text>
+            <Text style={[styles.sub, { color: colors.subtext }]}>{subtitle}</Text>
           ) : null}
         </View>
       </View>
 
       <View style={styles.right}>
         {rightDetail ? (
-          <Text style={[styles.detail, { color: asl.text.secondary }]}>
-            {rightDetail}
-          </Text>
+          <Text style={[styles.detail, { color: colors.subtext }]}>{rightDetail}</Text>
         ) : null}
 
         {status === "locked" ? (
-          <MaterialIcons name="lock" size={20} color={asl.text.muted} />
+          <MaterialIcons name="lock" size={20} color={colors.subtext} />
         ) : status === "complete" ? (
           <MaterialIcons name="check-circle" size={22} color="#4ADE80" />
         ) : (
-          <MaterialIcons name="chevron-right" size={22} color={asl.text.secondary} />
+          <MaterialIcons name="chevron-right" size={22} color={colors.subtext} />
         )}
       </View>
     </Pressable>

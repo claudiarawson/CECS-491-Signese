@@ -1,26 +1,33 @@
-import { Tabs } from "expo-router";
-import React from "react";
-import { Platform, StyleSheet } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { Sizes } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
+import { Tabs } from "expo-router";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import React, { useMemo } from "react";
+import { Platform, StyleSheet } from "react-native";
 
 const TAB_ICON_SIZE = Sizes.iconMd;
 
 export default function TabLayout() {
+  const { theme, colors } = useTheme();
+
+  const screenOptions = useMemo(
+    () => ({
+      headerShown: false,
+      animation: "fade" as const,
+      tabBarStyle: [styles.tabBarBase, theme === "light" ? styles.tabBarLight : styles.tabBarDark],
+      tabBarLabelStyle: styles.tabLabel,
+      tabBarAllowFontScaling: false,
+      tabBarActiveTintColor: theme === "light" ? colors.primary : asl.tabBar.active,
+      tabBarInactiveTintColor:
+        theme === "light" ? "rgba(15,23,42,0.42)" : asl.tabBar.inactive,
+      tabBarItemStyle: styles.tabItem,
+    }),
+    [theme, colors.primary]
+  );
+
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        animation: "fade",
-        tabBarStyle: styles.tabBar,
-        tabBarLabelStyle: styles.tabLabel,
-        tabBarAllowFontScaling: false,
-        tabBarActiveTintColor: asl.tabBar.active,
-        tabBarInactiveTintColor: asl.tabBar.inactive,
-        tabBarItemStyle: styles.tabItem,
-      }}
-    >
+    <Tabs screenOptions={screenOptions}>
       <Tabs.Screen
         name="home"
         options={{
@@ -64,7 +71,7 @@ export default function TabLayout() {
 }
 
 const styles = StyleSheet.create({
-  tabBar: {
+  tabBarBase: {
     position: "absolute",
     left: 16,
     right: 16,
@@ -72,9 +79,7 @@ const styles = StyleSheet.create({
     height: 62,
     borderRadius: 22,
     borderTopWidth: 0,
-    backgroundColor: asl.tabBar.bg,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: asl.tabBar.border,
     paddingBottom: 6,
     paddingTop: 4,
     ...Platform.select({
@@ -87,6 +92,14 @@ const styles = StyleSheet.create({
       android: { elevation: 14 },
       default: {},
     }),
+  },
+  tabBarDark: {
+    backgroundColor: asl.tabBar.bg,
+    borderColor: asl.tabBar.border,
+  },
+  tabBarLight: {
+    backgroundColor: "rgba(255,255,255,0.92)",
+    borderColor: "rgba(15,23,42,0.10)",
   },
   tabLabel: {
     fontSize: 11,

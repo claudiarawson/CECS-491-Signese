@@ -6,7 +6,7 @@ import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -19,6 +19,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
+import { useTheme, type ThemeColors } from "@/src/contexts/ThemeContext";
 import {
   CommunitySignSubmitError,
   submitCommunitySign,
@@ -26,11 +27,12 @@ import {
 
 export default function AddSignScreen() {
   const { authUser } = useAuthUser();
+  const { colors, theme } = useTheme();
   const insets = useSafeAreaInsets();
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const ms = (value: number) => moderateScale(value) * density;
-  const styles = createStyles(density);
+  const styles = useMemo(() => createStyles(density, colors, theme), [density, colors, theme]);
 
   const [word, setWord] = useState("");
   const [definition, setDefinition] = useState("");
@@ -146,7 +148,7 @@ export default function AddSignScreen() {
         accessibilityLabel="Back"
         style={({ pressed }) => [styles.headerIconBtn, pressed && { opacity: 0.7 }]}
       >
-        <MaterialIcons name="arrow-back" size={24} color={asl.text.primary} />
+        <MaterialIcons name="arrow-back" size={24} color={colors.text} />
       </Pressable>
       <Text style={styles.headerTitle} numberOfLines={1}>
         Add sign
@@ -193,7 +195,7 @@ export default function AddSignScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={videoUri ? "Change video" : "Add sign video"}
               >
-                <MaterialIcons name="videocam" size={ms(32)} color={asl.accentCyan} />
+                <MaterialIcons name="videocam" size={ms(32)} color={colors.accentBlue} />
                 <Text style={styles.videoPickLabel} numberOfLines={2}>
                   {videoUri ? "Change video" : "Add video *"}
                 </Text>
@@ -259,7 +261,7 @@ export default function AddSignScreen() {
               style={styles.submitGradient}
             >
               {submitting ? (
-                <ActivityIndicator color={asl.surfaceLight} />
+                <ActivityIndicator color="#FFFFFF" />
               ) : (
                 <Text style={styles.submitButtonText}>Submit</Text>
               )}
@@ -271,8 +273,10 @@ export default function AddSignScreen() {
   );
 }
 
-const createStyles = (density: number) => {
+const createStyles = (density: number, colors: ThemeColors, theme: "light" | "dark") => {
   const ms = (value: number) => moderateScale(value) * density;
+  const footerBg = theme === "light" ? colors.panelMuted : "rgba(0,0,0,0.45)";
+
   return StyleSheet.create({
     fill: {
       flex: 1,
@@ -290,7 +294,7 @@ const createStyles = (density: number) => {
     },
     headerTitle: {
       flex: 1,
-      color: asl.text.primary,
+      color: colors.text,
       fontSize: ms(22),
       fontWeight: fontWeight.emphasis,
       textAlign: "center",
@@ -309,12 +313,12 @@ const createStyles = (density: number) => {
       marginBottom: ms(16),
     },
     warnText: {
-      color: asl.text.secondary,
+      color: colors.text,
       fontSize: ms(14),
       lineHeight: ms(20),
     },
     warnLink: {
-      color: asl.linkPink,
+      color: colors.primary,
       fontWeight: fontWeight.medium,
     },
     wordVideoRow: {
@@ -344,13 +348,13 @@ const createStyles = (density: number) => {
     },
     videoPickLabel: {
       fontSize: ms(11),
-      color: asl.text.primary,
+      color: colors.text,
       textAlign: "center",
       fontWeight: fontWeight.medium,
     },
     videoHint: {
       fontSize: ms(12),
-      color: asl.text.muted,
+      color: colors.subtext,
       marginBottom: ms(12),
     },
     textarea: {
@@ -358,7 +362,7 @@ const createStyles = (density: number) => {
     },
     progressText: {
       textAlign: "center",
-      color: asl.accentCyan,
+      color: colors.accentBlue,
       marginTop: ms(8),
       fontSize: ms(14),
       fontWeight: fontWeight.medium,
@@ -370,8 +374,8 @@ const createStyles = (density: number) => {
       flexShrink: 0,
       paddingTop: ms(14),
       borderTopWidth: StyleSheet.hairlineWidth,
-      borderTopColor: asl.glass.border,
-      backgroundColor: "rgba(0,0,0,0.45)",
+      borderTopColor: colors.border,
+      backgroundColor: footerBg,
     },
     submitWrap: {
       width: "100%",

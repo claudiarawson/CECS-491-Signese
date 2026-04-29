@@ -1,15 +1,28 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-type ThemeMode = "light" | "dark";
+export type ThemeMode = "light" | "dark";
 
-type ThemeColors = {
+/** Semantic colors for glass/gradient UI. Light mode uses yellow–orange–blue–pink accents on a soft gradient. */
+export type ThemeColors = {
   background: string;
   card: string;
   text: string;
   subtext: string;
   border: string;
+  /** Primary CTA / emphasis (pink) */
   primary: string;
+  accentOrange: string;
+  accentBlue: string;
+  accentYellow: string;
+  /** Settings / account header strip */
+  headerScrim: string;
+  /** Camera wells, deep surfaces (translate, cards) */
+  panel: string;
+  /** Control strips, secondary panels */
+  panelMuted: string;
+  controlWell: string;
+  controlBorder: string;
 };
 
 type ThemeContextType = {
@@ -20,17 +33,23 @@ type ThemeContextType = {
   loading: boolean;
 };
 
-/** Matches `aslConnectTheme`: glass surfaces on gradient screens (ASL Connect–style UI). */
 const LIGHT_COLORS: ThemeColors = {
   background: "transparent",
-  card: "rgba(255,255,255,0.10)",
-  text: "#FFFFFF",
-  subtext: "rgba(255,255,255,0.72)",
-  border: "rgba(255,255,255,0.16)",
-  primary: "#F472B6",
+  card: "rgba(255,255,255,0.78)",
+  text: "#0F172A",
+  subtext: "rgba(15,23,42,0.68)",
+  border: "rgba(15,23,42,0.14)",
+  primary: "#DB2777",
+  accentOrange: "#EA580C",
+  accentBlue: "#2563EB",
+  accentYellow: "#CA8A04",
+  headerScrim: "rgba(255,255,255,0.62)",
+  panel: "rgba(255,255,255,0.52)",
+  panelMuted: "rgba(255,255,255,0.72)",
+  controlWell: "rgba(15,23,42,0.07)",
+  controlBorder: "rgba(15,23,42,0.12)",
 };
 
-/** Slightly deeper glass on dark preference (still maroon/purple gradient–friendly). */
 const DARK_COLORS: ThemeColors = {
   background: "transparent",
   card: "rgba(255,255,255,0.08)",
@@ -38,6 +57,14 @@ const DARK_COLORS: ThemeColors = {
   subtext: "rgba(255,255,255,0.68)",
   border: "rgba(255,255,255,0.14)",
   primary: "#EC4899",
+  accentOrange: "#FB923C",
+  accentBlue: "#38BDF8",
+  accentYellow: "#FACC15",
+  headerScrim: "rgba(8,2,10,0.2)",
+  panel: "rgba(8, 4, 18, 0.72)",
+  panelMuted: "rgba(12, 6, 24, 0.78)",
+  controlWell: "rgba(255,255,255,0.14)",
+  controlBorder: "rgba(255,255,255,0.22)",
 };
 
 const THEME_STORAGE_KEY = "app_theme";
@@ -79,12 +106,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     await setTheme(nextTheme);
   };
 
-  const colors = theme === "light" ? LIGHT_COLORS : DARK_COLORS;
-
   const value = useMemo(
     () => ({
       theme,
-      colors,
+      colors: theme === "light" ? LIGHT_COLORS : DARK_COLORS,
       toggleTheme,
       setTheme,
       loading,

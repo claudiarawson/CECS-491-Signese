@@ -1,9 +1,9 @@
-import React from "react";
-import { View, Pressable, Text, StyleSheet } from "react-native";
+import { useTheme } from "@/src/contexts/ThemeContext";
+import { fontWeight } from "@/src/theme";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
-import { asl } from "@/src/theme/aslConnectTheme";
-import { fontWeight } from "@/src/theme";
+import React from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   title: string;
@@ -16,7 +16,10 @@ export function LearnFlowHeader({
   title,
   showBack = true,
   onBackPress,
-  rightExtra}: Props) {
+  rightExtra,
+}: Props) {
+  const { colors } = useTheme();
+
   return (
     <View style={styles.row}>
       {showBack ? (
@@ -27,12 +30,12 @@ export function LearnFlowHeader({
           accessibilityLabel="Back"
           style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.72 }]}
         >
-          <MaterialIcons name="arrow-back" size={24} color={asl.text.primary} />
+          <MaterialIcons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
       ) : (
         <View style={styles.sidePlaceholder} />
       )}
-      <Text style={styles.title} numberOfLines={1}>
+      <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
         {title}
       </Text>
       {rightExtra != null ? <View style={styles.right}>{rightExtra}</View> : <View style={styles.sidePlaceholder} />}
@@ -45,25 +48,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 4,
-    /** Top inset comes from AppShell `SafeAreaView` */
     paddingTop: 6,
     paddingBottom: 14,
     gap: 10,
-    minHeight: 48},
+    minHeight: 48,
+  },
   iconBtn: {
-    padding: 4},
+    padding: 4,
+  },
   title: {
     flex: 1,
     fontSize: 22,
-    color: asl.text.primary,
     fontWeight: fontWeight.emphasis,
-    textAlign: "center"},
+    textAlign: "center",
+  },
   right: {
     minWidth: 40,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-    gap: 4},
+    gap: 4,
+  },
   sidePlaceholder: {
     width: 36,
-    height: 36}});
+    height: 36,
+  },
+});

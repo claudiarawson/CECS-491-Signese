@@ -1,5 +1,6 @@
+import { GradientBackground } from "@/src/components/asl";
 import { useTheme } from "@/src/contexts/ThemeContext";
-import { getDeviceDensity, moderateScale, Typography } from "@/src/theme";
+import { fontWeight, getDeviceDensity, moderateScale, Typography } from "@/src/theme";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import React from "react";
@@ -10,6 +11,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AppearanceScreen() {
   const { theme, setTheme, colors } = useTheme();
@@ -21,85 +23,87 @@ export default function AppearanceScreen() {
   const checkSize = moderateScale(22) * density;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Pressable
-          onPress={() => router.back()}
-          style={styles.backButton}
-          hitSlop={10}
-          accessibilityLabel="Go back"
-        >
-          <MaterialIcons name="arrow-back" size={iconSize} color={colors.text} />
-        </Pressable>
+    <GradientBackground variant="default" style={{ flex: 1 }}>
+      <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
+        <View style={styles.header}>
+          <Pressable
+            onPress={() => router.back()}
+            style={styles.backButton}
+            hitSlop={10}
+            accessibilityLabel="Go back"
+          >
+            <MaterialIcons name="arrow-back" size={iconSize} color={colors.text} />
+          </Pressable>
 
-        <Text style={styles.headerTitle}>Appearance</Text>
+          <Text style={styles.headerTitle}>Appearance</Text>
 
-        <View style={styles.headerSpacer} />
-      </View>
-
-      <View style={styles.content}>
-        <View style={styles.infoCard}>
-          <Text style={styles.title}>Choose Theme</Text>
-          <Text style={styles.subtitle}>
-            Pick the look you want for the app. Your choice will be saved automatically.
-          </Text>
+          <View style={styles.headerSpacer} />
         </View>
 
-        <Pressable
-          style={[
-            styles.optionCard,
-            theme === "light" && styles.optionCardSelected,
-          ]}
-          onPress={() => void setTheme("light")}
-        >
-          <View style={styles.optionLeft}>
-            <View style={[styles.iconChip, { backgroundColor: "#FDE68A" }]}>
-              <MaterialIcons name="light-mode" size={iconSize} color="#B45309" />
-            </View>
-
-            <View style={styles.textWrap}>
-              <Text style={styles.optionTitle}>Light Mode</Text>
-              <Text style={styles.optionSubtitle}>
-                Brighter glass panels on the maroon–purple gradient
-              </Text>
-            </View>
+        <View style={styles.content}>
+          <View style={styles.infoCard}>
+            <Text style={styles.title}>Choose Theme</Text>
+            <Text style={styles.subtitle}>
+              Pick the look you want for the app. Your choice will be saved automatically.
+            </Text>
           </View>
 
-          {theme === "light" ? (
-            <MaterialIcons name="check-circle" size={checkSize} color={colors.primary} />
-          ) : (
-            <View style={styles.uncheckedCircle} />
-          )}
-        </Pressable>
+          <Pressable
+            style={[
+              styles.optionCard,
+              theme === "light" && styles.optionCardSelected,
+            ]}
+            onPress={() => void setTheme("light")}
+          >
+            <View style={styles.optionLeft}>
+              <View style={[styles.iconChip, { backgroundColor: "#FDE68A" }]}>
+                <MaterialIcons name="light-mode" size={iconSize} color="#B45309" />
+              </View>
 
-        <Pressable
-          style={[
-            styles.optionCard,
-            theme === "dark" && styles.optionCardSelected,
-          ]}
-          onPress={() => void setTheme("dark")}
-        >
-          <View style={styles.optionLeft}>
-            <View style={[styles.iconChip, { backgroundColor: "#DDD6FE" }]}>
-              <MaterialIcons name="dark-mode" size={iconSize} color="#6D28D9" />
+              <View style={styles.textWrap}>
+                <Text style={styles.optionTitle}>Light Mode</Text>
+                <Text style={styles.optionSubtitle}>
+                  Sunny yellow, orange, blue & pink gradient with light glass
+                </Text>
+              </View>
             </View>
 
-            <View style={styles.textWrap}>
-              <Text style={styles.optionTitle}>Dark Mode</Text>
-              <Text style={styles.optionSubtitle}>
-                Softer glass panels on the maroon–purple gradient
-              </Text>
-            </View>
-          </View>
+            {theme === "light" ? (
+              <MaterialIcons name="check-circle" size={checkSize} color={colors.primary} />
+            ) : (
+              <View style={styles.uncheckedCircle} />
+            )}
+          </Pressable>
 
-          {theme === "dark" ? (
-            <MaterialIcons name="check-circle" size={checkSize} color={colors.primary} />
-          ) : (
-            <View style={styles.uncheckedCircle} />
-          )}
-        </Pressable>
-      </View>
-    </View>
+          <Pressable
+            style={[
+              styles.optionCard,
+              theme === "dark" && styles.optionCardSelected,
+            ]}
+            onPress={() => void setTheme("dark")}
+          >
+            <View style={styles.optionLeft}>
+              <View style={[styles.iconChip, { backgroundColor: "#DDD6FE" }]}>
+                <MaterialIcons name="dark-mode" size={iconSize} color="#6D28D9" />
+              </View>
+
+              <View style={styles.textWrap}>
+                <Text style={styles.optionTitle}>Dark Mode</Text>
+                <Text style={styles.optionSubtitle}>
+                  Deep maroon–purple gradient with softer glass
+                </Text>
+              </View>
+            </View>
+
+            {theme === "dark" ? (
+              <MaterialIcons name="check-circle" size={checkSize} color={colors.primary} />
+            ) : (
+              <View style={styles.uncheckedCircle} />
+            )}
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    </GradientBackground>
   );
 }
 
@@ -107,21 +111,20 @@ const createStyles = (density: number, colors: any) => {
   const ms = (value: number) => moderateScale(value) * density;
 
   return StyleSheet.create({
-    container: {
+    safe: {
       flex: 1,
-      backgroundColor: colors.background,
     },
 
     header: {
-      paddingTop: ms(18),
       paddingHorizontal: ms(16),
-      paddingBottom: ms(14),
+      paddingVertical: ms(12),
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      borderBottomWidth: 1,
+      minHeight: 52,
+      borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: colors.border,
-      backgroundColor: colors.background,
+      backgroundColor: colors.headerScrim,
     },
 
     backButton: {
@@ -137,8 +140,8 @@ const createStyles = (density: number, colors: any) => {
 
     headerTitle: {
       ...Typography.sectionTitle,
-      fontSize: ms(24),
-      fontWeight: "800",
+      fontSize: ms(20),
+      fontWeight: fontWeight.emphasis,
       color: colors.text,
     },
 

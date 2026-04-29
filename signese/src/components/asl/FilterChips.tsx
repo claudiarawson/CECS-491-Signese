@@ -1,7 +1,7 @@
-import React from "react";
-import { Text, Pressable, ScrollView, StyleSheet } from "react-native";
-import { asl } from "@/src/theme/aslConnectTheme";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { fontWeight } from "@/src/theme";
+import React from "react";
+import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
 
 type Chip = { id: string; label: string };
 
@@ -12,6 +12,10 @@ type Props = {
 };
 
 export function FilterChips({ items, selectedIds, onToggle }: Props) {
+  const { colors, theme } = useTheme();
+  const chipOnBorder = theme === "light" ? `${colors.primary}99` : "rgba(244, 114, 182, 0.5)";
+  const chipOnBg = theme === "light" ? "rgba(219, 39, 119, 0.18)" : "rgba(244, 114, 182, 0.25)";
+
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
       {items.map((item) => {
@@ -22,11 +26,20 @@ export function FilterChips({ items, selectedIds, onToggle }: Props) {
             onPress={() => onToggle(item.id)}
             style={({ pressed }) => [
               styles.chip,
-              on && styles.chipOn,
+              {
+                borderColor: colors.border,
+                backgroundColor: colors.controlWell,
+              },
+              on && {
+                backgroundColor: chipOnBg,
+                borderColor: chipOnBorder,
+              },
               pressed && { opacity: 0.85 },
             ]}
           >
-            <Text style={[styles.label, on && styles.labelOn]}>{item.label}</Text>
+            <Text style={[styles.label, { color: colors.subtext }, on && { color: colors.text, fontWeight: "700" }]}>
+              {item.label}
+            </Text>
           </Pressable>
         );
       })}
@@ -41,10 +54,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: asl.glass.border,
-    backgroundColor: "rgba(0,0,0,0.2)"},
-  chipOn: {
-    backgroundColor: "rgba(244, 114, 182, 0.25)",
-    borderColor: "rgba(244, 114, 182, 0.5)"},
-  label: { color: asl.text.secondary, fontSize: 13, fontWeight: fontWeight.medium },
-  labelOn: { color: asl.text.primary }});
+  },
+  label: { fontSize: 13, fontWeight: fontWeight.medium },
+});
