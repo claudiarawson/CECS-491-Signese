@@ -10,7 +10,6 @@ type Props = {
   item: TranslationHistoryItem;
   isNewest: boolean;
   textScale: number;
-  onReuse?: (item: TranslationHistoryItem) => void;
   onDictionary?: (item: TranslationHistoryItem) => void;
   onDelete?: (item: TranslationHistoryItem) => void;
   onReport?: (item: TranslationHistoryItem) => void;
@@ -37,7 +36,6 @@ export function TranslationHistoryItemCard({
   item,
   isNewest,
   textScale,
-  onReuse,
   onDictionary,
   onDelete,
   onReport,
@@ -73,35 +71,16 @@ export function TranslationHistoryItemCard({
           </View>
         ) : null}
       </View>
-      <Text style={[styles.kicker, d && darkStyles.kicker, { fontSize: 10 * textScale }]}>Detected</Text>
-      <Text style={[styles.original, d && darkStyles.original, { fontSize: 13 * textScale }]} numberOfLines={4}>
-        {item.originalText}
-      </Text>
-      <Text style={[styles.kicker, styles.kickerSpaced, d && darkStyles.kicker, { fontSize: 10 * textScale }]}>
-        Caption
-      </Text>
-      <Text style={[styles.translated, d && darkStyles.translated, { fontSize: 13 * textScale }]} numberOfLines={6}>
+      <Text style={[styles.kicker, d && darkStyles.kicker, { fontSize: 10 * textScale }]}>Recognized</Text>
+      <Text
+        style={[styles.translated, d && darkStyles.translated, { fontSize: 13 * textScale }]}
+        numberOfLines={6}
+      >
         {item.translatedText}
       </Text>
 
-      {onReuse || onDictionary || onDelete || onReport ? (
+      {onDictionary || onDelete || onReport ? (
         <View style={styles.actionRow}>
-          {onReuse ? (
-            <Pressable
-              onPress={() => onReuse(item)}
-              style={({ pressed }) => [
-                styles.actionBtn,
-                d ? darkStyles.actionPrimary : styles.actionPrimary,
-                pressed && styles.actionPressed,
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel="Reuse caption in translate"
-            >
-              <Text style={[styles.actionBtnText, d && darkStyles.actionBtnText, { fontSize: 12 * textScale }]}>
-                Use caption
-              </Text>
-            </Pressable>
-          ) : null}
           {onDictionary ? (
             <Pressable
               onPress={() => onDictionary(item)}
@@ -114,7 +93,9 @@ export function TranslationHistoryItemCard({
               accessibilityLabel="View this sign in the dictionary"
             >
               <MaterialIcons name="menu-book" size={16} color="#FFFFFF" />
-              <Text style={[styles.actionBtnText, { fontSize: 12 * textScale }]}>Dictionary</Text>
+              <Text style={[styles.actionBtnText, { fontSize: 12 * textScale }]} numberOfLines={1}>
+                Dictionary
+              </Text>
             </Pressable>
           ) : null}
           {onDelete ? (
@@ -125,7 +106,9 @@ export function TranslationHistoryItemCard({
               accessibilityLabel="Remove this sign from history"
             >
               <MaterialIcons name="delete-outline" size={16} color="#FFFFFF" />
-              <Text style={[styles.actionBtnText, { fontSize: 12 * textScale }]}>Delete</Text>
+              <Text style={[styles.actionBtnText, { fontSize: 12 * textScale }]} numberOfLines={1}>
+                Delete
+              </Text>
             </Pressable>
           ) : null}
           {onReport ? (
@@ -142,6 +125,7 @@ export function TranslationHistoryItemCard({
               <MaterialIcons name="flag" size={16} color={flagColor} />
               <Text
                 style={[styles.actionBtnTextSecondary, d && darkStyles.actionBtnTextSecondary, { fontSize: 12 * textScale }]}
+                numberOfLines={1}
               >
                 Report
               </Text>
@@ -197,18 +181,20 @@ const styles = StyleSheet.create({
   },
   actionRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
+    flexWrap: "nowrap",
     gap: Spacing.xs,
     marginTop: Spacing.sm,
+    alignItems: "center",
   },
   actionBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
     paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     borderRadius: Radius.sm,
     borderWidth: 1,
+    flexShrink: 1,
   },
   actionPrimary: {
     backgroundColor: "#214F46",

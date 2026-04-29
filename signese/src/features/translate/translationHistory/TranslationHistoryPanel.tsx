@@ -84,7 +84,6 @@ export function TranslationHistoryPanel({
       item={item}
       isNewest={index === 0}
       textScale={textScale}
-      onReuse={onReuse}
       onDictionary={onDictionary}
       onDelete={onDelete}
       onReport={onReportItem}

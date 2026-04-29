@@ -1,6 +1,6 @@
-import { AppShell, GlassCard, ToggleSwitch } from "@/src/components/asl";
+import { AppShell } from "@/src/components/asl";
 import { MainTabRail } from "@/src/components/navigation";
-import { Spacing, fontWeight, getDeviceDensity, moderateScale, Typography } from "@/src/theme";
+import { Spacing, getDeviceDensity, moderateScale, Typography } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import {
@@ -28,9 +28,6 @@ export default function TranslateHistoryScreen() {
     clearHistory,
     deleteHistoryItem,
     sessionId,
-    keepHistoryOnDevice,
-    setKeepHistoryOnDevice,
-    historyPrefsLoaded,
     requestReuseCaption} = useTabTranslationHistory();
 
   const [reportOpen, setReportOpen] = useState(false);
@@ -72,9 +69,9 @@ export default function TranslateHistoryScreen() {
   );
 
   const handleDictionaryLookup = useCallback((item: TranslationHistoryItem) => {
-    router.push({
+    router.replace({
       pathname: "/(tabs)/dictionary",
-      params: { q: item.originalText }} as any);
+      params: { q: item.translatedText }} as any);
   }, []);
 
   const header = (
@@ -110,23 +107,8 @@ export default function TranslateHistoryScreen() {
             listMaxHeight={listMaxHeight}
             textScale={textScale}
             appearance="dark"
-            keepHistoryOnDevice={keepHistoryOnDevice}
           />
         </View>
-
-        <GlassCard style={styles.historyPrefsCard} contentStyle={styles.historyPrefsInner}>
-          <ToggleSwitch
-            value={keepHistoryOnDevice}
-            onValueChange={setKeepHistoryOnDevice}
-            label="Keep history on device"
-            description="Recent translations stay on this phone."
-          />
-          {!historyPrefsLoaded ? (
-            <Text style={styles.prefsLoadingHint} accessibilityLiveRegion="polite">
-              Loading preference…
-            </Text>
-          ) : null}
-        </GlassCard>
 
         <View
           style={[
@@ -181,17 +163,6 @@ const createStyles = (density: number, textScale: number) => {
     panelSlot: {
       flex: 1,
       minHeight: 0},
-    historyPrefsCard: {
-      marginTop: Spacing.sm,
-      width: "100%"},
-    historyPrefsInner: {
-      paddingVertical: Spacing.sm,
-      paddingHorizontal: Spacing.md},
-    prefsLoadingHint: {
-      ...Typography.caption,
-      color: asl.text.muted,
-      marginTop: ms(8),
-      fontSize: ts(11)},
     tabRailOuter: {
       marginTop: Spacing.md,
       paddingHorizontal: ms(2)}});

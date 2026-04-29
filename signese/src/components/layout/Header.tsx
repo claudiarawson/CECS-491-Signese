@@ -3,13 +3,14 @@ import { navigationTheme } from "@/src/theme/navigation";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import React from "react";
-import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
+import { Pressable, StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
 
 type ScreenHeaderProps = {
 	title?: string;
 	right?: React.ReactNode;
 	left?: React.ReactNode;
 	style?: StyleProp<ViewStyle>;
+	titleStyle?: StyleProp<TextStyle>;
 	showBottomAccent?: boolean;
 	showBackButton?: boolean;
 	onBackPress?: () => void;
@@ -20,6 +21,7 @@ export function ScreenHeader({
 	right,
 	left,
 	style,
+	titleStyle,
 	showBottomAccent = true,
 	showBackButton = false,
 	onBackPress}: ScreenHeaderProps) {
@@ -40,7 +42,7 @@ export function ScreenHeader({
 					)}
 					{left}
 				</View>
-				{title && <Text style={styles.title}>{title}</Text>}
+				{title && <Text style={[styles.title, titleStyle]}>{title}</Text>}
 				<View style={styles.rightWrap}>{right}</View>
 			</View>
 		</View>
