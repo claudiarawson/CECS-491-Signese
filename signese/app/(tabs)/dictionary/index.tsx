@@ -13,21 +13,21 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import SignOverlay from "../../src/components/SignOverlay";
-import { useDictionarySigns } from "../../src/features/dictionary/hooks/useDictionarySigns";
-import { DictionarySignCard } from "../../src/features/dictionary/ui/DictionarySignCard";
-import { prefetchDictionaryVideoUrl } from "../../src/services/dictionary/dictionarySigns.service";
+import SignOverlay from "../../../src/components/SignOverlay";
+import { useDictionarySigns } from "../../../src/features/dictionary/hooks/useDictionarySigns";
+import { DictionarySignCard } from "../../../src/features/dictionary/ui/DictionarySignCard";
+import { prefetchDictionaryVideoUrl } from "../../../src/services/dictionary/dictionarySigns.service";
 import {
   getSavedIds,
   getSavedSnapshotMap,
   mergeSignWithSnapshot,
   toggleSavedId,
-} from "../../src/features/dictionary/storage/saved.local";
-import type { Sign, SignCategoryId } from "../../src/features/dictionary/types";
+} from "../../../src/features/dictionary/storage/saved.local";
+import type { Sign, SignCategoryId } from "../../../src/features/dictionary/types";
 import {
   SIGN_CATEGORY_LABEL,
   SIGN_CATEGORY_ORDER,
-} from "../../src/features/dictionary/signCategories";
+} from "../../../src/features/dictionary/signCategories";
 
 const CATEGORY_CHIPS = SIGN_CATEGORY_ORDER.map((id) => ({
   id,

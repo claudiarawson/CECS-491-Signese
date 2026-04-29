@@ -8,8 +8,8 @@ import React from "react";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 
 /** Must match `app/(tabs)/_layout.tsx` floating tab bar offset + height. */
-const TAB_BAR_FLOAT_BOTTOM = Platform.OS === "ios" ? 28 : 16;
-const TAB_BAR_HEIGHT = 62;
+export const TAB_BAR_FLOAT_BOTTOM = Platform.OS === "ios" ? 28 : 16;
+export const TAB_BAR_HEIGHT = 62;
 
 /** Distance from screen bottom to top edge of tab bar. */
 function tabBarTopFromBottom(): number {
@@ -17,9 +17,18 @@ function tabBarTopFromBottom(): number {
 }
 
 /** Bottom inset for the +Add / Saved row: sits above the tab bar with a small gap. */
-function footerBottomOffset(density: number): number {
+function footerGapAboveTabBar(density: number): number {
   const ms = (value: number) => moderateScale(value) * density;
-  return tabBarTopFromBottom() + ms(10);
+  return ms(10);
+}
+
+/**
+ * Distance from the physical screen bottom to the bottom edge of absolute-positioned chrome
+ * (e.g. Dictionary footer or Add Sign submit bar) so it sits above the floating tab bar.
+ */
+export function dictionaryChromeAbsoluteBottom(density: number, safeInsetBottom: number): number {
+  const baseOffset = tabBarTopFromBottom() + footerGapAboveTabBar(density);
+  return baseOffset + Math.max(0, safeInsetBottom - TAB_BAR_FLOAT_BOTTOM);
 }
 
 /**
@@ -27,7 +36,8 @@ function footerBottomOffset(density: number): number {
  */
 export function dictionaryChromePadBottom(density: number): number {
   const ms = (value: number) => moderateScale(value) * density;
-  return footerBottomOffset(density) + ms(14) * 2 + ms(22) + ms(18);
+  const footerBottomOffset = tabBarTopFromBottom() + footerGapAboveTabBar(density);
+  return footerBottomOffset + ms(14) * 2 + ms(22) + ms(18);
 }
 
 /** Shared bottom bar for dictionary tab + saved signs (same layout and scaling). */
@@ -69,8 +79,7 @@ const createStyles = (density: number, textScale: number, safeBottom: number) =>
   const ms = (value: number) => moderateScale(value) * density;
   const ts = (value: number) => ms(value) * textScale;
 
-  const baseOffset = footerBottomOffset(density);
-  const bottom = baseOffset + Math.max(0, safeBottom - TAB_BAR_FLOAT_BOTTOM);
+  const bottom = dictionaryChromeAbsoluteBottom(density, safeBottom);
 
   return StyleSheet.create({
     bottomRow: {

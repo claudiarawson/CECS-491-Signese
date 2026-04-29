@@ -1,4 +1,5 @@
 import { AppShell, GlassCard, InputField } from "@/src/components/asl";
+import { dictionaryChromeAbsoluteBottom } from "@/src/components/DictionaryFooter";
 import { Spacing, fontWeight, getDeviceDensity, moderateScale } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
 import * as ImagePicker from "expo-image-picker";
@@ -14,12 +15,14 @@ import {
   StyleSheet,
   Text,
   View,
-  useWindowDimensions} from "react-native";
+  useWindowDimensions,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import {
   CommunitySignSubmitError,
-  submitCommunitySign} from "@/src/services/dictionary/communitySignSubmit";
+  submitCommunitySign,
+} from "@/src/services/dictionary/communitySignSubmit";
 
 export default function AddSignScreen() {
   const { authUser } = useAuthUser();
@@ -59,7 +62,8 @@ export default function AddSignScreen() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Videos,
       videoMaxDuration: 120,
-      quality: 1});
+      quality: 1,
+    });
 
     if (result.canceled || !result.assets[0]) return;
 
@@ -86,10 +90,12 @@ export default function AddSignScreen() {
           word,
           definition,
           howToSign,
-          note},
+          note,
+        },
         videoUri,
         {
-          onUploadProgress: (r) => setUploadProgress(r)}
+          onUploadProgress: (r) => setUploadProgress(r),
+        }
       );
 
       resetForm();
@@ -99,7 +105,8 @@ export default function AddSignScreen() {
         [
           {
             text: "OK",
-            onPress: () => router.replace("/(tabs)/dictionary")},
+            onPress: () => router.replace("/dictionary"),
+          },
         ]
       );
       if (__DEV__) {
@@ -125,6 +132,11 @@ export default function AddSignScreen() {
     !howToSign.trim() ||
     !videoUri;
 
+  const chromeBottom = dictionaryChromeAbsoluteBottom(density, insets.bottom);
+  /** Padding above floating tab bar + full-width submit strip so scroll clears both. */
+  const submitStripHeight = ms(14) + ms(48) + ms(14);
+  const scrollBottomPad = chromeBottom + submitStripHeight + ms(12);
+
   const header = (
     <View style={styles.headerRow}>
       <Pressable
@@ -143,14 +155,12 @@ export default function AddSignScreen() {
     </View>
   );
 
-  const bottomPad = Math.max(insets.bottom, ms(12)) + ms(92);
-
   return (
     <AppShell scroll={false} header={header}>
       <View style={styles.fill}>
         <ScrollView
           style={styles.scroll}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPad }]}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: scrollBottomPad }]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -234,19 +244,13 @@ export default function AddSignScreen() {
           ) : null}
         </ScrollView>
 
-        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, ms(12)) }]}>
-          <Pressable
-            style={[styles.backButton, submitting && styles.btnDisabled]}
-            onPress={() => router.back()}
-            disabled={submitting}
-            accessibilityRole="button"
-          >
-            <Text style={styles.backButtonText}>Back</Text>
-          </Pressable>
+        <View style={[styles.footer, { bottom: chromeBottom }]}>
           <Pressable
             style={[styles.submitWrap, (submitDisabled || submitting) && styles.btnDisabled]}
             onPress={() => void handleSubmit()}
             disabled={submitDisabled || submitting}
+            accessibilityRole="button"
+            accessibilityLabel="Submit community sign"
           >
             <LinearGradient
               colors={[...asl.primaryButton] as unknown as [string, string, ...string[]]}
@@ -272,112 +276,124 @@ const createStyles = (density: number) => {
   return StyleSheet.create({
     fill: {
       flex: 1,
-      minHeight: 0},
+      minHeight: 0,
+    },
     headerRow: {
       flexDirection: "row",
       alignItems: "center",
       paddingHorizontal: Spacing.screenPadding,
       paddingBottom: Spacing.sm,
-      gap: ms(8)},
+      gap: ms(8),
+    },
     headerIconBtn: {
-      padding: ms(4)},
+      padding: ms(4),
+    },
     headerTitle: {
       flex: 1,
       color: asl.text.primary,
       fontSize: ms(22),
       fontWeight: fontWeight.emphasis,
-      textAlign: "center"},
+      textAlign: "center",
+    },
     headerSpacer: {
-      width: ms(32)},
+      width: ms(32),
+    },
     scroll: {
-      flex: 1},
+      flex: 1,
+    },
     scrollContent: {
       paddingHorizontal: Spacing.xl - 4,
-      paddingTop: ms(8)},
+      paddingTop: ms(8),
+    },
     warnGlass: {
-      marginBottom: ms(16)},
+      marginBottom: ms(16),
+    },
     warnText: {
       color: asl.text.secondary,
       fontSize: ms(14),
-      lineHeight: ms(20)},
+      lineHeight: ms(20),
+    },
     warnLink: {
       color: asl.linkPink,
-      fontWeight: fontWeight.medium},
+      fontWeight: fontWeight.medium,
+    },
     wordVideoRow: {
       flexDirection: "row",
       gap: ms(12),
       alignItems: "flex-start",
-      marginBottom: ms(8)},
+      marginBottom: ms(8),
+    },
     wordField: {
       flex: 1,
-      minWidth: 0},
+      minWidth: 0,
+    },
     videoCardOuter: {
-      width: ms(108)},
+      width: ms(108),
+    },
     videoCardInner: {
-      padding: ms(10)},
+      padding: ms(10),
+    },
     videoPick: {
       alignItems: "center",
       justifyContent: "center",
       minHeight: ms(108),
-      gap: ms(6)},
+      gap: ms(6),
+    },
     mediaButtonDisabled: {
-      opacity: 0.55},
+      opacity: 0.55,
+    },
     videoPickLabel: {
       fontSize: ms(11),
       color: asl.text.primary,
       textAlign: "center",
-      fontWeight: fontWeight.medium},
+      fontWeight: fontWeight.medium,
+    },
     videoHint: {
       fontSize: ms(12),
       color: asl.text.muted,
-      marginBottom: ms(12)},
+      marginBottom: ms(12),
+    },
     textarea: {
-      textAlignVertical: "top"},
+      textAlignVertical: "top",
+    },
     progressText: {
       textAlign: "center",
       color: asl.accentCyan,
       marginTop: ms(8),
       fontSize: ms(14),
-      fontWeight: fontWeight.medium},
+      fontWeight: fontWeight.medium,
+    },
     footer: {
+      position: "absolute",
+      left: Spacing.screenPadding,
+      right: Spacing.screenPadding,
       flexShrink: 0,
-      flexDirection: "row",
-      gap: ms(12),
-      paddingHorizontal: Spacing.xl - 4,
       paddingTop: ms(14),
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: asl.glass.border,
-      backgroundColor: "rgba(0,0,0,0.45)"},
-    backButton: {
-      flex: 1,
-      borderRadius: 999,
-      borderWidth: 1,
-      borderColor: asl.glass.border,
-      backgroundColor: "rgba(255,255,255,0.08)",
-      paddingVertical: ms(14),
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: ms(48)},
-    backButtonText: {
-      fontSize: ms(16),
-      fontWeight: fontWeight.emphasis,
-      color: asl.text.primary},
+      backgroundColor: "rgba(0,0,0,0.45)",
+    },
     submitWrap: {
-      flex: 1,
-      borderRadius: 999,
+      width: "100%",
+      borderRadius: ms(18),
       overflow: "hidden",
       minHeight: ms(48),
-      ...asl.shadow.card},
+      ...asl.shadow.card,
+    },
     submitGradient: {
       flex: 1,
       minHeight: ms(48),
       alignItems: "center",
       justifyContent: "center",
-      paddingHorizontal: ms(16)},
+      paddingHorizontal: ms(16),
+    },
     submitButtonText: {
       fontSize: ms(16),
       fontWeight: fontWeight.emphasis,
-      color: asl.surfaceLight},
+      color: asl.surfaceLight,
+    },
     btnDisabled: {
-      opacity: 0.55}});
+      opacity: 0.55,
+    },
+  });
 };
