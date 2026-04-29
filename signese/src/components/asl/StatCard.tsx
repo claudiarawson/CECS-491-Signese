@@ -1,7 +1,7 @@
-import React from "react";
-import { Text, View, StyleSheet, type TextStyle, type ViewStyle } from "react-native";
-import { asl } from "@/src/theme/aslConnectTheme";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { fontWeight } from "@/src/theme";
+import React from "react";
+import { StyleSheet, Text, View, type TextStyle, type ViewStyle } from "react-native";
 
 type Props = {
   icon: string;
@@ -12,21 +12,42 @@ type Props = {
   valueStyle?: TextStyle;
 };
 
-const accentMap = {
-  /** Rose glass fill (lifetime stars, highlights) */
-  pink: "rgba(244, 114, 182, 0.16)",
-  cyan: "rgba(56, 189, 248, 0.16)",
-  /** Streak / heat */
-  warm: "rgba(251, 191, 36, 0.16)",
-  /** Neutral frost—matches primary glass surfaces */
-  glass: "rgba(255,255,255,0.08)"} as const;
+export function StatCard({
+  icon,
+  value,
+  label,
+  accent = "pink",
+  style,
+  valueStyle,
+}: Props) {
+  const { colors, theme } = useTheme();
 
-export function StatCard({ icon, value, label, accent = "pink", style, valueStyle }: Props) {
+  const accentStyle =
+    accent === "pink"
+      ? {
+          backgroundColor: theme === "dark" ? "rgba(244, 114, 182, 0.12)" : colors.card,
+          borderColor: theme === "dark" ? "rgba(244, 114, 182, 0.22)" : colors.border,
+        }
+      : accent === "cyan"
+        ? {
+            backgroundColor: theme === "dark" ? "rgba(56, 189, 248, 0.12)" : colors.card,
+            borderColor: theme === "dark" ? "rgba(56, 189, 248, 0.22)" : colors.border,
+          }
+        : accent === "warm"
+          ? {
+              backgroundColor: theme === "dark" ? "rgba(251, 191, 36, 0.12)" : colors.card,
+              borderColor: theme === "dark" ? "rgba(251, 191, 36, 0.22)" : colors.border,
+            }
+          : {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+            };
+
   return (
-    <View style={[styles.card, { backgroundColor: accentMap[accent] }, asl.shadow.card, style]}>
+    <View style={[styles.card, accentStyle, style]}>
       <Text style={styles.icon}>{icon}</Text>
-      <Text style={[styles.value, valueStyle]}>{value}</Text>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.value, { color: colors.text }, valueStyle]}>{value}</Text>
+      <Text style={[styles.label, { color: colors.subtext }]}>{label}</Text>
     </View>
   );
 }
@@ -34,14 +55,27 @@ export function StatCard({ icon, value, label, accent = "pink", style, valueStyl
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    borderRadius: asl.radius.md,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: asl.glass.border,
     paddingVertical: 14,
     paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 96},
-  icon: { fontSize: 20, marginBottom: 4},
-  value: { color: asl.text.primary, fontSize: 26, fontWeight: fontWeight.emphasis },
-  label: { color: asl.text.secondary, fontSize: 12, fontWeight: fontWeight.medium }});
+    minHeight: 96,
+  },
+
+  icon: {
+    fontSize: 20,
+    marginBottom: 4,
+  },
+
+  value: {
+    fontSize: 26,
+    fontWeight: fontWeight.emphasis,
+  },
+
+  label: {
+    fontSize: 12,
+    fontWeight: fontWeight.medium,
+  },
+});
