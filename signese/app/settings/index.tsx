@@ -1,8 +1,5 @@
-import {
-  ScreenContainer,
-} from "@/src/components/layout";
-import { asl } from "@/src/theme/aslConnectTheme";
-import { GlassCard, GradientBackground } from "@/src/components/asl";
+import { ScreenContainer } from "@/src/components/layout";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import {
   Spacing,
   Typography,
@@ -42,28 +39,63 @@ function normalizeSearchText(value: string): string {
     .trim();
 }
 
-function SettingsHeader() {
+function SettingsHeader({
+  colors,
+}: {
+  colors: {
+    background: string;
+    card: string;
+    text: string;
+    subtext: string;
+    border: string;
+    primary: string;
+  };
+}) {
   return (
-    <View style={headerStyles.row}>
+    <View style={[headerStyles.row, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
       <Pressable
         onPress={() => router.back()}
-        style={({ pressed }) => [headerStyles.iconBtn, pressed && { opacity: 0.85 }]}
+        style={({ pressed }) => [
+          headerStyles.iconBtn,
+          {
+            backgroundColor: colors.card,
+            borderColor: colors.border,
+          },
+          pressed && { opacity: 0.85 },
+        ]}
       >
-        <MaterialIcons name="arrow-back" size={22} color={asl.text.primary} />
+        <MaterialIcons name="arrow-back" size={22} color={colors.text} />
       </Pressable>
-      <Text style={headerStyles.title}>Settings</Text>
+
+      <Text style={[headerStyles.title, { color: colors.text }]}>Settings</Text>
+
       <View style={headerStyles.right}>
         <Pressable
           onPress={() => router.push("/(tabs)/settings" as any)}
-          style={({ pressed }) => [headerStyles.iconBtn, pressed && { opacity: 0.85 }]}
+          style={({ pressed }) => [
+            headerStyles.iconBtn,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+            },
+            pressed && { opacity: 0.85 },
+          ]}
         >
-          <MaterialIcons name="settings" size={22} color={asl.text.secondary} />
+          <MaterialIcons name="settings" size={22} color={colors.text} />
         </Pressable>
+
         <Pressable
           onPress={() => router.push("/(tabs)/account" as any)}
-          style={({ pressed }) => [headerStyles.iconBtn, pressed && { opacity: 0.85 }]}
+          style={({ pressed }) => [
+            headerStyles.iconBtn,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+            },
+            pressed && { opacity: 0.85 },
+          ]}
         >
-          <MaterialIcons name="account-circle" size={26} color={asl.text.secondary} />
+          <MaterialIcons name="account-circle" size={26} color={colors.text} />
         </Pressable>
       </View>
     </View>
@@ -78,13 +110,10 @@ const headerStyles = StyleSheet.create({
     paddingHorizontal: Spacing.screenPadding,
     minHeight: 52,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: asl.glass.border,
-    backgroundColor: "rgba(8,2,10,0.2)",
   },
   title: {
     flex: 1,
     textAlign: "center",
-    color: asl.text.primary,
     fontSize: 20,
     lineHeight: 26,
     fontWeight: fontWeight.emphasis,
@@ -98,20 +127,19 @@ const headerStyles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: asl.glass.bg,
     borderWidth: 1,
-    borderColor: asl.glass.border,
     alignItems: "center",
     justifyContent: "center",
   },
 });
 
 export default function SettingsScreen() {
+  const { colors } = useTheme();
   const [query, setQuery] = useState("");
 
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
-  const styles = createStyles(density);
+  const styles = useMemo(() => createStyles(density, colors), [density, colors]);
 
   const searchIconSize = moderateScale(18) * density;
   const cardIconSize = moderateScale(18) * density;
@@ -190,69 +218,78 @@ export default function SettingsScreen() {
   }, [items, query]);
 
   return (
-    <GradientBackground variant="default" style={{ flex: 1 }}>
-      <ScreenContainer
-        backgroundColor="transparent"
-        safeStyle={{ backgroundColor: "transparent" }}
-        contentStyle={styles.safeContent}
-        contentPadded={false}
+    <ScreenContainer
+      backgroundColor={colors.background}
+      safeStyle={{ backgroundColor: colors.background }}
+      contentStyle={styles.safeContent}
+      contentPadded={false}
+    >
+      <SettingsHeader colors={colors} />
+
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
-        <SettingsHeader />
-        <ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.stack}>
-          <GlassCard style={styles.heroCard}>
-          <Text style={styles.heroTitle}>Customize your experience</Text>
-          <Text style={styles.heroSubtitle}>
-            Notifications, appearance, privacy, and account preferences.
-          </Text>
-          </GlassCard>
-
-        <GlassCard style={styles.searchWrap}>
-          <MaterialIcons name="search" size={searchIconSize} color={asl.text.muted} />
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Search Settings"
-            placeholderTextColor={asl.text.muted}
-            style={styles.searchInput}
-            autoCapitalize="none"
-            autoCorrect={false}
-            clearButtonMode="while-editing"
-            returnKeyType="search"
-          />
-        </GlassCard>
-
-        {filteredItems.map((item) => (
-          <Pressable
-            key={item.key}
-            style={({ pressed }) => [styles.itemCard, pressed && { opacity: 0.9 }]}
-            onPress={item.onPress}
-          >
-            <View style={styles.itemLeft}>
-              <View style={[styles.iconChip, { backgroundColor: item.iconBg }]}>
-                <MaterialIcons name={item.icon} size={cardIconSize} color={item.iconColor} />
-              </View>
-              <Text style={styles.itemLabel}>{item.label}</Text>
-            </View>
-            <MaterialIcons name="chevron-right" size={chevronSize} color={asl.text.secondary} />
-          </Pressable>
-        ))}
-
-        {filteredItems.length === 0 && (
-          <Text style={styles.emptyText}>No matching settings found.</Text>
-        )}
+        <View style={styles.stack}>
+          <View style={styles.heroCard}>
+            <Text style={styles.heroTitle}>Customize your experience</Text>
+            <Text style={styles.heroSubtitle}>
+              Notifications, appearance, privacy, and account preferences.
+            </Text>
           </View>
+
+          <View style={styles.searchWrap}>
+            <MaterialIcons name="search" size={searchIconSize} color={colors.subtext} />
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search Settings"
+              placeholderTextColor={colors.subtext}
+              style={styles.searchInput}
+              autoCapitalize="none"
+              autoCorrect={false}
+              clearButtonMode="while-editing"
+              returnKeyType="search"
+            />
+          </View>
+
+          {filteredItems.map((item) => (
+            <Pressable
+              key={item.key}
+              style={({ pressed }) => [styles.itemCard, pressed && { opacity: 0.9 }]}
+              onPress={item.onPress}
+            >
+              <View style={styles.itemLeft}>
+                <View style={[styles.iconChip, { backgroundColor: item.iconBg }]}>
+                  <MaterialIcons name={item.icon} size={cardIconSize} color={item.iconColor} />
+                </View>
+                <Text style={styles.itemLabel}>{item.label}</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={chevronSize} color={colors.text} />
+            </Pressable>
+          ))}
+
+          {filteredItems.length === 0 && (
+            <Text style={styles.emptyText}>No matching settings found.</Text>
+          )}
+        </View>
       </ScrollView>
-      </ScreenContainer>
-    </GradientBackground>
+    </ScreenContainer>
   );
 }
 
-const createStyles = (density: number) => {
+const createStyles = (
+  density: number,
+  colors: {
+    background: string;
+    card: string;
+    text: string;
+    subtext: string;
+    border: string;
+    primary: string;
+  }
+) => {
   const ms = (v: number) => moderateScale(v) * density;
 
   return StyleSheet.create({
@@ -261,25 +298,32 @@ const createStyles = (density: number) => {
     scrollView: {
       flex: 1,
     },
+
     stack: {
       paddingHorizontal: Spacing.screenPadding,
       paddingTop: ms(16),
       paddingBottom: ms(32),
       gap: ms(10),
     },
+
     heroCard: {
       paddingHorizontal: Spacing.sm,
       paddingVertical: ms(14),
-      ...asl.shadow.card,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: ms(18),
     },
+
     heroTitle: {
-      color: asl.text.primary,
+      color: colors.text,
       fontSize: ms(18),
       fontWeight: fontWeight.emphasis,
     },
+
     heroSubtitle: {
       marginTop: ms(4),
-      color: asl.text.secondary,
+      color: colors.subtext,
       fontSize: ms(13),
       lineHeight: ms(18),
       fontWeight: fontWeight.medium,
@@ -291,13 +335,16 @@ const createStyles = (density: number) => {
       paddingHorizontal: Spacing.sm,
       flexDirection: "row",
       alignItems: "center",
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.border,
     },
 
     searchInput: {
       ...Typography.body,
       flex: 1,
       fontSize: ms(14),
-      color: asl.text.primary,
+      color: colors.text,
       marginLeft: 8,
     },
 
@@ -309,8 +356,8 @@ const createStyles = (density: number) => {
       paddingVertical: ms(11),
       borderRadius: ms(18),
       borderWidth: 1,
-      borderColor: asl.glass.border,
-      backgroundColor: asl.glass.bg,
+      borderColor: colors.border,
+      backgroundColor: colors.card,
     },
 
     itemLeft: {
@@ -332,12 +379,12 @@ const createStyles = (density: number) => {
       ...Typography.sectionTitle,
       fontSize: ms(16),
       fontWeight: "700",
-      color: asl.text.primary,
+      color: colors.text,
     },
 
     emptyText: {
       ...Typography.body,
-      color: asl.text.secondary,
+      color: colors.subtext,
       textAlign: "center",
       marginTop: ms(10),
     },

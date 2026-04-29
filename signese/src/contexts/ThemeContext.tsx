@@ -20,22 +20,22 @@ type ThemeContextType = {
   loading: boolean;
 };
 
-const LIGHT_COLORS: ThemeColors = {
-  background: "#F6FBFA",
+const LIGHT_COLORS = {
+  background: "#F4FAF8",
   card: "#FFFFFF",
   text: "#163C39",
-  subtext: "#5B7A75",
-  border: "#D9E7E4",
-  primary: "#52B7A5",
+  subtext: "#5F7A75",
+  border: "#D8E6E2",
+  primary: "#53B1A3",
 };
 
-const DARK_COLORS: ThemeColors = {
+const DARK_COLORS = {
   background: "#0F1720",
-  card: "#1B2630",
-  text: "#F3F7F6",
-  subtext: "#A7B7B3",
-  border: "#2B3A45",
-  primary: "#52B7A5",
+  card: "#18212B",
+  text: "#F9FAFB",
+  subtext: "#9CA3AF",
+  border: "#253241",
+  primary: "#53B1A3",
 };
 
 const THEME_STORAGE_KEY = "app_theme";

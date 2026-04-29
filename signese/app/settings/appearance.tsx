@@ -1,78 +1,63 @@
-import {
-  ScreenContainer,
-} from "@/src/components/layout";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
 import { useTheme } from "@/src/contexts/ThemeContext";
-import { GradientBackground, GlassCard } from "@/src/components/asl";
-import { asl } from "@/src/theme/aslConnectTheme";
-import {
-  Spacing,
-  Typography,
-  fontWeight,
-  getDeviceDensity,
-  moderateScale,
-} from "@/src/theme";
+import { getDeviceDensity, moderateScale, Typography } from "@/src/theme";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import React from "react";
-import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 
 export default function AppearanceScreen() {
-  const { profile } = useAuthUser();
   const { theme, setTheme, colors } = useTheme();
-
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density, colors);
 
   const iconSize = moderateScale(22) * density;
-  const checkSize = moderateScale(20) * density;
+  const checkSize = moderateScale(22) * density;
 
   return (
-    <GradientBackground variant="default" style={{ flex: 1 }}>
-      <ScreenContainer
-        backgroundColor="transparent"
-        safeStyle={{ backgroundColor: "transparent" }}
-        contentStyle={styles.safeContent}
-        contentPadded={false}
-      >
-      <View style={styles.headerRow}>
+    <View style={styles.container}>
+      <View style={styles.header}>
         <Pressable
           onPress={() => router.back()}
-          style={({ pressed }) => [styles.headerBtn, pressed && { opacity: 0.85 }]}
+          style={styles.backButton}
+          hitSlop={10}
+          accessibilityLabel="Go back"
         >
-          <MaterialIcons name="arrow-back" size={22} color={asl.text.primary} />
+          <MaterialIcons name="arrow-back" size={iconSize} color={colors.text} />
         </Pressable>
+
         <Text style={styles.headerTitle}>Appearance</Text>
-        <Pressable
-          onPress={() => router.push("/(tabs)/account" as any)}
-          style={({ pressed }) => [styles.headerBtn, pressed && { opacity: 0.85 }]}
-        >
-          <Text style={styles.avatarText}>{profile?.avatar ?? "🙂"}</Text>
-        </Pressable>
+
+        <View style={styles.headerSpacer} />
       </View>
 
       <View style={styles.content}>
-        <GlassCard style={styles.heroCard}>
-        <Text style={styles.title}>Choose Theme</Text>
-        <Text style={styles.subtitle}>
-          Pick the look you want for the app. Your choice will be saved automatically.
-        </Text>
-        </GlassCard>
+        <View style={styles.infoCard}>
+          <Text style={styles.title}>Choose Theme</Text>
+          <Text style={styles.subtitle}>
+            Pick the look you want for the app. Your choice will be saved automatically.
+          </Text>
+        </View>
 
         <Pressable
           style={[
             styles.optionCard,
             theme === "light" && styles.optionCardSelected,
           ]}
-          onPress={() => setTheme("light")}
+          onPress={() => void setTheme("light")}
         >
           <View style={styles.optionLeft}>
             <View style={[styles.iconChip, { backgroundColor: "#FDE68A" }]}>
               <MaterialIcons name="light-mode" size={iconSize} color="#B45309" />
             </View>
 
-            <View>
+            <View style={styles.textWrap}>
               <Text style={styles.optionTitle}>Light Mode</Text>
               <Text style={styles.optionSubtitle}>
                 Bright background with dark text
@@ -92,14 +77,14 @@ export default function AppearanceScreen() {
             styles.optionCard,
             theme === "dark" && styles.optionCardSelected,
           ]}
-          onPress={() => setTheme("dark")}
+          onPress={() => void setTheme("dark")}
         >
           <View style={styles.optionLeft}>
             <View style={[styles.iconChip, { backgroundColor: "#DDD6FE" }]}>
               <MaterialIcons name="dark-mode" size={iconSize} color="#6D28D9" />
             </View>
 
-            <View>
+            <View style={styles.textWrap}>
               <Text style={styles.optionTitle}>Dark Mode</Text>
               <Text style={styles.optionSubtitle}>
                 Dark background with light text
@@ -114,8 +99,7 @@ export default function AppearanceScreen() {
           )}
         </Pressable>
       </View>
-    </ScreenContainer>
-    </GradientBackground>
+    </View>
   );
 }
 
@@ -123,68 +107,74 @@ const createStyles = (density: number, colors: any) => {
   const ms = (value: number) => moderateScale(value) * density;
 
   return StyleSheet.create({
-    safeContent: {
+    container: {
       flex: 1,
-      backgroundColor: "transparent",
+      backgroundColor: colors.background,
     },
-    headerRow: {
+
+    header: {
+      paddingTop: ms(18),
+      paddingHorizontal: ms(16),
+      paddingBottom: ms(14),
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingHorizontal: Spacing.screenPadding,
-      minHeight: 52,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: asl.glass.border,
-      backgroundColor: "rgba(8,2,10,0.2)",
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      backgroundColor: colors.background,
     },
-    headerBtn: {
+
+    backButton: {
       width: ms(40),
       height: ms(40),
       borderRadius: ms(20),
-      backgroundColor: asl.glass.bg,
-      borderWidth: 1,
-      borderColor: asl.glass.border,
       alignItems: "center",
       justifyContent: "center",
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.border,
     },
+
     headerTitle: {
-      flex: 1,
-      textAlign: "center",
-      color: asl.text.primary,
-      fontSize: ms(20),
-      lineHeight: ms(26),
-      fontWeight: fontWeight.emphasis,
+      ...Typography.sectionTitle,
+      fontSize: ms(24),
+      fontWeight: "800",
+      color: colors.text,
     },
-    avatarText: {
-      color: asl.text.primary,
-      fontSize: ms(18),
+
+    headerSpacer: {
+      width: ms(40),
+      height: ms(40),
     },
 
     content: {
       flex: 1,
-      paddingTop: Spacing.screenPadding,
-      paddingHorizontal: Spacing.screenPadding,
+      paddingHorizontal: ms(16),
+      paddingTop: ms(18),
     },
-    heroCard: {
-      padding: Spacing.sm,
-      marginBottom: Spacing.sm,
-      backgroundColor: asl.glass.bg,
+
+    infoCard: {
+      backgroundColor: colors.card,
+      borderRadius: ms(20),
+      paddingHorizontal: ms(18),
+      paddingVertical: ms(18),
       borderWidth: 1,
-      borderColor: asl.glass.border,
+      borderColor: colors.border,
+      marginBottom: ms(18),
     },
 
     title: {
       ...Typography.sectionTitle,
       fontSize: ms(22),
       fontWeight: "800",
-      color: asl.text.primary,
+      color: colors.text,
       marginBottom: ms(6),
     },
 
     subtitle: {
       ...Typography.body,
       fontSize: ms(14),
-      color: asl.text.secondary,
+      color: colors.subtext,
       lineHeight: ms(20),
     },
 
@@ -192,53 +182,57 @@ const createStyles = (density: number, colors: any) => {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingHorizontal: Spacing.sm,
-      paddingVertical: ms(14),
-      borderRadius: ms(18),
-      backgroundColor: asl.glass.bg,
+      paddingHorizontal: ms(16),
+      paddingVertical: ms(16),
+      borderRadius: ms(20),
+      backgroundColor: colors.card,
       borderWidth: 1,
-      borderColor: asl.glass.border,
-      marginBottom: Spacing.sm,
+      borderColor: colors.border,
+      marginBottom: ms(14),
     },
 
     optionCardSelected: {
-      borderColor: asl.accentCyan,
+      borderColor: colors.primary,
       borderWidth: 2,
     },
 
     optionLeft: {
       flexDirection: "row",
       alignItems: "center",
-      gap: Spacing.sm,
       flex: 1,
     },
 
     iconChip: {
-      width: ms(42),
-      height: ms(42),
-      borderRadius: ms(21),
+      width: ms(56),
+      height: ms(56),
+      borderRadius: ms(28),
       alignItems: "center",
       justifyContent: "center",
+      marginRight: ms(14),
+    },
+
+    textWrap: {
+      flex: 1,
     },
 
     optionTitle: {
       ...Typography.sectionTitle,
       fontSize: ms(16),
       fontWeight: "700",
-      color: asl.text.primary,
+      color: colors.text,
     },
 
     optionSubtitle: {
       ...Typography.body,
       fontSize: ms(13),
-      color: asl.text.secondary,
-      marginTop: ms(2),
+      color: colors.subtext,
+      marginTop: ms(3),
     },
 
     uncheckedCircle: {
-      width: ms(20),
-      height: ms(20),
-      borderRadius: ms(10),
+      width: ms(22),
+      height: ms(22),
+      borderRadius: ms(11),
       borderWidth: 2,
       borderColor: colors.border,
     },
