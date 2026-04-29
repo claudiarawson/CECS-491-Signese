@@ -8,7 +8,7 @@ import {
   Animated,
   PanResponder,
 } from "react-native";
-import { semanticColors, Spacing, moderateScale } from "@/src/theme";
+import { semanticColors, Spacing, moderateScale, fontFamily } from "@/src/theme";
 
 export type DailyTip = {
   id: string;
@@ -190,9 +190,9 @@ const styles = StyleSheet.create({
   },
   tipTitle: {
     fontSize: moderateScale(14),
-    fontWeight: "700",
     color: semanticColors.text.primary,
     flex: 1,
+    fontFamily: fontFamily.heading,
   },
   tipNavWrap: {
     flexDirection: "row",
@@ -212,8 +212,8 @@ const styles = StyleSheet.create({
   tipNavText: {
     fontSize: moderateScale(16),
     color: semanticColors.text.secondary,
-    fontWeight: "600",
     marginTop: -2,
+    fontFamily: fontFamily.medium,
   },
   tipNavDisabled: {
     opacity: 0.3,
@@ -223,6 +223,7 @@ const styles = StyleSheet.create({
     color: semanticColors.text.secondary,
     lineHeight: moderateScale(16),
     marginBottom: moderateScale(8),
+    fontFamily: fontFamily.body,
   },
   dotRow: {
     flexDirection: "row",

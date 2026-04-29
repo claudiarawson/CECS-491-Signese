@@ -1,4 +1,4 @@
-import { Sizes, Typography, semanticColors } from "@/src/theme";
+import { Sizes, Typography, fontFamily, semanticColors } from "@/src/theme";
 import { navigationTheme } from "@/src/theme/navigation";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
@@ -82,9 +82,9 @@ const styles = StyleSheet.create({
 		...Typography.screenTitle,
 		fontSize: 19,
 		lineHeight: 24,
-		fontWeight: "700",
 		flex: 1,
 		textAlign: "center",
+		fontFamily: fontFamily.heading,
 	},
 	rightWrap: {
 		flexDirection: "row",

@@ -256,6 +256,7 @@ export default function AccountScreen() {
 
             <StarsProgressPanel
               variant="hero"
+              appearance="dark"
               totalEarned={profile?.stars?.lifetimeEarned ?? 0}
               balance={profile?.stars?.balance ?? 0}
               nextUnlock={

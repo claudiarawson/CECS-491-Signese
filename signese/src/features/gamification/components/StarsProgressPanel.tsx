@@ -20,7 +20,26 @@ type Props = {
   nextUnlock?: StarsNextUnlock | null;
   /** Larger hero layout vs compact strip. */
   variant?: "hero" | "compact";
+  appearance?: "light" | "dark";
 };
+
+const darkAppearance = StyleSheet.create({
+  wrap: {
+    borderColor: "rgba(255,255,255,0.14)",
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+  kicker: { color: "rgba(255,255,255,0.6)" },
+  bigNumber: { color: "#F9A8D4" },
+  earned: { color: "rgba(255,255,255,0.95)" },
+  available: { color: "rgba(255,255,255,0.7)" },
+  hint: { color: "rgba(255,255,255,0.5)" },
+  loading: { color: "rgba(255,255,255,0.65)" },
+  unlockBlock: { borderTopColor: "rgba(255,255,255,0.1)" },
+  unlockLabel: { color: "rgba(255,255,255,0.92)" },
+  track: { backgroundColor: "rgba(0,0,0,0.35)" },
+  fill: { backgroundColor: "rgba(244, 114, 182, 0.9)" },
+  meta: { color: "rgba(255,255,255,0.65)" },
+});
 
 export function StarsProgressPanel({
   totalEarned,
@@ -29,7 +48,9 @@ export function StarsProgressPanel({
   errorMessage = null,
   nextUnlock = null,
   variant = "hero",
+  appearance = "light",
 }: Props) {
+  const d = appearance === "dark";
   const showAvailable = balance !== totalEarned || variant === "hero";
   const unlock =
     nextUnlock && nextUnlock.starsRequired > 0
@@ -46,12 +67,18 @@ export function StarsProgressPanel({
   if (isLoading) {
     return (
       <View
-        style={[styles.wrap, variant === "compact" && styles.wrapCompact]}
+        style={[
+          styles.wrap,
+          variant === "compact" && styles.wrapCompact,
+          d && darkAppearance.wrap,
+        ]}
         accessibilityRole="progressbar"
         accessibilityLabel="Loading stars progress"
       >
-        <ActivityIndicator color="#214F46" />
-        <Text style={styles.loadingCaption}>Loading your stars…</Text>
+        <ActivityIndicator color={d ? "#F472B6" : "#214F46"} />
+        <Text style={[styles.loadingCaption, d && darkAppearance.loading]}>
+          Loading your stars…
+        </Text>
       </View>
     );
   }
@@ -66,34 +93,47 @@ export function StarsProgressPanel({
 
   return (
     <View
-      style={[styles.wrap, variant === "compact" && styles.wrapCompact]}
+      style={[
+        styles.wrap,
+        variant === "compact" && styles.wrapCompact,
+        d && darkAppearance.wrap,
+      ]}
       accessibilityRole="summary"
       accessibilityLabel={summaryA11y}
     >
-      <Text style={styles.kicker}>Your stars</Text>
+      <Text style={[styles.kicker, d && darkAppearance.kicker]}>Your stars</Text>
       <Text
-        style={[styles.bigNumber, variant === "compact" && styles.bigNumberCompact]}
+        style={[
+          styles.bigNumber,
+          variant === "compact" && styles.bigNumberCompact,
+          d && darkAppearance.bigNumber,
+        ]}
         accessibilityLiveRegion="polite"
       >
         {totalEarned}
       </Text>
-      <Text style={styles.earnedLine}>You’ve earned {totalEarned} stars</Text>
+      <Text style={[styles.earnedLine, d && darkAppearance.earned]}>
+        You’ve earned {totalEarned} stars
+      </Text>
       {showAvailable ? (
-        <Text style={styles.availableLine}>
+        <Text style={[styles.availableLine, d && darkAppearance.available]}>
           {balance} available to unlock content and icons
         </Text>
       ) : null}
-      <Text style={styles.hint}>Keep going to unlock more content.</Text>
+      <Text style={[styles.hint, d && darkAppearance.hint]}>Keep going to unlock more content.</Text>
 
       {unlock ? (
-        <View style={styles.unlockBlock} accessibilityLabel={`Progress toward ${unlock.title}`}>
-          <Text style={styles.unlockLabel}>
+        <View
+          style={[styles.unlockBlock, d && darkAppearance.unlockBlock]}
+          accessibilityLabel={`Progress toward ${unlock.title}`}
+        >
+          <Text style={[styles.unlockLabel, d && darkAppearance.unlockLabel]}>
             Next unlock: {unlock.title} ({unlock.starsRequired} ⭐)
           </Text>
-          <View style={styles.track}>
-            <View style={[styles.fill, { width: `${unlock.pct}%` }]} />
+          <View style={[styles.track, d && darkAppearance.track]}>
+            <View style={[styles.fill, d && darkAppearance.fill, { width: `${unlock.pct}%` }]} />
           </View>
-          <Text style={styles.unlockMeta}>
+          <Text style={[styles.unlockMeta, d && darkAppearance.meta]}>
             {unlock.currentBalance} / {unlock.starsRequired} stars
           </Text>
         </View>

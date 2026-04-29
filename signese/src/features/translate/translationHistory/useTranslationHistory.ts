@@ -44,9 +44,22 @@ export function useTranslationHistory() {
     setTranslationHistory([]);
   }, []);
 
+  const mergeHistoryItems = useCallback((incoming: TranslationHistoryItem[]) => {
+    if (incoming.length === 0) return;
+    setTranslationHistory((prev) => {
+      const map = new Map<string, TranslationHistoryItem>();
+      for (const row of incoming) map.set(row.id, row);
+      for (const row of prev) map.set(row.id, row);
+      return Array.from(map.values()).sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    });
+  }, []);
+
   return {
     translationHistory,
     addHistoryItem,
     clearHistory,
+    mergeHistoryItems,
   };
 }

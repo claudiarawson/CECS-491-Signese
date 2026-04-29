@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import { moderateScale } from "react-native-size-matters";
+import { fontFamily } from "@/src/theme";
 import { signupColors as c } from "@/src/theme/pages/signup.colors";
 import { signUpWithEmail } from "@/src/services/firebase/auth.services";
 import { useAuthUser } from "@/src/contexts/AuthUserContext";
@@ -172,9 +173,6 @@ export default function SignupScreen() {
   );
 }
 
-const headingFont = Platform.select({ ios: "AvenirNext-Bold", android: "sans-serif-medium", default: "System" });
-const bodyFont = Platform.select({ ios: "AvenirNext-Regular", android: "sans-serif", default: "System" });
-const mediumFont = Platform.select({ ios: "AvenirNext-DemiBold", android: "sans-serif-medium", default: "System" });
 const styles = StyleSheet.create({
   bg: { flex: 1 },
   safe: { flex: 1 },
@@ -217,8 +215,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: moderateScale(28),
     lineHeight: moderateScale(32),
-    fontFamily: headingFont,
-    fontWeight: "700",
+    fontFamily: fontFamily.heading,
     letterSpacing: -0.2,
     textAlign: "center",
     color: c.titleText,
@@ -229,7 +226,7 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(3),
     textAlign: "center",
     color: c.subtitleText,
-    fontFamily: bodyFont,
+    fontFamily: fontFamily.body,
   },
   card: {
     width: "100%",
@@ -243,7 +240,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(10),
     color: c.labelText,
     marginBottom: moderateScale(3),
-    fontFamily: mediumFont,
+    fontFamily: fontFamily.label,
   },
   input: {
     height: moderateScale(34),
@@ -255,7 +252,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(12),
     fontSize: moderateScale(13),
     color: c.inputText,
-    fontFamily: bodyFont,
+    fontFamily: fontFamily.body,
   },
   passwordWrap: {
     height: moderateScale(34),
@@ -273,7 +270,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: moderateScale(13),
     color: c.inputText,
-    fontFamily: bodyFont,
+    fontFamily: fontFamily.body,
   },
   eyeBtn: {
     padding: moderateScale(2),
@@ -292,8 +289,7 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     fontSize: moderateScale(15),
     lineHeight: moderateScale(18),
-    fontFamily: mediumFont,
-    fontWeight: "700",
+    fontFamily: fontFamily.heading,
     color: c.buttonText,
   },
   bottomRow: {
@@ -305,12 +301,11 @@ const styles = StyleSheet.create({
   bottomText: {
     fontSize: moderateScale(11),
     color: c.labelText,
-    fontFamily: bodyFont,
+    fontFamily: fontFamily.body,
   },
   link: {
     fontSize: moderateScale(13),
     color: c.linkText,
-    fontWeight: "600",
-    fontFamily: mediumFont,
+    fontFamily: fontFamily.medium,
   },
 });

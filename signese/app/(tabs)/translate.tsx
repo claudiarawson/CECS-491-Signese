@@ -8,24 +8,12 @@ import {
   ActivityIndicator,
   useWindowDimensions,
 } from "react-native";
-import { router } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router, useFocusEffect } from "expo-router";
 import { CameraView } from "expo-camera";
-import {
-  semanticColors,
-  Spacing,
-  Typography,
-  getDeviceDensity,
-  moderateScale,
-} from "@/src/theme";
-import {
-  ScreenContainer,
-  ScreenHeader,
-  HeaderActionButton,
-  HeaderAvatarButton,
-} from "@/src/components/layout";
-import { useAuthUser } from "@/src/contexts/AuthUserContext";
-import { getProfileIconById } from "@/src/features/account/types";
+import { Spacing, Typography, getDeviceDensity, moderateScale } from "@/src/theme";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { AppShell, AslTabHeader, ToggleSwitch, TranslationOverlay } from "@/src/components/asl";
 import { useAccessibility } from "@/src/contexts/AccessibilityContext";
 import { useTranslateCamera } from "@/src/features/translate/camera/useCamera";
 import {
@@ -42,10 +30,8 @@ import {
 import { TranslateInferenceResponse } from "@/src/features/translate/inference/types";
 import {
   useTabTranslationHistory,
-  TranslationHistoryPanel,
   TRANSLATE_SOURCE_LANG,
   TRANSLATE_TARGET_LANG,
-  type TranslationHistoryItem,
 } from "@/src/features/translate/translationHistory";
 import {
   ReportTranslationModal,
@@ -54,17 +40,36 @@ import {
 
 function CommonResponsesPlaceholder({
   styles,
+  historyCount,
+  onOpenRecent,
 }: {
   styles: ReturnType<typeof createStyles>;
+  historyCount: number;
+  onOpenRecent: () => void;
 }) {
   const items = useMemo(() => GREETING_INTRO_V0_LABELS.slice(0, 3), []);
 
   return (
     <View style={styles.responsesPanel}>
+      <Pressable
+        style={styles.recentTranslationsBtn}
+        onPress={onOpenRecent}
+        accessibilityRole="button"
+        accessibilityLabel="View all recent translations"
+      >
+        <MaterialIcons name="history" size={18} color={asl.accentCyan} />
+        <Text style={styles.recentTranslationsBtnText}>Recent translations</Text>
+        {historyCount > 0 ? (
+          <View style={styles.recentCountPill}>
+            <Text style={styles.recentCountPillText}>{historyCount}</Text>
+          </View>
+        ) : null}
+        <MaterialIcons name="chevron-right" size={20} color={asl.text.muted} />
+      </Pressable>
       <Text style={styles.responsesTitle}>Common Responses</Text>
       {items.map((item) => (
         <View key={item} style={styles.responseItem}>
-          <MaterialIcons name="image" size={16} color="#6C7A89" />
+          <MaterialIcons name="image" size={16} color={asl.text.muted} />
           <Text style={styles.responseText}>{item}</Text>
         </View>
       ))}
@@ -74,9 +79,7 @@ function CommonResponsesPlaceholder({
 }
 
 export default function TranslateScreen() {
-  const { profile } = useAuthUser();
   const { textScale } = useAccessibility();
-  const headerProfileIcon = getProfileIconById(profile?.avatar);
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density, textScale);
@@ -93,7 +96,15 @@ export default function TranslateScreen() {
   const [inferenceError, setInferenceError] = useState<string | null>(null);
   const [isTranslateInitializing, setIsTranslateInitializing] = useState(true);
   const { captionText, tokens, append, clear, replaceCaptionFromText } = useCaptionBuffer(30);
-  const { translationHistory, addHistoryItem, clearHistory, sessionId } = useTabTranslationHistory();
+  const {
+    translationHistory,
+    addHistoryItem,
+    sessionId,
+    keepHistoryOnDevice,
+    setKeepHistoryOnDevice,
+    historyPrefsLoaded,
+    consumePendingReuseCaption,
+  } = useTabTranslationHistory();
   const lastHistoryEntryIdRef = useRef<string | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [reportContext, setReportContext] = useState<ReportTranslationContext | null>(null);
@@ -113,6 +124,18 @@ export default function TranslateScreen() {
   const shortClipService = useMemo<ShortClipInferenceService>(() => {
     return createShortClipInferenceService(RUNTIME_V0_LABELS);
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const text = consumePendingReuseCaption();
+      if (text != null && text.length > 0) {
+        replaceCaptionFromText(text);
+        setLastDecision(null);
+        setLastInference(null);
+        setInferenceError(null);
+      }
+    }, [consumePendingReuseCaption, replaceCaptionFromText])
+  );
 
   useEffect(() => {
     if (!cameraActive) {
@@ -356,21 +379,6 @@ export default function TranslateScreen() {
     setRecordingElapsedMs(0);
   };
 
-  const openReportForHistoryItem = useCallback(
-    (item: TranslationHistoryItem) => {
-      setReportContext({
-        translationId: item.id,
-        sourceText: item.originalText,
-        translatedText: item.translatedText,
-        sourceLanguage: item.sourceLanguage,
-        targetLanguage: item.targetLanguage,
-        sessionId,
-      });
-      setReportOpen(true);
-    },
-    [sessionId]
-  );
-
   const openReportForCurrentOutput = useCallback(() => {
     const cap = captionText.trim();
     if (!cap) {
@@ -390,19 +398,8 @@ export default function TranslateScreen() {
     setReportOpen(true);
   }, [captionText, lastDecision?.token?.label, lastInference?.tokens, sessionId]);
 
-  const handleReuseHistoryItem = useCallback(
-    (item: TranslationHistoryItem) => {
-      replaceCaptionFromText(item.translatedText);
-      setLastDecision(null);
-      setLastInference(null);
-      setInferenceError(null);
-    },
-    [replaceCaptionFromText]
-  );
-
   const recordingSecondsText = `${(recordingElapsedMs / 1000).toFixed(1)}s`;
   const cooldownSecondsText = `${(cooldownRemainingMs / 1000).toFixed(1)}s`;
-  const sessionHistoryMaxHeight = Math.min(280, Math.round(height * 0.32));
 
   const permissionDenied = permission && !permission.granted;
   const captionOutput = captionText.length > 0 ? captionText : "Translation output will appear here.";
@@ -430,38 +427,25 @@ export default function TranslateScreen() {
     : "Top scores: n/a";
 
   return (
-    <ScreenContainer backgroundColor="#F1F6F5">
-      <ScreenHeader
-        title="Translate"
-        right={
-          <>
-            <HeaderActionButton
-              iconName="settings"
-              onPress={() => router.push("/(tabs)/settings" as any)}
-            />
-            <HeaderAvatarButton
-              avatar={profile?.avatar}
-              onPress={() => router.push("/(tabs)/account")}
-            />
-          </>
-        }
-      />
-
+    <AppShell scroll={false} header={<AslTabHeader title="Translate" />}>
       <View style={styles.content}>
         {isTranslateInitializing ? (
           <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="small" color="#2C5D56" />
+            <ActivityIndicator size="small" color={asl.accentCyan} />
             <Text style={styles.loadingText}>Preparing Translate...</Text>
           </View>
         ) : null}
 
         <View style={styles.topSection}>
           <View style={styles.videoCard}>
+            <View style={styles.langOverlay}>
+              <TranslationOverlay topLeft={TRANSLATE_SOURCE_LANG} topRight={TRANSLATE_TARGET_LANG} />
+            </View>
             {cameraActive && permission?.granted ? (
               <CameraView ref={cameraRef} style={styles.cameraPreview} facing={cameraFacing} mode="video" />
             ) : (
               <View style={styles.videoPlaceholderWrap}>
-                <MaterialIcons name="videocam" size={34} color="#608D86" />
+                <MaterialIcons name="videocam" size={34} color={asl.text.secondary} />
                 <Text style={styles.videoPlaceholderTitle}>Tap to open camera</Text>
                 <Text style={styles.videoPlaceholderSubtitle}>
                   {permissionDenied
@@ -500,18 +484,24 @@ export default function TranslateScreen() {
             </View>
           </View>
 
-          <CommonResponsesPlaceholder styles={styles} />
+          <CommonResponsesPlaceholder
+            styles={styles}
+            historyCount={translationHistory.length}
+            onOpenRecent={() => router.push("/translate/history" as any)}
+          />
         </View>
 
-        <TranslationHistoryPanel
-          items={translationHistory}
-          onClear={clearHistory}
-          onReuse={handleReuseHistoryItem}
-          onReportItem={openReportForHistoryItem}
-          variant="stacked"
-          listMaxHeight={sessionHistoryMaxHeight}
-          textScale={textScale}
-        />
+        <View style={styles.historyToggle}>
+          <ToggleSwitch
+            value={keepHistoryOnDevice}
+            onValueChange={setKeepHistoryOnDevice}
+            label="Keep history on device"
+            description="Stores recent translations locally on this phone."
+          />
+          {!historyPrefsLoaded ? (
+            <Text style={styles.historyToggleHint}>Loading preference…</Text>
+          ) : null}
+        </View>
 
         <View style={styles.captionsControlsRow}>
           <View style={styles.leftControlsWrap}>
@@ -519,12 +509,12 @@ export default function TranslateScreen() {
               <MaterialIcons
                 name={cameraActive ? "videocam-off" : "videocam"}
                 size={18}
-                color="#2C5D56"
+                color={asl.accentCyan}
               />
             </Pressable>
             {Platform.OS !== "web" ? (
               <Pressable style={styles.smallControlBtn} onPress={reverseCamera}>
-                <MaterialIcons name="flip-camera-ios" size={18} color="#2C5D56" />
+                <MaterialIcons name="flip-camera-ios" size={18} color={asl.accentCyan} />
               </Pressable>
             ) : null}
           </View>
@@ -538,7 +528,7 @@ export default function TranslateScreen() {
               <MaterialIcons
                 name={isVolumeOn ? "volume-up" : "volume-off"}
                 size={18}
-                color="#2C5D56"
+                color={asl.accentCyan}
               />
             </Pressable>
           </View>
@@ -558,7 +548,7 @@ export default function TranslateScreen() {
               <MaterialIcons
                 name="flag"
                 size={16}
-                color={hasReportableCaption ? "#214F46" : "#9CA3AF"}
+                color={hasReportableCaption ? asl.accentCyan : asl.text.muted}
               />
               <Text
                 style={[
@@ -582,16 +572,21 @@ export default function TranslateScreen() {
             {isVolumeOn ? "Volume is on." : "Volume is muted."} Tokens: {tokens.length}
           </Text>
           <Pressable style={styles.clearCaptionsButton} onPress={handleClearCaptions}>
-            <MaterialIcons name="delete-outline" size={16} color="#2C5D56" />
+            <MaterialIcons name="delete-outline" size={16} color={asl.accentCyan} />
             <Text style={styles.clearCaptionsButtonText}>Clear captions</Text>
           </Pressable>
         </View>
       </View>
 
-      {/* TODO(model): Switch adapter from mock to local or backend inference after training first constrained model. */}
-      {/* TODO(sequence-mode): Enable longer clip recording and sequence tokenization mode on backend/local model support. */}
-      {/* TODO(dataset): Replace Common Responses panel with label-aware dictionary suggestions from dataset manifest. */}
-    </ScreenContainer>
+      <ReportTranslationModal
+        visible={reportOpen}
+        onClose={() => {
+          setReportOpen(false);
+          setReportContext(null);
+        }}
+        context={reportContext}
+      />
+    </AppShell>
   );
 }
 
@@ -603,26 +598,26 @@ const createStyles = (density: number, textScale: number) => {
     content: {
       flex: 1,
       paddingHorizontal: Spacing.screenPadding,
-      paddingBottom: Spacing.md,
+      paddingBottom: 100,
     },
     loadingOverlay: {
-    marginTop: Spacing.sm,
-    alignSelf: "center",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    backgroundColor: "#E8F2F0",
-    borderWidth: 1,
-    borderColor: "#C9E1DC",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  loadingText: {
-    ...Typography.caption,
-    color: "#2C5D56",
-    fontWeight: "600",
-  },
+      marginTop: Spacing.sm,
+      alignSelf: "center",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      backgroundColor: "rgba(0,0,0,0.35)",
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+      borderRadius: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+    },
+    loadingText: {
+      ...Typography.caption,
+      color: asl.text.secondary,
+      fontWeight: "600",
+    },
   topSection: {
       flexDirection: "row",
       gap: Spacing.sm,
@@ -633,11 +628,18 @@ const createStyles = (density: number, textScale: number) => {
       minHeight: ms(250),
       borderRadius: ms(20),
       overflow: "hidden",
-      backgroundColor: "#D9ECE8",
+      backgroundColor: "rgba(0,0,0,0.35)",
       borderWidth: 1,
-      borderColor: "#C6DEDA",
+      borderColor: asl.glass.border,
       position: "relative",
-  },
+    },
+    langOverlay: {
+      position: "absolute",
+      top: ms(10),
+      left: ms(10),
+      right: ms(10),
+      zIndex: 2,
+    },
     cameraPreview: {
       flex: 1,
     },
@@ -649,7 +651,7 @@ const createStyles = (density: number, textScale: number) => {
     },
     videoPlaceholderTitle: {
       ...Typography.sectionTitle,
-      color: semanticColors.text.primary,
+      color: asl.text.primary,
       marginTop: Spacing.xs,
       textAlign: "center",
       fontSize: ts(18),
@@ -657,41 +659,42 @@ const createStyles = (density: number, textScale: number) => {
     },
     videoPlaceholderSubtitle: {
       ...Typography.caption,
-      color: semanticColors.text.secondary,
+      color: asl.text.muted,
       marginTop: ms(6),
       textAlign: "center",
       fontSize: ts(12),
       lineHeight: ts(16),
     },
     cameraOverlayControls: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: Spacing.sm,
-    alignItems: "center",
-  },
-  recordClipButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "rgba(33, 79, 70, 0.92)",
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.45)",
-  },
-  previewCameraButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "rgba(44, 93, 86, 0.92)",
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.45)",
-  },
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: Spacing.sm,
+      alignItems: "center",
+      zIndex: 2,
+    },
+    recordClipButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: "rgba(219, 39, 119, 0.92)",
+      borderRadius: 14,
+      paddingHorizontal: 14,
+      paddingVertical: 9,
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.35)",
+    },
+    previewCameraButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: "rgba(236, 72, 153, 0.75)",
+      borderRadius: 14,
+      paddingHorizontal: 14,
+      paddingVertical: 9,
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.35)",
+    },
   recordClipButtonDisabled: {
     opacity: 0.6,
   },
@@ -701,51 +704,96 @@ const createStyles = (density: number, textScale: number) => {
     fontWeight: "700",
   },
   responsesPanel: {
-      width: ms(120),
-      minHeight: ms(250),
-      borderRadius: ms(18),
-      backgroundColor: "#EDF5F3",
-      borderWidth: 1,
-      borderColor: "#D8E8E4",
-      paddingVertical: Spacing.sm,
-      paddingHorizontal: Spacing.xs,
-    },
-    responsesTitle: {
-      ...Typography.caption,
-      fontWeight: "700",
-      color: semanticColors.text.primary,
-      textAlign: "center",
-      marginBottom: Spacing.sm,
-      fontSize: ts(12),
-      lineHeight: ts(16),
-    },
-    responseItem: {
-      borderRadius: ms(12),
-      backgroundColor: "#FFFFFF",
-      borderWidth: 1,
-      borderColor: "#D5E6E3",
-      minHeight: ms(52),
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: Spacing.xs,
-      paddingVertical: ms(6),
-      gap: ms(4),
-    },
-    responseText: {
-      ...Typography.caption,
-      color: semanticColors.text.primary,
-      fontWeight: "600",
-      fontSize: ts(12),
-      lineHeight: ts(16),
-    },
-    responsesHint: {
-      ...Typography.caption,
-      color: semanticColors.text.secondary,
-      textAlign: "center",
-      marginTop: Spacing.xs,
-      fontSize: ts(10),
-      lineHeight: ts(13),
-    },
+    width: ms(136),
+    minHeight: ms(250),
+    borderRadius: ms(18),
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderWidth: 1,
+    borderColor: asl.glass.border,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.xs,
+  },
+  recentTranslationsBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: ms(4),
+    borderRadius: ms(12),
+    backgroundColor: "rgba(0,0,0,0.22)",
+    borderWidth: 1,
+    borderColor: asl.glass.border,
+    paddingVertical: ms(8),
+    paddingHorizontal: ms(6),
+    marginBottom: Spacing.sm,
+  },
+  recentTranslationsBtnText: {
+    ...Typography.caption,
+    flex: 1,
+    flexShrink: 1,
+    color: asl.text.primary,
+    fontWeight: "700",
+    fontSize: ts(11),
+    lineHeight: ts(14),
+  },
+  recentCountPill: {
+    minWidth: ms(20),
+    paddingHorizontal: ms(5),
+    paddingVertical: ms(2),
+    borderRadius: ms(10),
+    backgroundColor: "rgba(56, 189, 248, 0.22)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  recentCountPillText: {
+    ...Typography.caption,
+    fontSize: ts(10),
+    fontWeight: "800",
+    color: asl.accentCyan,
+  },
+  responsesTitle: {
+    ...Typography.caption,
+    fontWeight: "700",
+    color: asl.text.primary,
+    textAlign: "center",
+    marginBottom: Spacing.sm,
+    fontSize: ts(12),
+    lineHeight: ts(16),
+  },
+  responseItem: {
+    borderRadius: ms(12),
+    backgroundColor: "rgba(0,0,0,0.22)",
+    borderWidth: 1,
+    borderColor: asl.glass.border,
+    minHeight: ms(52),
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: Spacing.xs,
+    paddingVertical: ms(6),
+    gap: ms(4),
+  },
+  responseText: {
+    ...Typography.caption,
+    color: asl.text.primary,
+    fontWeight: "600",
+    fontSize: ts(12),
+    lineHeight: ts(16),
+  },
+  responsesHint: {
+    ...Typography.caption,
+    color: asl.text.muted,
+    textAlign: "center",
+    marginTop: Spacing.xs,
+    fontSize: ts(10),
+    lineHeight: ts(13),
+  },
+  historyToggle: {
+    marginTop: Spacing.md,
+  },
+  historyToggleHint: {
+    ...Typography.caption,
+    color: asl.text.muted,
+    marginTop: 4,
+    fontSize: ts(11),
+  },
     captionsControlsRow: {
       marginTop: Spacing.md,
       flexDirection: "row",
@@ -773,15 +821,15 @@ const createStyles = (density: number, textScale: number) => {
       width: ms(36),
       height: ms(36),
       borderRadius: ms(18),
-      backgroundColor: "#E2F0ED",
+      backgroundColor: "rgba(255,255,255,0.1)",
       borderWidth: 1,
-      borderColor: "#C9E1DC",
+      borderColor: asl.glass.border,
       alignItems: "center",
       justifyContent: "center",
     },
     captionsLabel: {
       ...Typography.sectionTitle,
-      color: semanticColors.text.primary,
+      color: asl.text.primary,
       fontSize: ts(18),
       lineHeight: ts(22),
     },
@@ -792,18 +840,18 @@ const createStyles = (density: number, textScale: number) => {
       minHeight: ms(160),
       borderRadius: ms(18),
       borderWidth: 1,
-      borderColor: "#C8DDDA",
-      backgroundColor: "#FFFFFF",
+      borderColor: asl.glass.border,
+      backgroundColor: "rgba(0,0,0,0.22)",
       padding: Spacing.md,
     },
     captionsOutputText: {
       ...Typography.body,
-      color: semanticColors.text.primary,
+      color: asl.text.primary,
       fontSize: ts(16),
       lineHeight: ts(20),
-    fontWeight: "700",
-    minHeight: 54,
-  },
+      fontWeight: "700",
+      minHeight: 54,
+    },
     captionOutputActions: {
       flexDirection: "row",
       alignItems: "center",
@@ -818,45 +866,45 @@ const createStyles = (density: number, textScale: number) => {
       paddingVertical: 8,
       paddingHorizontal: 12,
       borderRadius: 12,
-      backgroundColor: "#E8F2F0",
+      backgroundColor: "rgba(255,255,255,0.1)",
       borderWidth: 1,
-      borderColor: "#C9E1DC",
+      borderColor: asl.glass.border,
     },
     reportOutputBtnDisabled: {
       opacity: 0.65,
     },
     reportOutputBtnText: {
       ...Typography.caption,
-      color: "#214F46",
+      color: asl.accentCyan,
       fontWeight: "700",
     },
     reportOutputBtnTextDisabled: {
-      color: "#9CA3AF",
+      color: asl.text.muted,
     },
     captionsSubText: {
       ...Typography.caption,
-      color: semanticColors.text.secondary,
+      color: asl.text.muted,
       marginTop: Spacing.xs,
       fontSize: ts(12),
       lineHeight: ts(16),
     },
     clearCaptionsButton: {
-    marginTop: Spacing.md,
-    alignSelf: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "#E8F2F0",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#C9E1DC",
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
-  clearCaptionsButtonText: {
-    ...Typography.caption,
-    color: "#2C5D56",
-    fontWeight: "700",
-  },
-});
+      marginTop: Spacing.md,
+      alignSelf: "flex-start",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: "rgba(255,255,255,0.08)",
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: asl.glass.border,
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+    },
+    clearCaptionsButtonText: {
+      ...Typography.caption,
+      color: asl.accentCyan,
+      fontWeight: "700",
+    },
+  });
 };

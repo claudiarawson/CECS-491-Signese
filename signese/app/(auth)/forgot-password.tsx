@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import { moderateScale } from "react-native-size-matters";
+import { fontFamily } from "@/src/theme";
 import { signupColors as c } from "@/src/theme/pages/signup.colors";
 import { resetPassword } from "@/src/services/firebase/auth.services";
 
@@ -52,9 +53,6 @@ export default function ForgotPasswordScreen() {
   );
 }
 
-const headingFont = Platform.select({ ios: "AvenirNext-Bold", android: "sans-serif-medium", default: "System" });
-const bodyFont = Platform.select({ ios: "AvenirNext-Regular", android: "sans-serif", default: "System" });
-const mediumFont = Platform.select({ ios: "AvenirNext-DemiBold", android: "sans-serif-medium", default: "System" });
 const styles = StyleSheet.create({
   bg: { flex: 1 },
   safe: { flex: 1 },
@@ -79,8 +77,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: moderateScale(28),
     color: c.titleText,
-    fontFamily: headingFont,
-    fontWeight: "700",
+    fontFamily: fontFamily.heading,
     marginBottom: moderateScale(5),
   },
   subtitle: {
@@ -88,7 +85,7 @@ const styles = StyleSheet.create({
     color: c.subtitleText,
     marginBottom: moderateScale(10),
     textAlign: "center",
-    fontFamily: bodyFont,
+    fontFamily: fontFamily.body,
   },
   card: {
     width: "100%",
@@ -101,7 +98,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(10),
     color: c.labelText,
     marginBottom: moderateScale(3),
-    fontFamily: mediumFont,
+    fontFamily: fontFamily.label,
   },
   input: {
     height: moderateScale(34),
@@ -113,7 +110,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(12),
     fontSize: moderateScale(13),
     color: c.inputText,
-    fontFamily: bodyFont,
+    fontFamily: fontFamily.body,
   },
   primaryBtn: {
     marginTop: moderateScale(8),
@@ -125,8 +122,7 @@ const styles = StyleSheet.create({
   },
   primaryBtnText: {
     fontSize: moderateScale(15),
-    fontWeight: "700",
     color: c.buttonText,
-    fontFamily: mediumFont,
+    fontFamily: fontFamily.heading,
   },
 });

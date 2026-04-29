@@ -4,11 +4,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { moderateScale } from "react-native-size-matters";
-import { landingColors as c } from "@/src/theme/pages/landing.colors";
+import { fontFamily } from "@/src/theme";
+import { asl } from "@/src/theme/aslConnectTheme";
 
 export default function Index() {
   return (
-    <LinearGradient colors={[c.bgTop, c.bgBottom]} style={styles.bg}>
+    <LinearGradient colors={[...asl.welcome]} style={styles.bg}>
       <SafeAreaView style={styles.safe}>
         <View style={styles.content}>
           <Image
@@ -54,24 +55,24 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(45),
     overflow: "hidden",
     marginBottom: moderateScale(20),
+    borderWidth: 2,
+    borderColor: "rgba(244, 114, 182, 0.35)",
   },
   title: {
     fontSize: moderateScale(40),
-    fontWeight: "700",
     letterSpacing: 1,
     textAlign: "center",
-    color: c.logoText,
-    fontFamily: "System",
+    color: "#FFFFFF",
+    fontFamily: fontFamily.heading,
   },
   subtitle: {
     marginTop: moderateScale(10),
     fontSize: moderateScale(16),
-    fontWeight: "400",
     lineHeight: moderateScale(22),
     textAlign: "center",
-    color: c.subtitle,
-    maxWidth: moderateScale(260),
-    fontFamily: "System",
+    color: "rgba(255,255,255,0.72)",
+    maxWidth: moderateScale(280),
+    fontFamily: fontFamily.body,
   },
   actions: {
     width: "100%",
@@ -82,31 +83,29 @@ const styles = StyleSheet.create({
   signupButton: {
     height: moderateScale(50),
     borderRadius: moderateScale(25),
-    backgroundColor: c.signupBackground,
+    backgroundColor: "#EC4899",
     alignItems: "center",
     justifyContent: "center",
   },
   signupText: {
     fontSize: moderateScale(18),
-    fontWeight: "600",
     textAlign: "center",
-    color: c.signupText,
-    fontFamily: "System",
+    color: "#FFFFFF",
+    fontFamily: fontFamily.heading,
   },
   loginButton: {
     height: moderateScale(50),
     borderRadius: moderateScale(25),
     borderWidth: 1.5,
-    borderColor: c.loginBorder,
-    backgroundColor: c.loginBackground,
+    borderColor: "rgba(244, 114, 182, 0.85)",
+    backgroundColor: "rgba(255,255,255,0.08)",
     alignItems: "center",
     justifyContent: "center",
   },
   loginText: {
     fontSize: moderateScale(18),
-    fontWeight: "600",
     textAlign: "center",
-    color: c.loginText,
-    fontFamily: "System",
+    color: "#F9A8D4",
+    fontFamily: fontFamily.medium,
   },
 });

@@ -12,6 +12,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { EmptyState } from "@/src/components/ui";
 import { AppShell, Radius, semanticColors, Spacing, Typography } from "@/src/theme";
 import { Surfaces } from "@/src/theme/surfaces";
+import { asl } from "@/src/theme/aslConnectTheme";
 import type { TranslationHistoryItem } from "./types";
 import { TranslationHistoryItemCard } from "./TranslationHistoryItemCard";
 
@@ -27,7 +28,28 @@ type Props = {
   /** Viewport height for the list (stacked mode). Ignored for sidebar when flex is used. */
   listMaxHeight: number;
   textScale: number;
+  appearance?: "light" | "dark";
+  /** When true, subtitle reflects on-device persistence. */
+  keepHistoryOnDevice?: boolean;
 };
+
+const darkPanel = StyleSheet.create({
+  panel: {
+    borderColor: asl.glass.border,
+    backgroundColor: "rgba(0,0,0,0.22)",
+  },
+  header: {
+    borderBottomColor: asl.glass.border,
+    backgroundColor: "rgba(0,0,0,0.2)",
+  },
+  title: { color: asl.text.primary },
+  subtitle: { color: asl.text.muted },
+  clearBtn: {
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderColor: asl.glass.border,
+  },
+  clearBtnText: { color: asl.accentCyan },
+});
 
 export function TranslationHistoryPanel({
   items,
@@ -37,8 +59,11 @@ export function TranslationHistoryPanel({
   variant,
   listMaxHeight,
   textScale,
+  appearance = "light",
+  keepHistoryOnDevice = false,
 }: Props) {
   const listRef = useRef<FlatList<TranslationHistoryItem>>(null);
+  const d = appearance === "dark";
 
   useEffect(() => {
     if (items.length === 0) {
@@ -57,6 +82,7 @@ export function TranslationHistoryPanel({
       textScale={textScale}
       onReuse={onReuse}
       onReport={onReportItem}
+      appearance={appearance}
     />
   );
 
@@ -69,39 +95,68 @@ export function TranslationHistoryPanel({
     styles.panel,
     variant === "sidebar" && styles.panelSidebar,
     variant === "stacked" && styles.panelStacked,
+    d && darkPanel.panel,
   ];
+
+  const historySubtitle = keepHistoryOnDevice
+    ? "Saved on this device"
+    : "This session only · not saved";
 
   return (
     <View style={panelStyle}>
-      <View style={styles.panelHeader}>
+      <View style={[styles.panelHeader, d && darkPanel.header]}>
         <View style={styles.titleBlock}>
           <View style={styles.panelTitleRow}>
-            <MaterialIcons name="history" size={20} color="#214F46" />
-            <Text style={[styles.panelTitle, { fontSize: 15 * textScale }]}>Recent translations</Text>
+            <MaterialIcons name="history" size={20} color={d ? asl.accentCyan : "#214F46"} />
+            <Text
+              style={[
+                styles.panelTitle,
+                d && darkPanel.title,
+                { fontSize: 15 * textScale },
+              ]}
+            >
+              Recent translations
+            </Text>
           </View>
-          <Text style={[styles.subtitle, { fontSize: 12 * textScale }]}>
-            This session only · not saved
+          <Text style={[styles.subtitle, d && darkPanel.subtitle, { fontSize: 12 * textScale }]}>
+            {historySubtitle}
           </Text>
         </View>
         {items.length > 0 ? (
           <Pressable
             onPress={onClear}
-            style={({ pressed }) => [styles.clearBtn, pressed && styles.clearBtnPressed]}
+            style={({ pressed }) => [
+              styles.clearBtn,
+              d && darkPanel.clearBtn,
+              pressed && styles.clearBtnPressed,
+            ]}
             hitSlop={8}
             accessibilityRole="button"
             accessibilityLabel="Clear translation history for this session"
           >
-            <Text style={[styles.clearBtnText, { fontSize: 12 * textScale }]}>Clear</Text>
+            <Text style={[styles.clearBtnText, d && darkPanel.clearBtnText, { fontSize: 12 * textScale }]}>
+              Clear
+            </Text>
           </Pressable>
         ) : null}
       </View>
 
       {items.length === 0 ? (
         <View style={styles.emptyWrap}>
-          <EmptyState
-            title="No translations yet"
-            description="Run Record Clip & infer — each result appears here automatically for this session."
-          />
+          {d ? (
+            <View style={styles.emptyDark} accessibilityRole="text">
+              <Text style={styles.emptyDarkTitle}>No translations yet</Text>
+              <Text style={styles.emptyDarkDesc}>
+                Record a clip and infer — results show up here.
+                {keepHistoryOnDevice ? " They can stay on this device when the toggle is on." : ""}
+              </Text>
+            </View>
+          ) : (
+            <EmptyState
+              title="No translations yet"
+              description="Run Record Clip & infer — each result appears here automatically for this session."
+            />
+          )}
         </View>
       ) : (
         <FlatList
@@ -199,5 +254,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.md,
+  },
+  emptyDark: {
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.sm,
+    alignItems: "center",
+  },
+  emptyDarkTitle: {
+    ...Typography.sectionTitle,
+    color: asl.text.primary,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  emptyDarkDesc: {
+    ...Typography.caption,
+    color: asl.text.muted,
+    textAlign: "center",
+    marginTop: Spacing.xs,
+    lineHeight: 18,
   },
 });

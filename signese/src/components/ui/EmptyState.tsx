@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { semanticColors, Spacing, Typography } from "@/src/theme";
+import { semanticColors, Spacing, Typography, fontFamily } from "@/src/theme";
 
 type Props = {
   title: string;
@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.sectionTitle,
+    fontFamily: fontFamily.heading,
     color: semanticColors.text.primary,
-    fontWeight: "700",
     textAlign: "center",
   },
   description: {
