@@ -37,10 +37,12 @@ export default function HomeScreen() {
   const refreshHomeStats = React.useCallback(async () => {
     setStatsLoading(true);
     setStatsError(null);
+
     try {
       const completed = await getCompletedLessons();
       setCompletedLessonsCount(completed.length);
       setAlphabetPct(await getLessonProgressPercent("alphabet"));
+
       if (!authUser) {
         const total = await getTotalStars();
         setGuestStarTotal(total);
