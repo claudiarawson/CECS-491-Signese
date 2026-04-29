@@ -1,0 +1,35 @@
+{
+  "cli": {
+    "version": ">= 10.0.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "development",
+      "env": {
+        "EXPO_PUBLIC_TRANSLATE_INFERENCE_MODE": "backend",
+        "EXPO_PUBLIC_TRANSLATE_INFERENCE_URL": "https://signese-inference-135650697112.us-west2.run.app"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview",
+      "env": {
+        "EXPO_PUBLIC_TRANSLATE_INFERENCE_MODE": "backend",
+        "EXPO_PUBLIC_TRANSLATE_INFERENCE_URL": "https://signese-inference-135650697112.us-west2.run.app"
+      }
+    },
+    "production": {
+      "channel": "production",
+      "env": {
+        "EXPO_PUBLIC_TRANSLATE_INFERENCE_MODE": "backend",
+        "EXPO_PUBLIC_TRANSLATE_INFERENCE_URL": "https://signese-inference-135650697112.us-west2.run.app"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
+
