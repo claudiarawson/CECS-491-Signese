@@ -1,13 +1,23 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, Pressable, Platform, TextInput, ScrollView, KeyboardAvoidingView } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import React, { useMemo, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  Platform,
+  TextInput,
+  ScrollView,
+  KeyboardAvoidingView,
+  useWindowDimensions,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useLocalSearchParams } from "expo-router";
-import { moderateScale } from "react-native-size-matters";
-import { fontWeight } from "@/src/theme";
-import { signupColors as c } from "@/src/theme/pages/signup.colors";
+import { getDeviceDensity, moderateScale } from "@/src/theme";
+import { asl } from "@/src/theme/aslConnectTheme";
+import { GlassCard, GradientBackground, InputField, PrimaryButton } from "@/src/components/asl";
 import { signInWithEmail } from "@/src/services/firebase/auth.services";
+import { createAuthScreenStyles } from "./authStyles";
 
 export default function LoginScreen() {
   const { redirect: redirectParam } = useLocalSearchParams<{ redirect?: string | string[] }>();
@@ -16,6 +26,11 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+
+  const { width, height } = useWindowDimensions();
+  const density = getDeviceDensity(width, height);
+  const styles = useMemo(() => createAuthScreenStyles(density), [density]);
+  const keyboardOffset = moderateScale(12) * density;
 
   const handleSignIn = async () => {
     setError("");
@@ -34,77 +49,94 @@ export default function LoginScreen() {
   };
 
   return (
-    <LinearGradient colors={[c.backgroundTop, c.backgroundBottom]} locations={[0, 1]} style={styles.bg}>
-      <SafeAreaView style={styles.safe}>
+    <GradientBackground variant="welcome">
+      <SafeAreaView style={styles.flex}>
         <KeyboardAvoidingView
-          style={styles.keyboardWrap}
+          style={styles.keyboard}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? moderateScale(12) : 0}
+          keyboardVerticalOffset={Platform.OS === "ios" ? keyboardOffset : 0}
         >
           <View style={styles.topRow}>
-            <Pressable onPress={() => router.back()} style={styles.backBtn}>
-              <MaterialIcons name="chevron-left" size={moderateScale(20)} color={c.titleText} />
+            <Pressable
+              onPress={() => router.back()}
+              style={({ pressed }) => [styles.backBtn, pressed && { opacity: 0.85 }]}
+              accessibilityLabel="Go back"
+            >
+              <MaterialIcons name="chevron-left" size={22} color={asl.accentCyan} />
             </Pressable>
           </View>
-          <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-            <View style={styles.centerWrap}>
-              <Image source={require("../../assets/images/logo.png")} style={styles.logo} resizeMode="contain" />
-              <Text style={styles.title}>Welcome Back</Text>
-              <Text style={styles.subtitle}>Sign in to continue</Text>
-              <View style={styles.card}>
-                <Text style={styles.label}>Email</Text>
-                <TextInput value={email} onChangeText={setEmail} placeholder="your@email.com" placeholderTextColor={c.placeholderText} autoCapitalize="none" keyboardType="email-address" style={styles.input} />
-                <Text style={styles.label}>Password</Text>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.centerBlock}>
+              <Image
+                source={require("../../assets/images/logo.png")}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text style={styles.title}>Welcome back</Text>
+              <Text style={styles.subtitle}>Sign in to continue learning</Text>
+
+              <GlassCard style={{ alignSelf: "stretch" }}>
+                <InputField
+                  label="Email"
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="you@example.com"
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  autoComplete="email"
+                />
+
+                <View style={styles.labelRow}>
+                  <Text style={styles.label}>Password</Text>
+                </View>
                 <View style={styles.passwordWrap}>
-                  <TextInput value={password} onChangeText={setPassword} placeholder="........" placeholderTextColor={c.placeholderText} secureTextEntry={!showPassword} style={styles.passwordInput} />
-                  <Pressable style={styles.eyeBtn} onPress={() => setShowPassword((s) => !s)}>
-                    <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={moderateScale(18)} color={c.inputText} />
+                  <TextInput
+                    value={password}
+                    onChangeText={setPassword}
+                    placeholder="••••••••"
+                    placeholderTextColor={asl.text.muted}
+                    secureTextEntry={!showPassword}
+                    style={styles.passwordInput}
+                    autoComplete="password"
+                  />
+                  <Pressable
+                    style={styles.eyeBtn}
+                    onPress={() => setShowPassword((s) => !s)}
+                    accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+                  >
+                    <MaterialIcons
+                      name={showPassword ? "visibility" : "visibility-off"}
+                      size={22}
+                      color={asl.text.secondary}
+                    />
                   </Pressable>
                 </View>
-                {error ? <Text style={[styles.label, { color: "#ff4d4f", marginBottom: moderateScale(6) }]}>{error}</Text> : null}
-                <Pressable style={styles.primaryBtn} onPress={handleSignIn}><Text style={styles.primaryBtnText}>Login</Text></Pressable>
-                <View style={styles.bottomRow}>
-                  <Pressable onPress={() => router.push("/forgot-password")}><Text style={styles.link}>Forgot password?</Text></Pressable>
+
+                {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+                <PrimaryButton label="Log in" onPress={handleSignIn} style={{ alignSelf: "stretch" }} />
+
+                <View style={styles.linkRow}>
+                  <Pressable onPress={() => router.push("/forgot-password" as any)}>
+                    <Text style={styles.link}>Forgot password?</Text>
+                  </Pressable>
                 </View>
-              </View>
+
+                <View style={styles.linkRow}>
+                  <Text style={styles.linkMuted}>New here?</Text>
+                  <Pressable onPress={() => router.push("/signup" as any)}>
+                    <Text style={styles.link}>Create an account</Text>
+                  </Pressable>
+                </View>
+              </GlassCard>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </LinearGradient>
+    </GradientBackground>
   );
 }
-
-const styles = StyleSheet.create({
-  bg: { flex: 1 },
-  safe: { flex: 1 },
-  keyboardWrap: { flex: 1 },
-  scrollContent: { flexGrow: 1 },
-  topRow: {
-    paddingHorizontal: moderateScale(16),
-    paddingTop: Platform.select({ ios: moderateScale(6), android: moderateScale(10), default: moderateScale(10) })},
-  backBtn: {
-    width: moderateScale(36),
-    height: moderateScale(36),
-    borderRadius: moderateScale(18),
-    backgroundColor: c.backButton,
-    alignItems: "center",
-    justifyContent: "center"},
-  centerWrap: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: moderateScale(16)},
-  logo: { width: moderateScale(44), height: moderateScale(44), borderRadius: moderateScale(22), marginBottom: moderateScale(5) },
-  title: { fontSize: moderateScale(28), color: c.titleText, fontWeight: fontWeight.emphasis },
-  subtitle: { fontSize: moderateScale(16), color: c.subtitleText, marginBottom: moderateScale(11)},
-  card: { width: "100%", maxWidth: moderateScale(340), backgroundColor: c.cardBackground, borderRadius: moderateScale(24), padding: moderateScale(14) },
-  label: { fontSize: moderateScale(10), color: c.labelText, marginBottom: moderateScale(3), fontWeight: fontWeight.label },
-  input: { height: moderateScale(34), borderRadius: moderateScale(17), marginBottom: moderateScale(5), backgroundColor: c.inputBackground, borderWidth: 1, borderColor: c.inputBorder, paddingHorizontal: moderateScale(12), fontSize: moderateScale(13), color: c.inputText},
-  passwordWrap: { height: moderateScale(34), borderRadius: moderateScale(17), marginBottom: moderateScale(5), backgroundColor: c.inputBackground, borderWidth: 1, borderColor: c.inputBorder, paddingLeft: moderateScale(12), paddingRight: moderateScale(8), flexDirection: "row", alignItems: "center" },
-  passwordInput: { flex: 1, fontSize: moderateScale(13), color: c.inputText},
-  eyeBtn: { padding: moderateScale(2) },
-  primaryBtn: { marginTop: moderateScale(8), height: moderateScale(40), borderRadius: moderateScale(20), backgroundColor: c.primaryButton, alignItems: "center", justifyContent: "center" },
-  primaryBtnText: { fontSize: moderateScale(15), color: c.buttonText, fontWeight: fontWeight.emphasis },
-  bottomRow: { marginTop: moderateScale(8), alignItems: "center", justifyContent: "center" },
-  link: { fontSize: moderateScale(13), color: c.linkText, fontWeight: fontWeight.medium }});
