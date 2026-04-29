@@ -33,14 +33,17 @@ PROCESSED_DIR = REPO_ROOT / "data" / "processed"
 FEATURES_DIR = PROCESSED_DIR / "landmarks" / "features"
 
 REDUCED_LABELS = [
-    "MEET",
-    "HOW",
-    "GOOD",
-    "NAME",
-    "YOU",
-    "NICE",
     "HELLO",
+    "HOW",
+    "YOU",
+    "GOOD",
     "MORNING",
+    "NICE",
+    "MEET",
+    "SEE",
+    "WHAT",
+    "NAME",
+    "MY",
 ]
 REDUCED_LABEL_SET = set(REDUCED_LABELS)
 

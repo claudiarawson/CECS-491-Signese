@@ -22,6 +22,8 @@ type Props = {
   items: TranslationHistoryItem[];
   onClear: () => void;
   onReuse?: (item: TranslationHistoryItem) => void;
+  onDictionary?: (item: TranslationHistoryItem) => void;
+  onDelete?: (item: TranslationHistoryItem) => void;
   onReportItem?: (item: TranslationHistoryItem) => void;
   /** Stacked under main content on phones; fixed width column on wide layouts. */
   variant: "stacked" | "sidebar";
@@ -55,6 +57,8 @@ export function TranslationHistoryPanel({
   items,
   onClear,
   onReuse,
+  onDictionary,
+  onDelete,
   onReportItem,
   variant,
   listMaxHeight,
@@ -81,6 +85,8 @@ export function TranslationHistoryPanel({
       isNewest={index === 0}
       textScale={textScale}
       onReuse={onReuse}
+      onDictionary={onDictionary}
+      onDelete={onDelete}
       onReport={onReportItem}
       appearance={appearance}
     />

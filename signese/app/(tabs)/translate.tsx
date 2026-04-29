@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Platform,
   ActivityIndicator,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
   useWindowDimensions,
+  type DimensionValue,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useFocusEffect } from "expo-router";
@@ -93,6 +95,11 @@ export default function TranslateScreen() {
   const [cooldownRemainingMs, setCooldownRemainingMs] = useState(0);
   const [recordingStartedAtMs, setRecordingStartedAtMs] = useState<number | null>(null);
   const [recordingElapsedMs, setRecordingElapsedMs] = useState(0);
+  const [sequenceChunkIndex, setSequenceChunkIndex] = useState(0);
+  const [sequencePrompt, setSequencePrompt] = useState<"sign-now" | "move-next" | null>(null);
+  const [nextChunkStartsInMs, setNextChunkStartsInMs] = useState(0);
+  const [stopAfterCurrentInference, setStopAfterCurrentInference] = useState(false);
+  const [showCommonResponses, setShowCommonResponses] = useState(false);
   const [inferenceError, setInferenceError] = useState<string | null>(null);
   const [isTranslateInitializing, setIsTranslateInitializing] = useState(true);
   const { captionText, tokens, append, clear, replaceCaptionFromText } = useCaptionBuffer(30);
@@ -119,7 +126,13 @@ export default function TranslateScreen() {
   } = useTranslateCamera();
   const sequenceRef = useRef(0);
   const cameraRef = useRef<CameraView | null>(null);
-  const recordingPromiseRef = useRef<Promise<{ uri: string } | undefined> | null>(null);
+  const continueSequenceRef = useRef(false);
+  const chunkStopTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const recordingPromiseRef = useRef<
+    Promise<{ result?: { uri: string }; error?: unknown }> | null
+  >(null);
+  const CHUNK_DURATION_MS = 1500;
+  const BETWEEN_CHUNKS_MS = 550;
 
   const shortClipService = useMemo<ShortClipInferenceService>(() => {
     return createShortClipInferenceService(RUNTIME_V0_LABELS);
@@ -150,6 +163,16 @@ export default function TranslateScreen() {
       setCooldownRemainingMs(0);
       setRecordingStartedAtMs(null);
       setRecordingElapsedMs(0);
+      setSequenceChunkIndex(0);
+      setSequencePrompt(null);
+      setNextChunkStartsInMs(0);
+      setStopAfterCurrentInference(false);
+      setShowCommonResponses(false);
+      continueSequenceRef.current = false;
+      if (chunkStopTimeoutRef.current) {
+        clearTimeout(chunkStopTimeoutRef.current);
+        chunkStopTimeoutRef.current = null;
+      }
     }
   }, [cameraActive, shortClipService]);
 
@@ -175,7 +198,7 @@ export default function TranslateScreen() {
     };
 
     tick();
-    const interval = setInterval(tick, 200);
+    const interval = setInterval(tick, 50);
     return () => clearInterval(interval);
   }, [isRecordingClip, recordingStartedAtMs]);
 
@@ -200,90 +223,21 @@ export default function TranslateScreen() {
         setIsRecordingClip(true);
         setRecordingStartedAtMs(Date.now());
         setRecordingElapsedMs(0);
-
-        if (Platform.OS !== "web") {
-          const recorder = cameraRef.current as any;
-          if (!recorder?.recordAsync) {
-            setInferenceError("Video recording is not available on this device.");
-            setIsRecordingClip(false);
-          } else {
-            recordingPromiseRef.current = recorder.recordAsync({
-              maxDuration: 6,
-              quality: "480p",
-              mute: true,
-            });
-          }
-        }
       }
     }, 100);
 
     return () => clearInterval(interval);
   }, [isRecordCooldown]);
 
-  const handleRecordClipToggle = async () => {
-    if (isInferring || isRecordCooldown) {
+  useEffect(() => {
+    if (!isRecordingClip || Platform.OS === "web") {
       return;
     }
 
-    setInferenceError(null);
+    let cancelled = false;
+    continueSequenceRef.current = true;
 
-    if (!isRecordingClip) {
-      if (!cameraActive) {
-        setInferenceError("Open camera preview first, then tap Record Clip.");
-        return;
-      }
-
-      setIsRecordCooldown(true);
-      return;
-    }
-
-    setIsRecordingClip(false);
-    setRecordingStartedAtMs(null);
-    setIsInferring(true);
-
-    try {
-      const clipDurationMs = Math.max(recordingElapsedMs, 0);
-
-      let response: TranslateInferenceResponse;
-      if (Platform.OS !== "web") {
-        const recorder = cameraRef.current as any;
-        if (recorder?.stopRecording) {
-          recorder.stopRecording();
-        }
-
-        const recordingResult = recordingPromiseRef.current
-          ? await recordingPromiseRef.current
-          : undefined;
-        recordingPromiseRef.current = null;
-
-        if (!recordingResult?.uri) {
-          throw new Error("No recorded clip was captured.");
-        }
-
-        response = await shortClipService.inferRecordedClip({
-          sequence: sequenceRef.current,
-          clipUri: recordingResult.uri,
-          startMs: 0,
-          endMs: clipDurationMs,
-        });
-      } else {
-        const derivedFps = Math.max(
-          10,
-          Math.min(16, Math.round((recordingElapsedMs || 1200) / 100))
-        );
-        const derivedFrameCount = Math.max(
-          8,
-          Math.min(48, Math.round((Math.max(clipDurationMs, 400) / 1000) * derivedFps))
-        );
-
-        // Web fallback keeps the previous mocked path until browser recording uploads are implemented.
-        response = await shortClipService.inferShortClip({
-        sequence: sequenceRef.current,
-        frameCount: derivedFrameCount,
-        fps: derivedFps,
-        });
-      }
-
+    const applyInferenceResponse = (response: TranslateInferenceResponse, clipDurationMs: number) => {
       sequenceRef.current += 1;
       setLastInference(response);
 
@@ -300,30 +254,18 @@ export default function TranslateScreen() {
         }
       }
 
-      const clipLabels = response.tokens.map((t) => t.label);
-      const hasHistorySignal =
-        clipLabels.length > 0 || (response.raw_top_k && response.raw_top_k.length > 0);
-      if (hasHistorySignal) {
-        const originalText =
-          clipLabels.length > 0
-            ? clipLabels.join(" ")
-            : (response.raw_top_k?.[0]?.label ?? "No prediction");
-        const prevCaption = captionText.trim();
-        const translatedText =
-          clipLabels.length > 0
-            ? prevCaption
-              ? `${prevCaption} ${clipLabels.join(" ")}`
-              : clipLabels.join(" ")
-            : prevCaption.length > 0
-              ? prevCaption
-              : "—";
-        const newId = addHistoryItem({
-          originalText,
-          translatedText,
-          sourceLanguage: TRANSLATE_SOURCE_LANG,
-          targetLanguage: TRANSLATE_TARGET_LANG,
-        });
-        lastHistoryEntryIdRef.current = newId;
+      if (response.tokens.length > 0 || (response.raw_top_k && response.raw_top_k.length > 0)) {
+        for (const token of response.tokens) {
+          const entryId = addHistoryItem({
+            originalText: token.label,
+            translatedText: token.label,
+            sourceLanguage: TRANSLATE_SOURCE_LANG,
+            targetLanguage: TRANSLATE_TARGET_LANG,
+            timestamp: new Date(token.end_ms || clipDurationMs).toISOString(),
+            confidence: token.confidence,
+          });
+          lastHistoryEntryIdRef.current = entryId;
+        }
       }
 
       const topScores = response.raw_top_k ?? [];
@@ -345,12 +287,177 @@ export default function TranslateScreen() {
           reason: primaryToken && best.score >= 0.45 ? "accepted" : "below-threshold",
         });
       }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to run inference.";
-      setInferenceError(message);
-    } finally {
-      setIsInferring(false);
-      deactivateCamera();
+    };
+
+    const recordSingleChunk = async (): Promise<{ uri: string } | undefined> => {
+      const recorder = cameraRef.current as any;
+      if (!recorder?.recordAsync) {
+        throw new Error("Video recording is not available on this device.");
+      }
+      recordingPromiseRef.current = recorder
+        .recordAsync({
+          maxDuration: 6,
+          quality: "480p",
+          mute: true,
+        })
+        .then((result: { uri: string } | undefined) => ({ result }))
+        .catch((error: unknown) => ({ error }));
+
+      chunkStopTimeoutRef.current = setTimeout(() => {
+        const activeRecorder = cameraRef.current as any;
+        if (activeRecorder?.stopRecording) {
+          activeRecorder.stopRecording();
+        }
+      }, CHUNK_DURATION_MS);
+
+      const outcome = recordingPromiseRef.current
+        ? await Promise.race([
+            recordingPromiseRef.current,
+            new Promise<{ result?: { uri: string }; error?: unknown }>((resolve) => {
+              setTimeout(() => resolve({ error: new Error("Recording timed out.") }), CHUNK_DURATION_MS + 3000);
+            }),
+          ])
+        : { error: new Error("No recording was started.") };
+
+      if (chunkStopTimeoutRef.current) {
+        clearTimeout(chunkStopTimeoutRef.current);
+        chunkStopTimeoutRef.current = null;
+      }
+      recordingPromiseRef.current = null;
+
+      if (outcome?.error) {
+        throw outcome.error instanceof Error
+          ? outcome.error
+          : new Error("An error occurred while recording a video.");
+      }
+      return outcome?.result;
+    };
+
+    const run = async () => {
+      try {
+        setSequencePrompt("sign-now");
+        setStopAfterCurrentInference(false);
+        while (continueSequenceRef.current && !cancelled) {
+          setSequenceChunkIndex((prev) => prev + 1);
+          setSequencePrompt("sign-now");
+          setRecordingStartedAtMs(Date.now());
+          setRecordingElapsedMs(0);
+
+          const chunk = await recordSingleChunk();
+          setRecordingStartedAtMs(null);
+          setRecordingElapsedMs(0);
+
+          if (!continueSequenceRef.current || cancelled) {
+            break;
+          }
+          if (!chunk?.uri) {
+            throw new Error("No recorded clip was captured.");
+          }
+
+          setIsInferring(true);
+          try {
+            const response = await shortClipService.inferRecordedClip({
+              sequence: sequenceRef.current,
+              clipUri: chunk.uri,
+              startMs: 0,
+              endMs: CHUNK_DURATION_MS,
+            });
+            applyInferenceResponse(response, CHUNK_DURATION_MS);
+          } finally {
+            setIsInferring(false);
+          }
+
+          if (!continueSequenceRef.current || cancelled) {
+            break;
+          }
+          setSequencePrompt("move-next");
+          setNextChunkStartsInMs(BETWEEN_CHUNKS_MS);
+          await new Promise<void>((resolve) => {
+            const startedAt = Date.now();
+            const interval = setInterval(() => {
+              const elapsed = Date.now() - startedAt;
+              const remaining = Math.max(0, BETWEEN_CHUNKS_MS - elapsed);
+              setNextChunkStartsInMs(remaining);
+              if (remaining <= 0) {
+                clearInterval(interval);
+                resolve();
+              }
+            }, 100);
+          });
+          setNextChunkStartsInMs(0);
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Failed to run inference.";
+        setInferenceError(message);
+      } finally {
+        setSequencePrompt(null);
+        setNextChunkStartsInMs(0);
+        setStopAfterCurrentInference(false);
+        setIsRecordingClip(false);
+        setRecordingStartedAtMs(null);
+        setRecordingElapsedMs(0);
+        setShowCommonResponses(true);
+      }
+    };
+
+    run();
+    return () => {
+      cancelled = true;
+      continueSequenceRef.current = false;
+      const recorder = cameraRef.current as any;
+      if (recorder?.stopRecording) {
+        recorder.stopRecording();
+      }
+      if (chunkStopTimeoutRef.current) {
+        clearTimeout(chunkStopTimeoutRef.current);
+        chunkStopTimeoutRef.current = null;
+      }
+    };
+  }, [isRecordingClip, shortClipService, append, addHistoryItem]);
+
+  const handleRecordClipToggle = async () => {
+    if (isRecordCooldown) {
+      return;
+    }
+    setInferenceError(null);
+
+    if (!isRecordingClip) {
+      if (!cameraActive) {
+        setInferenceError("Open camera preview first, then tap Record Clip.");
+        return;
+      }
+      setSequenceChunkIndex(0);
+      setSequencePrompt("sign-now");
+      setIsRecordCooldown(true);
+      return;
+    }
+
+    continueSequenceRef.current = false;
+    setStopAfterCurrentInference(true);
+    if (!isInferring) {
+      setIsRecordingClip(false);
+      setSequencePrompt(null);
+      setNextChunkStartsInMs(0);
+      setShowCommonResponses(true);
+      const recorder = cameraRef.current as any;
+      if (recorder?.stopRecording) {
+        recorder.stopRecording();
+      }
+    }
+  };
+
+  const handleCancelNextClip = () => {
+    if (!isRecordingClip) {
+      return;
+    }
+    continueSequenceRef.current = false;
+    setStopAfterCurrentInference(true);
+    setNextChunkStartsInMs(0);
+    if (!isInferring) {
+      const recorder = cameraRef.current as any;
+      if (recorder?.stopRecording) {
+        recorder.stopRecording();
+      }
     }
   };
 
@@ -400,17 +507,35 @@ export default function TranslateScreen() {
 
   const recordingSecondsText = `${(recordingElapsedMs / 1000).toFixed(1)}s`;
   const cooldownSecondsText = `${(cooldownRemainingMs / 1000).toFixed(1)}s`;
+  const chunkProgress = Math.max(0, Math.min(1, recordingElapsedMs / CHUNK_DURATION_MS));
+  const nextChunkSecondsText = `${Math.max(0, nextChunkStartsInMs / 1000).toFixed(1)}s`;
+  const prepProgress = Math.max(
+    0,
+    Math.min(1, 1 - nextChunkStartsInMs / Math.max(1, BETWEEN_CHUNKS_MS))
+  );
+  const activeProgressValue = 1 - chunkProgress;
+  const verticalProgressHeight =
+    sequencePrompt === "move-next"
+      ? "100%"
+      : `${Math.round(Math.max(0, Math.min(1, activeProgressValue)) * 100)}%`;
+  const prepRed = Math.round(244 + (107 - 244) * prepProgress);
+  const prepGreen = Math.round(80 + (226 - 80) * prepProgress);
+  const prepBlue = Math.round(93 + (193 - 93) * prepProgress);
+  const prepTransitionColor = `rgb(${prepRed}, ${prepGreen}, ${prepBlue})`;
 
   const permissionDenied = permission && !permission.granted;
   const captionOutput = captionText.length > 0 ? captionText : "Translation output will appear here.";
-  const hasReportableCaption = captionText.trim().length > 0;
   const inferenceStatus =
     isRecordCooldown
       ? `Get ready... recording starts in ${cooldownSecondsText}`
       : isRecordingClip
-      ? "Recording short clip... tap Stop & Infer when finished."
+      ? sequencePrompt === "move-next"
+        ? `Move to the next sign... next recording starts in ${nextChunkSecondsText}.`
+        : `Sign now (window ${sequenceChunkIndex > 0 ? sequenceChunkIndex : 1}, 1.5s each).`
       : isInferring
-      ? "Running short-clip inference..."
+      ? stopAfterCurrentInference
+        ? "Recognizing current sign, then stopping..."
+        : "Recognizing current sign..."
       : inferenceError
         ? `Error: ${inferenceError}`
         : lastInference && lastInference.tokens.length === 0
@@ -426,8 +551,27 @@ export default function TranslateScreen() {
     ? `Top scores: ${formatTopScores(lastDecision.smoothedScores)}`
     : "Top scores: n/a";
 
+  const hasReportableCaption = captionText.trim().length > 0;
+
   return (
-    <AppShell scroll={false} header={<AslTabHeader title="Translate" />}>
+    <AppShell
+      scroll={false}
+      header={
+        <AslTabHeader
+          title="Translate"
+          rightExtra={
+            <Pressable
+              onPress={() => router.push("/translate/history" as any)}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel="Translation history"
+            >
+              <MaterialIcons name="history" size={24} color={asl.text.secondary} />
+            </Pressable>
+          }
+        />
+      }
+    >
       <View style={styles.content}>
         {isTranslateInitializing ? (
           <View style={styles.loadingOverlay}>
@@ -455,26 +599,107 @@ export default function TranslateScreen() {
               </View>
             )}
 
-            <View style={styles.cameraOverlayControls}>
-              {cameraActive ? (
-                <Pressable
-                  style={[styles.recordClipButton, isInferring && styles.recordClipButtonDisabled]}
-                  onPress={handleRecordClipToggle}
-                  disabled={isInferring || isRecordCooldown}
-                >
+            <View style={styles.videoTopSettingsOverlay}>
+              <View style={styles.videoTopSettingsRow}>
+                <Pressable style={styles.smallControlBtnOverlay} onPress={toggleCamera}>
                   <MaterialIcons
-                    name={isRecordingClip ? "stop-circle" : isRecordCooldown ? "hourglass-top" : "fiber-manual-record"}
+                    name={cameraActive ? "videocam-off" : "videocam"}
+                    size={18}
+                    color="#FFFFFF"
+                  />
+                </Pressable>
+                {Platform.OS !== "web" ? (
+                  <Pressable style={styles.smallControlBtnOverlay} onPress={reverseCamera}>
+                    <MaterialIcons name="flip-camera-ios" size={18} color="#FFFFFF" />
+                  </Pressable>
+                ) : null}
+              </View>
+            </View>
+
+            {cameraActive && isRecordingClip ? (
+              <View style={styles.sequenceProgressVerticalOverlay} pointerEvents="none">
+                <View style={styles.sequenceProgressVerticalTrack}>
+                  <View
+                    style={[
+                      styles.sequenceProgressVerticalFill,
+                      sequencePrompt === "move-next" && { backgroundColor: prepTransitionColor },
+                      { height: verticalProgressHeight as DimensionValue },
+                    ]}
+                  />
+                </View>
+              </View>
+            ) : null}
+
+            <View style={styles.captionsOverlayBox}>
+              <View style={styles.captionsOverlayContent}>
+                <ScrollView
+                  style={styles.captionsOverlayScrollArea}
+                  contentContainerStyle={styles.captionsOverlayScrollContent}
+                  showsVerticalScrollIndicator={false}
+                >
+                  <Text
+                    style={captionText.length > 0 ? styles.captionsOutputText : styles.captionsOutputPlaceholderText}
+                  >
+                    {captionOutput}
+                  </Text>
+                </ScrollView>
+              </View>
+              <View style={styles.captionsOverlayActionColumn}>
+                <Pressable style={styles.captionsOverlayVolumeButton} onPress={handleToggleVolume}>
+                  <MaterialIcons
+                    name={isVolumeOn ? "volume-up" : "volume-off"}
                     size={16}
                     color="#FFFFFF"
                   />
-                  <Text style={styles.recordClipButtonText}>
-                    {isRecordCooldown
-                      ? `Get Ready (${cooldownSecondsText})`
-                      : isRecordingClip
-                        ? `Stop & Infer (${recordingSecondsText})`
-                        : "Record Clip"}
-                  </Text>
                 </Pressable>
+                <Pressable style={styles.captionsOverlayClearButton} onPress={handleClearCaptions}>
+                  <MaterialIcons name="delete-outline" size={16} color="#FFFFFF" />
+                </Pressable>
+              </View>
+            </View>
+
+            <View style={styles.cameraOverlayControls}>
+              {cameraActive ? (
+                <View style={styles.bottomVideoControlsRow}>
+                  {!isRecordingClip ? (
+                    <Pressable
+                      style={[styles.recordClipButton, isInferring && styles.recordClipButtonDisabled]}
+                      onPress={handleRecordClipToggle}
+                      disabled={isInferring || isRecordCooldown}
+                    >
+                      <MaterialIcons
+                        name={isRecordCooldown ? "hourglass-top" : "fiber-manual-record"}
+                        size={16}
+                        color="#FFFFFF"
+                      />
+                      <Text style={styles.recordClipButtonText}>
+                        {isRecordCooldown ? `Get Ready (${cooldownSecondsText})` : "Record Clip"}
+                      </Text>
+                    </Pressable>
+                  ) : (
+                    <Pressable
+                      style={[
+                        styles.cancelCornerButton,
+                        stopAfterCurrentInference && styles.cancelCornerButtonPressed,
+                      ]}
+                      onPress={handleCancelNextClip}
+                    >
+                      <MaterialIcons name="close" size={16} color="#FFFFFF" />
+                      <Text style={styles.cancelCornerButtonText}>Stop</Text>
+                    </Pressable>
+                  )}
+                  <Pressable
+                    style={styles.commonResponsesControlArrow}
+                    onPress={() => setShowCommonResponses((prev) => !prev)}
+                  >
+                    <Text style={styles.commonResponsesControlArrowLabel}>Responses</Text>
+                    <MaterialIcons
+                      name={showCommonResponses ? "keyboard-arrow-down" : "keyboard-arrow-up"}
+                      size={18}
+                      color="#FFFFFF"
+                    />
+                  </Pressable>
+                </View>
               ) : (
                 <Pressable style={styles.previewCameraButton} onPress={handlePreviewCamera}>
                   <MaterialIcons name="videocam" size={16} color="#FFFFFF" />
@@ -619,13 +844,14 @@ const createStyles = (density: number, textScale: number) => {
       fontWeight: "600",
     },
   topSection: {
+      flex: 1,
       flexDirection: "row",
-      gap: Spacing.sm,
       marginTop: Spacing.md,
+      minHeight: 0,
     },
     videoCard: {
       flex: 1,
-      minHeight: ms(250),
+      minHeight: ms(280),
       borderRadius: ms(20),
       overflow: "hidden",
       backgroundColor: "rgba(0,0,0,0.35)",
@@ -695,8 +921,157 @@ const createStyles = (density: number, textScale: number) => {
       borderWidth: 1,
       borderColor: "rgba(255,255,255,0.35)",
     },
+    videoTopSettingsOverlay: {
+      position: "absolute",
+      top: Spacing.sm,
+      left: Spacing.sm,
+      right: Spacing.sm,
+      alignItems: "center",
+    },
+    videoTopSettingsRow: {
+      flexDirection: "row",
+      gap: Spacing.xs,
+      paddingHorizontal: 8,
+      paddingVertical: 6,
+      borderRadius: 16,
+      backgroundColor: "rgba(20, 34, 31, 0.35)",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.22)",
+    },
+    smallControlBtnOverlay: {
+      width: ms(34),
+      height: ms(34),
+      borderRadius: ms(17),
+      backgroundColor: "rgba(44, 93, 86, 0.55)",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.35)",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    sequenceProgressVerticalOverlay: {
+      position: "absolute",
+      left: Spacing.xs,
+      top: "50%",
+      transform: [{ translateY: -40 }],
+      width: 12,
+      height: 80,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    sequenceProgressVerticalTrack: {
+      width: 8,
+      height: 80,
+      borderRadius: 999,
+      backgroundColor: "rgba(255,255,255,0.22)",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.28)",
+      overflow: "hidden",
+      justifyContent: "flex-end",
+    },
+    sequenceProgressVerticalFill: {
+      width: "100%",
+      borderRadius: 999,
+      backgroundColor: "#6BE2C1",
+    },
+    captionsOverlayBox: {
+      position: "absolute",
+      left: Spacing.sm,
+      right: Spacing.sm,
+      bottom: ms(58),
+      maxHeight: ms(120),
+      borderRadius: 14,
+      backgroundColor: "rgba(20, 34, 31, 0.22)",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.22)",
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+    },
+    captionsOverlayContent: {
+      paddingRight: 38,
+      paddingBottom: 2,
+    },
+    captionsOverlayScrollArea: {
+      maxHeight: ms(64),
+    },
+    captionsOverlayScrollContent: {
+      paddingBottom: 2,
+    },
+    captionsOverlayActionColumn: {
+      position: "absolute",
+      right: 8,
+      bottom: 8,
+      alignItems: "center",
+      gap: 6,
+    },
+    captionsOverlayClearButton: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      backgroundColor: "rgba(214, 64, 69, 0.28)",
+      borderWidth: 1,
+      borderColor: "rgba(214, 64, 69, 0.45)",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    captionsOverlayVolumeButton: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      backgroundColor: "rgba(44, 93, 86, 0.7)",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.35)",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    bottomVideoControlsRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: Spacing.xs,
+    },
+    commonResponsesControlArrow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      paddingHorizontal: 10,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: "rgba(44, 93, 86, 0.86)",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.45)",
+      justifyContent: "center",
+    },
+    commonResponsesControlArrowLabel: {
+      ...Typography.caption,
+      color: "#FFFFFF",
+      fontWeight: "700",
+      fontSize: ts(11),
+      lineHeight: ts(14),
+    },
   recordClipButtonDisabled: {
     opacity: 0.6,
+  },
+  cancelCornerButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingHorizontal: 10,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: "#D64045",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.65)",
+    justifyContent: "center",
+  },
+  cancelCornerButtonPressed: {
+    backgroundColor: "#7D8790",
+    borderColor: "rgba(255,255,255,0.35)",
+  },
+  cancelCornerButtonText: {
+    ...Typography.caption,
+    color: "#FFFFFF",
+    fontWeight: "700",
+    fontSize: ts(11),
+    lineHeight: ts(14),
   },
   recordClipButtonText: {
     ...Typography.caption,
@@ -835,9 +1210,9 @@ const createStyles = (density: number, textScale: number) => {
     },
     captionsCard: {
       marginTop: Spacing.sm,
-      flex: 1,
-      flexShrink: 1,
-      minHeight: ms(160),
+      minHeight: ms(100),
+      maxHeight: ms(145),
+      flexShrink: 0,
       borderRadius: ms(18),
       borderWidth: 1,
       borderColor: asl.glass.border,
@@ -850,6 +1225,13 @@ const createStyles = (density: number, textScale: number) => {
       fontSize: ts(16),
       lineHeight: ts(20),
       fontWeight: "700",
+      minHeight: 54,
+    },
+    captionsOutputPlaceholderText: {
+      ...Typography.caption,
+      color: "rgba(255,255,255,0.65)",
+      fontSize: ts(12),
+      lineHeight: ts(16),
       minHeight: 54,
     },
     captionOutputActions: {

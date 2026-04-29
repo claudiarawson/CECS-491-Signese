@@ -27,6 +27,7 @@ export default function TranslateHistoryScreen() {
   const {
     translationHistory,
     clearHistory,
+    deleteHistoryItem,
     sessionId,
     keepHistoryOnDevice,
     requestReuseCaption,
@@ -60,6 +61,20 @@ export default function TranslateHistoryScreen() {
     [requestReuseCaption]
   );
 
+  const handleDeleteHistoryItem = useCallback(
+    (item: TranslationHistoryItem) => {
+      deleteHistoryItem(item.id);
+    },
+    [deleteHistoryItem]
+  );
+
+  const handleDictionaryLookup = useCallback((item: TranslationHistoryItem) => {
+    router.push({
+      pathname: "/(tabs)/dictionary",
+      params: { q: item.originalText },
+    } as any);
+  }, []);
+
   const header = (
     <View style={styles.headerRow}>
       <Pressable
@@ -85,6 +100,8 @@ export default function TranslateHistoryScreen() {
           items={translationHistory}
           onClear={clearHistory}
           onReuse={handleReuseHistoryItem}
+          onDictionary={handleDictionaryLookup}
+          onDelete={handleDeleteHistoryItem}
           onReportItem={openReportForHistoryItem}
           variant="stacked"
           listMaxHeight={listMaxHeight}

@@ -17,6 +17,8 @@ type AddInput = {
   translatedText: string;
   sourceLanguage?: string;
   targetLanguage?: string;
+  timestamp?: string;
+  confidence?: number;
 };
 
 export function useTranslationHistory() {
@@ -34,6 +36,8 @@ export function useTranslationHistory() {
       targetLanguage: item.targetLanguage ?? TRANSLATE_TARGET_LANG,
       originalText: item.originalText,
       translatedText: item.translatedText,
+      timestamp: item.timestamp,
+      confidence: item.confidence,
     };
     setTranslationHistory((prev) => [row, ...prev]);
     return row.id;
@@ -56,9 +60,14 @@ export function useTranslationHistory() {
     });
   }, []);
 
+  const deleteHistoryItem = useCallback((id: string) => {
+    setTranslationHistory((prev) => prev.filter((item) => item.id !== id));
+  }, []);
+
   return {
     translationHistory,
     addHistoryItem,
+    deleteHistoryItem,
     clearHistory,
     mergeHistoryItems,
   };

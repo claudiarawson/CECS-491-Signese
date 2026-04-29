@@ -2,7 +2,7 @@ import { AppShell, AslTabHeader, FilterChips, SearchBar, ToggleSwitch } from "@/
 import { DictionaryFooter, dictionaryChromePadBottom } from "@/src/components/DictionaryFooter";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { getDeviceDensity, moderateScale, Spacing } from "@/src/theme";
-import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -35,12 +35,20 @@ const CATEGORY_CHIPS = SIGN_CATEGORY_ORDER.map((id) => ({
 
 export default function DictionaryScreen() {
   const { signs, loading, loadingMore, error, reload, loadMore } = useDictionarySigns();
+  const { q } = useLocalSearchParams<{ q?: string }>();
   const { height, width } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const listContentBottomPad = useMemo(() => dictionaryChromePadBottom(density), [density]);
   const styles = useMemo(() => createStyles(density), [density]);
   const [query, setQuery] = useState("");
   const [communityOnly, setCommunityOnly] = useState(false);
+
+  useEffect(() => {
+    if (typeof q === "string" && q.trim().length > 0) {
+      setQuery(q);
+    }
+  }, [q]);
+
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<SignCategoryId[]>([]);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [savedSnapshots, setSavedSnapshots] = useState<Record<string, Sign>>({});
