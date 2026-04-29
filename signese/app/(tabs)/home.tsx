@@ -37,10 +37,12 @@ export default function HomeScreen() {
   const refreshHomeStats = React.useCallback(async () => {
     setStatsLoading(true);
     setStatsError(null);
+
     try {
       const completed = await getCompletedLessons();
       setCompletedLessonsCount(completed.length);
       setAlphabetPct(await getLessonProgressPercent("alphabet"));
+
       if (!authUser) {
         const total = await getTotalStars();
         setGuestStarTotal(total);
@@ -114,7 +116,7 @@ export default function HomeScreen() {
       {statsLoading ? (
         <View style={styles.starsBox}>
           <ActivityIndicator color={asl.accentCyan} />
-          <Text style={styles.starsBoxHint}>Loading stars…</Text>
+          <Text style={styles.starsBoxHint}>Loading stars...</Text>
         </View>
       ) : statsError ? (
         <View style={[styles.starsBox, styles.starsBoxError]} accessibilityRole="alert">
@@ -126,9 +128,7 @@ export default function HomeScreen() {
           accessibilityRole="text"
           accessibilityLabel={`${starCount} stars`}
         >
-          <Text style={styles.starsBoxLine}>
-            {starCount} stars ⭐
-          </Text>
+          <Text style={styles.starsBoxLine}>{starCount} stars ⭐</Text>
         </View>
       )}
 
@@ -174,8 +174,13 @@ const createStyles = (density: number, textScale: number) => {
       color: asl.text.secondary,
       fontSize: ts(14),
     },
-    greetingWrap: { marginBottom: ms(8) },
-    greetingLine: { color: asl.text.secondary, fontSize: ts(16) },
+    greetingWrap: {
+      marginBottom: ms(8),
+    },
+    greetingLine: {
+      color: asl.text.secondary,
+      fontSize: ts(16),
+    },
     greetingName: {
       color: asl.text.primary,
       fontSize: ts(28),
@@ -216,7 +221,12 @@ const createStyles = (density: number, textScale: number) => {
       fontWeight: "600",
       textAlign: "center",
     },
-    statsRow: { flexDirection: "row", gap: 10, marginTop: 8, marginBottom: 12 },
+    statsRow: {
+      flexDirection: "row",
+      gap: 10,
+      marginTop: 8,
+      marginBottom: 12,
+    },
     resetButton: {
       alignSelf: "flex-start",
       marginBottom: 12,
@@ -230,6 +240,8 @@ const createStyles = (density: number, textScale: number) => {
       fontSize: ts(14),
       fontWeight: "700",
     },
-    tipsSection: { marginTop: 8 },
+    tipsSection: {
+      marginTop: 8,
+    },
   });
 };
