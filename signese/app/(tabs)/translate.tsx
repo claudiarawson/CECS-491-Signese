@@ -12,6 +12,7 @@ import {
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useFocusEffect } from "expo-router";
 import { CameraView } from "expo-camera";
+import * as Speech from "expo-speech";
 import { Spacing, Typography, getDeviceDensity, moderateScale } from "@/src/theme";
 import { asl } from "@/src/theme/aslConnectTheme";
 import { AppShell, AslTabHeader, GlassCard, TranslationOverlay } from "@/src/components/asl";
@@ -86,7 +87,7 @@ function CommonResponsesPlaceholder({
 }
 
 export default function TranslateScreen() {
-  const { textScale } = useAccessibility();
+  const { textScale, tts: accessibilityTtsEnabled } = useAccessibility();
   const { width, height } = useWindowDimensions();
   const density = getDeviceDensity(width, height);
   const styles = createStyles(density, textScale);
@@ -149,6 +150,9 @@ export default function TranslateScreen() {
         setLastInference(null);
         setInferenceError(null);
       }
+      return () => {
+        Speech.stop();
+      };
     }, [consumePendingReuseCaption, replaceCaptionFromText])
   );
 
@@ -472,10 +476,29 @@ export default function TranslateScreen() {
   };
 
   const handleToggleVolume = () => {
-    setIsVolumeOn((previous) => !previous);
+    setIsVolumeOn((previous) => {
+      if (previous) {
+        Speech.stop();
+      }
+      return !previous;
+    });
   };
 
+  const handleSpeakCaption = useCallback(() => {
+    const text = captionText.trim();
+    if (!text || !isVolumeOn || !accessibilityTtsEnabled) {
+      return;
+    }
+    try {
+      Speech.stop();
+      Speech.speak(text, { language: "en-US" });
+    } catch {
+      // Web or unsupported environment
+    }
+  }, [captionText, isVolumeOn, accessibilityTtsEnabled]);
+
   const handleClearCaptions = () => {
+    Speech.stop();
     clear();
     lastHistoryEntryIdRef.current = null;
     setLastDecision(null);
@@ -549,6 +572,7 @@ export default function TranslateScreen() {
     : "Top scores: n/a";
 
   const hasReportableCaption = captionText.trim().length > 0;
+  const canSpeakCaption = hasReportableCaption && isVolumeOn && accessibilityTtsEnabled;
 
   return (
     <AppShell
@@ -645,35 +669,6 @@ export default function TranslateScreen() {
                   </View>
                 </View>
               ) : null}
-
-              <View style={styles.liveCaptionBar}>
-                <ScrollView
-                  style={styles.liveCaptionScroll}
-                  contentContainerStyle={styles.liveCaptionScrollContent}
-                  showsVerticalScrollIndicator={false}
-                  nestedScrollEnabled
-                >
-                  <Text
-                    style={
-                      captionText.length > 0 ? styles.captionsOutputText : styles.captionsOutputPlaceholderText
-                    }
-                  >
-                    {captionOutput}
-                  </Text>
-                </ScrollView>
-                <View style={styles.liveCaptionActions}>
-                  <Pressable style={styles.liveCaptionIconBtn} onPress={handleToggleVolume}>
-                    <MaterialIcons
-                      name={isVolumeOn ? "volume-up" : "volume-off"}
-                      size={18}
-                      color={asl.accentCyan}
-                    />
-                  </Pressable>
-                  <Pressable style={styles.liveCaptionIconBtnDanger} onPress={handleClearCaptions}>
-                    <MaterialIcons name="delete-outline" size={18} color="#FCA5A5" />
-                  </Pressable>
-                </View>
-              </View>
 
               <View style={styles.liveActionsRow}>
                 {cameraActive ? (
@@ -776,6 +771,41 @@ export default function TranslateScreen() {
               <Pressable style={styles.outputChipBtn} onPress={handleClearCaptions} accessibilityRole="button">
                 <MaterialIcons name="delete-outline" size={18} color={asl.accentCyan} />
                 <Text style={styles.outputChipBtnText}>Clear</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.outputChipBtn, !canSpeakCaption && styles.outputChipBtnDisabled]}
+                onPress={handleSpeakCaption}
+                disabled={!canSpeakCaption}
+                accessibilityRole="button"
+                accessibilityLabel="Speak translation"
+                accessibilityState={{ disabled: !canSpeakCaption }}
+              >
+                <MaterialIcons
+                  name="record-voice-over"
+                  size={18}
+                  color={canSpeakCaption ? asl.accentCyan : asl.text.muted}
+                />
+                <Text
+                  style={[
+                    styles.outputChipBtnText,
+                    !canSpeakCaption && styles.outputChipBtnTextDisabled,
+                  ]}
+                >
+                  Listen
+                </Text>
+              </Pressable>
+              <Pressable
+                style={styles.outputChipBtn}
+                onPress={handleToggleVolume}
+                accessibilityRole="button"
+                accessibilityLabel={isVolumeOn ? "Mute translation speech" : "Unmute translation speech"}
+              >
+                <MaterialIcons
+                  name={isVolumeOn ? "volume-up" : "volume-off"}
+                  size={18}
+                  color={asl.accentCyan}
+                />
+                <Text style={styles.outputChipBtnText}>{isVolumeOn ? "Sound on" : "Muted"}</Text>
               </Pressable>
             </View>
 
@@ -946,53 +976,6 @@ const createStyles = (density: number, textScale: number) => {
     recordingProgressFill: {
       height: "100%",
       borderRadius: ms(99),
-    },
-    liveCaptionBar: {
-      flexDirection: "row",
-      alignItems: "stretch",
-      gap: ms(10),
-      paddingVertical: ms(10),
-      paddingHorizontal: ms(12),
-      borderRadius: ms(14),
-      backgroundColor: asl.glass.bg,
-      borderWidth: 1,
-      borderColor: asl.glass.border,
-      minHeight: ms(76),
-      ...asl.shadow.card,
-    },
-    liveCaptionScroll: {
-      flex: 1,
-      minHeight: 0,
-      maxHeight: ms(80),
-    },
-    liveCaptionScrollContent: {
-      paddingBottom: ms(4),
-      flexGrow: 1,
-    },
-    liveCaptionActions: {
-      justifyContent: "center",
-      gap: ms(8),
-      flexShrink: 0,
-    },
-    liveCaptionIconBtn: {
-      width: ms(36),
-      height: ms(36),
-      borderRadius: ms(18),
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: "rgba(255,255,255,0.08)",
-      borderWidth: 1,
-      borderColor: asl.glass.border,
-    },
-    liveCaptionIconBtnDanger: {
-      width: ms(36),
-      height: ms(36),
-      borderRadius: ms(18),
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: "rgba(239,68,68,0.15)",
-      borderWidth: 1,
-      borderColor: "rgba(248,113,113,0.45)",
     },
     liveActionsRow: {
       width: "100%",
@@ -1270,22 +1253,5 @@ const createStyles = (density: number, textScale: number) => {
     fontSize: ts(10),
     lineHeight: ts(13),
   },
-    captionsOutputText: {
-      ...Typography.body,
-      color: asl.text.primary,
-      fontSize: ts(14),
-      lineHeight: ts(19),
-      fontWeight: "700",
-      fontFamily: fontFamily.heading,
-      minHeight: ms(44),
-    },
-    captionsOutputPlaceholderText: {
-      ...Typography.caption,
-      color: asl.text.muted,
-      fontSize: ts(11),
-      lineHeight: ts(15),
-      fontFamily: fontFamily.body,
-      minHeight: ms(44),
-    },
   });
 };
