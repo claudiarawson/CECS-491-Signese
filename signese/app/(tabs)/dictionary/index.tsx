@@ -1,7 +1,7 @@
 import { AppShell, AslTabHeader, FilterChips, SearchBar, ToggleSwitch } from "@/src/components/asl";
 import { DictionaryFooter, dictionaryChromePadBottom } from "@/src/components/DictionaryFooter";
 import { useTheme } from "@/src/contexts/ThemeContext";
-import { Spacing, getDeviceDensity, moderateScale } from "@/src/theme";
+import { getDeviceDensity, moderateScale } from "@/src/theme";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -203,7 +203,6 @@ const createStyles = (density: number, colors: any, theme: "light" | "dark") => 
     root: {
       flex: 1,
       minHeight: 0,
-      paddingHorizontal: Spacing.xl - 4,
     },
     filtersBlock: {
       flexShrink: 0,

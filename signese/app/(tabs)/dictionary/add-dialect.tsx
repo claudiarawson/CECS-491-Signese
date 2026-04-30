@@ -306,7 +306,6 @@ const createStyles = (density: number, colors: ThemeColors, theme: "light" | "da
       flex: 1,
     },
     scrollContent: {
-      paddingHorizontal: Spacing.xl - 4,
       paddingTop: ms(8),
     },
     warnGlass: {
@@ -369,8 +368,8 @@ const createStyles = (density: number, colors: ThemeColors, theme: "light" | "da
     },
     footer: {
       position: "absolute",
-      left: Spacing.screenPadding,
-      right: Spacing.screenPadding,
+      left: 0,
+      right: 0,
       flexShrink: 0,
       paddingTop: ms(14),
       borderTopWidth: StyleSheet.hairlineWidth,

@@ -269,7 +269,6 @@ const createStyles = (density: number, colors: ThemeColors, theme: "light" | "da
     root: {
       flex: 1,
       minHeight: 0,
-      paddingHorizontal: Spacing.xl - 4,
     },
     filtersBlock: {
       flexShrink: 0,
